@@ -2,7 +2,7 @@ name: Daily Podcast Automation
 
 on:
   schedule:
-    - cron: '0 22 * * *' # 每日台灣時間早上6點
+    - cron: '0 22 * * *' # 每天台灣時間早上 6:00 執行
   workflow_dispatch:
 
 jobs:
@@ -12,94 +12,94 @@ jobs:
       GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
       ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
       GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      VOICE_ID: 'D9bZgM9Er0PhIxuW9Jqa' # 語音ID (可替換)
+      VOICE_ID: 'D9bZgM9Er0PhIxuW9Jqa'
 
     steps:
-      - name: Checkout Repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Install dependencies
         run: npm install axios dayjs
 
-      # 1. 使用 Grok 生成即時腳本（精確數據）
-
-- name: Generate Script (Grok)
-  run: |
-    node -e "
-    const axios = require('axios');
-    const fs = require('fs');
-
-    async function main() {
-      const apiKey = process.env.GROK_API_KEY;
-      if (!apiKey) {
-        throw new Error('GROK_API_KEY未設定，請檢查 GitHub Secrets！');
-      }
-
-      try {
-        const res = await axios.post('https://api.grok.x.ai/v1/chat/completions', {
-          model: 'grok-1',
-          messages: [{
-            role: 'system',
-            content: '你是台灣中年大叔播報員，以口語化語氣生成12分鐘腳本，包含美股(.DJI,.IXIC,.SPX,SOX)、QQQ/SPY ETF、比特幣、黃金期貨、Top5熱門股、AI重要新聞、總經新聞與投資金句，數據需精確。'
-          }]
-        }, {
-          headers: { Authorization: `Bearer ${apiKey}` }
-        });
-
-        if (!res.data.choices || !res.data.choices.length) {
-          throw new Error('Grok API 回傳空資料！');
-        }
-
-        fs.writeFileSync('script.txt', res.data.choices[0].message.content);
-      } catch (err) {
-        throw new Error(`Grok API 呼叫錯誤: ${err.message}`);
-      }
-    }
-    main();
-    "
-
-
-      # 除錯：確認腳本存在
-      - name: Check script generation
+      - name: Generate Script (Grok)
         run: |
-          [ -s script.txt ] || { echo "腳本未生成或為空"; exit 1; }
+          node -e "
+          const axios = require('axios');
+          const fs = require('fs');
 
-      # 2. 使用 ElevenLabs 合成語音
+          async function main() {
+            const apiKey = process.env.GROK_API_KEY;
+            if (!apiKey) throw new Error('❌ 錯誤：GROK_API_KEY 未設定，請檢查 GitHub Secrets！');
+
+            try {
+              const res = await axios.post('https://api.grok.x.ai/v1/chat/completions', {
+                model: 'grok-1',
+                messages: [{
+                  role: 'system',
+                  content: '你是台灣中年大叔播報員，請生成12分鐘繁體中文播報腳本。內容須含：美股四大指數(.DJI, .IXIC, .SPX, SOX)收盤、QQQ和SPY ETF、比特幣與黃金期貨報價、Top5熱門股、資金流向、最新AI新聞、總體經濟新聞，最後以投資金句作結。語氣親切自然，語速約1.3倍，所有數據必須準確且經交叉驗證。'
+                }]
+              }, {
+                headers: { Authorization: \`Bearer \${apiKey}\` }
+              });
+
+              if (!res.data.choices || !res.data.choices.length) {
+                throw new Error('❌ 錯誤：Grok API 無返回內容，請檢查 API 狀態！');
+              }
+
+              fs.writeFileSync('script.txt', res.data.choices[0].message.content);
+            } catch (err) {
+              throw new Error(\`❌ Grok API 呼叫失敗：\${err.message}\`);
+            }
+          }
+
+          main();
+          "
+
+      - name: Check script file
+        run: |
+          [ -s script.txt ] || { echo "❌ 錯誤：腳本 script.txt 未生成或內容為空"; exit 1; }
+
       - name: Generate Audio (ElevenLabs)
         run: |
           node -e "
           const axios = require('axios');
           const fs = require('fs');
           const dayjs = require('dayjs');
+
           async function main() {
-            const text = fs.readFileSync('script.txt', 'utf-8');
+            const apiKey = process.env.ELEVENLABS_API_KEY;
+            if (!apiKey) throw new Error('❌ 錯誤：ELEVENLABS_API_KEY 未設定，請檢查 GitHub Secrets！');
+
+            const text = fs.readFileSync('script.txt', 'utf8');
             const dateStr = dayjs().format('YYYYMMDD');
+
             try {
               const res = await axios({
                 method: 'post',
                 url: \`https://api.elevenlabs.io/v1/text-to-speech/\${process.env.VOICE_ID}/stream\`,
                 headers: {
-                  'xi-api-key': process.env.ELEVENLABS_API_KEY,
+                  'xi-api-key': apiKey,
                   'Content-Type': 'application/json'
                 },
                 data: { text, voice_settings: { stability: 0.3, similarity_boost: 0.8 } },
                 responseType: 'arraybuffer'
               });
+
+              fs.mkdirSync('audio', { recursive: true });
               fs.writeFileSync(\`audio/daily_podcast_\${dateStr}.mp3\`, res.data);
-            } catch (error) {
-              throw new Error(`ElevenLabs API錯誤: ${error}`);
+            } catch (err) {
+              throw new Error(\`❌ ElevenLabs API 呼叫失敗：\${err.message}\`);
             }
           }
+
           main();
           "
 
-      # 除錯：確認音檔生成
-      - name: Check audio generation
+      - name: Check audio file
         run: |
           FILE="audio/daily_podcast_$(date +%Y%m%d).mp3"
-          [ -f "$FILE" ] || { echo "音檔未生成"; exit 1; }
+          [ -f "$FILE" ] || { echo "❌ 錯誤：語音檔案未生成"; exit 1; }
 
-      # 3. 動態生成 RSS feed.xml
       - name: Generate RSS Feed
         run: |
           node -e "
@@ -114,26 +114,26 @@ jobs:
           <rss version='2.0' xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'>
             <channel>
               <title>大叔說財經科技投資</title>
-              <link>https://timhun.github.io/daily-podcast-stk/</link>
+              <link>https://你的帳號.github.io/daily-podcast-stk/</link>
               <language>zh-tw</language>
-              <itunes:image href='https://timhun.github.io/daily-podcast-stk/cover.jpg'/>
+              <itunes:image href='https://你的帳號.github.io/daily-podcast-stk/cover.jpg'/>
               <item>
                 <title>\${dateSlug} 每日播報</title>
-                <enclosure url='https://timhun.github.io/daily-podcast-stk/\${audioPath}' length='\${audioSize}' type='audio/mpeg'/>
-                <guid>https://timhun.github.io/daily-podcast-stk/\${audioPath}</guid>
+                <enclosure url='https://你的帳號.github.io/daily-podcast-stk/\${audioPath}' length='\${audioSize}' type='audio/mpeg'/>
+                <guid>https://你的帳號.github.io/daily-podcast-stk/\${audioPath}</guid>
                 <pubDate>\${pubDate}</pubDate>
                 <itunes:duration>12:00</itunes:duration>
               </item>
             </channel>
           </rss>\`;
+
           fs.writeFileSync('feed.xml', rss.trim());
           "
 
-      # 4. 自動提交更新到repo
-      - name: Commit & Push updates
+      - name: Commit and Push Changes
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add audio/*.mp3 feed.xml script.txt
-          git commit -m "每日Podcast自動更新：$(date +%Y%m%d)" || echo "無更動"
+          git commit -m "🟢 每日Podcast自動更新：$(date +%Y%m%d)" || echo "✅ 無更新可提交"
           git push https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git HEAD:main
