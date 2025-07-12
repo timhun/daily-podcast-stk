@@ -22,31 +22,42 @@ jobs:
         run: npm install axios dayjs
 
       # 1. 使用 Grok 生成即時腳本（精確數據）
-      - name: Generate Script (Grok)
-        run: |
-          node -e "
-          const axios = require('axios');
-          const fs = require('fs');
 
-          async function main() {
-            try {
-              const res = await axios.post('https://api.grok.x.ai/v1/chat/completions', {
-                model: 'grok-1',
-                messages: [{
-                  role: 'system',
-                  content: '你是台灣中年大叔播報員，每日以口語化語氣生成12分鐘腳本，內容必須含有美股(.DJI, .IXIC, .SPX, SOX)、QQQ/SPY ETF、比特幣、黃金期貨、Top5熱門股、AI重要新聞、總體經濟新聞及投資金句，所有數據需交叉比對精確，語速設定為1.3倍。'
-                }]
-              }, {
-                headers: { 'Authorization': `Bearer ${process.env.GROK_API_KEY}` }
-              });
-              fs.writeFileSync('script.txt', res.data.choices[0].message.content);
-            } catch (error) {
-              throw new Error(`Grok API錯誤: ${error}`);
-            }
-          }
+- name: Generate Script (Grok)
+  run: |
+    node -e "
+    const axios = require('axios');
+    const fs = require('fs');
 
-          main();
-          "
+    async function main() {
+      const apiKey = process.env.GROK_API_KEY;
+      if (!apiKey) {
+        throw new Error('GROK_API_KEY未設定，請檢查 GitHub Secrets！');
+      }
+
+      try {
+        const res = await axios.post('https://api.grok.x.ai/v1/chat/completions', {
+          model: 'grok-1',
+          messages: [{
+            role: 'system',
+            content: '你是台灣中年大叔播報員，以口語化語氣生成12分鐘腳本，包含美股(.DJI,.IXIC,.SPX,SOX)、QQQ/SPY ETF、比特幣、黃金期貨、Top5熱門股、AI重要新聞、總經新聞與投資金句，數據需精確。'
+          }]
+        }, {
+          headers: { Authorization: `Bearer ${apiKey}` }
+        });
+
+        if (!res.data.choices || !res.data.choices.length) {
+          throw new Error('Grok API 回傳空資料！');
+        }
+
+        fs.writeFileSync('script.txt', res.data.choices[0].message.content);
+      } catch (err) {
+        throw new Error(`Grok API 呼叫錯誤: ${err.message}`);
+      }
+    }
+    main();
+    "
+
 
       # 除錯：確認腳本存在
       - name: Check script generation
