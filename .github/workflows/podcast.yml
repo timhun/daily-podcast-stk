@@ -114,13 +114,13 @@ jobs:
           <rss version='2.0' xmlns:itunes='http://www.itunes.com/dtds/podcast-1.0.dtd'>
             <channel>
               <title>大叔說財經科技投資</title>
-              <link>https://你的帳號.github.io/daily-podcast-stk/</link>
+              <link>https://timhun.github.io/daily-podcast-stk/</link>
               <language>zh-tw</language>
-              <itunes:image href='https://你的帳號.github.io/daily-podcast-stk/cover.jpg'/>
+              <itunes:image href='https://timhun.github.io/daily-podcast-stk/cover.jpg'/>
               <item>
                 <title>\${dateSlug} 每日播報</title>
-                <enclosure url='https://你的帳號.github.io/daily-podcast-stk/\${audioPath}' length='\${audioSize}' type='audio/mpeg'/>
-                <guid>https://你的帳號.github.io/daily-podcast-stk/\${audioPath}</guid>
+                <enclosure url='https://timhun.github.io/daily-podcast-stk/\${audioPath}' length='\${audioSize}' type='audio/mpeg'/>
+                <guid>https://timhun.github.io/daily-podcast-stk/\${audioPath}</guid>
                 <pubDate>\${pubDate}</pubDate>
                 <itunes:duration>12:00</itunes:duration>
               </item>
