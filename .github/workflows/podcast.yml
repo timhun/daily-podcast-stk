@@ -1,0 +1,51 @@
+name: Daily Podcast Generation
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # UTC 22:00 = Taiwan 06:00 next day
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  generate-podcast:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          lfs: true  # Enable Git LFS
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version  # Verify FFmpeg installation
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check main.py content
+        run: cat scripts/main.py  # Debug: Output main.py content
+
+      - name: Run podcast generation
+        run: python scripts/main.py
+
+      - name: Commit and push changes
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add --all
+          git commit -m "Add podcast episode for $(date +%Y%m%d)" --allow-empty || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
