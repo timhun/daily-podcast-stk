@@ -6,8 +6,8 @@ import random
 import os
 import logging
 from datetime import datetime
+from gtts import gTTS
 from feedgen.feed import FeedGenerator
-from google.cloud import texttospeech_v1 as tts
 import time
 
 # 設置日誌
@@ -71,8 +71,8 @@ def fetch_crypto(api_key):
 
 def fetch_gold():
     try:
-        # 請在此處替換為實際的 API 呼叫
-        data = {'price': 3354.76, 'change': 0.92} # 模擬 TradingEconomics API
+        # 模擬 TradingEconomics API - 請替換為真實 API 呼叫
+        data = {'price': 3354.76, 'change': 0.92}
         logger.info(f"Fetched Gold: price={data['price']}, change={data['change']}%")
         return data
     except Exception as e:
@@ -81,8 +81,8 @@ def fetch_gold():
 
 def fetch_top_stocks():
     try:
-        # 請在此處替換為實際的 API 呼叫以獲取熱門股票
-        stocks = ['WLGS', 'ABVE', 'BTOG', 'NCNA', 'OPEN'] # 模擬 Yahoo Finance
+        # 模擬 Yahoo Finance - 請替換為真實 API 呼叫以獲取熱門股票
+        stocks = ['AAPL', 'NVDA', 'TSLA', 'AMZN', 'MSFT']
         logger.info(f"Fetched top stocks: {stocks}")
         return stocks
     except Exception as e:
@@ -91,10 +91,10 @@ def fetch_top_stocks():
 
 def fetch_news(api_key):
     try:
-        # 請在此處替換為實際的 API 呼叫以獲取新聞
-        news = { # 模擬 NewsAPI
-            'ai': {'title': 'Capgemini收購WNS', 'summary': '以33億美元強化企業AI能力，AI市場競爭更火熱！'},
-            'economic': {'title': '美國經濟增長放緩', 'summary': '聯準會降息預期降溫，市場繃緊神經！'}
+        # 模擬 NewsAPI - 請替換為真實 API 呼叫
+        news = {
+            'ai': {'title': '最新AI模型發布', 'summary': '某公司發布了突破性的AI模型，聲稱性能大幅提升。'},
+            'economic': {'title': '美國聯準會利率決議', 'summary': '聯準會宣布維持利率不變，但暗示未來可能升息。'}
         }
         logger.info(f"Fetched news: AI={news['ai']['title']}, Economic={news['economic']['title']}")
         return news
@@ -113,26 +113,9 @@ def fetch_quote():
         logger.error(f"Error fetching quote: {str(e)}")
         return None
 
-# 文字轉語音 (使用 Google Cloud Text-to-Speech)
-def text_to_audio_google(text, output_file):
-    logger.info(f"Starting Google TTS for {output_file}")
-    try:
-        client = tts.TextToSpeechClient()
-        input_text = tts.SynthesisInput(text=text)
-        voice = tts.VoiceSelectionParams(language_code="zh-TW", name="cmn-TW-Wavenet-A") # 您可以選擇其他聲音
-        audio_config = tts.AudioConfig(audio_encoding=tts.AudioEncoding.MP3, speaking_rate=1.3) # 設定語速為 1.3
-        response = client.synthesize_speech(request={"input": input_text, "voice": voice, "audio_config": audio_config})
-        with open(output_file, "wb") as out:
-            out.write(response.audio_content)
-        logger.info(f"Google TTS generated successfully: {output_file}")
-        return output_file
-    except Exception as e:
-        logger.error(f"Error during Google TTS: {str(e)}")
-        return None
-
-# 生成腳本
+# 生成腳本 (整合 Grok - 需使用者自行替換)
 def generate_script(cmc_api_key, newsapi_key):
-    logger.info("Starting script generation")
+    logger.info("Starting script generation using Grok (Placeholder)")
     try:
         with open('podcast_config.yaml', 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
@@ -140,21 +123,18 @@ def generate_script(cmc_api_key, newsapi_key):
             tw_phrases = json.load(f)
 
         indices = fetch_indices() or {
-            '^DJI': {'close': 44371.51, 'change': -0.63},
-            '^IXIC': {'close': 20585.53, 'change': -0.22},
-            '^GSPC': {'close': 6259.75, 'change': -0.33},
-            '^SOX': {'close': 5696.29, 'change': -0.21},
-            'QQQ': {'close': 554.20, 'change': -0.23},
-            'SPY': {'close': 623.62, 'change': -0.35}
+            '^DJI': {'close': 0, 'change': 0},
+            '^IXIC': {'close': 0, 'change': 0},
+            '^GSPC': {'close': 0, 'change': 0},
+            '^SOX': {'close': 0, 'change': 0},
+            'QQQ': {'close': 0, 'change': 0},
+            'SPY': {'close': 0, 'change': 0}
         }
         btc = fetch_crypto(cmc_api_key)
-        gold = fetch_gold() or {'price': 3354.76, 'change': 0.92}
-        stocks = fetch_top_stocks() or ['WLGS', 'ABVE', 'BTOG', 'NCNA', 'OPEN']
-        news = fetch_news(newsapi_key) or {
-            'ai': {'title': 'Capgemini收購WNS', 'summary': '以33億美元強化企業AI能力，AI市場競爭更火熱！'},
-            'economic': {'title': '美國經濟增長放緩', 'summary': '聯準會降息預期降溫，市場繃緊神經！'}
-        }
-        quote = fetch_quote() or {'text': '投資像種樹，今天種下，十年後才乘涼！', 'author': '大叔'}
+        gold = fetch_gold() or {'price': 0, 'change': 0}
+        stocks = fetch_top_stocks() or []
+        news = fetch_news(newsapi_key) or {}
+        quote = fetch_quote() or {'text': 'No quote available', 'author': ''}
         date = datetime.now().strftime('%Y年%m月%d日')
 
         greeting = random.choice(tw_phrases['greetings'])
@@ -163,46 +143,58 @@ def generate_script(cmc_api_key, newsapi_key):
         analysis = random.choice(tw_phrases['analysis'])
         closing = random.choice(tw_phrases['closing'])
 
+        # --- Grok 整合 Placeholder ---
+        # 在此處您需要整合 Grok 的 API 呼叫，根據您的需求生成腳本
+        # 腳本內容應涵蓋 (1) 到 (7) 的所有目標
+        # 並符合語音風格和語速的要求
         script = f"""
 《大叔說財經科技投資》 - {date}
 開場白
-{greeting}今天是{date}，雖然美股昨天收盤，但財經世界沒停下來！咱們來盤點昨天的市場動態，包含美股、加密貨幣、黃金、熱門股、AI和美國經濟新聞，還有一句金句幫大家充電！準備好了嗎？一起來瞧瞧！
-
-(1) 美股四大指數
-昨天道瓊工業指數收盤 {indices['^DJI']['close']} 點，{'漲' if indices['^DJI']['change'] >= 0 else '跌'} {abs(indices['^DJI']['change'])}%，表現{positive if indices['^DJI']['change'] >= 0 else negative}，{'藍籌股穩穩撐盤！' if indices['^DJI']['change'] >= 0 else '得小心後續壓力！'}...
-納斯達克指數收盤 {indices['^IXIC']['close']} 點，{'漲' if indices['^IXIC']['change'] >= 0 else '跌'} {abs(indices['^IXIC']['change'])}%，科技股動能{positive if indices['^IXIC']['change'] >= 0 else negative}，{'AI熱潮還在燒！' if indices['^IXIC']['change'] >= 0 else '可能有點回檔！'}...
-標普500收盤 {indices['^GSPC']['close']} 點，{'漲' if indices['^GSPC']['change'] >= 0 else '跌'} {abs(indices['^GSPC']['change'])}%，市場情緒{positive if indices['^GSPC']['change'] >= 0 else negative}，{analysis}...
-費城半導體指數收盤 {indices['^SOX']['close']} 點，{'漲' if indices['^SOX']['change'] >= 0 else '跌'} {abs(indices['^SOX']['change'])}%，晶片股{positive if indices['^SOX']['change'] >= 0 else negative}，{'晶片需求火熱！' if indices['^SOX']['change'] >= 0 else '得盯緊財報！'}...
-
-(2) QQQ與SPY ETF
-QQQ ETF，追蹤納斯達克100，收盤 {indices['QQQ']['close']}，{'漲' if indices['QQQ']['change'] >= 0 else '跌'} {abs(indices['QQQ']['change'])}%。{'科技龍頭帶頭衝！' if indices['QQQ']['change'] >= 0 else '可能受大盤影響，{analysis}'}...
-SPY ETF，追蹤標普500，收盤 {indices['SPY']['close']}，{'漲' if indices['SPY']['change'] >= 0 else '跌'} {abs(indices['SPY']['change'])}%。{'市場信心穩穩！' if indices['SPY']['change'] >= 0 else '得注意宏觀風險！'}...
-
-(3) 比特幣與黃金期貨
-比特幣昨天收盤 {btc['price']} 美元，{'漲' if btc['change'] >= 0 else '跌'} {abs(btc['change'])}%，{'市場熱情又回來啦！' if btc['change'] >= 0 else '波動大，{analysis}'}...
-黃金期貨收盤 {gold['price']} 美元/盎司，{'漲' if gold['change'] >= 0 else '跌'} {abs(gold['change'])}%，{'避險需求穩穩撐！' if gold['change'] >= 0 else '可能美元走強，{analysis}'}...
-
-(4) Top 5熱門股與資金流向
-昨天熱門股有 {', '.join(stocks)}，交易量超火熱，市場焦點全在這！資金流向{'偏科技和避險資產' if indices['^IXIC']['change'] >= 0 else '可能轉向防禦板塊'}，{analysis}...
-
-(5) AI新聞
-{news['ai']['title']}：{news['ai']['summary']}這對AI產業{positive if '收購' in news['ai']['title'] else '影響待觀察'}，投資人可多瞧瞧相關股票！
-
-(6) 美國經濟新聞
-{news['economic']['title']}：{news['economic']['summary']}這可能{'提振市場信心' if '增長' in news['economic']['title'] else '讓市場繃緊神經'}，{analysis}...
-
-(7) 每日投資金句
-今天的金句是：“{quote['text']}” —— {quote['author']}。大叔提醒大家，市場波動別慌，做好功課才能穩穩賺！
-
+{greeting}今天是{date}，咱們來聊聊昨天的財經大小事...
+(1) 美股四大指數：道瓊 {indices['^DJI']['close']} ({indices['^DJI']['change']}%)，那斯達克 {indices['^IXIC']['close']} ({indices['^IXIC']['change']}%)，標普500 {indices['^GSPC']['close']} ({indices['^GSPC']['change']}%)，費城半導體 {indices['^SOX']['close']} ({indices['^SOX']['change']}%)...
+(2) QQQ {indices['QQQ']['change']}%，SPY {indices['SPY']['change']}%，簡要分析...
+(3) 比特幣 {btc['price']} ({btc['change']}%)，黃金 {gold['price']} ({gold['change']}%)，簡要分析...
+(4) 熱門股：{', '.join(stocks)}，資金流向...
+(5) AI新聞：{news.get('ai', {}).get('title', '')}...
+(6) 美國經濟新聞：{news.get('economic', {}).get('title', '')}...
+(7) 今日金句：“{quote['text']}” —— {quote['author']}。
 結語
-{closing}想了解更多？上Yahoo Finance或鉅亨網查即時數據。祝大家投資順利，明天見！
+{closing}
 """
+        # --- Grok 整合 Placeholder End ---
+
         with open('data/script.txt', 'w', encoding='utf-8') as f:
             f.write(script)
         logger.info("Podcast script generated successfully")
         return script
     except Exception as e:
         logger.error(f"Error generating script: {str(e)}")
+        return None
+
+# 文字轉語音 (使用 gTTS)
+def text_to_audio(script, output_file):
+    logger.info(f"Starting text_to_audio for {output_file}")
+    try:
+        ensure_directories()
+        tts = gTTS(text=script, lang='zh-tw', slow=False)
+        temp_file = f"{output_file}.temp.mp3"
+        tts.save(temp_file)
+        logger.info(f"Saved temporary audio file: {temp_file}")
+        # 使用 FFmpeg 加速語速至 1.3 倍
+        result = os.system(f"ffmpeg -i {temp_file} -filter:a 'atempo=1.3' -y {output_file}")
+        if result != 0:
+            logger.error("FFmpeg command failed")
+            return None
+        if os.path.exists(temp_file):
+            os.remove(temp_file)
+            logger.info(f"Removed temporary file: {temp_file}")
+        if not os.path.exists(output_file):
+            logger.error(f"Audio file {output_file} not created")
+            return None
+        logger.info(f"Audio generated successfully: {output_file}")
+        return output_file
+    except Exception as e:
+        logger.error(f"Error generating audio: {str(e)}")
         return None
 
 # 生成 RSS 饋送
@@ -221,7 +213,6 @@ def generate_rss():
 
         date = datetime.now().strftime('%Y%m%d')
         audio_file_path = f'audio/episode_{date}.mp3'
-        # 嘗試獲取檔案大小，如果檔案不存在則使用預設值
         try:
             audio_file_size = os.path.getsize(audio_file_path)
         except FileNotFoundError:
@@ -247,18 +238,17 @@ if __name__ == "__main__":
     ensure_directories()
     cmc_api_key = os.getenv('CMC_API_KEY')
     newsapi_key = os.getenv('NEWSAPI_KEY')
-    google_credentials = os.getenv('GOOGLE_CLOUD_CREDENTIALS') # 確保您有設定此環境變數
-    if not cmc_api_key or not newsapi_key or not google_credentials:
-        logger.error("Missing API keys: CMC_API_KEY, NEWSAPI_KEY, or GOOGLE_CLOUD_CREDENTIALS")
+    if not cmc_api_key or not newsapi_key:
+        logger.error("Missing API keys: CMC_API_KEY or NEWSAPI_KEY")
         exit(1)
 
     script = generate_script(cmc_api_key, newsapi_key)
     if script:
         date = datetime.now().strftime('%Y%m%d')
         output_file = f'audio/episode_{date}.mp3'
-        if text_to_audio_google(script, output_file):
+        if text_to_audio(script, output_file):
             generate_rss()
         else:
-            logger.error("Failed to generate audio using Google TTS, skipping RSS generation")
+            logger.error("Failed to generate audio, skipping RSS generation")
     else:
         logger.error("Failed to generate script, aborting")
