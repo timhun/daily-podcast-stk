@@ -5,7 +5,7 @@ import yaml
 import random
 import os
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from gtts import gTTS
 from feedgen.feed import FeedGenerator
 import time
@@ -71,7 +71,7 @@ def fetch_crypto(api_key):
 
 def fetch_gold():
     try:
-        # 模擬 TradingEconomics API（需自行申請）
+        # 模擬 TradingEconomics API
         data = {'price': 3354.76, 'change': 0.92}
         logger.info(f"Fetched Gold: price={data['price']}, change={data['change']}%")
         return data
@@ -81,7 +81,7 @@ def fetch_gold():
 
 def fetch_top_stocks():
     try:
-        # 模擬 Yahoo Finance（需自行實現）
+        # 模擬 Yahoo Finance
         stocks = ['WLGS', 'ABVE', 'BTOG', 'NCNA', 'OPEN']
         logger.info(f"Fetched top stocks: {stocks}")
         return stocks
@@ -91,7 +91,7 @@ def fetch_top_stocks():
 
 def fetch_news(api_key):
     try:
-        # 模擬 NewsAPI（需自行申請）
+        # 模擬 NewsAPI
         news = {
             'ai': {'title': 'Capgemini收購WNS', 'summary': '以33億美元強化企業AI能力，AI市場競爭更火熱！'},
             'economic': {'title': '美國經濟增長放緩', 'summary': '聯準會降息預期降溫，市場繃緊神經！'}
@@ -180,14 +180,10 @@ SPY ETF，追蹤標普500，收盤 {indices['SPY']['close']}，{'漲' if indices
 結語
 {closing}想了解更多？上Yahoo Finance或鉅亨網查即時數據。祝大家投資順利，明天見！
 """
-        try:
-            with open('data/script.txt', 'w', encoding='utf-8') as f:
-                f.write(script)
-            logger.info("Podcast script generated successfully")
-            return script
-        except Exception as e:
-            logger.error(f"Error writing script to file: {str(e)}")
-            return None
+        with open('data/script.txt', 'w', encoding='utf-8') as f:
+            f.write(script)
+        logger.info("Podcast script generated successfully")
+        return script
     except Exception as e:
         logger.error(f"Error generating script: {str(e)}")
         return None
@@ -237,18 +233,18 @@ def generate_rss():
         fg = FeedGenerator()
         fg.title('大叔說財經科技投資')
         fg.author({'name': '大叔', 'email': 'uncle@example.com'})
-        fg.link(href='https://USERNAME.github.io/daily-podcast-stk/', rel='alternate')
+        fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
         fg.description('每日財經科技投資資訊，用台灣人的語言聊美股、加密貨幣、AI與美國經濟新聞')
         fg.language('zh-tw')
         fg.itunes_category({'cat': 'Business', 'sub': 'Investing'})
-        fg.itunes_image('https://USERNAME.github.io/daily-podcast-stk/img/cover.jpg')
+        fg.itunes_image('https://timhun.github.io/daily-podcast-stk/img/cover.jpg')
         fg.itunes_explicit('no')
 
         date = datetime.now().strftime('%Y%m%d')
         fe = fg.add_entry()
         fe.title(f'每日財經播報 - {date}')
         fe.description('咱們用台灣人的方式，盤點美股、加密貨幣、AI與美國經濟新聞！')
-        fe.enclosure(url=f'https://USERNAME.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
+        fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
 
         fg.rss_file('feed.xml')
