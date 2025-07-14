@@ -3,4 +3,4 @@ requests==2.31.0
 feedgen==1.0.0
 python-dateutil==2.9.0
 pyyaml==6.0.1
-google-cloud-texttospeech==2.16.5
+gTTS==2.5.1
