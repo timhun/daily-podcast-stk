@@ -4,3 +4,4 @@ PyYAML
 feedgenerator
 google-cloud-texttospeech
 pydub
+gTTS
