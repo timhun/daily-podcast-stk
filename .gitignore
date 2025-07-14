@@ -1,0 +1,4 @@
+node_modules/
+audio/
+*.log
+.DS_Store

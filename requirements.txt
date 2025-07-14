@@ -1,0 +1,8 @@
+yfinance
+requests
+PyYAML
+feedgenerator
+google-cloud-texttospeech
+pydub
+gTTS
+feedgen==0.9.0
