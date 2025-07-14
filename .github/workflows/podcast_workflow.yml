@@ -25,16 +25,17 @@ jobs:
 
       - name: Run podcast generation
         env:
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
           CMC_API_KEY: ${{ secrets.CMC_API_KEY }}
           NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
         run: python scripts/main.py
 
       - name: Commit and push changes
         run: |
-          git config --local or user.email "action@github.com"
+          git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add audio/ feed.xml data/script.txt
-          git commit -m "Add podcast episode for $(date +%Y%m%d)" || echo "No changes to commit"
+          git add audio/ transcripts/ feed.xml data/script.txt
+          git commit -m "Add podcast episode and transcript for $(date +%Y%m%d)" || echo "No changes to commit"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
