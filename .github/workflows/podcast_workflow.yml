@@ -17,39 +17,23 @@ jobs:
         with:
           python-version: '3.10'
 
+      - name: Install FFmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
-      - name: Set up Google Cloud credentials
-        run: |
-          echo "${{ secrets.GOOGLE_CREDENTIALS }}" | base64 -d > credentials.json
-
-      - name: Fetch data and news
+      - name: Run podcast generation
         env:
           CMC_API_KEY: ${{ secrets.CMC_API_KEY }}
-        run: |
-          python scripts/fetch_data.py
-          curl -o data/news.json "YOUR_GOOGLE_APPS_SCRIPT_URL"  # 替換為 Web App URL
-
-      - name: Generate script with Grok API
-        env:
-          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
-          CMC_API_KEY: ${{ secrets.CMC_API_KEY }}
-        run: |
-          python scripts/generate_script.py
-
-      - name: Convert text to audio
-        run: python scripts/text_to_audio.py
-
-      - name: Generate RSS feed
-        run: python scripts/generate_rss.py
+          NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
+        run: python scripts/main.py
 
       - name: Commit and push changes
         run: |
-          git config --local user.email "action@github.com"
+          git config --local or user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add audio/ feed.xml data/script.txt data/news.json
+          git add audio/ feed.xml data/script.txt
           git commit -m "Add podcast episode for $(date +%Y%m%d)" || echo "No changes to commit"
           git push
         env:
