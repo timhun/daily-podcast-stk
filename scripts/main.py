@@ -115,6 +115,7 @@ def fetch_quote():
 
 # 生成腳本
 def generate_script(cmc_api_key, newsapi_key):
+    logger.info("Starting script generation")
     try:
         with open('podcast_config.yaml', 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
@@ -185,8 +186,11 @@ SPY ETF，追蹤標普500，收盤 {indices['SPY']['close']}，{'漲' if indices
             logger.info("Podcast script generated successfully")
             return script
         except Exception as e:
-            logger.error(f"Error generating script: {str(e)}")
+            logger.error(f"Error writing script to file: {str(e)}")
             return None
+    except Exception as e:
+        logger.error(f"Error generating script: {str(e)}")
+        return None
 
 # 文字轉語音
 def text_to_audio(script, output_file):
@@ -228,22 +232,23 @@ def text_to_audio(script, output_file):
 
 # 生成 RSS 饋送
 def generate_rss():
+    logger.info("Starting RSS generation")
     try:
         fg = FeedGenerator()
         fg.title('大叔說財經科技投資')
-        fg.author({'name': '大叔', 'email': 'tim.oneway@gmail.com'})
-        fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
+        fg.author({'name': '大叔', 'email': 'uncle@example.com'})
+        fg.link(href='https://USERNAME.github.io/daily-podcast-stk/', rel='alternate')
         fg.description('每日財經科技投資資訊，用台灣人的語言聊美股、加密貨幣、AI與美國經濟新聞')
         fg.language('zh-tw')
         fg.itunes_category({'cat': 'Business', 'sub': 'Investing'})
-        fg.itunes_image('https://timhun.github.io/daily-podcast-stk/img/cover.jpg')
+        fg.itunes_image('https://USERNAME.github.io/daily-podcast-stk/img/cover.jpg')
         fg.itunes_explicit('no')
 
         date = datetime.now().strftime('%Y%m%d')
         fe = fg.add_entry()
         fe.title(f'每日財經播報 - {date}')
         fe.description('咱們用台灣人的方式，盤點美股、加密貨幣、AI與美國經濟新聞！')
-        fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
+        fe.enclosure(url=f'https://USERNAME.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
 
         fg.rss_file('feed.xml')
@@ -255,12 +260,13 @@ def generate_rss():
 
 # 主程式
 if __name__ == "__main__":
-    ensure_directories()
     logger.info("Starting podcast generation")
+    ensure_directories()
     cmc_api_key = os.getenv('CMC_API_KEY')
     newsapi_key = os.getenv('NEWSAPI_KEY')
     if not cmc_api_key or not newsapi_key:
         logger.error("Missing API keys: CMC_API_KEY or NEWSAPI_KEY")
+        exit(1)
     
     script = generate_script(cmc_api_key, newsapi_key)
     if script:
