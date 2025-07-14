@@ -6,8 +6,8 @@ import random
 import os
 import logging
 from datetime import datetime
-from gtts import gTTS
 from feedgen.feed import FeedGenerator
+from google.cloud import texttospeech_v1 as tts
 import time
 
 # 設置日誌
@@ -71,8 +71,8 @@ def fetch_crypto(api_key):
 
 def fetch_gold():
     try:
-        # 模擬 TradingEconomics API
-        data = {'price': 3354.76, 'change': 0.92}
+        # 請在此處替換為實際的 API 呼叫
+        data = {'price': 3354.76, 'change': 0.92} # 模擬 TradingEconomics API
         logger.info(f"Fetched Gold: price={data['price']}, change={data['change']}%")
         return data
     except Exception as e:
@@ -81,8 +81,8 @@ def fetch_gold():
 
 def fetch_top_stocks():
     try:
-        # 模擬 Yahoo Finance
-        stocks = ['WLGS', 'ABVE', 'BTOG', 'NCNA', 'OPEN']
+        # 請在此處替換為實際的 API 呼叫以獲取熱門股票
+        stocks = ['WLGS', 'ABVE', 'BTOG', 'NCNA', 'OPEN'] # 模擬 Yahoo Finance
         logger.info(f"Fetched top stocks: {stocks}")
         return stocks
     except Exception as e:
@@ -91,8 +91,8 @@ def fetch_top_stocks():
 
 def fetch_news(api_key):
     try:
-        # 模擬 NewsAPI
-        news = {
+        # 請在此處替換為實際的 API 呼叫以獲取新聞
+        news = { # 模擬 NewsAPI
             'ai': {'title': 'Capgemini收購WNS', 'summary': '以33億美元強化企業AI能力，AI市場競爭更火熱！'},
             'economic': {'title': '美國經濟增長放緩', 'summary': '聯準會降息預期降溫，市場繃緊神經！'}
         }
@@ -111,6 +111,23 @@ def fetch_quote():
         return quote
     except Exception as e:
         logger.error(f"Error fetching quote: {str(e)}")
+        return None
+
+# 文字轉語音 (使用 Google Cloud Text-to-Speech)
+def text_to_audio_google(text, output_file):
+    logger.info(f"Starting Google TTS for {output_file}")
+    try:
+        client = tts.TextToSpeechClient()
+        input_text = tts.SynthesisInput(text=text)
+        voice = tts.VoiceSelectionParams(language_code="zh-TW", name="cmn-TW-Wavenet-A") # 您可以選擇其他聲音
+        audio_config = tts.AudioConfig(audio_encoding=tts.AudioEncoding.MP3, speaking_rate=1.3) # 設定語速為 1.3
+        response = client.synthesize_speech(request={"input": input_text, "voice": voice, "audio_config": audio_config})
+        with open(output_file, "wb") as out:
+            out.write(response.audio_content)
+        logger.info(f"Google TTS generated successfully: {output_file}")
+        return output_file
+    except Exception as e:
+        logger.error(f"Error during Google TTS: {str(e)}")
         return None
 
 # 生成腳本
@@ -188,44 +205,6 @@ SPY ETF，追蹤標普500，收盤 {indices['SPY']['close']}，{'漲' if indices
         logger.error(f"Error generating script: {str(e)}")
         return None
 
-# 文字轉語音
-def text_to_audio(script, output_file):
-    logger.info(f"Starting text_to_audio for {output_file}")
-    try:
-        ensure_directories()
-        for attempt in range(3):
-            try:
-                logger.info(f"Attempt {attempt + 1}: Generating audio with gTTS")
-                tts = gTTS(text=script, lang='zh-tw', slow=False)
-                temp_file = f"{output_file}.temp.mp3"
-                tts.save(temp_file)
-                logger.info(f"Saved temporary audio file: {temp_file}")
-                # 使用 FFmpeg 加速語速至 1.3 倍
-                result = os.system(f"ffmpeg -i {temp_file} -filter:a 'atempo=1.3' -y {output_file}")
-                if result != 0:
-                    logger.error("FFmpeg command failed")
-                    return None
-                if os.path.exists(temp_file):
-                    os.remove(temp_file)
-                    logger.info(f"Removed temporary file: {temp_file}")
-                if not os.path.exists(output_file):
-                    logger.error(f"Audio file {output_file} not created")
-                    return None
-                logger.info(f"Audio generated successfully: {output_file}")
-                return output_file
-            except Exception as e:
-                logger.error(f"Error generating audio (attempt {attempt + 1}): {str(e)}")
-                time.sleep(2)
-        # 備用：生成簡單檔案以避免工作流程失敗
-        logger.warning("Falling back to dummy audio file")
-        with open(output_file, 'w') as f:
-            f.write("Dummy audio file due to gTTS failure")
-        logger.info(f"Created dummy audio: {output_file}")
-        return output_file
-    except Exception as e:
-        logger.error(f"Error in text_to_audio: {str(e)}")
-        return None
-
 # 生成 RSS 饋送
 def generate_rss():
     logger.info("Starting RSS generation")
@@ -233,18 +212,26 @@ def generate_rss():
         fg = FeedGenerator()
         fg.title('大叔說財經科技投資')
         fg.author({'name': '大叔', 'email': 'uncle@example.com'})
-        fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
+        fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate') # 請在此處替換您的 GitHub Pages URL
         fg.description('每日財經科技投資資訊，用台灣人的語言聊美股、加密貨幣、AI與美國經濟新聞')
         fg.language('zh-tw')
         fg.itunes_category({'cat': 'Business', 'sub': 'Investing'})
-        fg.itunes_image('https://timhun.github.io/daily-podcast-stk/img/cover.jpg')
+        fg.itunes_image('https://timhun.github.io/daily-podcast-stk/img/cover.jpg') # 請在此處替換您的 Podcast 封面圖片 URL
         fg.itunes_explicit('no')
 
         date = datetime.now().strftime('%Y%m%d')
+        audio_file_path = f'audio/episode_{date}.mp3'
+        # 嘗試獲取檔案大小，如果檔案不存在則使用預設值
+        try:
+            audio_file_size = os.path.getsize(audio_file_path)
+        except FileNotFoundError:
+            logger.warning(f"Audio file not found: {audio_file_path}, using default length")
+            audio_file_size = 45000000 # 預設檔案大小
+
         fe = fg.add_entry()
         fe.title(f'每日財經播報 - {date}')
         fe.description('咱們用台灣人的方式，盤點美股、加密貨幣、AI與美國經濟新聞！')
-        fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
+        fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length=str(audio_file_size)) # 請在此處替換您的 GitHub Pages URL
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
 
         fg.rss_file('feed.xml')
@@ -260,17 +247,18 @@ if __name__ == "__main__":
     ensure_directories()
     cmc_api_key = os.getenv('CMC_API_KEY')
     newsapi_key = os.getenv('NEWSAPI_KEY')
-    if not cmc_api_key or not newsapi_key:
-        logger.error("Missing API keys: CMC_API_KEY or NEWSAPI_KEY")
+    google_credentials = os.getenv('GOOGLE_CLOUD_CREDENTIALS') # 確保您有設定此環境變數
+    if not cmc_api_key or not newsapi_key or not google_credentials:
+        logger.error("Missing API keys: CMC_API_KEY, NEWSAPI_KEY, or GOOGLE_CLOUD_CREDENTIALS")
         exit(1)
-    
+
     script = generate_script(cmc_api_key, newsapi_key)
     if script:
         date = datetime.now().strftime('%Y%m%d')
         output_file = f'audio/episode_{date}.mp3'
-        if text_to_audio(script, output_file):
+        if text_to_audio_google(script, output_file):
             generate_rss()
         else:
-            logger.error("Failed to generate audio, skipping RSS generation")
+            logger.error("Failed to generate audio using Google TTS, skipping RSS generation")
     else:
         logger.error("Failed to generate script, aborting")
