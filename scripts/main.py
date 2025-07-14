@@ -190,10 +190,12 @@ SPY ETF，追蹤標普500，收盤 {indices['SPY']['close']}，{'漲' if indices
 
 # 文字轉語音
 def text_to_audio(script, output_file):
+    logger.info(f"Starting text_to_audio for {output_file}")
     try:
         ensure_directories()
         for attempt in range(3):
             try:
+                logger.info(f"Attempt {attempt + 1}: Generating audio with gTTS")
                 tts = gTTS(text=script, lang='zh-tw', slow=False)
                 temp_file = f"{output_file}.temp.mp3"
                 tts.save(temp_file)
@@ -205,10 +207,11 @@ def text_to_audio(script, output_file):
                     return None
                 if os.path.exists(temp_file):
                     os.remove(temp_file)
+                    logger.info(f"Removed temporary file: {temp_file}")
                 if not os.path.exists(output_file):
                     logger.error(f"Audio file {output_file} not created")
                     return None
-                logger.info(f"Audio generated: {output_file}")
+                logger.info(f"Audio generated successfully: {output_file}")
                 return output_file
             except Exception as e:
                 logger.error(f"Error generating audio (attempt {attempt + 1}): {str(e)}")
@@ -230,7 +233,7 @@ def generate_rss():
         fg.title('大叔說財經科技投資')
         fg.author({'name': '大叔', 'email': 'tim.oneway@gmail.com'})
         fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
-        fg.description('每日財經科技投資資訊，聊美股、加密貨幣、AI與美國經濟新聞')
+        fg.description('每日財經科技投資資訊，用台灣人的語言聊美股、加密貨幣、AI與美國經濟新聞')
         fg.language('zh-tw')
         fg.itunes_category({'cat': 'Business', 'sub': 'Investing'})
         fg.itunes_image('https://timhun.github.io/daily-podcast-stk/img/cover.jpg')
@@ -239,7 +242,7 @@ def generate_rss():
         date = datetime.now().strftime('%Y%m%d')
         fe = fg.add_entry()
         fe.title(f'每日財經播報 - {date}')
-        fe.description('盤點美股、加密貨幣、AI與美國經濟新聞！')
+        fe.description('咱們用台灣人的方式，盤點美股、加密貨幣、AI與美國經濟新聞！')
         fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
 
