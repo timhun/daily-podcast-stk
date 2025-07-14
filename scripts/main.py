@@ -138,7 +138,7 @@ def generate_script(xai_api_key, cmc_api_key, newsapi_key):
         6. AI新聞：{news['ai']['title']}，{news['ai']['summary']}，附簡易影響分析。
         7. 美國經濟新聞：{news['economic']['title']}，{news['economic']['summary']}，附簡易影響分析。
         8. 每日投資金句："{quote['text']}" —— {quote['author']}，附大叔式提醒。
-        9. 結語：總結並鼓勵聽眾查詢Yahoo Finance或鉅亨網。
+        9. 結語：總結。
         請確保腳本約15分鐘（語速1.3倍，130-150字/分鐘）。
         """
 
@@ -185,18 +185,18 @@ def generate_rss():
         fg = FeedGenerator()
         fg.title('大叔說財經科技投資')
         fg.author({'name': '大叔', 'email': 'uncle@example.com'})
-        fg.link(href='https://USERNAME.github.io/daily-podcast/', rel='alternate')
-        fg.description('每日財經科技投資資訊，用台灣人的語言聊美股、加密貨幣、AI與經濟新聞')
+        fg.link(href='https://timhun.github.io/daily-podcast/', rel='alternate')
+        fg.description('每日財經科技投資資訊，聊美股、加密貨幣、AI與經濟新聞')
         fg.language('zh-tw')
         fg.itunes_category({'cat': 'Business', 'sub': 'Investing'})
-        fg.itunes_image('https://USERNAME.github.io/daily-podcast/img/cover.jpg')
+        fg.itunes_image('https://timhun.github.io/daily-podcast/img/cover.jpg')
         fg.itunes_explicit('no')
 
         date = datetime.now().strftime('%Y%m%d')
         fe = fg.add_entry()
         fe.title(f'每日財經播報 - {date}')
-        fe.description('咱們用台灣人的方式，盤點美股、加密貨幣、AI與經濟新聞！')
-        fe.enclosure(url=f'https://USERNAME.github.io/daily-podcast/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
+        fe.description('盤點美股、加密貨幣、AI與經濟新聞！')
+        fe.enclosure(url=f'https://timhun.github.io/daily-podcast/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
 
         fg.rss_file('feed.xml')
