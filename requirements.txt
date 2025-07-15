@@ -8,3 +8,4 @@ gTTS
 beautifulsoup4
 openai
 python-dotenv
+python-feedgen
