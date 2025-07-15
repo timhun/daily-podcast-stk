@@ -1,0 +1,21 @@
+2025-07-15 13:05:03,365 - INFO - Logger initialized
+2025-07-15 13:05:03,365 - INFO - Starting podcast generation
+2025-07-15 13:05:03,365 - INFO - Starting script generation
+2025-07-15 13:05:03,365 - INFO - Ensured audio and data directories exist
+2025-07-15 13:05:03,366 - INFO - Fetching stock indices data
+2025-07-15 13:05:03,784 - INFO - Fetched ^DJI: close=44459.6484375, change=0.1986335721637273%
+2025-07-15 13:05:03,893 - INFO - Fetched ^IXIC: close=20640.330078125, change=0.26621021232773967%
+2025-07-15 13:05:03,989 - INFO - Fetched ^GSPC: close=6268.56005859375, change=0.14074138094572466%
+2025-07-15 13:05:04,098 - INFO - Fetched ^SOX: close=5646.72021484375, change=-0.8702124343884048%
+2025-07-15 13:05:04,098 - INFO - Script generated successfully
+2025-07-15 13:05:04,098 - INFO - Starting text-to-audio conversion
+2025-07-15 13:05:04,177 - INFO - FFmpeg version: ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers
+2025-07-15 13:05:04,177 - INFO - Generating audio with gTTS
+2025-07-15 13:05:04,177 - WARNING - 'zh-tw' has been deprecated, falling back to 'zh-TW'. This fallback will be removed in a future version.
+2025-07-15 13:05:09,410 - INFO - Temporary audio file created: audio/temp.mp3
+2025-07-15 13:05:09,411 - INFO - Processing audio with FFmpeg to audio/episode_20250715.mp3
+2025-07-15 13:05:10,037 - INFO - Removed temporary file: audio/temp.mp3
+2025-07-15 13:05:10,037 - INFO - Audio generated successfully: audio/episode_20250715.mp3
+2025-07-15 13:05:10,037 - INFO - Starting RSS generation
+2025-07-15 13:05:10,038 - INFO - RSS feed updated successfully
+2025-07-15 13:05:10,038 - INFO - Podcast generation completed successfully
