@@ -2,57 +2,31 @@ name: Daily Podcast Generation
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # UTC 22:00 = Taiwan 06:00 next day
-  workflow_dispatch:  # Allow manual trigger
+    - cron: '0 22 * * *'  # UTC 22:00 = 台灣 06:00
+  workflow_dispatch:
 
 jobs:
   generate-podcast:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # Grant write access for GITHUB_TOKEN
+      contents: write
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-        with:
-          lfs: true  # Enable Git LFS
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-
-      - name: Install FFmpeg
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y ffmpeg
-          ffmpeg -version  # Verify FFmpeg installation
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          pip list  # Debug: List installed packages
-
-      - name: Check main.py content
-        run: cat scripts/main.py  # Debug: Output main.py content
-
-      - name: Run podcast generation
-        run: python scripts/main.py
-
-      - name: Verify audio file
-        run: ls -l audio/  # Debug: List audio directory contents
-
-      - name: Commit and push changes
-        run: |
+      - run: sudo apt-get install -y ffmpeg
+      - run: pip install -r requirements.txt
+      - run: python scripts/main.py
+      - run: |
           git config user.email "action@github.com"
           git config user.name "GitHub Action"
           git add --all
-          git commit -m "Add podcast episode for $(date +%Y%m%d)" --allow-empty || echo "No changes to commit"
+          git commit -m "Add podcast for $(date +%Y%m%d)"
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
