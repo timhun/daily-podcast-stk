@@ -6,3 +6,5 @@ google-cloud-texttospeech
 pydub
 gTTS
 beautifulsoup4
+openai
+python-dotenv
