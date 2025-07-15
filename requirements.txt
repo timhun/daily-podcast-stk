@@ -1,11 +1,11 @@
-yfinance
-requests
 PyYAML
 feedgen
 google-cloud-texttospeech
 pydub
-gTTS
 beautifulsoup4
-openai
-python-dotenv
-python-feedgen
+yfinance==0.2.40
+gTTS==2.5.1
+python-feedgen==1.0.0
+requests==2.32.3
+openai==1.35.7
+python-dotenv==1.0.1
