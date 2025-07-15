@@ -8,6 +8,8 @@ on:
 jobs:
   generate-podcast:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Grant write access for GITHUB_TOKEN
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -26,13 +28,18 @@ jobs:
           ffmpeg -version  # Verify FFmpeg installation
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip list  # Debug: List installed packages
 
       - name: Check main.py content
         run: cat scripts/main.py  # Debug: Output main.py content
 
       - name: Run podcast generation
         run: python scripts/main.py
+
+      - name: Verify audio file
+        run: ls -l audio/  # Debug: List audio directory contents
 
       - name: Commit and push changes
         run: |
