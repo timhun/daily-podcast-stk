@@ -65,16 +65,3 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-
-      - name: Notify on failure
-        if: failure()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: Podcast Workflow Failed
-          to: tim.oneway@gmail.com  # 替換為您的郵箱
-          from: GitHub Actions
-          body: Check logs at https://github.com/timhun/daily-podcast-stk/actions
