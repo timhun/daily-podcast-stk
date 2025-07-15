@@ -2,19 +2,19 @@ name: Daily Podcast Generation
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # UTC 22:00 = 台灣 06:00
-  workflow_dispatch:  # 允許手動觸發
+    - cron: '0 22 * * *'  # UTC 22:00 = Taiwan 06:00
+  workflow_dispatch:
 
 jobs:
   generate-podcast:
     runs-on: ubuntu-latest
     permissions:
-      contents: write  # 授予寫入權限，修復 Permission denied
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          lfs: true  # 啟用 Git LFS
+          lfs: true
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -25,28 +25,30 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y ffmpeg
-          ffmpeg -version  # 驗證 FFmpeg 安裝
+          ffmpeg -version
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
-          pip list  # 除錯：列出已安裝套件
+          pip install --no-cache-dir -r requirements.txt || pip install --no-cache-dir -r requirements.txt
+          pip list
 
-      - name: Check main.py content
-        run: cat scripts/main.py  # 除錯：輸出 main.py 內容
-
-      - name: Verify Git setup
+      - name: Verify script files
         run: |
-          pwd  # 顯示當前目錄
-          ls -la  # 列出檔案（檢查 .git 資料夾）
-          git status || echo "Git status failed with error: $?"
-          git config --list || echo "Git config failed with error: $?"
+          ls -l scripts/
+          cat scripts/main.py
+          cat scripts/tw_phrases.json
 
       - name: Run podcast generation
+        env:
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
         run: python scripts/main.py
 
-      - name: Verify audio file
-        run: ls -l audio/  # 除錯：列出 audio 目錄內容
+      - name: Verify outputs
+        run: |
+          ls -l audio/
+          ls -l data/
+          cat feed.xml
 
       - name: Commit and push changes
         run: |
@@ -63,3 +65,16 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
+
+      - name: Notify on failure
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Podcast Workflow Failed
+          to: tim.oneway@gmail.com  # 替換為您的郵箱
+          from: GitHub Actions
+          body: Check logs at https://github.com/timhun/daily-podcast-stk/actions
