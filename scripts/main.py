@@ -9,6 +9,7 @@ import subprocess
 import requests
 from openai import OpenAI
 from dotenv import load_dotenv
+from feedgen.feed import FeedGenerator
 
 # Load environment variables
 load_dotenv()
@@ -124,9 +125,9 @@ def fetch_economic_news():
         logger.error(f"Error fetching economic news: {e}")
         return "今天沒有特別的經濟新聞，市場穩穩走！"
 
-# Generate podcast script using Grok API
+# Generate podcast script using Grok 3
 def generate_script():
-    logger.info("Starting script generation with Grok API")
+    logger.info("Starting script generation with Grok 3")
     ensure_directories()
     try:
         with open('scripts/tw_phrases.json', 'r', encoding='utf-8') as f:
@@ -210,7 +211,7 @@ def generate_script():
     try:
         client = OpenAI(api_key=XAI_API_KEY, base_url="https://api.x.ai/v1")
         response = client.chat.completions.create(
-            model="grok",
+            model="grok",  # Grok 3 model
             messages=[
                 {"role": "system", "content": "你是一位親切、風趣的台灣中年大叔，擅長用台灣慣用語解說財經科技資訊。"},
                 {"role": "user", "content": prompt}
@@ -221,10 +222,10 @@ def generate_script():
         script = response.choices[0].message.content
         with open('data/script.txt', 'w', encoding='utf-8') as f:
             f.write(script)
-        logger.info("Script generated successfully with Grok API")
+        logger.info("Script generated successfully with Grok 3")
         return script
     except Exception as e:
-        logger.error(f"Grok API failed: {e}")
+        logger.error(f"Grok 3 API failed: {e}")
         # Fallback script
         analysis = lambda x: random.choice(phrases['analysis_positive'] if x >= 0 else phrases['analysis_negative'])
         script = (
@@ -311,22 +312,17 @@ def text_to_audio(script):
         return None
 
 # Generate RSS feed
-try:
-    from feedgen.feed import FeedGenerator
-except ImportError as e:
-    logger.error(f"Failed to import feedgen: {e}")
-    exit(1)
-
 def generate_rss(audio_file):
     logger.info("Starting RSS generation")
     try:
         fg = FeedGenerator()
+        fg.load_extension('podcast')  # Enable podcast extension
         fg.title('大叔說財經科技投資')
         fg.author({'name': '大叔'})
         fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
         fg.description('每日美股、ETF、比特幣、AI與經濟新聞，用台灣味聊投資')
         fg.language('zh-tw')
-        fg.itunes_type('serial')
+        #fg.podcast.itunes_type('serial')  # Set iTunes podcast type to serial
         
         date = datetime.now().strftime('%Y%m%d')
         fe = fg.add_entry()
@@ -334,7 +330,7 @@ def generate_rss(audio_file):
         fe.description('大叔帶你看美股、ETF、比特幣與最新財經動態！')
         fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
-        fe.itunes_order(str(int(date)))
+        fe.podcast.itunes_order(str(int(date)))
         
         fg.rss_file('feed.xml')
         logger.info("RSS feed updated successfully")
