@@ -30,3 +30,10 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
+
+- name: Debug Git Config
+  run: |
+    pwd  # Show current directory
+    ls -la  # List files (check for .git folder)
+    git config --list || echo "Git config failed with error: $?"
+
