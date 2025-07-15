@@ -19,7 +19,7 @@ jobs:
       - run: pip install -r requirements.txt
       - run: python scripts/main.py
       - run: |
-          git config user.email "action@github.com"
+          git config user.email "tim.oneway@gmail.com"
           git config user.name "GitHub Action"
           git add --all
           git commit -m "Add podcast for $(date +%Y%m%d)"
