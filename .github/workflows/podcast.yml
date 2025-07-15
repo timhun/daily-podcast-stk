@@ -1,0 +1,65 @@
+name: Daily Podcast Generation
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # UTC 22:00 = 台灣 06:00
+  workflow_dispatch:  # 允許手動觸發
+
+jobs:
+  generate-podcast:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # 授予寫入權限，修復 Permission denied
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true  # 啟用 Git LFS
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+          ffmpeg -version  # 驗證 FFmpeg 安裝
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip list  # 除錯：列出已安裝套件
+
+      - name: Check main.py content
+        run: cat scripts/main.py  # 除錯：輸出 main.py 內容
+
+      - name: Verify Git setup
+        run: |
+          pwd  # 顯示當前目錄
+          ls -la  # 列出檔案（檢查 .git 資料夾）
+          git status || echo "Git status failed with error: $?"
+          git config --list || echo "Git config failed with error: $?"
+
+      - name: Run podcast generation
+        run: python scripts/main.py
+
+      - name: Verify audio file
+        run: ls -l audio/  # 除錯：列出 audio 目錄內容
+
+      - name: Commit and push changes
+        run: |
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add --all
+          git commit -m "Add podcast episode for $(date +%Y%m%d)" --allow-empty || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
