@@ -1,7 +1,7 @@
 yfinance
 requests
 PyYAML
-feedgenerator
+feedgen
 google-cloud-texttospeech
 pydub
 gTTS
