@@ -1,8 +1,8 @@
 yfinance
 requests
 PyYAML
-feedgenerator
+feedgen
 google-cloud-texttospeech
 pydub
 gTTS
-feedgen==0.9.0
+beautifulsoup4
