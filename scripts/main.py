@@ -2,7 +2,7 @@ import yfinance as yf
 import json
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from gtts import gTTS
 import random
 import subprocess
@@ -10,10 +10,6 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from feedgen.feed import FeedGenerator
 import time
-
-# 載入環境變數
-load_dotenv()
-XAI_API_KEY = os.getenv("XAI_API_KEY")
 
 # 設置日誌
 def setup_logger():
@@ -53,7 +49,8 @@ def fetch_financial_data():
             for attempt in range(1, attempts + 1):
                 try:
                     ticker = yf.Ticker(sym)
-                    hist = ticker.history(period='2d')
+                    # Use '1d' and manual previous close to handle ^DJI issues
+                    hist = ticker.history(period='5d')  # Fetch 5 days to ensure data
                     if len(hist) < 2:
                         logger.error(f"嘗試 {attempt}：{sym} 數據不足")
                         if attempt == attempts:
@@ -99,7 +96,9 @@ def generate_script():
         }
     }
     
-    date = datetime.now().strftime('%Y年%m月%d日')
+    # Use previous day's date to align with UTC 22:00 = Taiwan 06:00 next day
+    date = (datetime.now() - timedelta(days=1)).strftime('%Y年%m月%d日')
+    file_date = datetime.now().strftime('%Y%m%d')
     
     prompt = f"""
     你是大叔，一位親切、風趣的台灣中年男性，擅長用台灣慣用語以輕鬆的方式解說財經資訊。請根據以下數據，撰寫一篇約 400-500 字的播客逐字稿，語氣親切自然，帶點幽默，融入以下台灣慣用語：
@@ -114,11 +113,11 @@ def generate_script():
     4. 結尾以幽默語氣總結。
 
     數據：
-    - 道瓊 (^DJI): {data['indices']['^DJI']['close']} 點，{'漲' if data['indices']['^DJI']['change'] >= 0 else '跌'} {abs(data['indices']['^DJI']['change'])}%
-    - 納斯達克 (^IXIC): {data['indices']['^IXIC']['close']} 點，{'漲' if data['indices']['^IXIC']['change'] >= 0 else '跌'} {abs(data['indices']['^IXIC']['change'])}%
-    - 標普500 (^GSPC): {data['indices']['^GSPC']['close']} 點，{'漲' if data['indices']['^GSPC']['change'] >= 0 else '跌'} {abs(data['indices']['^GSPC']['change'])}%
-    - 費城半導體 (^SOX): {data['indices']['^SOX']['close']} 點，{'漲' if data['indices']['^SOX']['change'] >= 0 else '跌'} {abs(data['indices']['^SOX']['change'])}%
-    - QQQ: {data['etfs']['QQQ']['close']} 點，{'漲' if data['etfs']['QQQ']['change'] >= 0 else '跌'} {abs(data['etfs']['QQQ']['change'])}%
+    - 道瓊 (^DJI): {data['indices']['^DJI']['close']} 點，{'漲' if data['indices']['^DJI']['close'] >= 0 else '跌'} {abs(data['indices']['^DJI']['change'])}%
+    - 納斯達克 (^IXIC): {data['indices']['^IXIC']['close']} 點，{'漲' if data['indices']['^IXIC']['close'] >= 0 else '跌'} {abs(data['indices']['^IXIC']['change'])}%
+    - 標普500 (^GSPC): {data['indices']['^GSPC']['close']} 點，{'漲' if data['indices']['^GSPC']['close'] >= 0 else '跌'} {abs(data['indices']['^GSPC']['change'])}%
+    - 費城半導體 (^SOX): {data['indices']['^SOX']['close']} 點，{'漲' if data['indices']['^SOX']['close'] >= 0 else '跌'} {abs(data['indices']['^SOX']['change'])}%
+    - QQQ: {data['etfs']['QQQ']['close']} 點，{'漲' if data['etfs']['QQQ']['close'] >= 0 else '跌'} {abs(data['etfs']['QQQ']['change'])}%
 
     語氣需親切、幽默，控制在 15 分鐘語音長度（約 400-500 字）。確保逐字稿結構清晰，分段明確。
     """
@@ -135,10 +134,10 @@ def generate_script():
             max_tokens=1000
         )
         script = response.choices[0].message.content
-        with open('data/script.txt', 'w', encoding='utf-8') as f:
+        with open(f'data/script_{file_date}.txt', 'w', encoding='utf-8') as f:
             f.write(script)
         logger.info("Grok 3 腳本生成成功")
-        return script
+        return script, file_date
     except Exception as e:
         logger.error(f"Grok 3 API 失敗：{e}")
         # 備用腳本
@@ -156,16 +155,15 @@ def generate_script():
             f"### 3. 總結\n"
             f"{random.choice(phrases['closing'])}"
         )
-        with open('data/script.txt', 'w', encoding='utf-8') as f:
+        with open(f'data/script_{file_date}.txt', 'w', encoding='utf-8') as f:
             f.write(script)
         logger.info("生成備用腳本")
-        return script
+        return script, file_date
 
 # 文字轉語音
-def text_to_audio(script):
+def text_to_audio(script, file_date):
     logger.info("開始文字轉語音")
-    date = datetime.now().strftime('%Y%m%d')
-    output_file = f"audio/episode_{date}.mp3"
+    output_file = f"audio/episode_{file_date}.mp3"
     temp_file = "audio/temp.mp3"
     fallback_file = "audio/fallback.mp3"
     
@@ -179,7 +177,7 @@ def text_to_audio(script):
         
         # 生成語音
         logger.info("使用 gTTS 生成語音")
-        tts = gTTS(text=script, lang='zh-tw', slow=False)
+        tts = gTTS(text=script, lang='zh-TW', slow=False)  # Updated to zh-TW
         tts.save(temp_file)
         if not os.path.exists(temp_file):
             logger.error(f"臨時音頻檔案未生成：{temp_file}")
@@ -220,7 +218,7 @@ def text_to_audio(script):
         return fallback_file
 
 # 生成 RSS
-def generate_rss(audio_file):
+def generate_rss(audio_file, file_date):
     logger.info("開始生成 RSS")
     try:
         if not os.path.exists(audio_file):
@@ -232,16 +230,15 @@ def generate_rss(audio_file):
         fg.author({'name': '大叔'})
         fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
         fg.description('每日美股指數與 QQQ ETF 動態，用台灣味聊投資')
-        fg.language('zh-tw')
+        fg.language('zh-TW')
         
-        date = datetime.now().strftime('%Y%m%d')
         fe = fg.add_entry()
-        fe.title(f'美股播報 - {date}')
+        fe.title(f'美股播報 - {file_date}')
         fe.description('大叔帶你看美股四大指數與 QQQ ETF 動態！')
         file_size = os.path.getsize(audio_file) if os.path.exists(audio_file) else 45000000
         fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/{audio_file}', type='audio/mpeg', length=str(file_size))
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
-        fe.guid(f"episode_{date}", permalink=False)  # 唯一 GUID
+        fe.guid(f"episode_{file_date}", permalink=False)
         
         fg.rss_file('feed.xml')
         logger.info("RSS 檔案更新成功")
@@ -258,17 +255,17 @@ if __name__ == "__main__":
             logger.error("XAI_API_KEY 未設置")
             exit(1)
         
-        script = generate_script()
+        script, file_date = generate_script()
         if not script:
             logger.error("腳本生成失敗，中止")
             exit(1)
         
-        audio_file = text_to_audio(script)
+        audio_file = text_to_audio(script, file_date)
         if not audio_file or not os.path.exists(audio_file):
             logger.error(f"音頻檔案 {audio_file} 不存在，中止")
             exit(1)
         
-        if not generate_rss(audio_file):
+        if not generate_rss(audio_file, file_date):
             logger.error("RSS 生成失敗，中止")
             exit(1)
         
