@@ -32,6 +32,7 @@ logger.info("日誌初始化完成")
 def ensure_directories():
     os.makedirs("audio", exist_ok=True)
     os.makedirs("data/logs", exist_ok=True)
+    os.makedirs("data/scripts", exist_ok=True)
     logger.info("確保目錄存在")
 
 # 獲取財經數據（含重試邏輯）
@@ -45,18 +46,17 @@ def fetch_financial_data():
     
     for category, symbols in tickers.items():
         for sym in symbols:
-            attempts = 3
+            attempts = 5  # 增加重試次數
             for attempt in range(1, attempts + 1):
                 try:
                     ticker = yf.Ticker(sym)
-                    # Use '1d' and manual previous close to handle ^DJI issues
-                    hist = ticker.history(period='5d')  # Fetch 5 days to ensure data
+                    hist = ticker.history(period='5d')  # 獲取 5 天數據以避免缺失
                     if len(hist) < 2:
                         logger.error(f"嘗試 {attempt}：{sym} 數據不足")
                         if attempt == attempts:
                             logger.warning(f"跳過 {sym}，使用備用數據")
                             return None
-                        time.sleep(2)
+                        time.sleep(3)
                         continue
                     close = hist['Close'][-1]
                     prev_close = hist['Close'][-2]
@@ -69,7 +69,7 @@ def fetch_financial_data():
                     if attempt == attempts:
                         logger.warning(f"跳過 {sym}，使用備用數據")
                         return None
-                    time.sleep(2)
+                    time.sleep(3)
     
     return data
 
@@ -82,7 +82,7 @@ def generate_script():
             phrases = json.load(f)
     except Exception as e:
         logger.error(f"無法載入 tw_phrases.json：{e}")
-        return None
+        return None, None
     
     data = fetch_financial_data() or {
         'indices': {
@@ -96,7 +96,7 @@ def generate_script():
         }
     }
     
-    # Use previous day's date to align with UTC 22:00 = Taiwan 06:00 next day
+    # 使用前一天日期（內容反映前日收盤），檔案名使用當天日期
     date = (datetime.now() - timedelta(days=1)).strftime('%Y年%m月%d日')
     file_date = datetime.now().strftime('%Y%m%d')
     
@@ -113,17 +113,17 @@ def generate_script():
     4. 結尾以幽默語氣總結。
 
     數據：
-    - 道瓊 (^DJI): {data['indices']['^DJI']['close']} 點，{'漲' if data['indices']['^DJI']['close'] >= 0 else '跌'} {abs(data['indices']['^DJI']['change'])}%
-    - 納斯達克 (^IXIC): {data['indices']['^IXIC']['close']} 點，{'漲' if data['indices']['^IXIC']['close'] >= 0 else '跌'} {abs(data['indices']['^IXIC']['change'])}%
-    - 標普500 (^GSPC): {data['indices']['^GSPC']['close']} 點，{'漲' if data['indices']['^GSPC']['close'] >= 0 else '跌'} {abs(data['indices']['^GSPC']['change'])}%
-    - 費城半導體 (^SOX): {data['indices']['^SOX']['close']} 點，{'漲' if data['indices']['^SOX']['close'] >= 0 else '跌'} {abs(data['indices']['^SOX']['change'])}%
-    - QQQ: {data['etfs']['QQQ']['close']} 點，{'漲' if data['etfs']['QQQ']['close'] >= 0 else '跌'} {abs(data['etfs']['QQQ']['change'])}%
+    - 道瓊 (^DJI): {data['indices']['^DJI']['close']} 點，{'漲' if data['indices']['^DJI']['change'] >= 0 else '跌'} {abs(data['indices']['^DJI']['change'])}%
+    - 納斯達克 (^IXIC): {data['indices']['^IXIC']['close']} 點，{'漲' if data['indices']['^IXIC']['change'] >= 0 else '跌'} {abs(data['indices']['^IXIC']['change'])}%
+    - 標普500 (^GSPC): {data['indices']['^GSPC']['close']} 點，{'漲' if data['indices']['^GSPC']['change'] >= 0 else '跌'} {abs(data['indices']['^GSPC']['change'])}%
+    - 費城半導體 (^SOX): {data['indices']['^SOX']['close']} 點，{'漲' if data['indices']['^SOX']['change'] >= 0 else '跌'} {abs(data['indices']['^SOX']['change'])}%
+    - QQQ: {data['etfs']['QQQ']['close']} 點，{'漲' if data['etfs']['QQQ']['change'] >= 0 else '跌'} {abs(data['etfs']['QQQ']['change'])}%
 
     語氣需親切、幽默，控制在 15 分鐘語音長度（約 400-500 字）。確保逐字稿結構清晰，分段明確。
     """
     
     try:
-        client = OpenAI(api_key=XAI_API_KEY, base_url="https://api.x.ai/v1")
+        client = OpenAI(api_key=os.getenv("XAI_API_KEY"), base_url="https://api.x.ai/v1")
         response = client.chat.completions.create(
             model="grok",  # Grok 3 模型
             messages=[
@@ -134,7 +134,7 @@ def generate_script():
             max_tokens=1000
         )
         script = response.choices[0].message.content
-        with open(f'data/script_{file_date}.txt', 'w', encoding='utf-8') as f:
+        with open(f'data/scripts/script_{file_date}.txt', 'w', encoding='utf-8') as f:
             f.write(script)
         logger.info("Grok 3 腳本生成成功")
         return script, file_date
@@ -155,7 +155,7 @@ def generate_script():
             f"### 3. 總結\n"
             f"{random.choice(phrases['closing'])}"
         )
-        with open(f'data/script_{file_date}.txt', 'w', encoding='utf-8') as f:
+        with open(f'data/scripts/script_{file_date}.txt', 'w', encoding='utf-8') as f:
             f.write(script)
         logger.info("生成備用腳本")
         return script, file_date
@@ -177,7 +177,7 @@ def text_to_audio(script, file_date):
         
         # 生成語音
         logger.info("使用 gTTS 生成語音")
-        tts = gTTS(text=script, lang='zh-TW', slow=False)  # Updated to zh-TW
+        tts = gTTS(text=script, lang='zh-TW', slow=False)
         tts.save(temp_file)
         if not os.path.exists(temp_file):
             logger.error(f"臨時音頻檔案未生成：{temp_file}")
@@ -231,6 +231,7 @@ def generate_rss(audio_file, file_date):
         fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
         fg.description('每日美股指數與 QQQ ETF 動態，用台灣味聊投資')
         fg.language('zh-TW')
+        fg.logo('https://timhun.github.io/daily-podcast-stk/logo.png')  # 可選：上傳 logo 至 audio/
         
         fe = fg.add_entry()
         fe.title(f'美股播報 - {file_date}')
@@ -251,7 +252,7 @@ def generate_rss(audio_file, file_date):
 if __name__ == "__main__":
     logger.info("開始生成播客")
     try:
-        if not XAI_API_KEY:
+        if not os.getenv("XAI_API_KEY"):
             logger.error("XAI_API_KEY 未設置")
             exit(1)
         
