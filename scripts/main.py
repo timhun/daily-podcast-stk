@@ -2,7 +2,7 @@ import yfinance as yf
 import json
 import os
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from gtts import gTTS
 import random
 import subprocess
@@ -10,10 +10,6 @@ from openai import OpenAI
 from dotenv import load_dotenv
 from feedgen.feed import FeedGenerator
 import time
-
-# 載入環境變數
-load_dotenv()
-XAI_API_KEY = os.getenv("XAI_API_KEY")
 
 # 設置日誌
 def setup_logger():
@@ -36,6 +32,7 @@ logger.info("日誌初始化完成")
 def ensure_directories():
     os.makedirs("audio", exist_ok=True)
     os.makedirs("data/logs", exist_ok=True)
+    os.makedirs("data/scripts", exist_ok=True)
     logger.info("確保目錄存在")
 
 # 獲取財經數據（含重試邏輯）
@@ -49,17 +46,17 @@ def fetch_financial_data():
     
     for category, symbols in tickers.items():
         for sym in symbols:
-            attempts = 3
+            attempts = 5  # 增加重試次數
             for attempt in range(1, attempts + 1):
                 try:
                     ticker = yf.Ticker(sym)
-                    hist = ticker.history(period='2d')
+                    hist = ticker.history(period='5d')  # 獲取 5 天數據以避免缺失
                     if len(hist) < 2:
                         logger.error(f"嘗試 {attempt}：{sym} 數據不足")
                         if attempt == attempts:
                             logger.warning(f"跳過 {sym}，使用備用數據")
                             return None
-                        time.sleep(2)
+                        time.sleep(3)
                         continue
                     close = hist['Close'][-1]
                     prev_close = hist['Close'][-2]
@@ -72,7 +69,7 @@ def fetch_financial_data():
                     if attempt == attempts:
                         logger.warning(f"跳過 {sym}，使用備用數據")
                         return None
-                    time.sleep(2)
+                    time.sleep(3)
     
     return data
 
@@ -85,7 +82,7 @@ def generate_script():
             phrases = json.load(f)
     except Exception as e:
         logger.error(f"無法載入 tw_phrases.json：{e}")
-        return None
+        return None, None
     
     data = fetch_financial_data() or {
         'indices': {
@@ -99,7 +96,9 @@ def generate_script():
         }
     }
     
-    date = datetime.now().strftime('%Y年%m月%d日')
+    # 使用前一天日期（內容反映前日收盤），檔案名使用當天日期
+    date = (datetime.now() - timedelta(days=1)).strftime('%Y年%m月%d日')
+    file_date = datetime.now().strftime('%Y%m%d')
     
     prompt = f"""
     你是大叔，一位親切、風趣的台灣中年男性，擅長用台灣慣用語以輕鬆的方式解說財經資訊。請根據以下數據，撰寫一篇約 400-500 字的播客逐字稿，語氣親切自然，帶點幽默，融入以下台灣慣用語：
@@ -124,7 +123,7 @@ def generate_script():
     """
     
     try:
-        client = OpenAI(api_key=XAI_API_KEY, base_url="https://api.x.ai/v1")
+        client = OpenAI(api_key=os.getenv("XAI_API_KEY"), base_url="https://api.x.ai/v1")
         response = client.chat.completions.create(
             model="grok",  # Grok 3 模型
             messages=[
@@ -135,10 +134,10 @@ def generate_script():
             max_tokens=1000
         )
         script = response.choices[0].message.content
-        with open('data/script.txt', 'w', encoding='utf-8') as f:
+        with open(f'data/scripts/script_{file_date}.txt', 'w', encoding='utf-8') as f:
             f.write(script)
         logger.info("Grok 3 腳本生成成功")
-        return script
+        return script, file_date
     except Exception as e:
         logger.error(f"Grok 3 API 失敗：{e}")
         # 備用腳本
@@ -156,16 +155,15 @@ def generate_script():
             f"### 3. 總結\n"
             f"{random.choice(phrases['closing'])}"
         )
-        with open('data/script.txt', 'w', encoding='utf-8') as f:
+        with open(f'data/scripts/script_{file_date}.txt', 'w', encoding='utf-8') as f:
             f.write(script)
         logger.info("生成備用腳本")
-        return script
+        return script, file_date
 
 # 文字轉語音
-def text_to_audio(script):
+def text_to_audio(script, file_date):
     logger.info("開始文字轉語音")
-    date = datetime.now().strftime('%Y%m%d')
-    output_file = f"audio/episode_{date}.mp3"
+    output_file = f"audio/episode_{file_date}.mp3"
     temp_file = "audio/temp.mp3"
     fallback_file = "audio/fallback.mp3"
     
@@ -179,7 +177,7 @@ def text_to_audio(script):
         
         # 生成語音
         logger.info("使用 gTTS 生成語音")
-        tts = gTTS(text=script, lang='zh-tw', slow=False)
+        tts = gTTS(text=script, lang='zh-TW', slow=False)
         tts.save(temp_file)
         if not os.path.exists(temp_file):
             logger.error(f"臨時音頻檔案未生成：{temp_file}")
@@ -220,7 +218,7 @@ def text_to_audio(script):
         return fallback_file
 
 # 生成 RSS
-def generate_rss(audio_file):
+def generate_rss(audio_file, file_date):
     logger.info("開始生成 RSS")
     try:
         if not os.path.exists(audio_file):
@@ -232,16 +230,16 @@ def generate_rss(audio_file):
         fg.author({'name': '大叔'})
         fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
         fg.description('每日美股指數與 QQQ ETF 動態，用台灣味聊投資')
-        fg.language('zh-tw')
+        fg.language('zh-TW')
+        fg.logo('https://timhun.github.io/daily-podcast-stk/logo.png')  # 可選：上傳 logo 至 audio/
         
-        date = datetime.now().strftime('%Y%m%d')
         fe = fg.add_entry()
-        fe.title(f'美股播報 - {date}')
+        fe.title(f'美股播報 - {file_date}')
         fe.description('大叔帶你看美股四大指數與 QQQ ETF 動態！')
         file_size = os.path.getsize(audio_file) if os.path.exists(audio_file) else 45000000
         fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/{audio_file}', type='audio/mpeg', length=str(file_size))
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
-        fe.guid(f"episode_{date}", permalink=False)  # 唯一 GUID
+        fe.guid(f"episode_{file_date}", permalink=False)
         
         fg.rss_file('feed.xml')
         logger.info("RSS 檔案更新成功")
@@ -254,21 +252,21 @@ def generate_rss(audio_file):
 if __name__ == "__main__":
     logger.info("開始生成播客")
     try:
-        if not XAI_API_KEY:
+        if not os.getenv("XAI_API_KEY"):
             logger.error("XAI_API_KEY 未設置")
             exit(1)
         
-        script = generate_script()
+        script, file_date = generate_script()
         if not script:
             logger.error("腳本生成失敗，中止")
             exit(1)
         
-        audio_file = text_to_audio(script)
+        audio_file = text_to_audio(script, file_date)
         if not audio_file or not os.path.exists(audio_file):
             logger.error(f"音頻檔案 {audio_file} 不存在，中止")
             exit(1)
         
-        if not generate_rss(audio_file):
+        if not generate_rss(audio_file, file_date):
             logger.error("RSS 生成失敗，中止")
             exit(1)
         
