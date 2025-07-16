@@ -51,6 +51,7 @@ jobs:
           ls -l data/
           cat feed.xml
           file audio/episode_$(date +%Y%m%d).mp3 || echo "Audio file missing"
+          curl -I https://timhun.github.io/daily-podcast-stk/audio/episode_$(date +%Y%m%d).mp3 || echo "Audio file not accessible"
 
       - name: Commit and push changes
         run: |
@@ -59,12 +60,23 @@ jobs:
           git add --all
           git commit -m "Add podcast episode for $(date +%Y%m%d)" --allow-empty || echo "No changes to commit"
           git push
+        continue-on-error: true
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
+        continue-on-error: true
+
+      - name: Retry deploy if failed
+        if: steps.deploy.outputs.success != 'true'
+        run: |
+          git push
+          curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+               -H "Accept: application/vnd.github.v3+json" \
+               https://api.github.com/repos/timhun/daily-podcast-stk/pages/builds
+        continue-on-error: true
 
       - name: Notify on failure
         if: failure()
