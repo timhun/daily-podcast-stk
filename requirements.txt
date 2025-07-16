@@ -1,7 +1,6 @@
-yfinance
-google-cloud-texttospeech
-google-cloud-aiplatform
-python-dotenv
-lxml
-requests # 用於直接呼叫 Grok API
-edge-tts
+yfinance==0.2.44
+requests==2.32.3
+python-dotenv==1.0.1
+feedgen==1.0.0
+openai==1.51.2
+edge-tts==6.1.12
