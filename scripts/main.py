@@ -218,28 +218,28 @@ def text_to_audio(script, file_date):
         return fallback_file
 
 # 生成 RSS
-def generate_rss(audio_file, file_date):
+
+def generate_rss(audio_file):
     logger.info("開始生成 RSS")
     try:
-        if not os.path.exists(audio_file):
-            logger.error(f"音頻檔案 {audio_file} 不存在，使用後備檔案")
-            audio_file = "audio/fallback.mp3"
-        
         fg = FeedGenerator()
+        fg.load_extension('itunes')  # 啟用 iTunes 擴展
         fg.title('幫幫忙說財經科技投資')
-        fg.author({'name': '大叔'})
+        fg.itunes_author('幫幫忙')  # 明確設置 iTunes 作者
+        fg.author({'name': '幫幫忙', 'email': 'podcast@timhun.github.io'})  # 標準 RSS 作者
         fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
         fg.description('每日美股指數與 QQQ ETF 動態，用台灣味聊投資')
-        fg.language('zh-TW')
-        fg.logo('https://timhun.github.io/daily-podcast-stk/logo.png')  # 可選：上傳 logo 至 audio/
+        fg.language('zh-tw')
+        fg.itunes_category({'cat': 'Business', 'sub': 'Investing'})  # 添加 iTunes 分類
+        fg.itunes_explicit('no')  # 明確內容分級
         
+        date = datetime.now().strftime('%Y%m%d')
         fe = fg.add_entry()
-        fe.title(f'美股播報 - {file_date}')
-        fe.description('大叔帶你看美股四大指數與 QQQ ETF 動態！')
-        file_size = os.path.getsize(audio_file) if os.path.exists(audio_file) else 45000000
-        fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/{audio_file}', type='audio/mpeg', length=str(file_size))
+        fe.title(f'美股播報 - {date}')
+        fe.description('幫幫忙帶你看美股四大指數與 QQQ ETF 動態！')
+        fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
-        fe.guid(f"episode_{file_date}", permalink=False)
+        fe.guid(f"episode_{date}", permalink=False)  # 唯一 GUID
         
         fg.rss_file('feed.xml')
         logger.info("RSS 檔案更新成功")
