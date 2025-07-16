@@ -1,4 +1,6 @@
 yfinance
-feedgen
-requests
 google-cloud-texttospeech
+google-cloud-aiplatform
+python-dotenv
+lxml
+requests # 用於直接呼叫 Grok API
