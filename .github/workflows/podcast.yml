@@ -41,7 +41,6 @@ jobs:
       - name: Run podcast generation
         env:
           XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
-          NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
         run: python scripts/main.py
 
       - name: Verify outputs
