@@ -263,7 +263,7 @@ def generate_script():
             f"### 3. 比特幣與黃金\n"
             f"加密貨幣和商品市場：\n"
             f"- 比特幣（BTC-USD）報價 {data['crypto_commodities']['BTC-USD']['close']} 美元，{'漲' if data['crypto_commodities']['BTC-USD']['change'] >= 0 else '跌'} {abs(data['crypto_commodities']['BTC-USD']['change'])}%，{'市場熱度高' if data['crypto_commodities']['BTC-USD']['change'] > 1 else '穩中求進'}。\n"
-            f"- 黃金期貨（GC=F）報價 {data['crypto_commodities']['GC=F']['close']} 美元，{'漲' if data['crypto_commodities']['GC=F']['close']} >= 0 else '跌'} {abs(data['crypto_commodities']['GC=F']['change'])}%，{'避險需求強' if data['crypto_commodities']['GC=F']['change'] > 0 else '市場偏向風險資產'}。\n"
+            f"- 黃金期貨（GC=F）報價 {data['crypto_commodities']['GC=F']['close']} 美元，{'漲' if data['crypto_commodities']['GC=F']['change'] >= 0 else '跌'} {abs(data['crypto_commodities']['GC=F']['change'])}%，{'避險需求強' if data['crypto_commodities']['GC=F']['change'] > 0 else '市場偏向風險資產'}。\n"
             f"- 十年期美國國債殖利率 {data['treasury']['^TNX']['close']}%，{'上升' if data['treasury']['^TNX']['change'] >= 0 else '下降'} {abs(data['treasury']['^TNX']['change'])}%，影響市場預期。\n\n"
             f"### 4. 熱門美股\n"
             f"看看 Top 5 熱門美股：\n"
@@ -384,4 +384,3 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"意外錯誤：{e}")
         exit(1)
-        
