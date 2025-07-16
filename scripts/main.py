@@ -384,3 +384,4 @@ if __name__ == "__main__":
     except Exception as e:
         logger.error(f"意外錯誤：{e}")
         exit(1)
+        
