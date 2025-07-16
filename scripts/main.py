@@ -229,7 +229,7 @@ def generate_script():
     try:
         client = OpenAI(api_key=XAI_API_KEY, base_url="https://api.x.ai/v1")
         response = client.chat.completions.create(
-            model="grok",
+            model="grok-3",
             messages=[
                 {"role": "system", "content": "你是一位親切、風趣的台灣中年大叔，擅長用台灣慣用語解說財經科技資訊。"},
                 {"role": "user", "content": prompt}
