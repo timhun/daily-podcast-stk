@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,6 +27,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y ffmpeg
           ffmpeg -version
+          ffprobe -version
 
       - name: Install dependencies
         run: |
@@ -48,6 +50,7 @@ jobs:
           ls -l audio/
           ls -l data/
           cat feed.xml
+          file audio/episode_$(date +%Y%m%d).mp3 || echo "Audio file missing"
 
       - name: Commit and push changes
         run: |
@@ -56,11 +59,21 @@ jobs:
           git add --all
           git commit -m "Add podcast episode for $(date +%Y%m%d)" --allow-empty || echo "No changes to commit"
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
+
+      - name: Notify on failure
+        if: failure()
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: 1,
+              body: 'Podcast generation failed. Check logs: https://github.com/timhun/daily-podcast-stk/actions'
+            })
