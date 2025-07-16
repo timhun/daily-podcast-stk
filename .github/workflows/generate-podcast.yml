@@ -1,0 +1,46 @@
+name: Generate Daily Podcast
+
+on:
+  schedule:
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.10
+
+      - name: Install deps
+        run: pip install -r requirements.txt
+
+      - name: Setup gcloud
+        run: |
+          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}" | base64 -d > gcloud.json
+          export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/gcloud.json
+
+      - name: Fetch market data
+        run: python scripts/fetch_market_data.py
+
+      - name: Generate script
+        run: python scripts/generate_script_grok.py
+        env:
+          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+
+      - name: Synthesize audio
+        run: python scripts/synthesize_tts_google.py
+
+      - name: Build RSS
+        run: python scripts/build_rss.py
+
+      - name: Commit & Push
+        run: |
+          git config user.name github-actions
+          git config user.email actions@github.com
+          git add episodes/ feed/rss.xml
+          git commit -m "daily podcast"
+          git push
