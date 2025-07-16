@@ -57,6 +57,7 @@ def fetch_financial_data():
                     if len(hist) < 2:
                         logger.error(f"嘗試 {attempt}：{sym} 數據不足")
                         if attempt == attempts:
+                            logger.warning(f"跳過 {sym}，使用備用數據")
                             return None
                         time.sleep(2)
                         continue
@@ -69,7 +70,7 @@ def fetch_financial_data():
                 except Exception as e:
                     logger.error(f"嘗試 {attempt}：獲取 {sym} 失敗：{e}")
                     if attempt == attempts:
-                        logger.error(f"{sym} 在 {attempts} 次嘗試後失敗")
+                        logger.warning(f"跳過 {sym}，使用備用數據")
                         return None
                     time.sleep(2)
     
@@ -166,48 +167,66 @@ def text_to_audio(script):
     date = datetime.now().strftime('%Y%m%d')
     output_file = f"audio/episode_{date}.mp3"
     temp_file = "audio/temp.mp3"
+    fallback_file = "audio/fallback.mp3"
     
     try:
+        # 檢查 FFmpeg
         ffmpeg_check = subprocess.run(['ffmpeg', '-version'], capture_output=True, text=True)
         if ffmpeg_check.returncode != 0:
             logger.error(f"FFmpeg 未安裝：{ffmpeg_check.stderr}")
-            return None
+            return fallback_file
         logger.info(f"FFmpeg 版本：{ffmpeg_check.stdout.splitlines()[0]}")
         
+        # 生成語音
         logger.info("使用 gTTS 生成語音")
         tts = gTTS(text=script, lang='zh-tw', slow=False)
         tts.save(temp_file)
         if not os.path.exists(temp_file):
             logger.error(f"臨時音頻檔案未生成：{temp_file}")
-            return None
+            return fallback_file
         logger.info(f"臨時音頻檔案生成：{temp_file}")
         
+        # 使用 FFmpeg 加速語音
         logger.info(f"處理音頻至 {output_file}")
         result = subprocess.run(
-            ['ffmpeg', '-i', temp_file, '-filter:a', 'atempo=1.3', '-y', output_file],
+            ['ffmpeg', '-i', temp_file, '-filter:a', 'atempo=1.3', '-c:a', 'mp3', '-y', output_file],
             capture_output=True, text=True
         )
         if result.returncode != 0:
             logger.error(f"FFmpeg 處理失敗：{result.stderr}")
-            return None
+            return fallback_file
         
+        # 清理臨時檔案
         if os.path.exists(temp_file):
             os.remove(temp_file)
             logger.info(f"刪除臨時檔案：{temp_file}")
         
+        # 驗證輸出檔案
         if not os.path.exists(output_file):
             logger.error(f"輸出音頻檔案未生成：{output_file}")
-            return None
+            return fallback_file
         logger.info(f"音頻生成成功：{output_file}")
+        
+        # 檢查檔案是否為有效 MP3
+        result = subprocess.run(['ffprobe', '-v', 'error', output_file], capture_output=True, text=True)
+        if result.returncode != 0:
+            logger.error(f"音頻檔案無效：{result.stderr}")
+            return fallback_file
+        logger.info(f"音頻檔案驗證通過：{output_file}")
+        
         return output_file
     except Exception as e:
         logger.error(f"音頻生成失敗：{str(e)}")
-        return None
+        return fallback_file
 
 # 生成 RSS
 def generate_rss(audio_file):
     logger.info("開始生成 RSS")
     try:
+        if not os.path.exists(audio_file):
+            logger.error(f"音頻檔案 {audio_file} 不存在，使用後備檔案")
+            audio_file = "audio/fallback.mp3"
+        
         fg = FeedGenerator()
         fg.title('幫幫忙說財經科技投資')
         fg.author({'name': '大叔'})
@@ -219,8 +238,10 @@ def generate_rss(audio_file):
         fe = fg.add_entry()
         fe.title(f'美股播報 - {date}')
         fe.description('大叔帶你看美股四大指數與 QQQ ETF 動態！')
-        fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
+        file_size = os.path.getsize(audio_file) if os.path.exists(audio_file) else 45000000
+        fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/{audio_file}', type='audio/mpeg', length=str(file_size))
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
+        fe.guid(f"episode_{date}", permalink=False)  # 唯一 GUID
         
         fg.rss_file('feed.xml')
         logger.info("RSS 檔案更新成功")
@@ -243,8 +264,8 @@ if __name__ == "__main__":
             exit(1)
         
         audio_file = text_to_audio(script)
-        if not audio_file:
-            logger.error("音頻生成失敗，中止")
+        if not audio_file or not os.path.exists(audio_file):
+            logger.error(f"音頻檔案 {audio_file} 不存在，中止")
             exit(1)
         
         if not generate_rss(audio_file):

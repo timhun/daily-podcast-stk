@@ -25,3 +25,32 @@
 2025-07-16 10:04:54,662 - INFO - 開始生成 RSS
 2025-07-16 10:04:54,662 - INFO - RSS 檔案更新成功
 2025-07-16 10:04:54,663 - INFO - 播客生成成功完成
+2025-07-16 11:36:47,033 - INFO - 日誌初始化完成
+2025-07-16 11:36:47,033 - INFO - 開始生成播客
+2025-07-16 11:36:47,033 - INFO - 開始使用 Grok 3 生成腳本
+2025-07-16 11:36:47,033 - INFO - 確保目錄存在
+2025-07-16 11:36:47,033 - INFO - 開始獲取財經數據
+2025-07-16 11:36:47,529 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 11:36:47,652 - ERROR - $^DJI: possibly delisted; No price data found  (period=2d)
+2025-07-16 11:36:47,652 - ERROR - 嘗試 1：^DJI 數據不足
+2025-07-16 11:36:49,656 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 11:36:49,784 - ERROR - $^DJI: possibly delisted; No price data found  (period=2d)
+2025-07-16 11:36:49,784 - ERROR - 嘗試 2：^DJI 數據不足
+2025-07-16 11:36:51,787 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 11:36:51,911 - ERROR - $^DJI: possibly delisted; No price data found  (period=2d)
+2025-07-16 11:36:51,911 - ERROR - 嘗試 3：^DJI 數據不足
+2025-07-16 11:36:51,911 - WARNING - 跳過 ^DJI，使用備用數據
+2025-07-16 11:36:51,912 - ERROR - Grok 3 API 失敗：Client.__init__() got an unexpected keyword argument 'proxies'
+2025-07-16 11:36:51,912 - INFO - 生成備用腳本
+2025-07-16 11:36:51,912 - INFO - 開始文字轉語音
+2025-07-16 11:36:51,991 - INFO - FFmpeg 版本：ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers
+2025-07-16 11:36:51,991 - INFO - 使用 gTTS 生成語音
+2025-07-16 11:36:51,992 - WARNING - 'zh-tw' has been deprecated, falling back to 'zh-TW'. This fallback will be removed in a future version.
+2025-07-16 11:36:57,803 - INFO - 臨時音頻檔案生成：audio/temp.mp3
+2025-07-16 11:36:57,803 - INFO - 處理音頻至 audio/episode_20250716.mp3
+2025-07-16 11:36:58,465 - INFO - 刪除臨時檔案：audio/temp.mp3
+2025-07-16 11:36:58,465 - INFO - 音頻生成成功：audio/episode_20250716.mp3
+2025-07-16 11:36:58,547 - INFO - 音頻檔案驗證通過：audio/episode_20250716.mp3
+2025-07-16 11:36:58,547 - INFO - 開始生成 RSS
+2025-07-16 11:36:58,548 - INFO - RSS 檔案更新成功
+2025-07-16 11:36:58,548 - INFO - 播客生成成功完成
