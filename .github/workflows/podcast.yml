@@ -2,7 +2,7 @@ name: Daily Podcast Generation
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # UTC 22:00 = Taiwan 06:00
+    - cron: '0 22 * * *'  # UTC 22:00 = 台灣 06:00
   workflow_dispatch:
 
 jobs:
