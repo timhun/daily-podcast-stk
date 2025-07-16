@@ -1,0 +1,27 @@
+2025-07-16 10:04:41,212 - INFO - 日誌初始化完成
+2025-07-16 10:04:41,212 - INFO - 開始生成播客
+2025-07-16 10:04:41,213 - INFO - 開始使用 Grok 3 生成腳本
+2025-07-16 10:04:41,213 - INFO - 確保目錄存在
+2025-07-16 10:04:41,213 - INFO - 開始獲取財經數據
+2025-07-16 10:04:42,404 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 10:04:42,719 - ERROR - $^DJI: possibly delisted; No price data found  (period=2d)
+2025-07-16 10:04:42,719 - ERROR - 嘗試 1：^DJI 數據不足
+2025-07-16 10:04:44,722 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 10:04:45,036 - ERROR - $^DJI: possibly delisted; No price data found  (period=2d)
+2025-07-16 10:04:45,037 - ERROR - 嘗試 2：^DJI 數據不足
+2025-07-16 10:04:47,040 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 10:04:47,341 - ERROR - $^DJI: possibly delisted; No price data found  (period=2d)
+2025-07-16 10:04:47,342 - ERROR - 嘗試 3：^DJI 數據不足
+2025-07-16 10:04:47,342 - ERROR - Grok 3 API 失敗：Client.__init__() got an unexpected keyword argument 'proxies'
+2025-07-16 10:04:47,342 - INFO - 生成備用腳本
+2025-07-16 10:04:47,342 - INFO - 開始文字轉語音
+2025-07-16 10:04:47,421 - INFO - FFmpeg 版本：ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers
+2025-07-16 10:04:47,421 - INFO - 使用 gTTS 生成語音
+2025-07-16 10:04:47,421 - WARNING - 'zh-tw' has been deprecated, falling back to 'zh-TW'. This fallback will be removed in a future version.
+2025-07-16 10:04:53,955 - INFO - 臨時音頻檔案生成：audio/temp.mp3
+2025-07-16 10:04:53,955 - INFO - 處理音頻至 audio/episode_20250716.mp3
+2025-07-16 10:04:54,661 - INFO - 刪除臨時檔案：audio/temp.mp3
+2025-07-16 10:04:54,662 - INFO - 音頻生成成功：audio/episode_20250716.mp3
+2025-07-16 10:04:54,662 - INFO - 開始生成 RSS
+2025-07-16 10:04:54,662 - INFO - RSS 檔案更新成功
+2025-07-16 10:04:54,663 - INFO - 播客生成成功完成
