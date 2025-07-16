@@ -54,38 +54,38 @@
 2025-07-16 11:36:58,547 - INFO - 開始生成 RSS
 2025-07-16 11:36:58,548 - INFO - RSS 檔案更新成功
 2025-07-16 11:36:58,548 - INFO - 播客生成成功完成
-2025-07-16 14:23:59,643 - INFO - 日誌初始化完成
-2025-07-16 14:23:59,643 - INFO - 開始生成播客
-2025-07-16 14:23:59,643 - INFO - 開始使用 Grok 3 生成腳本
-2025-07-16 14:23:59,643 - INFO - 確保目錄存在
-2025-07-16 14:23:59,643 - INFO - 開始獲取財經數據
-2025-07-16 14:24:00,416 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
-2025-07-16 14:24:00,697 - ERROR - $^DJI: possibly delisted; No price data found  (period=5d)
-2025-07-16 14:24:00,697 - ERROR - 嘗試 1：^DJI 數據不足
-2025-07-16 14:24:03,701 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
-2025-07-16 14:24:04,197 - ERROR - $^DJI: possibly delisted; No price data found  (period=5d)
-2025-07-16 14:24:04,197 - ERROR - 嘗試 2：^DJI 數據不足
-2025-07-16 14:24:07,201 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
-2025-07-16 14:24:07,395 - ERROR - $^DJI: possibly delisted; No price data found  (period=5d)
-2025-07-16 14:24:07,395 - ERROR - 嘗試 3：^DJI 數據不足
-2025-07-16 14:24:10,399 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
-2025-07-16 14:24:10,631 - ERROR - $^DJI: possibly delisted; No price data found  (period=5d)
-2025-07-16 14:24:10,632 - ERROR - 嘗試 4：^DJI 數據不足
-2025-07-16 14:24:13,636 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
-2025-07-16 14:24:17,039 - ERROR - $^DJI: possibly delisted; No price data found  (period=5d)
-2025-07-16 14:24:17,040 - ERROR - 嘗試 5：^DJI 數據不足
-2025-07-16 14:24:17,040 - WARNING - 跳過 ^DJI，使用備用數據
-2025-07-16 14:24:17,040 - ERROR - Grok 3 API 失敗：Client.__init__() got an unexpected keyword argument 'proxies'
-2025-07-16 14:24:17,041 - INFO - 生成備用腳本
-2025-07-16 14:24:17,041 - INFO - 開始文字轉語音
-2025-07-16 14:24:17,122 - INFO - FFmpeg 版本：ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers
-2025-07-16 14:24:17,122 - INFO - 使用 gTTS 生成語音
-2025-07-16 14:24:17,122 - WARNING - 'zh-TW' has been deprecated, falling back to 'zh-TW'. This fallback will be removed in a future version.
-2025-07-16 14:24:24,117 - INFO - 臨時音頻檔案生成：audio/temp.mp3
-2025-07-16 14:24:24,117 - INFO - 處理音頻至 audio/episode_20250716.mp3
-2025-07-16 14:24:24,856 - INFO - 刪除臨時檔案：audio/temp.mp3
-2025-07-16 14:24:24,856 - INFO - 音頻生成成功：audio/episode_20250716.mp3
-2025-07-16 14:24:24,939 - INFO - 音頻檔案驗證通過：audio/episode_20250716.mp3
-2025-07-16 14:24:24,939 - INFO - 開始生成 RSS
-2025-07-16 14:24:24,940 - INFO - RSS 檔案更新成功
-2025-07-16 14:24:24,940 - INFO - 播客生成成功完成
+2025-07-16 14:43:09,465 - INFO - 日誌初始化完成
+2025-07-16 14:43:09,466 - INFO - 開始生成播客
+2025-07-16 14:43:09,466 - INFO - 開始使用 Grok 3 生成腳本
+2025-07-16 14:43:09,466 - INFO - 確保目錄存在
+2025-07-16 14:43:09,466 - INFO - 開始獲取財經數據
+2025-07-16 14:43:10,013 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 14:43:10,204 - ERROR - $^DJI: possibly delisted; No price data found  (period=5d)
+2025-07-16 14:43:10,205 - ERROR - 嘗試 1：^DJI 數據不足
+2025-07-16 14:43:13,209 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 14:43:13,379 - ERROR - $^DJI: possibly delisted; No price data found  (period=5d)
+2025-07-16 14:43:13,379 - ERROR - 嘗試 2：^DJI 數據不足
+2025-07-16 14:43:16,383 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 14:43:16,573 - ERROR - $^DJI: possibly delisted; No price data found  (period=5d)
+2025-07-16 14:43:16,574 - ERROR - 嘗試 3：^DJI 數據不足
+2025-07-16 14:43:19,578 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 14:43:19,750 - ERROR - $^DJI: possibly delisted; No price data found  (period=5d)
+2025-07-16 14:43:19,750 - ERROR - 嘗試 4：^DJI 數據不足
+2025-07-16 14:43:22,755 - ERROR - Failed to get ticker '^DJI' reason: Expecting value: line 1 column 1 (char 0)
+2025-07-16 14:43:22,952 - ERROR - $^DJI: possibly delisted; No price data found  (period=5d)
+2025-07-16 14:43:22,953 - ERROR - 嘗試 5：^DJI 數據不足
+2025-07-16 14:43:22,953 - WARNING - 跳過 ^DJI，使用備用數據
+2025-07-16 14:43:22,953 - ERROR - Grok 3 API 失敗：Client.__init__() got an unexpected keyword argument 'proxies'
+2025-07-16 14:43:22,953 - INFO - 生成備用腳本
+2025-07-16 14:43:22,953 - INFO - 開始文字轉語音
+2025-07-16 14:43:23,031 - INFO - FFmpeg 版本：ffmpeg version 6.1.1-3ubuntu5 Copyright (c) 2000-2023 the FFmpeg developers
+2025-07-16 14:43:23,032 - INFO - 使用 gTTS 生成語音
+2025-07-16 14:43:23,032 - WARNING - 'zh-TW' has been deprecated, falling back to 'zh-TW'. This fallback will be removed in a future version.
+2025-07-16 14:43:29,795 - INFO - 臨時音頻檔案生成：audio/temp.mp3
+2025-07-16 14:43:29,795 - INFO - 處理音頻至 audio/episode_20250716.mp3
+2025-07-16 14:43:30,454 - INFO - 刪除臨時檔案：audio/temp.mp3
+2025-07-16 14:43:30,454 - INFO - 音頻生成成功：audio/episode_20250716.mp3
+2025-07-16 14:43:30,534 - INFO - 音頻檔案驗證通過：audio/episode_20250716.mp3
+2025-07-16 14:43:30,534 - INFO - 開始生成 RSS
+2025-07-16 14:43:30,535 - INFO - RSS 檔案更新成功
+2025-07-16 14:43:30,535 - INFO - 播客生成成功完成
