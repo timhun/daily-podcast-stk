@@ -276,7 +276,7 @@ def generate_rss(audio_file):
         fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
         fg.description('每日美股、ETF、比特幣、AI與經濟新聞，用台灣味聊投資')
         fg.language('zh-tw')
-        fg.itunes_type('serial')
+      #  fg.itunes_type('serial')
         
         date = datetime.now().strftime('%Y%m%d')
         fe = fg.add_entry()
@@ -284,7 +284,7 @@ def generate_rss(audio_file):
         fe.description('大叔帶你看美股、ETF、比特幣與最新財經動態！')
         fe.enclosure(url=f'https://timhun.github.io/daily-podcast-stk/audio/episode_{date}.mp3', type='audio/mpeg', length='45000000')
         fe.published(datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'))
-        fe.itunes_order(str(int(date)))
+      #  fe.itunes_order(str(int(date)))
         
         fg.rss_file('feed.xml')
         logger.info("RSS feed updated successfully")
