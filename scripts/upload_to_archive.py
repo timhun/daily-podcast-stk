@@ -41,12 +41,16 @@ with open(AUDIO_PATH, "rb") as audio_file:
         mp3_name: audio_file
     }
 
-    r = requests.post(
-        f"https://s3.us.archive.org/{identifier}",
-        auth=(ARCHIVE_EMAIL, ARCHIVE_PASSWORD),
-        files=files,
-        data=metadata
-    )
+r = requests.post(
+    f"https://s3.us.archive.org/{identifier}",
+    auth=(ARCHIVE_EMAIL, ARCHIVE_PASSWORD),
+    files=files,
+    data=metadata,
+    headers={
+        "Host": "s3.us.archive.org"
+    }
+)
+
 
     if r.status_code == 200:
         print("✅ 上傳成功！")
