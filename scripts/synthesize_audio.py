@@ -1,27 +1,29 @@
 import os
-import subprocess
+import asyncio
+from edge_tts import Communicate
 
-# 確保輸出資料夾存在
-os.makedirs('podcast/latest', exist_ok=True)
+# 確保資料夾存在
+os.makedirs("podcast/latest", exist_ok=True)
 
-input_file = 'podcast/latest/script.txt'
-output_file = 'podcast/latest/audio.mp3'
+input_path = "podcast/latest/script.txt"
+output_path = "podcast/latest/audio.mp3"
 
-# 確保 script.txt 存在
-if not os.path.exists(input_file):
+# 確認逐字稿存在
+if not os.path.exists(input_path):
     raise FileNotFoundError("⚠️ 找不到 script.txt，無法合成語音")
 
-# 讀取內容
-with open(input_file, 'r', encoding='utf-8') as f:
-    text = f.read()
+# 讀取逐字稿內容
+with open(input_path, "r", encoding="utf-8") as f:
+    text = f.read().strip()
 
-# 呼叫 edge-tts 合成語音（台灣男聲，語速+30%）
-subprocess.run([
-    'edge-tts',
-    '--voice', 'zh-TW-YunJheNeural',
-    '--rate', '+30%',
-    '--text', text,
-    '--write-media', output_file
-], check=True)
+# 語音設定
+VOICE = "zh-TW-YunJheNeural"   # 台灣男聲
+RATE = "+30%"                  # 語速加快 30%
 
-print("✅ 使用 edge-tts 已完成台灣口音語音合成 audio.mp3")
+async def main():
+    communicate = Communicate(text=text, voice=VOICE, rate=RATE)
+    await communicate.save(output_path)
+
+asyncio.run(main())
+
+print("✅ 已使用 edge-tts Python API 完成語音合成")
