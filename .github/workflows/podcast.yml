@@ -2,7 +2,7 @@ name: 每日自動產生 Podcast
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 台灣時間 06:00
+    - cron: '0 22 * * *'  # 台灣時間 06:00（UTC 22:00）
   workflow_dispatch:
 
 jobs:
@@ -26,11 +26,13 @@ jobs:
       - name: 複製音檔與逐字稿到 GitHub Pages 資料夾
         run: |
           today=$(date -u +"%Y%m%d")
+          mkdir -p podcast/$today
+          cp podcast/latest/script.txt podcast/$today/script.txt   # ✅ 從 latest 複製進 $today
           mkdir -p docs/podcast/$today
           cp podcast/$today/audio.mp3 docs/podcast/$today/audio.mp3
           cp podcast/$today/script.txt docs/podcast/$today/script.txt
 
-      - name: 產生 RSS feed（含所有歷史集數與主題摘要）
+      - name: 產生 RSS feed（含歷史集數、主題摘要與逐字稿）
         run: python scripts/generate_rss.py
 
       - name: Commit 並推送 GitHub Pages
@@ -38,5 +40,5 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add docs/podcast/* docs/rss/podcast.xml
-          git commit -m "更新 Podcast 音檔與 RSS feed"
+          git commit -m "更新 Podcast 音檔、逐字稿與 RSS feed"
           git push origin main
