@@ -23,8 +23,8 @@ prompt = f"""
 2. ETF：QQQ {market['QQQ']['close']}（{market['QQQ']['change']}%）、SPY、IBIT。
 3. 比特幣：{market['BTC']['close']} 美元、黃金：{market['Gold']['close']} 美元、十年美債殖利率：{market['US10Y']['close']}%。
 4. 熱門美股：{'、'.join(market['Top5'])}
-5. AI 新聞：{news_ai}
-6. 總經新聞：{news_macro}
+5. AI 與投資相關新聞：{news_ai}
+6. 美國總經新聞：{news_macro}
 7. 投資金句：{quote}
 
 請生成一段自然口語、方便語音播報的逐字稿，像廣播節目，不要條列式。
