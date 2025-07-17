@@ -302,7 +302,7 @@ def text_to_audio(script):
     
     try:
         # Verify edge-tts is installed
-        edge_tts_check = subprocess.run(['edge-tts', '--version'], capture_output=True, text=True)
+        edge_tts_check = subprocess.run(['edge-tts'], capture_output=True, text=True)
         if edge_tts_check.returncode != 0:
             logger.error(f"edge-tts not installed: {edge_tts_check.stderr}")
             return None
