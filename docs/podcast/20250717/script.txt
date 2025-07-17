@@ -1,9 +1,8 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link><description>每天更新的財經、科技、AI、投資語音節目</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><language>zh-TW</language><lastBuildDate>Thu, 17 Jul 2025 23:07:04 +0000</lastBuildDate><item><title>2025/07/17｜嘿，親愛的聽眾朋友們，歡迎回到我們的財經科技小站，我是你們的老朋友阿強。今天，咱們照舊來聊聊全球市場的最新動態，讓我們一起把脈股市，把握投資機會。 首先，讓我們</title><description>嘿，親愛的聽眾朋友們，歡迎回到我們的財經科技小站，我是你們的老朋友阿強。今天，咱們照舊來聊聊全球市場的最新動態，讓我們一起把脈股市，把握投資機會。
+嘿，親愛的聽眾朋友們，歡迎回到我們的財經科技小站，我是你們的老朋友阿強。今天，咱們照舊來聊聊全球市場的最新動態，讓我們一起把脈股市，把握投資機會。
 
 首先，讓我們來看看美股這邊的情況。道瓊工業平均指數收盤下跌了0.45%，報在33,735點。納斯達克綜合指數表現相對穩定，微幅上漲0.09%，收在11,426點。標準普爾500指數也是小幅下跌，跌幅0.14%，收在4,075點。至於費城半導體指數，則是下跌了0.78%，收在3,071點。整體來看，市場的波動並不算大，投資人們還是保持著謹慎的態度。
 
-接下來，讓我們聊聊ETF。QQQ這隻納斯達克100ETF，今天小幅上漲了0.05%，表現算是相對平穩。SPY這隻S&amp;P500ETF則是下跌了0.14%，跟指數差不多。至於IBIT這隻加密貨幣ETF，今天下跌了1.5%，看來加密貨幣市場還是有些動盪。
+接下來，讓我們聊聊ETF。QQQ這隻納斯達克100ETF，今天小幅上漲了0.05%，表現算是相對平穩。SPY這隻S&P500ETF則是下跌了0.14%，跟指數差不多。至於IBIT這隻加密貨幣ETF，今天下跌了1.5%，看來加密貨幣市場還是有些動盪。
 
 再來，讓我們簡單分析一下比特幣、黃金和十年期美債殖利率。比特幣價格今天下跌了2.3%，看來加密貨幣市場的波動還是挺大的。黃金價格則是小幅上漲了0.5%，近期的避險需求似乎有所上升。至於十年期美債殖利率，今天下降了2個基點，這可能意味著投資者對未來經濟的預期變得更加謹慎。
 
@@ -13,4 +12,4 @@
 
 好啦，今天的分享就到這裡。投資市場，總是有風有雨，但記住，耐心和信心是我們最好的武器。就像那句老話說的，“投資就像種樹，耐心等候，才能收穫滿滿。”希望大家都能在投資的道路上，越走越穩，越走越遠。謝謝大家的收聽，我們明天再見！
 
-（以上數據和公司名稱為示意，具體情況請參考實時市場數據。）</description><enclosure url="https://timhun.github.io/daily-podcast-stk/podcast/20250717/audio.mp3" length="844272" type="audio/mpeg"/><pubDate>Thu, 17 Jul 2025 00:00:00 +0000</pubDate></item></channel></rss>
+（以上數據和公司名稱為示意，具體情況請參考實時市場數據。）
