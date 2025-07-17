@@ -16,7 +16,7 @@ with open('podcast/latest/quote.txt') as f:
 
 # ========== 提示詞建構 ==========
 prompt = f"""
-你是一位 Podcast 節目編輯，要幫我撰寫一份 12 分鐘節目逐字稿，主題是「幫幫忙說財經科技投資」，口吻像台灣大叔，講話自然、親切、有點幽默。
+你是一位 Podcast 節目編輯，要幫我撰寫一份 15 分鐘節目逐字稿，主題是「幫幫忙說財經科技投資」，口吻像專業投資人，講話自然、親切、有點幽默，台灣慣用語。
 
 內容包括：
 1. 美股四大指數收盤：.DJI {market['.DJI']['close']}（{market['.DJI']['change']}%）、.IXIC {market['.IXIC']['close']}、.SPX {market['.SPX']['close']}、SOX {market['SOX']['close']}。
