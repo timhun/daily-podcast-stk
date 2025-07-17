@@ -1,26 +1,38 @@
 import os
-import requests
 import json
+from xai_sdk import Client
+from xai_sdk.chat import user, system
 
-def generate_script():
-    with open("data.json") as f:
-        market = json.load(f)
+with open('podcast/latest/market.json') as f:
+    market = json.load(f)
+with open('podcast/latest/news_ai.txt') as f:
+    news_ai = f.read()
+with open('podcast/latest/news_macro.txt') as f:
+    news_macro = f.read()
+with open('podcast/latest/quote.txt') as f:
+    quote = f.read()
 
-    prompt = f"""
-請幫我產出一篇 Podcast 的逐字稿，語氣自然親切像台灣的專業投資人，語速約 1.3 倍，內容要涵蓋：
-(1) 昨日美股四大指數 (.DJI, .IXIC, .SPX, SOX) 收盤與漲跌幅，
-(2) QQQ ETF 的表現與簡要分析。
-不要超過 1500 字。風格有點聊天但資訊正確。
-輸入資料如下：
-{json.dumps(market, ensure_ascii=False)}
+prompt = f"""
+你是台灣財經 Podcast 主持人，請用自然、親切的台灣專業投資人語氣，寫一篇約 15 分鐘逐字稿，內容包含：
+1. 美股四大指數 (.DJI, .IXIC, .SPX, SOX) 收盤/漲跌幅
+2. QQQ、SPY、IBIT ETF 漲跌幅與簡易分析
+3. 比特幣、黃金、十年美債數據/分析
+4. Top 5 熱門美股及資金流向
+5. 一則熱門AI新聞
+6. 一則美國總經新聞
+7. 投資金句結尾
+
+所有數據如下：
+美股/ETF: {market}
+AI新聞: {news_ai}
+總經: {news_macro}
+金句: {quote}
 """
 
-    response = requests.post("https://api.grok.example/generate",  # 替換為真實 API
-        headers={"Authorization": f"Bearer {os.environ['GROK_API_KEY']}"},
-        json={"prompt": prompt})
-    text = response.json().get("text", "")
-    with open("script.txt", "w", encoding="utf-8") as f:
-        f.write(text)
-
-if __name__ == "__main__":
-    generate_script()
+client = Client(api_key=os.getenv("XAI_API_KEY"), timeout=3600)
+chat = client.chat.create(model="grok-4")
+chat.append(system("你是Grok，一個高度智慧、親切有幫助的 Podcast 助理。"))
+chat.append(user(prompt))
+response = chat.sample()
+with open('podcast/latest/script.txt', 'w') as f:
+    f.write(response.content)
