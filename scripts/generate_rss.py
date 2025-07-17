@@ -1,47 +1,32 @@
 import os
+import requests
 from feedgen.feed import FeedGenerator
 from datetime import datetime
-from zoneinfo import ZoneInfo  # Python 3.9+ 內建
 
-os.makedirs('rss', exist_ok=True)
+# 從 upload_to_archive.py 輸出的檔案中讀取 archive.org mp3 連結
+with open("archive_audio_url.txt", "r") as f:
+    audio_url = f.read().strip()
 
-audio_path = 'podcast/latest/audio.mp3'
-script_path = 'podcast/latest/script.txt'
+# 使用 HEAD 請求取得音檔大小（byte）
+res = requests.head(audio_url)
+file_size = int(res.headers.get("Content-Length", 0))
 
-if not os.path.exists(audio_path) or not os.path.exists(script_path):
-    print('⚠️ 音檔或逐字稿不存在，無法產生 RSS')
-    exit(0)
-
+# 建立 RSS feed
 fg = FeedGenerator()
-fg.title('幫幫忙說財經科技投資')
-fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
-fg.description('每天15分鐘，帶你掌握最新美股、ETF、比特幣、AI 新聞與總經趨勢！')
-fg.language('zh-tw')
 fg.load_extension('podcast')
-fg.podcast.itunes_author('幫幫忙')
-fg.podcast.itunes_category('Business', 'Investing')
-fg.podcast.itunes_explicit('no')
-fg.podcast.itunes_image('https://timhun.github.io/daily-podcast-stk/img/cover.jpg')  # 請自行放 podcast_cover.jpg
-fg.podcast.itunes_owner(name='幫幫忙', email='tim.oneway@gmail.com')
 
-with open(script_path) as f:
-    summary = f.read()[:200]
+fg.title("幫幫忙說財經科技投資")  # 節目名稱
+fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self")
+fg.description("每天早上更新的財經、科技、AI、投資語音節目")  # 節目簡介
+fg.language("zh-TW")
 
-# 產生台灣時區的發佈時間
-tw_now = datetime.now(ZoneInfo("Asia/Taipei"))
+# 新增一集內容
 fe = fg.add_entry()
-fe.title(f'財經科技投資 Podcast - {tw_now.strftime("%Y-%m-%d")}')
-fe.description(summary)
-audio_path = "podcast/latest/audio.mp3"
-audio_url = "https://timhun.github.io/daily-podcast-stk/podcast/latest/audio.mp3"
-file_size = os.path.getsize(audio_path)
-
+today = datetime.today().strftime("%Y/%m/%d")
+fe.title(f"每日播報：{today}")
+fe.pubDate(datetime.now())
+fe.description("今天的財經科技投資重點播報")
 fe.enclosure(audio_url, file_size, "audio/mpeg")
 
-fe.pubDate(tw_now)
-fe.podcast.itunes_author('幫幫忙')
-fe.podcast.itunes_explicit('no')
-fe.podcast.itunes_duration("15:00")
-
-fg.rss_file('rss/podcast.xml')
-print('✅ RSS 產生完畢（台灣時區、含作者/信箱）')
+# 輸出 RSS 到指定位置（GitHub Pages 中的 rss 資料夾）
+fg.rss_file("docs/rss/podcast.xml")
