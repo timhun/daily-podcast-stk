@@ -1,29 +1,34 @@
 import os
-import asyncio
-from edge_tts import Communicate
+import re
+from feedgen.feed import FeedGenerator
+from datetime import datetime
 
-# 確保資料夾存在
-os.makedirs("podcast/latest", exist_ok=True)
+fg = FeedGenerator()
+fg.load_extension('podcast')
 
-input_path = "podcast/latest/script.txt"
-output_path = "podcast/latest/audio.mp3"
+fg.title("幫幫忙說財經科技投資")
+fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self")
+fg.description("每天更新的財經、科技、AI、投資語音節目")
+fg.language("zh-TW")
 
-# 確認逐字稿存在
-if not os.path.exists(input_path):
-    raise FileNotFoundError("⚠️ 找不到 script.txt，無法合成語音")
+# 掃描 docs/podcast/YYYYMMDD/audio.mp3
+podcast_root = "docs/podcast"
+date_dirs = sorted([d for d in os.listdir(podcast_root) if re.match(r'\d{8}', d)], reverse=True)
 
-# 讀取逐字稿內容
-with open(input_path, "r", encoding="utf-8") as f:
-    text = f.read().strip()
+for d in date_dirs:
+    audio_path = f"{podcast_root}/{d}/audio.mp3"
+    if os.path.exists(audio_path):
+        pub_date = datetime.strptime(d, "%Y%m%d")
+        url = f"https://timhun.github.io/daily-podcast-stk/podcast/{d}/audio.mp3"
+        file_size = os.path.getsize(audio_path)
 
-# 語音設定
-VOICE = "zh-TW-YunJheNeural"   # 台灣男聲
-RATE = "+30%"                  # 語速加快 30%
+        fe = fg.add_entry()
+        fe.title(f"每日播報：{pub_date.strftime('%Y/%m/%d')}")
+        fe.pubDate(pub_date)
+        fe.description("今天的財經科技投資重點播報")
+        fe.enclosure(url, file_size, "audio/mpeg")
 
-async def main():
-    communicate = Communicate(text=text, voice=VOICE, rate=RATE)
-    await communicate.save(output_path)
-
-asyncio.run(main())
-
-print("✅ 已使用 edge-tts Python API 完成語音合成")
+# 輸出 RSS
+os.makedirs("docs/rss", exist_ok=True)
+fg.rss_file("docs/rss/podcast.xml")
+print("✅ RSS feed 已更新，含所有歷史集數")
