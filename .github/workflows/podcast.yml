@@ -2,7 +2,7 @@ name: Daily Podcast Generation
 
 on:
   schedule:
-    - cron: '0 22 * * *' # 台灣06:00自動執行
+    - cron: '0 22 * * *' # 台灣早上06:00
   workflow_dispatch:
 
 jobs:
@@ -33,12 +33,10 @@ jobs:
       - name: Fetch Daily Quote
         run: python scripts/fetch_quote.py
 
-      - name: Generate Podcast Script (Grok)
-        env:
-          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+      - name: Generate Podcast Script (mock)
         run: python scripts/generate_script_grok.py
 
-      - name: Synthesize Audio
+      - name: Synthesize Audio (mock)
         run: python scripts/synthesize_audio.py
 
       - name: Generate RSS
@@ -48,12 +46,7 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add podcast/latest/ rss/podcast.xml
+          git add podcast/latest/ rss || true
+          git status
           git commit -m "Daily podcast update $(date '+%Y-%m-%d')" || echo "Nothing to commit"
           git push
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./podcast/latest/
