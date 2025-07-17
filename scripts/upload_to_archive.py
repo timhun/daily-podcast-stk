@@ -7,22 +7,21 @@ import re
 ARCHIVE_EMAIL = os.environ["ARCHIVE_EMAIL"]
 ARCHIVE_PASSWORD = os.environ["ARCHIVE_PASSWORD"]
 
-# 音檔位置
+# 檔案路徑
 AUDIO_PATH = "podcast/latest/audio.mp3"
+COVER_PATH = "img/cover.jpg"  # ← 你的封面圖路徑
 
-# 今日日期
+# 產生合法的 identifier
 today_str = datetime.datetime.utcnow().strftime("%Y%m%d")
-
-# 確保 identifier 合法（小寫、英數、dash）
 identifier_base = "daily-podcast-stk"
 identifier = re.sub(r'[^a-z0-9\-]', '', f"{identifier_base}-{today_str}".lower())
 
 print("🪪 上傳的 identifier 為：", identifier)
 
-# 檔案名稱
+# 檔名
 mp3_name = f"{identifier}.mp3"
 
-# 建立 metadata（可加上更多欄位）
+# 建立 metadata
 metadata = {
     "title": f"幫幫忙說財經科技投資 - {today_str}",
     "mediatype": "audio",
@@ -33,24 +32,24 @@ metadata = {
     "subject": "Podcast, 財經, AI, 投資, 科技, 中文, 每日"
 }
 
-# 🔼 開始上傳 mp3 檔案
-print("🔼 正在上傳 mp3 至 archive.org...")
+# 🔼 上傳 mp3 + 封面圖（確保縮排正確）
+print("🔼 正在上傳 mp3 與封面至 archive.org...")
 
-with open(AUDIO_PATH, "rb") as audio_file:
+with open(AUDIO_PATH, "rb") as audio_file, open(COVER_PATH, "rb") as cover_file:
     files = {
-        mp3_name: audio_file
+        mp3_name: audio_file,
+        "cover.jpg": cover_file
     }
 
-r = requests.post(
-    f"https://s3.us.archive.org/{identifier}",
-    auth=(ARCHIVE_EMAIL, ARCHIVE_PASSWORD),
-    files=files,
-    data=metadata,
-    headers={
-        "Host": "s3.us.archive.org"
-    }
-)
-
+    r = requests.post(
+        f"https://s3.us.archive.org/{identifier}",
+        auth=(ARCHIVE_EMAIL, ARCHIVE_PASSWORD),
+        files=files,
+        data=metadata,
+        headers={
+            "Host": "s3.us.archive.org"  # ← 修正 Virtual Host 錯誤
+        }
+    )
 
     if r.status_code == 200:
         print("✅ 上傳成功！")
@@ -58,7 +57,7 @@ r = requests.post(
         print("❌ 上傳失敗：", r.status_code, r.text)
         raise Exception("上傳 archive.org 失敗")
 
-# 📝 輸出 mp3 下載連結（給 generate_rss.py 使用）
+# 📝 輸出 mp3 URL 給 generate_rss.py 使用
 mp3_url = f"https://archive.org/download/{identifier}/{mp3_name}"
 with open("archive_audio_url.txt", "w") as f:
     f.write(mp3_url)
