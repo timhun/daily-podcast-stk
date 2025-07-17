@@ -32,13 +32,11 @@ tw_now = datetime.now(ZoneInfo("Asia/Taipei"))
 fe = fg.add_entry()
 fe.title(f'財經科技投資 Podcast - {tw_now.strftime("%Y-%m-%d")}')
 fe.description(summary)
-#fe.enclosure('https://timhun.github.io/daily-podcast-stk/podcast/latest/audio.mp3', 0, 'audio/mpeg')
-audio_path = 'podcast/latest/audio.mp3'
-audio_url = 'https://timhun.github.io/daily-podcast-stk/podcast/latest/audio.mp3'
+audio_path = "podcast/latest/audio.mp3"
+audio_url = "https://timhun.github.io/daily-podcast-stk/podcast/latest/audio.mp3"
 file_size = os.path.getsize(audio_path)
-#fe.enclosure(audio_url, file_size, 'audio/mpeg')
-#file_size = os.path.getsize(audio_path)  # ← 這是檔案大小，單位是byte
-fe.enclosure(audio_url, file_size, 'audio/mpeg')
+
+fe.enclosure(audio_url, file_size, "audio/mpeg")
 
 fe.pubDate(tw_now)
 fe.podcast.itunes_author('幫幫忙')
