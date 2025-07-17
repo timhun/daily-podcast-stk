@@ -1,56 +1,64 @@
 import os
-import json
 import requests
+import json
 
-# ========== 讀取資料 ==========
-os.makedirs('podcast/latest', exist_ok=True)
-
-with open('podcast/latest/market.json') as f:
-    market = json.load(f)
-with open('podcast/latest/news_ai.txt') as f:
-    news_ai = f.read()
-with open('podcast/latest/news_macro.txt') as f:
-    news_macro = f.read()
-with open('podcast/latest/quote.txt') as f:
-    quote = f.read()
-
-# ========== 提示詞建構 ==========
-prompt = f"""
-你是一位 Podcast 節目編輯，要幫我撰寫一份 15 分鐘節目逐字稿，主題是「幫幫忙說財經科技投資」，口吻像專業投資人，講話自然、親切、有點幽默，台灣慣用語。
-
-內容包括：
-1. 美股四大指數收盤：.DJI {market['.DJI']['close']}（{market['.DJI']['change']}%）、.IXIC {market['.IXIC']['close']}、.SPX {market['.SPX']['close']}、SOX {market['SOX']['close']}。
-2. ETF：QQQ {market['QQQ']['close']}（{market['QQQ']['change']}%）、SPY、IBIT。
-3. 比特幣：{market['BTC']['close']} 美元、黃金：{market['Gold']['close']} 美元、十年美債殖利率：{market['US10Y']['close']}%。
-4. 熱門美股：{'、'.join(market['Top5'])}
-5. AI工具與AI公司投資相關新聞：{news_ai}
-6. 美國總經新聞：{news_macro}
-7. 投資金句：{quote}
-
-請生成一段自然口語、方便語音播報的逐字稿，像廣播節目，不要條列式。
-"""
-
-# ========== 呼叫 Kimi API ==========
+# 讀取環境變數中的 Kimi API 金鑰
 api_key = os.getenv("MOONSHOT_API_KEY")
 if not api_key:
     raise ValueError("請設定環境變數 MOONSHOT_API_KEY")
 
-headers = {
-    "Authorization": f"Bearer {api_key}",
-    "Content-Type": "application/json"
-}
-payload = {
-    "model": "moonshot-v1-128k",
-    "messages": [{"role": "user", "content": prompt}],
-    "temperature": 0.7
-}
-response = requests.post("https://api.moonshot.cn/v1/chat/completions", headers=headers, json=payload)
-response.raise_for_status()
+# 輸出逐字稿的路徑
+os.makedirs("podcast/latest", exist_ok=True)
+output_path = "podcast/latest/script.txt"
 
-text = response.json()['choices'][0]['message']['content']
+# 繁體中文 prompt：請 Kimi 撰寫完整 Podcast 播報逐字稿
+prompt = """你是一位財經科技主持人，請用繁體中文撰寫一段每日 Podcast 播報逐字稿，語氣自然、親切、有點台灣中年大叔的口吻。
 
-# ========== 輸出 ==========
-with open('podcast/latest/script.txt', 'w') as f:
-    f.write(text)
+內容請包含：
+1. 今日美股四大指數（道瓊、NASDAQ、S&P500、費半）收盤與漲跌幅
+2. QQQ、SPY、IBIT ETF 變化簡評
+3. 比特幣、黃金、十年期美債殖利率簡析
+4. 熱門美股與資金流向概況
+5. 一則熱門 AI工具，公司或AI投資機會
+6. 最後加一句投資鼓勵語或金句，溫暖收尾
 
-print("✅ Kimi 已生成逐字稿")
+注意事項：
+- 內容請使用繁體中文撰寫
+- 語氣口語化、自然，有生活感
+- 長度控制在 800～1200 字左右
+- 不要輸出任何系統說明或 JSON 格式，僅輸出逐字稿正文"""
+
+# 呼叫 Moonshot API（Kimi）
+response = requests.post(
+    url="https://api.moonshot.cn/v1/chat/completions",
+    headers={
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    },
+    json={
+        "model": "moonshot-v1-128k",
+        "messages": [
+            {"role": "system", "content": "你是專業的 Podcast 撰稿助手"},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.7,
+        "max_tokens": 2048,
+        "top_p": 0.95
+    }
+)
+
+# 解析回應
+if response.status_code == 200:
+    result = response.json()
+    script_text = result["choices"][0]["message"]["content"].strip()
+
+    # 儲存逐字稿內容
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(script_text)
+
+    print("✅ 成功產生 Podcast 逐字稿")
+    print("📄 儲存於：", output_path)
+else:
+    print("❌ 產生逐字稿失敗")
+    print(response.status_code, response.text)
+    raise RuntimeError("Kimi API 回傳錯誤")
