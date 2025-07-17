@@ -1,9 +1,8 @@
 name: Daily Podcast Generation
 
-
 on:
   schedule:
-    - cron: '0 22 * * *' # 台灣早上06:00
+    - cron: '0 22 * * *' # 台灣時間 06:00
   workflow_dispatch:
 
 jobs:
@@ -11,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -19,8 +18,10 @@ jobs:
         with:
           python-version: 3.11
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Install Dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install edge-tts
 
       - name: Fetch Market Data
         run: python scripts/fetch_market_data.py
@@ -34,16 +35,18 @@ jobs:
       - name: Fetch Daily Quote
         run: python scripts/fetch_quote.py
 
-      - name: Generate Podcast Script (Kimi)
+      - name: Generate Script using Kimi
         run: python scripts/generate_script_kimi.py
+        env:
+          MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
 
-      - name: Synthesize Audio (mock)
+      - name: Synthesize Audio using edge-tts
         run: python scripts/synthesize_audio.py
 
       - name: Generate RSS
         run: python scripts/generate_rss.py
 
-      - name: Commit and Push
+      - name: Commit and Push Updates
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
