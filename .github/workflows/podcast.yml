@@ -1,4 +1,4 @@
-name: 每日自動產生 Podcast
+name: Daily Podcast
 
 on:
   schedule:
@@ -16,10 +16,12 @@ jobs:
       - name: 安裝 Python 套件
         run: pip install feedgen requests
 
-      - name: 產生每日腳本與音檔（這部分請依你的流程自行決定）
+      - name: 產生每日腳本與音檔（Kimi + 語音合成）
         run: |
           python scripts/generate_script_kimi.py
           python scripts/synthesize_audio.py
+        env:
+          MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
 
       - name: 上傳 mp3 到 archive.org
         run: python scripts/upload_to_archive.py
