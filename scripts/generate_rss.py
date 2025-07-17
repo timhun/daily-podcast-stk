@@ -1,32 +1,34 @@
 import os
+import re
 from feedgen.feed import FeedGenerator
 from datetime import datetime
 
-# 設定音檔位置與 GitHub Pages 上的網址
-audio_path = "podcast/latest/audio.mp3"
-audio_url = "https://timhun.github.io/daily-podcast-stk/podcast/latest/audio.mp3"
-
-# 取得檔案大小（用於 RSS enclosure）
-file_size = os.path.getsize(audio_path)
-
-# 建立 RSS feed
 fg = FeedGenerator()
 fg.load_extension('podcast')
 
 fg.title("幫幫忙說財經科技投資")
 fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self")
-fg.description("每天早上更新的財經、科技、AI、投資語音節目")
+fg.description("每天更新的財經、科技、AI、投資語音節目")
 fg.language("zh-TW")
 
-# 新增一集
-fe = fg.add_entry()
-today = datetime.today().strftime("%Y/%m/%d")
-fe.title(f"每日播報：{today}")
-fe.pubDate(datetime.now())
-fe.description("今天的財經科技投資重點播報")
-fe.enclosure(audio_url, file_size, "audio/mpeg")
+# 掃描 docs/podcast/YYYYMMDD/audio.mp3
+podcast_root = "docs/podcast"
+date_dirs = sorted([d for d in os.listdir(podcast_root) if re.match(r'\d{8}', d)], reverse=True)
 
-# 輸出 RSS 檔案到 GitHub Pages 專用的 docs 目錄
+for d in date_dirs:
+    audio_path = f"{podcast_root}/{d}/audio.mp3"
+    if os.path.exists(audio_path):
+        pub_date = datetime.strptime(d, "%Y%m%d")
+        url = f"https://timhun.github.io/daily-podcast-stk/podcast/{d}/audio.mp3"
+        file_size = os.path.getsize(audio_path)
+
+        fe = fg.add_entry()
+        fe.title(f"每日播報：{pub_date.strftime('%Y/%m/%d')}")
+        fe.pubDate(pub_date)
+        fe.description("今天的財經科技投資重點播報")
+        fe.enclosure(url, file_size, "audio/mpeg")
+
+# 輸出 RSS
+os.makedirs("docs/rss", exist_ok=True)
 fg.rss_file("docs/rss/podcast.xml")
-
-print("✅ RSS feed 已輸出完成")
+print("✅ RSS feed 已更新，含所有歷史集數")
