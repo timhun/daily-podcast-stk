@@ -34,8 +34,8 @@ jobs:
       - name: Fetch Daily Quote
         run: python scripts/fetch_quote.py
 
-      - name: Generate Podcast Script (mock)
-        run: python scripts/generate_script_grok.py
+      - name: Generate Podcast Script (Kimi)
+        run: python scripts/generate_script_kimi.py
 
       - name: Synthesize Audio (mock)
         run: python scripts/synthesize_audio.py
