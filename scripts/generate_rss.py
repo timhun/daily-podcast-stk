@@ -1,8 +1,8 @@
 import os
+os.makedirs('rss', exist_ok=True)
+
 from feedgen.feed import FeedGenerator
 from datetime import datetime
-
-os.makedirs('rss', exist_ok=True)
 
 audio_path = 'podcast/latest/audio.mp3'
 script_path = 'podcast/latest/script.txt'
