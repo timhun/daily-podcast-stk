@@ -15,7 +15,10 @@ jobs:
 
       - name: 安裝 Python 套件
         run: pip install feedgen requests
-
+        
+      - name: 安裝 edge-tts
+        run: pip install edge-tts
+  
       - name: 產生每日腳本與音檔（Kimi + 語音合成）
         run: |
           python scripts/generate_script_kimi.py
