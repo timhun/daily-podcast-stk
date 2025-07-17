@@ -17,7 +17,7 @@ fg.load_extension('podcast')
 
 fg.title("幫幫忙說財經科技投資")  # 節目名稱
 fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self")
-fg.description("每天早上更新的財經、科技、AI、投資語音節目")  # 節目簡介
+fg.description("每天早上更新的財經、科技、AI投資語音節目")  # 節目簡介
 fg.language("zh-TW")
 
 # 新增一集內容
