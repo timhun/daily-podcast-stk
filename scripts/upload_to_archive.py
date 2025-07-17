@@ -8,8 +8,11 @@ ARCHIVE_PASSWORD = os.environ["ARCHIVE_PASSWORD"]
 AUDIO_PATH = "podcast/latest/audio.mp3"
 
 # identifier = 範例：daily-podcast-stk-20250717
+import re
 today_str = datetime.datetime.utcnow().strftime("%Y%m%d")
-identifier = f"daily-podcast-stk-{today_str}"
+identifier_base = "daily-podcast-stk"
+identifier = re.sub(r'[^a-z0-9\-]', '', f"{identifier_base}-{today_str}".lower())
+print("🪪 上傳的 identifier 為：", identifier)
 
 # 建立 metadata
 metadata = {
