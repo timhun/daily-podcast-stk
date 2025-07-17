@@ -21,12 +21,13 @@ fg.load_extension('podcast')
 fg.podcast.itunes_author('幫幫忙')
 fg.podcast.itunes_category('Business', 'Investing')
 fg.podcast.itunes_explicit('no')
-fg.podcast.itunes_image('https://timhun.github.io/daily-podcast-stk/img/cover.jpg')  # 記得換成你的封面圖
+fg.podcast.itunes_image('https://timhun.github.io/daily-podcast-stk/img/cover.jpg')  # 請自行放 podcast_cover.jpg
 fg.podcast.itunes_owner(name='幫幫忙', email='tim.oneway@gmail.com')
 
 with open(script_path) as f:
     summary = f.read()[:200]
 
+# 產生台灣時區的發佈時間
 tw_now = datetime.now(ZoneInfo("Asia/Taipei"))
 fe = fg.add_entry()
 fe.title(f'財經科技投資 Podcast - {tw_now.strftime("%Y-%m-%d")}')
