@@ -22,7 +22,7 @@ fg.load_extension('podcast')
 fg.podcast.itunes_author('幫幫忙')
 fg.podcast.itunes_category('Business', 'Investing')
 fg.podcast.itunes_explicit('no')
-fg.podcast.itunes_image('https://timhun.github.io/daily-podcast-stk/podcast_cover.jpg')  # 建議放你的封面圖
+fg.podcast.itunes_image('https://timhun.github.io/daily-podcast-stk/img/cover.jpg')  # 建議放你的封面圖
 fg.podcast.itunes_owner(name=' 幫幫忙', email='tim.oneway@gmail.com')
 
 with open(script_path) as f:
