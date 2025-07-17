@@ -36,4 +36,4 @@ jobs:
           git config --global user.email 'github-actions@github.com'
           git add docs/rss/podcast.xml
           git commit -m "每日更新 podcast.xml"
-          git push
+          git push origin main
