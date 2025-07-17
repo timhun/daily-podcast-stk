@@ -1,29 +1,13 @@
-from google.cloud import texttospeech
-import datetime
+import subprocess
 
-def synthesize():
-    with open("script.txt", "r", encoding="utf-8") as f:
-        text = f.read()
+script_file = "podcast/latest/script.txt"
+audio_file = "podcast/latest/audio.mp3"
+with open(script_file) as f:
+    content = f.read()
 
-    client = texttospeech.TextToSpeechClient()
-    input_text = texttospeech.SynthesisInput(text=text)
-
-    voice = texttospeech.VoiceSelectionParams(
-        language_code="cmn-TW", name="cmn-TW-Standard-A"
-    )
-
-    audio_config = texttospeech.AudioConfig(
-        speaking_rate=1.3,
-        audio_encoding=texttospeech.AudioEncoding.MP3
-    )
-
-    response = client.synthesize_speech(
-        input=input_text, voice=voice, audio_config=audio_config
-    )
-
-    date = datetime.date.today().isoformat()
-    with open(f"episodes/{date}.mp3", "wb") as out:
-        out.write(response.audio_content)
-
-if __name__ == "__main__":
-    synthesize()
+subprocess.run([
+    "edge-tts", "--voice", "zh-TW-YunJheNeural",
+    "--rate=+30%",
+    "--text", content,
+    "--output", audio_file
+])
