@@ -23,19 +23,20 @@ jobs:
         env:
           MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
 
-      - name: 複製音檔到 GitHub Pages 日期資料夾
+      - name: 複製音檔與逐字稿到日期資料夾
         run: |
           today=$(date -u +"%Y%m%d")
           mkdir -p docs/podcast/$today
           cp podcast/$today/audio.mp3 docs/podcast/$today/audio.mp3
+          cp podcast/latest/script.txt podcast/$today/script.txt
 
-      - name: 產生 RSS feed（含所有歷史集數）
+      - name: 產生 RSS feed（含所有歷史集數與逐字稿）
         run: python scripts/generate_rss.py
 
       - name: Commit 並推送 GitHub Pages
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add docs/podcast/*/audio.mp3 docs/rss/podcast.xml
+          git add docs/podcast/*/audio.mp3 podcast/*/script.txt docs/rss/podcast.xml
           git commit -m "更新 Podcast 音檔與 RSS feed"
           git push origin main
