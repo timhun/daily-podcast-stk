@@ -1,6 +1,9 @@
+import os
 import json
 
-# 完全 mock 假資料，隨便可調
+# 自動建立目錄
+os.makedirs('podcast/latest', exist_ok=True)
+
 data = {
     ".DJI": {"close": 40000, "change": 0.25},
     ".IXIC": {"close": 18000, "change": 0.4},
