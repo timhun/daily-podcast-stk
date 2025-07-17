@@ -1,26 +1,24 @@
 import os
-import requests
 from feedgen.feed import FeedGenerator
 from datetime import datetime
 
-# 從 upload_to_archive.py 輸出的檔案中讀取 archive.org mp3 連結
-with open("archive_audio_url.txt", "r") as f:
-    audio_url = f.read().strip()
+# 設定音檔位置與 GitHub Pages 上的網址
+audio_path = "podcast/latest/audio.mp3"
+audio_url = "https://timhun.github.io/daily-podcast-stk/podcast/latest/audio.mp3"
 
-# 使用 HEAD 請求取得音檔大小（byte）
-res = requests.head(audio_url)
-file_size = int(res.headers.get("Content-Length", 0))
+# 取得檔案大小（用於 RSS enclosure）
+file_size = os.path.getsize(audio_path)
 
 # 建立 RSS feed
 fg = FeedGenerator()
 fg.load_extension('podcast')
 
-fg.title("幫幫忙說財經科技投資")  # 節目名稱
+fg.title("幫幫忙說財經科技投資")
 fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self")
-fg.description("每天早上更新的財經、科技、AI投資語音節目")  # 節目簡介
+fg.description("每天早上更新的財經、科技、AI、投資語音節目")
 fg.language("zh-TW")
 
-# 新增一集內容
+# 新增一集
 fe = fg.add_entry()
 today = datetime.today().strftime("%Y/%m/%d")
 fe.title(f"每日播報：{today}")
@@ -28,5 +26,7 @@ fe.pubDate(datetime.now())
 fe.description("今天的財經科技投資重點播報")
 fe.enclosure(audio_url, file_size, "audio/mpeg")
 
-# 輸出 RSS 到指定位置（GitHub Pages 中的 rss 資料夾）
+# 輸出 RSS 檔案到 GitHub Pages 專用的 docs 目錄
 fg.rss_file("docs/rss/podcast.xml")
+
+print("✅ RSS feed 已輸出完成")
