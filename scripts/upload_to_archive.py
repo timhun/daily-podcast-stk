@@ -6,7 +6,7 @@ import re
 # 讀取帳號資訊
 ARCHIVE_EMAIL = os.environ["ARCHIVE_EMAIL"]
 ARCHIVE_PASSWORD = os.environ["ARCHIVE_PASSWORD"]
-
+print("DEBUG帳號：", ARCHIVE_EMAIL)
 # 檔案路徑
 AUDIO_PATH = "podcast/latest/audio.mp3"
 COVER_PATH = "img/cover.jpg"
