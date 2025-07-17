@@ -2,7 +2,7 @@ name: 每日自動產生 Podcast
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 台灣時間每天早上 06:00（UTC+8）
+    - cron: '0 22 * * *'  # 台灣時間 06:00
   workflow_dispatch:
 
 jobs:
@@ -16,25 +16,26 @@ jobs:
       - name: 安裝 Python 套件
         run: pip install feedgen requests edge-tts
 
-      - name: 產生每日腳本與音檔（Kimi + edge-tts）
+      - name: 產生每日腳本與語音
         run: |
           python scripts/generate_script_kimi.py
           python scripts/synthesize_audio.py
         env:
           MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
 
-      - name: 複製 mp3 到 GitHub Pages 目錄
+      - name: 複製音檔到 GitHub Pages 日期資料夾
         run: |
-          mkdir -p docs/podcast/latest
-          cp podcast/latest/audio.mp3 docs/podcast/latest/audio.mp3
+          today=$(date -u +"%Y%m%d")
+          mkdir -p docs/podcast/$today
+          cp podcast/$today/audio.mp3 docs/podcast/$today/audio.mp3
 
-      - name: 產生 RSS feed
+      - name: 產生 RSS feed（含所有歷史集數）
         run: python scripts/generate_rss.py
 
-      - name: Commit 並推送 GitHub Pages 更新
+      - name: Commit 並推送 GitHub Pages
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add docs/podcast/latest/audio.mp3 docs/rss/podcast.xml
-          git commit -m "每日更新 Podcast 音檔與 RSS feed"
+          git add docs/podcast/*/audio.mp3 docs/rss/podcast.xml
+          git commit -m "更新 Podcast 音檔與 RSS feed"
           git push origin main
