@@ -1,10 +1,15 @@
+import os
 import requests
+from bs4 import BeautifulSoup
+
+os.makedirs('podcast/latest', exist_ok=True)
 
 try:
-    resp = requests.get("https://api.thenewsapi.com/v1/news/all?api_token=demo&language=zh&categories=business")
-    news = resp.json()["data"][0]["title"] + "\n" + resp.json()["data"][0]["description"]
+    r = requests.get("https://www.bing.com/news/search?q=美國+經濟", timeout=10)
+    soup = BeautifulSoup(r.text, "html.parser")
+    article = soup.find("a", {"class": "title"})
+    title = article.text.strip() if article else "找不到最新總經新聞"
 except Exception:
-    news = "美國通膨降溫、聯準會利率維持不變，市場觀望。"
-
-with open("podcast/latest/news_macro.txt", "w") as f:
-    f.write(news)
+    title = "總經新聞服務異常，請明天再試"
+with open('podcast/latest/news_macro.txt', 'w') as f:
+    f.write(title)
