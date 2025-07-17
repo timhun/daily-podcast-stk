@@ -1,8 +1,8 @@
-name: Daily Podcast Generation
+name: 每日自動產生 Podcast
 
 on:
   schedule:
-    - cron: '0 22 * * *' # 台灣時間 06:00
+    - cron: '0 22 * * *'  # 台灣時間每天早上 06:00（UTC+8）
   workflow_dispatch:
 
 jobs:
@@ -10,47 +10,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: 取得 GitHub 專案程式碼
+        uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: 3.11
+      - name: 安裝 Python 套件
+        run: pip install feedgen requests
 
-      - name: Install Dependencies
+      - name: 產生每日腳本與音檔（這部分請依你的流程自行決定）
         run: |
-          pip install -r requirements.txt
-          pip install edge-tts
+          python scripts/generate_script_kimi.py
+          python scripts/synthesize_audio.py
 
-      - name: Fetch Market Data
-        run: python scripts/fetch_market_data.py
-
-      - name: Fetch AI News
-        run: python scripts/fetch_news_ai.py
-
-      - name: Fetch Macro News
-        run: python scripts/fetch_news_macro.py
-
-      - name: Fetch Daily Quote
-        run: python scripts/fetch_quote.py
-
-      - name: Generate Script using Kimi
-        run: python scripts/generate_script_kimi.py
+      - name: 上傳 mp3 到 archive.org
+        run: python scripts/upload_to_archive.py
         env:
-          MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+          ARCHIVE_EMAIL: ${{ secrets.ARCHIVE_EMAIL }}
+          ARCHIVE_PASSWORD: ${{ secrets.ARCHIVE_PASSWORD }}
 
-      - name: Synthesize Audio using edge-tts
-        run: python scripts/synthesize_audio.py
-
-      - name: Generate RSS
+      - name: 產生 RSS feed（含 archive.org 音檔連結）
         run: python scripts/generate_rss.py
 
-      - name: Commit and Push Updates
+      - name: Commit 更新後的 RSS feed
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add podcast/latest/ rss || true
-          git status
-          git commit -m "Daily podcast update $(date '+%Y-%m-%d')" || echo "Nothing to commit"
+          git add docs/rss/podcast.xml
+          git commit -m "每日更新 podcast.xml"
           git push
