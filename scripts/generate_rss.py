@@ -2,6 +2,11 @@ import os
 import re
 from feedgen.feed import FeedGenerator
 from datetime import datetime, timezone
+from mutagen.mp3 import MP3
+
+output_path = "docs/rss/podcast.xml"
+rss_url = "https://timhun.github.io/daily-podcast-stk/rss/podcast.xml"
+cover_url = "https://timhun.github.io/daily-podcast-stk/img/cover.jpg"
 
 fg = FeedGenerator()
 fg.load_extension('podcast')
@@ -12,21 +17,17 @@ fg.link(href="https://timhun.github.io/daily-podcast-stk", rel="alternate")
 fg.description("每天更新的財經、科技、AI、投資語音節目")
 fg.language("zh-TW")
 fg.author({"name": "幫幫忙", "email": "no-reply@timhun.github.io"})
-fg.image("https://timhun.github.io/daily-podcast-stk/img/cover.jpg")
+fg.image(cover_url)
 
-# Apple Podcasts 必備欄位
+# Apple 專屬欄位
 fg.podcast.itunes_author("幫幫忙")
 fg.podcast.itunes_summary("每天更新的財經、科技、AI、投資語音節目，由幫幫忙主持。")
 fg.podcast.itunes_owner(name="幫幫忙", email="no-reply@timhun.github.io")
-fg.podcast.itunes_image("https://timhun.github.io/daily-podcast-stk/img/cover.jpg")
+fg.podcast.itunes_image(cover_url)
 fg.podcast.itunes_category("Business", "Investing")
 fg.podcast.itunes_explicit("no")
 
-# ✅ 兼容方式手動補 atom:link
-fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self", type="application/rss+xml")
-fg._feed.attrib['xmlns:atom'] = 'http://www.w3.org/2005/Atom'  # ⚠ 需使用 _feed
-
-# 歷史集數
+# 建立集數
 podcast_root = "docs/podcast"
 date_dirs = sorted(
     [d for d in os.listdir(podcast_root) if re.match(r'\d{8}', d)],
@@ -40,6 +41,17 @@ for d in date_dirs:
         pub_date = datetime.strptime(d, "%Y%m%d").replace(tzinfo=timezone.utc)
         url = f"https://timhun.github.io/daily-podcast-stk/podcast/{d}/audio.mp3"
         file_size = os.path.getsize(audio_path)
+
+        # 取得語音時長
+        try:
+            audio = MP3(audio_path)
+            duration_sec = int(audio.info.length)
+            h = duration_sec // 3600
+            m = (duration_sec % 3600) // 60
+            s = duration_sec % 60
+            duration_str = f"{h:02}:{m:02}:{s:02}" if h > 0 else f"{m:02}:{s:02}"
+        except Exception:
+            duration_str = None
 
         if os.path.exists(script_path):
             with open(script_path, "r", encoding="utf-8") as f:
@@ -60,8 +72,27 @@ for d in date_dirs:
         fe.pubDate(pub_date)
         fe.enclosure(url, file_size, "audio/mpeg")
         fe.guid(url)
+        if duration_str:
+            fe.podcast.itunes_duration(duration_str)
 
-# 輸出 RSS 檔案
+# 儲存 XML 檔案
 os.makedirs("docs/rss", exist_ok=True)
-fg.rss_file("docs/rss/podcast.xml")
-print("✅ RSS feed 已更新，支援 Apple Podcasts 所需欄位")
+fg.rss_file(output_path)
+
+# ✅ 後處理：插入 atom:link 與 xmlns:atom
+with open(output_path, "r", encoding="utf-8") as f:
+    rss = f.read()
+
+rss = rss.replace(
+    '<rss version="2.0"',
+    '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"'
+)
+rss = rss.replace(
+    "<channel>",
+    f"<channel>\n  <atom:link href=\"{rss_url}\" rel=\"self\" type=\"application/rss+xml\" />"
+)
+
+with open(output_path, "w", encoding="utf-8") as f:
+    f.write(rss)
+
+print("✅ RSS feed 已更新，含 itunes:duration 與 atom:link")
