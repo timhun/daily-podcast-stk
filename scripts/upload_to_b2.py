@@ -1,47 +1,45 @@
 import os
 import datetime
-from b2sdk.v2 import InMemoryAccountInfo, B2Api, UploadSourceBytes
+from b2sdk.v2 import InMemoryAccountInfo, B2Api
 
 # 讀取環境變數
-key_id = os.environ["B2_KEY_ID"]
-application_key = os.environ["B2_APPLICATION_KEY"]
+application_key_id = os.environ["B2_KEY_ID"]
+application_key = os.environ["B2_KEY"]
 bucket_name = os.environ["B2_BUCKET_NAME"]
 
-# 取得今天日期
-today_str = datetime.datetime.utcnow().strftime("%Y%m%d")
-folder = f"docs/podcast/{today_str}"
-filename_audio = "audio.mp3"
-filename_script = "script.txt"
-
-# 檢查檔案存在
-audio_path = os.path.join(folder, filename_audio)
-script_path = os.path.join(folder, filename_script)
-
-if not os.path.exists(audio_path):
-    raise FileNotFoundError("找不到 audio.mp3")
-
-if not os.path.exists(script_path):
-    raise FileNotFoundError("找不到 script.txt")
+# 日期
+today = datetime.datetime.utcnow().strftime("%Y%m%d")
+local_audio_path = f"docs/podcast/{today}/audio.mp3"
+local_script_path = f"docs/podcast/{today}/script.txt"
+remote_audio_filename = f"{today}.mp3"
+remote_script_filename = f"{today}.txt"
 
 # 初始化 B2
 info = InMemoryAccountInfo()
 b2_api = B2Api(info)
-b2_api.authorize_account("production", key_id, application_key)
+b2_api.authorize_account("production", application_key_id, application_key)
+
+# 取得 Bucket（此方法需 key 有權限）
 bucket = b2_api.get_bucket_by_name(bucket_name)
 
 # 上傳 audio.mp3
-with open(audio_path, "rb") as f:
-    bucket.upload_bytes(f.read(), f"podcast/{today_str}/{filename_audio}")
+if not os.path.exists(local_audio_path):
+    raise FileNotFoundError("❌ 找不到音檔 audio.mp3")
+
+with open(local_audio_path, "rb") as f:
+    bucket.upload_bytes(f.read(), remote_audio_filename)
     print("✅ audio.mp3 上傳成功")
 
 # 上傳 script.txt
-with open(script_path, "rb") as f:
-    bucket.upload_bytes(f.read(), f"podcast/{today_str}/{filename_script}")
-    print("✅ script.txt 上傳成功")
+if os.path.exists(local_script_path):
+    with open(local_script_path, "rb") as f:
+        bucket.upload_bytes(f.read(), remote_script_filename)
+        print("✅ script.txt 上傳成功")
+else:
+    print("⚠️ 找不到 script.txt，略過上傳")
 
-# 輸出公開音訊連結（給 RSS 用）
-public_url = f"https://f000.backblazeb2.com/file/{bucket_name}/podcast/{today_str}/{filename_audio}"
-with open(os.path.join(folder, "b2_audio_url.txt"), "w") as f:
-    f.write(public_url)
-
-print("📤 上傳完成，音訊網址：", public_url)
+# 儲存連結供 RSS 使用
+b2_url = f"https://f000.backblazeb2.com/file/{bucket_name}/{remote_audio_filename}"
+with open("b2_audio_url.txt", "w") as f:
+    f.write(b2_url)
+print("✅ B2 連結已儲存：", b2_url)
