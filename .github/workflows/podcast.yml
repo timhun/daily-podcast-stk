@@ -2,7 +2,7 @@ name: 每日自動產生 Podcast
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 台灣時間 06:00（UTC 22:00）
+    - cron: '0 22 * * *'  # 台灣時間 06:00
   workflow_dispatch:
 
 jobs:
@@ -13,8 +13,8 @@ jobs:
       - name: 取得 GitHub 專案程式碼
         uses: actions/checkout@v3
 
-      - name: 安裝 Python 套件
-        run: pip install feedgen requests edge-tts
+      - name: 安裝 Python 套件（含 feedgen 最新版）
+        run: pip install --upgrade feedgen requests edge-tts
 
       - name: 產生每日腳本與語音
         run: |
@@ -27,18 +27,18 @@ jobs:
         run: |
           today=$(date -u +"%Y%m%d")
           mkdir -p podcast/$today
-          cp podcast/latest/script.txt podcast/$today/script.txt   # ✅ 從 latest 複製進 $today
+          cp podcast/latest/script.txt podcast/$today/script.txt  # ✅ 儲存 script
           mkdir -p docs/podcast/$today
           cp podcast/$today/audio.mp3 docs/podcast/$today/audio.mp3
           cp podcast/$today/script.txt docs/podcast/$today/script.txt
 
-      - name: 產生 RSS feed（含歷史集數、主題摘要與逐字稿）
+      - name: 產生 RSS feed（含 Apple 所需欄位與歷史集數）
         run: python scripts/generate_rss.py
 
       - name: Commit 並推送 GitHub Pages
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add docs/podcast/* docs/rss/podcast.xml
+          git add docs/podcast/*/audio.mp3 docs/podcast/*/script.txt docs/rss/podcast.xml
           git commit -m "更新 Podcast 音檔、逐字稿與 RSS feed"
           git push origin main
