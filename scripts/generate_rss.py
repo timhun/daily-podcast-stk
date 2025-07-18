@@ -6,9 +6,6 @@ from datetime import datetime, timezone
 fg = FeedGenerator()
 fg.load_extension('podcast')
 
-# 必要的 RSS 命名空間（補上 atom）
-fg._feed.attrib['xmlns:atom'] = 'http://www.w3.org/2005/Atom'
-
 # 頻道基本資訊
 fg.title("幫幫忙說財經科技投資")
 fg.link(href="https://timhun.github.io/daily-podcast-stk", rel="alternate")
@@ -17,18 +14,22 @@ fg.language("zh-TW")
 fg.author({"name": "幫幫忙", "email": "no-reply@timhun.github.io"})
 fg.image("https://timhun.github.io/daily-podcast-stk/img/cover.jpg")
 
-# Apple 專用欄位
+# Apple Podcasts 必備欄位
 fg.podcast.itunes_author("幫幫忙")
 fg.podcast.itunes_summary("每天更新的財經、科技、AI、投資語音節目，由幫幫忙主持。")
 fg.podcast.itunes_owner(name="幫幫忙", email="no-reply@timhun.github.io")
 fg.podcast.itunes_image("https://timhun.github.io/daily-podcast-stk/img/cover.jpg")
 fg.podcast.itunes_category("Business", "Investing")
-fg.podcast.itunes_explicit("no")  # ✅ Apple 要求必填
+fg.podcast.itunes_explicit("no")  # ✅ 明確標記非露骨內容
 
-# atom:link self
-fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self", type="application/rss+xml")
+# ✅ atom:link 自動補 xmlns:atom
+fg.atom_link(
+    href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml",
+    rel="self",
+    type="application/rss+xml"
+)
 
-# 每一集
+# 遍歷所有歷史集數資料夾
 podcast_root = "docs/podcast"
 date_dirs = sorted(
     [d for d in os.listdir(podcast_root) if re.match(r'\d{8}', d)],
@@ -50,7 +51,7 @@ for d in date_dirs:
         else:
             script_text = "(未提供逐字稿)"
 
-        # 標題摘要
+        # 主題摘要當作標題
         lines = [line.strip() for line in script_text.splitlines() if line.strip()]
         if lines:
             summary_line = lines[0] + (" " + lines[1] if len(lines) > 1 else "")
@@ -63,9 +64,9 @@ for d in date_dirs:
         fe.description(script_text)
         fe.pubDate(pub_date)
         fe.enclosure(url, file_size, "audio/mpeg")
-        fe.guid(url)  # ✅ 每集唯一 ID
+        fe.guid(url)
 
-# 輸出 RSS
+# 輸出 RSS 檔案
 os.makedirs("docs/rss", exist_ok=True)
 fg.rss_file("docs/rss/podcast.xml")
-print("✅ RSS feed 已更新，支援 Apple Podcasts 所需欄位")
+print("✅ RSS feed 已更新，包含 Apple 所需欄位與逐字稿")
