@@ -73,6 +73,9 @@ else:
     print("❌ 上傳失敗：", res.status_code)
     print(res.text)
     raise Exception("上傳 archive.org 失敗")
+    
+print("🪪 Identifier:", identifier)
+print("🔗 預期網址：https://archive.org/download/{}/{}.mp3".format(identifier, identifier))
 
 # ✅ 儲存音訊連結供 generate_rss.py 使用
 archive_url = f"https://archive.org/download/{identifier}/{identifier}.mp3"
