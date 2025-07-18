@@ -14,7 +14,7 @@ if not ARCHIVE_EMAIL or not ARCHIVE_PASSWORD:
 today = datetime.datetime.utcnow().strftime("%Y%m%d")
 identifier = f"daily-podcast-stk-{today}"
 
-base_path = f"podcast/{today}"
+base_path = f"docs/podcast/{today}"
 audio_path = f"{base_path}/audio.mp3"
 script_path = f"{base_path}/script.txt"
 cover_path = "img/cover.jpg"
