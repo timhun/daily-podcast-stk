@@ -2,7 +2,7 @@ name: 每日自動產生 Podcast
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 台灣時間早上 06:00
+    - cron: '0 22 * * *'  # 台灣時間 06:00
   workflow_dispatch:
 
 jobs:
@@ -14,25 +14,26 @@ jobs:
         uses: actions/checkout@v3
 
       - name: 安裝 Python 套件
-        run: pip install feedgen requests edge-tts boto3
+        run: pip install feedgen requests edge-tts b2sdk
 
-      - name: 產生逐字稿與語音（儲存至 docs/）
+      - name: 產生每日腳本與語音
         run: |
           python scripts/generate_script_kimi.py
           python scripts/synthesize_audio.py
         env:
           MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
 
-      - name: 上傳至 archive.org（含 mp3 / script.txt / 封面）
-        run: python scripts/upload_to_archive.py
+      - name: 上傳音檔與逐字稿至 Backblaze B2
+        run: python scripts/upload_to_b2.py
         env:
-          ARCHIVE_ACCESS_KEY_ID: ${{ secrets.ARCHIVE_ACCESS_KEY_ID }}
-          ARCHIVE_SECRET_ACCESS_KEY: ${{ secrets.ARCHIVE_SECRET_ACCESS_KEY }}
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
 
-      - name: 產生 RSS feed（使用 archive.org 音訊連結）
+      - name: 產生 RSS feed（使用 B2 音檔連結）
         run: python scripts/generate_rss.py
 
-      - name: Commit 並推送 RSS Feed 更新
+      - name: Commit RSS 更新檔案
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
