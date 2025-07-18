@@ -4,7 +4,7 @@ from b2sdk.v2 import InMemoryAccountInfo, B2Api
 
 # 讀取環境變數
 key_id = os.environ["B2_KEY_ID"]
-app_key = os.environ["B2_APPLICATION_KEY"]
+app_key = os.environ["B2_KEY"]
 bucket_id = os.environ["B2_BUCKET_NAME"]  # 注意：此為 bucket "ID"（若使用限制 bucket 金鑰）
 
 # 日期字串
