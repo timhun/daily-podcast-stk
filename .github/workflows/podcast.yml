@@ -20,7 +20,7 @@ jobs:
 
       - name: 安裝 Python 套件
         run: |
-          pip install feedgen requests edge-tts mutagen yfinance
+          pip install feedgen requests edge-tts mutagen yfinance b2sdk
 
       - name: 產生逐字稿
         run: python scripts/generate_script_kimi.py
