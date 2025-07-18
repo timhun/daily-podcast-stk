@@ -16,33 +16,26 @@ jobs:
       - name: 安裝 Python 套件
         run: pip install feedgen requests edge-tts boto3
 
-      - name: 產生逐字稿與語音
+      - name: 產生逐字稿與語音（輸出直接寫入 docs/）
         run: |
           python scripts/generate_script_kimi.py
           python scripts/synthesize_audio.py
         env:
           MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
 
-      - name: 複製檔案到 GitHub Pages 目錄（含 script.txt / audio.mp3）
-        run: |
-          today=$(date -u +"%Y%m%d")
-          mkdir -p docs/podcast/$today
-          cp podcast/$today/script.txt docs/podcast/$today/script.txt
-          cp podcast/$today/audio.mp3 docs/podcast/$today/audio.mp3
-
-      - name: 上傳到 archive.org（使用 boto3）
+      - name: 上傳至 archive.org（使用 boto3）
         run: python scripts/upload_to_archive.py
         env:
           ARCHIVE_ACCESS_KEY_ID: ${{ secrets.ARCHIVE_ACCESS_KEY_ID }}
           ARCHIVE_SECRET_ACCESS_KEY: ${{ secrets.ARCHIVE_SECRET_ACCESS_KEY }}
 
-      - name: 產生 RSS feed（讀取 archive_audio_url.txt）
+      - name: 產生 RSS feed（讀取 archive_audio_url.txt 與逐字稿）
         run: python scripts/generate_rss.py
 
       - name: Commit 並推送到 GitHub Pages
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add docs/podcast/*/*.mp3 docs/podcast/*/*.txt docs/rss/podcast.xml
+          git add docs/podcast/*/*.mp3 docs/podcast/*/*.txt docs/podcast/*/*.jpg docs/rss/podcast.xml
           git commit -m "每日自動更新 Podcast 音檔與 RSS feed"
           git push origin main
