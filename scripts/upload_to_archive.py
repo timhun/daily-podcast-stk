@@ -1,21 +1,19 @@
 import os
 import re
 import datetime
-import requests
+import boto3
+from botocore.client import Config
 
-# 載入 AWS-S3 格式的 archive.org 憑證（可從 https://archive.org/account/s3.php 取得）
+# 載入憑證（從 GitHub Secrets 或 local 設定）
 ACCESS_KEY = os.getenv("ARCHIVE_ACCESS_KEY_ID")
 SECRET_KEY = os.getenv("ARCHIVE_SECRET_ACCESS_KEY")
 
 if not ACCESS_KEY or not SECRET_KEY:
-    raise ValueError("請設定環境變數 ARCHIVE_ACCESS_KEY_ID 和 ARCHIVE_SECRET_ACCESS_KEY")
+    raise ValueError("請設定環境變數 ARCHIVE_ACCESS_KEY_ID 與 ARCHIVE_SECRET_ACCESS_KEY")
 
-# 今天的日期與資料夾
+# 產生 DNS-safe identifier
 today = datetime.datetime.utcnow().strftime("%Y%m%d")
-local_dir = f"docs/podcast/{today}"
-docs_dir = f"docs/podcast/{today}"
 
-# DNS-safe identifier（符合 archive.org 要求）
 def to_dns_safe(s):
     s = s.lower()
     s = re.sub(r'[^a-z0-9\-]', '', s)
@@ -27,6 +25,7 @@ identifier = to_dns_safe(f"daily-podcast-stk-{today}")
 print("🪪 上傳的 identifier 為：", identifier)
 
 # 檔案路徑
+local_dir = f"docs/podcast/{today}"
 audio_path = os.path.join(local_dir, "audio.mp3")
 script_path = os.path.join(local_dir, "script.txt")
 cover_path = "img/cover.jpg"
@@ -38,44 +37,48 @@ if not os.path.exists(script_path):
 if not os.path.exists(cover_path):
     raise FileNotFoundError("找不到封面圖 img/cover.jpg")
 
-# 準備檔案與 metadata
-files = {
-    f"{identifier}.mp3": open(audio_path, "rb"),
-    f"{identifier}_script.txt": open(script_path, "rb"),
-    f"{identifier}_cover.jpg": open(cover_path, "rb"),
-}
-
-metadata = {
-    "title": f"幫幫忙說財經科技投資 - {today}",
-    "mediatype": "audio",
-    "collection": "opensource_audio",
-    "creator": "幫幫忙",
-    "description": "每日更新的財經科技 AI 投資播報節目，由幫幫忙主持",
-    "language": "zh",
-    "subject": "Podcast, Finance, AI, Investment, Tech, Daily"
-}
-
-print("🔼 正在上傳至 archive.org...")
-
-# 發送 POST 請求到 archive S3 API
-r = requests.post(
-    f"https://s3.us.archive.org/{identifier}",
-    auth=(ACCESS_KEY, SECRET_KEY),
-    files=files,
-    data=metadata
+# 建立 boto3 client（IA endpoint）
+s3 = boto3.client(
+    "s3",
+    endpoint_url="https://s3.us.archive.org",
+    aws_access_key_id=ACCESS_KEY,
+    aws_secret_access_key=SECRET_KEY,
+    config=Config(signature_version='s3')
 )
 
-# 結果處理
-if r.status_code == 200:
-    print("✅ 上傳成功！")
-    archive_url = f"https://archive.org/download/{identifier}/{identifier}.mp3"
+# 上傳檔案
+def upload_file(local_path, key):
+    print(f"📤 上傳 {key} 中...")
+    s3.upload_file(local_path, identifier, key)
 
-    os.makedirs(docs_dir, exist_ok=True)
-    with open(os.path.join(docs_dir, "archive_audio_url.txt"), "w") as f:
-        f.write(archive_url)
+upload_file(audio_path, f"{identifier}.mp3")
+upload_file(script_path, f"{identifier}_script.txt")
+upload_file(cover_path, f"{identifier}_cover.jpg")
 
-    print("📄 mp3 archive URL 已儲存至 archive_audio_url.txt")
-else:
-    print("❌ 上傳失敗：", r.status_code)
-    print(r.text)
-    raise Exception("上傳 archive.org 失敗")
+# 上傳 metadata
+print("📝 上傳 metadata.xml...")
+metadata_txt = f"""
+<metadata>
+  <title>幫幫忙說財經科技投資 - {today}</title>
+  <mediatype>audio</mediatype>
+  <collection>opensource_audio</collection>
+  <creator>幫幫忙</creator>
+  <language>zh</language>
+  <description>每日更新的財經科技 AI 投資語音節目</description>
+  <subject>Podcast, Finance, AI, Investment, Tech</subject>
+</metadata>
+""".strip()
+
+s3.put_object(
+    Bucket=identifier,
+    Key="metadata.xml",
+    Body=metadata_txt.encode("utf-8")
+)
+
+# 儲存 mp3 URL
+archive_url = f"https://archive.org/download/{identifier}/{identifier}.mp3"
+with open(os.path.join(local_dir, "archive_audio_url.txt"), "w") as f:
+    f.write(archive_url)
+
+print("✅ 全部上傳完成！")
+print("🔗 音檔網址：", archive_url)
