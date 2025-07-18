@@ -1,79 +1,68 @@
 import os
+import re
 import datetime
 from feedgen.feed import FeedGenerator
-from mutagen.mp3 import MP3
-from xml.etree import ElementTree as ET
+from mutagen.mp3 import MP3, HeaderNotFoundError
 
-# 設定參數
 base_url = "https://f005.backblazeb2.com/file/daily-podcast-stk"
-rss_path = "docs/rss/podcast.xml"
-audio_dir = "docs/podcast"
-cover_url = "https://timhun.github.io/daily-podcast-stk/img/cover.jpg"
+rss_output = "docs/rss/podcast.xml"
+cover_image_url = "https://timhun.github.io/daily-podcast-stk/img/cover.jpg"
+email = "tim.oneway@email.com"  # ✅ 請改為你的 Apple/Spotify 驗證 email
 
-# 建立 FeedGenerator
 fg = FeedGenerator()
-fg.load_extension("podcast")
-
+fg.load_extension('podcast')
+fg.id("https://timhun.github.io/daily-podcast-stk/rss/podcast.xml")
 fg.title("幫幫忙說財經科技投資")
+fg.author({"name": "幫幫忙", "email": email})
+fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self")
 fg.link(href="https://timhun.github.io/daily-podcast-stk/", rel="alternate")
-fg.description("每日 7 分鐘幫你掌握財經、科技、AI、投資新知。")
-fg.language("zh-tw")
-fg.pubDate(datetime.datetime.now(datetime.UTC))
-
-fg.generator("GitHub Actions")
-fg.podcast.itunes_author("幫幫忙")
-fg.podcast.itunes_owner(name="幫幫忙", email="timhun@gmail.com")
-fg.podcast.itunes_image(cover_url)
+fg.logo(cover_image_url)
+fg.image(cover_image_url)
+fg.language("zh-TW")
+fg.description("每日 AI 自動播報：財經、科技、投資、AI 工具，一次掌握")
 fg.podcast.itunes_category("Business", "Investing")
 fg.podcast.itunes_explicit("no")
 
-# 加入每一集
-dates = sorted(os.listdir(audio_dir), reverse=True)
-for date_str in dates:
-    episode_path = os.path.join(audio_dir, date_str)
-    audio_path = os.path.join(episode_path, "audio.mp3")
-    script_path = os.path.join(episode_path, "script.txt")
-
-    if not os.path.exists(audio_path) or not os.path.exists(script_path):
+# 依序加入每一集
+podcast_root = "docs/podcast"
+for folder in sorted(os.listdir(podcast_root), reverse=True):
+    folder_path = os.path.join(podcast_root, folder)
+    if not os.path.isdir(folder_path):
         continue
 
-    with open(script_path, encoding="utf-8") as f:
-        content = f.read().strip()
-    title = content.split("\n")[0][:50]
-    description = content[:300]
+    script_path = os.path.join(folder_path, "script.txt")
+    audio_path = os.path.join(folder_path, "audio.mp3")
+    if not os.path.exists(script_path) or not os.path.exists(audio_path):
+        print(f"⚠️ 缺少 script 或 mp3：{folder}")
+        continue
 
-    audio = MP3(audio_path)
-    duration_seconds = int(audio.info.length)
-    minutes = duration_seconds // 60
-    seconds = duration_seconds % 60
-    duration_str = f"{minutes}:{seconds:02d}"
+    # 嘗試解析 MP3 音訊長度
+    try:
+        audio = MP3(audio_path)
+        duration_sec = int(audio.info.length)
+    except HeaderNotFoundError:
+        print(f"⚠️ 無法解析 MP3 音訊：{audio_path}，跳過此集")
+        continue
+
+    # 讀取逐字稿前幾行作為標題與摘要
+    with open(script_path, encoding="utf-8") as f:
+        lines = f.readlines()
+    lines = [line.strip() for line in lines if line.strip()]
+    title = re.sub(r"[「」\"\']", "", lines[0])[:50] if lines else f"每日播報 - {folder}"
+    description = " ".join(lines[1:4])[:150] if len(lines) >= 2 else "自動播報財經科技內容"
+
+    # 組成 enclosure URL
+    mp3_url = f"{base_url}/daily-podcast-stk-{folder}.mp3"
 
     fe = fg.add_entry()
+    fe.id(mp3_url)
     fe.title(title)
     fe.description(description)
-    fe.link(href=f"{base_url}/daily-podcast-stk-{date_str}.mp3")
-    fe.enclosure(f"{base_url}/daily-podcast-stk-{date_str}.mp3", str(os.path.getsize(audio_path)), "audio/mpeg")
-    fe.guid(f"{base_url}/daily-podcast-stk-{date_str}.mp3", permalink=False)
-    fe.pubDate(datetime.datetime.strptime(date_str, "%Y%m%d").replace(tzinfo=datetime.timezone.utc))
-    fe.podcast.itunes_duration(duration_str)
-    fe.podcast.itunes_explicit("no")
+    fe.pubDate(datetime.datetime.strptime(folder, "%Y%m%d"))
+    fe.enclosure(mp3_url, 0, "audio/mpeg")
+    fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration_sec)))
 
-# 儲存為 XML 字串
-rss_str = fg.rss_str(pretty=True)
-root = ET.fromstring(rss_str)
-
-# 加入 <atom:link>
-atom_ns = "http://www.w3.org/2005/Atom"
-ET.register_namespace("atom", atom_ns)
-channel = root.find("channel")
-if channel is not None:
-    atom_link = ET.Element(f"{{{atom_ns}}}link", {
-        "href": "https://timhun.github.io/daily-podcast-stk/rss/podcast.xml",
-        "rel": "self",
-        "type": "application/rss+xml"
-    })
-    channel.insert(0, atom_link)
-
-# 儲存到檔案
-ET.ElementTree(root).write(rss_path, encoding="utf-8", xml_declaration=True)
-print(f"✅ 已產生 RSS Feed：{rss_path}")
+# 輸出 RSS 檔案
+os.makedirs(os.path.dirname(rss_output), exist_ok=True)
+fg.rss_file(rss_output, pretty=True)
+print(f"✅ RSS 產生完成：{rss_output}")
