@@ -3,3 +3,4 @@ feedgen
 xai-sdk
 edge-tts
 yfinance
+mutagen
