@@ -20,16 +20,13 @@ fg.podcast.itunes_summary("每天更新的財經、科技、AI、投資語音節
 fg.podcast.itunes_owner(name="幫幫忙", email="no-reply@timhun.github.io")
 fg.podcast.itunes_image("https://timhun.github.io/daily-podcast-stk/img/cover.jpg")
 fg.podcast.itunes_category("Business", "Investing")
-fg.podcast.itunes_explicit("no")  # ✅ 明確標記非露骨內容
+fg.podcast.itunes_explicit("no")
 
-# ✅ atom:link 自動補 xmlns:atom
-fg.atom_link(
-    href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml",
-    rel="self",
-    type="application/rss+xml"
-)
+# ✅ 兼容方式手動補 atom:link
+fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self", type="application/rss+xml")
+fg._feed.attrib['xmlns:atom'] = 'http://www.w3.org/2005/Atom'  # ⚠ 需使用 _feed
 
-# 遍歷所有歷史集數資料夾
+# 歷史集數
 podcast_root = "docs/podcast"
 date_dirs = sorted(
     [d for d in os.listdir(podcast_root) if re.match(r'\d{8}', d)],
@@ -44,14 +41,12 @@ for d in date_dirs:
         url = f"https://timhun.github.io/daily-podcast-stk/podcast/{d}/audio.mp3"
         file_size = os.path.getsize(audio_path)
 
-        # 讀取逐字稿
         if os.path.exists(script_path):
             with open(script_path, "r", encoding="utf-8") as f:
                 script_text = f.read().strip()
         else:
             script_text = "(未提供逐字稿)"
 
-        # 主題摘要當作標題
         lines = [line.strip() for line in script_text.splitlines() if line.strip()]
         if lines:
             summary_line = lines[0] + (" " + lines[1] if len(lines) > 1 else "")
@@ -69,4 +64,4 @@ for d in date_dirs:
 # 輸出 RSS 檔案
 os.makedirs("docs/rss", exist_ok=True)
 fg.rss_file("docs/rss/podcast.xml")
-print("✅ RSS feed 已更新，包含 Apple 所需欄位與逐字稿")
+print("✅ RSS feed 已更新，支援 Apple Podcasts 所需欄位")
