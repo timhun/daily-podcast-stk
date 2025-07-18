@@ -54,7 +54,8 @@ for d in date_dirs:
         script = "本集未提供逐字稿。"
 
     # 產生 enclosure 連結（Backblaze B2）
-    enclosure_url = f"https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-{d}.mp3"
+    # enclosure_url = f"https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-{d}.mp3"
+    enclosure_url = f"https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-{d}.mp3"
 
     # 加入 feed 項目
     fe = fg.add_entry()
