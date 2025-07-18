@@ -12,7 +12,7 @@ os.makedirs("podcast/latest", exist_ok=True)
 output_path = "podcast/latest/script.txt"
 
 # 繁體中文 prompt：請 Kimi 撰寫完整 Podcast 播報逐字稿
-prompt = """你是一位財經科技主持人，請用繁體中文撰寫一段每日 Podcast 播報逐字稿，語氣自然、親切、有點台灣中年大叔的口吻。
+prompt = """你是一位專業財經科技主持人，請用繁體中文撰寫一段每日 Podcast 播報逐字稿，語氣自然、親切、有點台灣中年大叔的口吻。
 
 內容請包含：
 1. 今日美股四大指數（道瓊、NASDAQ、S&P500、費半）收盤與漲跌幅
