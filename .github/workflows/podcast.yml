@@ -2,7 +2,7 @@ name: 每日自動產生 Podcast
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 台灣時間 06:00
+    - cron: '0 22 * * *'  # 每天台灣時間 06:00（UTC+8）
   workflow_dispatch:
 
 jobs:
@@ -13,32 +13,38 @@ jobs:
       - name: 取得 GitHub 專案程式碼
         uses: actions/checkout@v3
 
-      - name: 安裝 Python 套件（含 feedgen 最新版）
-        run: pip install --upgrade feedgen requests edge-tts mutagen
+      - name: 安裝 Python 套件
+        run: pip install feedgen requests edge-tts opencc
 
-      - name: 產生每日腳本與語音
+      - name: 產生每日逐字稿與語音
         run: |
           python scripts/generate_script_kimi.py
           python scripts/synthesize_audio.py
         env:
           MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
 
-      - name: 複製音檔與逐字稿到 GitHub Pages 資料夾
+      - name: 上傳 mp3 + script + 封面 到 archive.org
+        run: python scripts/upload_to_archive.py
+        env:
+          ARCHIVE_EMAIL: ${{ secrets.ARCHIVE_EMAIL }}
+          ARCHIVE_PASSWORD: ${{ secrets.ARCHIVE_PASSWORD }}
+
+      - name: 複製音檔與逐字稿到 docs/podcast/YYYYMMDD/
         run: |
           today=$(date -u +"%Y%m%d")
-          mkdir -p podcast/$today
-          cp podcast/latest/script.txt podcast/$today/script.txt  # ✅ 儲存 script
           mkdir -p docs/podcast/$today
           cp podcast/$today/audio.mp3 docs/podcast/$today/audio.mp3
           cp podcast/$today/script.txt docs/podcast/$today/script.txt
+          cp podcast/$today/archive_audio_url.txt docs/podcast/$today/archive_audio_url.txt
 
-      - name: 產生 RSS feed（含 Apple 所需欄位與歷史集數）
+      - name: 產生 RSS feed（使用 archive.org 連結與繁體逐字稿）
         run: python scripts/generate_rss.py
 
       - name: Commit 並推送 GitHub Pages
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add docs/podcast/*/audio.mp3 docs/podcast/*/script.txt docs/rss/podcast.xml
-          git commit -m "更新 Podcast 音檔、逐字稿與 RSS feed"
+          git add docs/podcast/* docs/rss/podcast.xml
+          git commit -m "每日更新 podcast 音檔、逐字稿與 RSS feed"
           git push origin main
+
