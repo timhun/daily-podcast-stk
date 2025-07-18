@@ -27,7 +27,7 @@ jobs:
         run: python scripts/upload_to_b2.py
         env:
           B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-          B2_KEY: ${{ secrets.B2_APPLICATION_KEY}}
+          B2_KEY: ${{ secrets.B2_KEY }}
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
 
       - name: 產生 RSS feed（改用 B2 連結）
