@@ -4,12 +4,13 @@ import asyncio
 from edge_tts import Communicate
 
 # 日期
-today_str = datetime.datetime.utcnow().strftime("%Y%m%d")
+today = datetime.datetime.utcnow().strftime("%Y%m%d")
 
 # 檔案路徑
-os.makedirs(f"podcast/{today_str}", exist_ok=True)
-input_path = "podcast/latest/script.txt"
-output_path = f"podcast/{today_str}/audio.mp3"
+base_dir = f"docs/podcast/{today}"
+script_path = f"{base_dir}/script.txt"
+audio_path = f"{base_dir}/audio.mp3"
+
 
 # 讀取逐字稿
 if not os.path.exists(input_path):
