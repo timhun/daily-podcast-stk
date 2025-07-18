@@ -19,7 +19,7 @@ with open(script_path, "r", encoding="utf-8") as f:
 
 # 合成語音參數
 VOICE = "zh-TW-YunJheNeural"
-RATE = "+30%"
+RATE = "+15%"
 
 # 使用 edge-tts 的 Python API 合成語音
 async def synthesize():
