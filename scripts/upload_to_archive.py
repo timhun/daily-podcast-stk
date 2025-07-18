@@ -3,65 +3,80 @@ import datetime
 import requests
 import re
 
-# 載入帳號
-ARCHIVE_EMAIL = os.environ.get("ARCHIVE_EMAIL")
-ARCHIVE_PASSWORD = os.environ.get("ARCHIVE_PASSWORD")
-
+# ✅ 檢查環境變數
+ARCHIVE_EMAIL = os.getenv("ARCHIVE_EMAIL")
+ARCHIVE_PASSWORD = os.getenv("ARCHIVE_PASSWORD")
 if not ARCHIVE_EMAIL or not ARCHIVE_PASSWORD:
-    raise ValueError("請設定環境變數 ARCHIVE_EMAIL / ARCHIVE_PASSWORD")
+    raise ValueError("請設定 ARCHIVE_EMAIL 與 ARCHIVE_PASSWORD 環境變數")
 
-# 取得今天日期與檔案路徑
+# ✅ 今日日期與資料夾
 today = datetime.datetime.utcnow().strftime("%Y%m%d")
-identifier = f"daily-podcast-stk-{today}"
+folder = f"docs/podcast/{today}"
+script_path = os.path.join(folder, "script.txt")
+audio_path = os.path.join(folder, "audio.mp3")
+cover_path = "img/cover.jpg"  # 使用專案內共用封面
 
-base_path = f"docs/podcast/{today}"
-audio_path = f"{base_path}/audio.mp3"
-script_path = f"{base_path}/script.txt"
-cover_path = "img/cover.jpg"
-
-# 檢查檔案
-if not os.path.exists(audio_path):
-    raise FileNotFoundError("找不到音訊檔案 audio.mp3")
+# ✅ 檢查檔案存在
 if not os.path.exists(script_path):
-    raise FileNotFoundError("找不到逐字稿 script.txt")
+    raise FileNotFoundError("❌ 找不到逐字稿 script.txt")
+if not os.path.exists(audio_path):
+    raise FileNotFoundError("❌ 找不到音檔 audio.mp3")
 if not os.path.exists(cover_path):
-    raise FileNotFoundError("找不到封面圖 img/cover.jpg")
+    raise FileNotFoundError("❌ 找不到封面 img/cover.jpg")
 
-# 組成 metadata
+# ✅ 載入逐字稿內容當作說明
+with open(script_path, encoding="utf-8") as f:
+    description = f.read().strip()
+
+# ✅ 建立合法 DNS-safe identifier
+def to_dns_safe(s):
+    s = s.lower()
+    s = re.sub(r'[^a-z0-9\-]', '', s)
+    s = re.sub(r'-+', '-', s)
+    return s.strip('-')
+
+identifier_base = "daily-podcast-stk"
+identifier = to_dns_safe(f"{identifier_base}-{today}")
+print("🪪 上傳的 identifier 為：", identifier)
+
+# ✅ Metadata
 metadata = {
-    "title": f"幫幫忙播報：{today}",
+    "title": f"幫幫忙說財經科技投資 - {today}",
     "mediatype": "audio",
     "collection": "opensource_audio",
-    "language": "zh",
     "creator": "幫幫忙",
-    "description": "幫幫忙說財經科技投資：每日語音播報",
-    "subject": "Podcast, 財經, 科技, AI, 投資, 幫幫忙",
+    "language": "zh",
+    "description": description,
+    "subject": "Podcast, Finance, AI, Investment, Tech, Daily"
 }
 
-# 準備檔案
+# ✅ 準備檔案
 files = {
     f"{identifier}.mp3": open(audio_path, "rb"),
-    "script.txt": open(script_path, "rb"),
-    "cover.jpg": open(cover_path, "rb"),
+    f"{identifier}.txt": open(script_path, "rb"),
+    f"{identifier}.jpg": open(cover_path, "rb")
 }
 
-print(f"🪪 上傳 identifier：{identifier}")
-print("🔼 正在上傳到 archive.org...")
+# ✅ 上傳
+print("🔼 正在上傳至 archive.org...")
+res = requests.post(
+    f"https://s3.us.archive.org/{identifier}",
+    auth=(ARCHIVE_EMAIL, ARCHIVE_PASSWORD),
+    files=files,
+    data=metadata
+)
 
-upload_url = f"https://s3.us.archive.org/{identifier}"
-r = requests.post(upload_url, auth=(ARCHIVE_EMAIL, ARCHIVE_PASSWORD), files=files, data=metadata)
-
-# 關閉檔案
-for f in files.values():
-    f.close()
-
-if r.status_code == 200:
+# ✅ 結果判斷
+if res.status_code == 200:
     print("✅ 上傳成功！")
-    mp3_url = f"https://archive.org/download/{identifier}/{identifier}.mp3"
-    with open("archive_audio_url.txt", "w") as f:
-        f.write(mp3_url)
-    print(f"🔗 mp3 URL: {mp3_url}")
 else:
-    print("❌ 上傳失敗：", r.status_code)
-    print(r.text)
+    print("❌ 上傳失敗：", res.status_code)
+    print(res.text)
     raise Exception("上傳 archive.org 失敗")
+
+# ✅ 儲存音訊連結供 generate_rss.py 使用
+archive_url = f"https://archive.org/download/{identifier}/{identifier}.mp3"
+with open(f"{folder}/archive_audio_url.txt", "w") as f:
+    f.write(archive_url)
+
+print("📄 已儲存 archive_audio_url.txt")
