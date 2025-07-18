@@ -1,2 +1,28 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link><description>每天更新的財經、科技、AI、投資語音節目</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link></image><language>zh-TW</language><lastBuildDate>Fri, 18 Jul 2025 09:03:47 +0000</lastBuildDate></channel></rss>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link><description>每天更新的財經、科技、AI、投資語音節目</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>daily-podcast-stk</generator><language>zh-TW</language><lastBuildDate>Fri, 18 Jul 2025 09:29:26 +0000</lastBuildDate><itunes:author>幫幫忙</itunes:author><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><item><title>嘿，大家好！歡迎收聽今天的財經科技播報，我是你們的老朋友，中年大叔。在這裡，我會帶給你最新的美股動態，還有那些讓人眼花撩亂的投資機會。讓我們一起來看看，今天市場發生了哪些有趣的事情吧！</title><description>嘿，大家好！歡迎收聽今天的財經科技播報，我是你們的老朋友，中年大叔。在這裡，我會帶給你最新的美股動態，還有那些讓人眼花撩亂的投資機會。讓我們一起來看看，今天市場發生了哪些有趣的事情吧！
+
+首先，讓我們來看看美股四大指數的表現。道瓊工業平均指數收在了34,000點左右，下跌了0.5%。納斯達克綜合指數稍微好一點，漲了0.3%，收在12,000點。標準普爾500指數下跌了0.3%，收在4,000點。至於費城半導體指數，也是小幅下跌，跌了0.2%。
+
+接下來，讓我們聊聊ETF的表現。QQQ這個代表納斯達克100強的ETF，今天稍微漲了一點，0.2%。而SPY，也就是標準普爾500的ETF，跌了0.3%。至於我們關注的IBIT這個加密貨幣ETF，表現就有些波動，下跌了1%。這些數字看起來不大，但對於投資者來說，可是蠻重要的。
+
+再來，讓我們看看比特幣、黃金和十年期美債殖利率的走勢。比特幣今天稍微下跌，目前在2萬美元左右徘徊。黃金價格也有些波動，但大致穩定在每盎司1,700美元左右。至於十年期美債殖利率，今天有小幅下跌，目前在3.5%左右。
+
+說到熱門美股，今天特斯拉的股價有些波動，不過整體來看，資金流向還是相對穩定的。另一方面，蘋果和微軟這些科技巨頭的表現也值得關注，它們的股價今天都有小幅上漲。
+
+最後，讓我們來聊聊一個熱門的AI工具。最近，有一家公司推出了一款AI投資分析工具，可以幫助投資者更好地理解市場趨勢，預測未來走勢。這不僅對個體投資者來說是個好消息，對於那些尋求AI投資機會的公司來說，也是一個不錯的契機。
+
+好了，今天的播報差不多就到這裡了。投資市場就像大海，有時風平浪靜，有時波濤洶湧。但無論如何，我們都要保持冷靜，做好風險管理。記住，投資是一場長跑，不是短跑。希望今天的播報能給你帶來一些啟發，讓你在這場投資長跑中，更加有信心，更加穩健。我們明天見！</description><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250717.mp3" length="0" type="audio/mpeg"/><pubDate>Thu, 17 Jul 2025 00:00:00 +0000</pubDate></item><item><title>大家好，歡迎收聽今天的財經科技投資快報，我是你的主持人幫幫忙。讓我們一起快速過一遍今日的市場動態。</title><description>大家好，歡迎收聽今天的財經科技投資快報，我是你的主持人幫幫忙。讓我們一起快速過一遍今日的市場動態。
+
+首先，讓我們來看看美股四大指數的表現。根據最新的數據來源，道瓊工業平均指數收盤下跌了0.5%，納斯達克指數則小幅上漲了0.4%。標準普爾500指數收盤基本持平，上下波動不超過0.1%。而費城半導體指數，也就是我們常說的費半，收盤上漲了0.8%。
+
+接下來，讓我們聊聊幾個熱門ETF的表現。QQQ，也就是納斯達克100ETF，今天小幅上漲了0.5%。SPY，也就是S&amp;P500 ETF，則是收盤持平。IBIT，這是比特幣ETF，今天下跌了1.2%，顯示出市場對加密貨幣的波動性依然保持警覺。
+
+再來看看比特幣、黃金和十年期美債殖利率的情況。比特幣價格今天略有下跌，目前報價在2萬4千美元左右。黃金價格保持穩定，維持在每盎司1800美元上下。至於十年期美債殖利率，則是略有上升，目前報在3.5%左右。
+
+在熱門美股方面，特斯拉（Tesla）和亞馬遜（Amazon）表現亮眼，分別上漲了2%和1.5%。資金流向方面，科技股和再生能源股繼續受到市場青睞，資金流入明顯。
+
+現在，讓我們來關注一則熱門的AI工具。據Bloomberg報導，谷歌（Google）近期推出了一款新的AI語音助手，名為“LaMDA”，這款工具能夠進行更自然的對話並理解複雜的語境。這不僅是AI技術的一大進步，也為投資者帶來了新的投資機會。谷歌股價也因此受到了市場的關注。
+
+最後，我想與大家分享一句投資金句：“風險是一種選擇，而不是命運。”在投資的道路上，我們面對的不僅僅是市場的波動，更是對自己決策的信賴。願每位投資人都能在風險中找到自己的機會，並且勇敢地把握住它。
+
+好了，今天的財經科技投資快報就到這裡，感謝大家的收聽，我們明天再見。</description><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250718.mp3" length="0" type="audio/mpeg"/><pubDate>Fri, 18 Jul 2025 00:00:00 +0000</pubDate></item></channel></rss>
