@@ -1,76 +1,79 @@
-import os
-import json
 import yfinance as yf
+import requests
 
-os.makedirs('podcast/latest', exist_ok=True)
-data = {}
+def get_stock_index_data():
+    symbols = {
+        "^DJI": "道瓊工業指數",
+        "^IXIC": "NASDAQ 指數",
+        "^GSPC": "S&P500 指數",
+        "^SOX": "費城半導體指數"
+    }
+    data = []
+    for symbol, name in symbols.items():
+        ticker = yf.Ticker(symbol)
+        hist = ticker.history(period="2d")
+        if len(hist) < 2:
+            continue
+        today = hist.iloc[-1]
+        prev = hist.iloc[-2]
+        change = today["Close"] - prev["Close"]
+        percent = (change / prev["Close"]) * 100
+        data.append(f"{name} 收報 {today['Close']:.2f}，漲跌幅 {change:+.2f}（{percent:+.2f}%）")
+    return data
 
-tickers = {
-    '.DJI': '^DJI',
-    '.IXIC': '^IXIC',
-    '.SPX': '^GSPC',
-    'SOX': '^SOX'
-}
+def get_etf_data():
+    symbols = {
+        "QQQ": "QQQ",
+        "SPY": "SPY",
+        "IBIT": "IBIT（BlackRock 比特幣 ETF）"
+    }
+    data = []
+    for symbol, name in symbols.items():
+        ticker = yf.Ticker(symbol)
+        hist = ticker.history(period="2d")
+        if len(hist) < 2:
+            continue
+        today = hist.iloc[-1]
+        prev = hist.iloc[-2]
+        change = today["Close"] - prev["Close"]
+        percent = (change / prev["Close"]) * 100
+        data.append(f"{name} 收盤 {today['Close']:.2f}（{percent:+.2f}%）")
+    return data
 
-for k, v in tickers.items():
-    t = yf.Ticker(v)
-    hist = t.history(period='2d')
+def get_bitcoin_price():
+    url = "https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd"
+    r = requests.get(url)
+    if r.status_code == 200:
+        price = r.json()["bitcoin"]["usd"]
+        return f"比特幣最新報價約 {price:,.0f} 美元"
+    return "比特幣資料無法取得"
+
+def get_gold_price():
+    ticker = yf.Ticker("GC=F")
+    hist = ticker.history(period="2d")
     if len(hist) < 2:
-        data[k] = {"close": None, "change": None}
-    else:
-        latest, prev = hist.iloc[-1], hist.iloc[-2]
-        data[k] = {
-            "close": round(latest['Close'], 2),
-            "change": round((latest['Close']-prev['Close'])/prev['Close']*100, 2)
-        }
+        return "黃金資料不足"
+    today = hist.iloc[-1]
+    prev = hist.iloc[-2]
+    change = today["Close"] - prev["Close"]
+    percent = (change / prev["Close"]) * 100
+    return f"黃金價格每盎司 {today['Close']:.2f} 美元（{percent:+.2f}%）"
 
-for t in ['QQQ', 'SPY', 'IBIT']:
-    tk = yf.Ticker(t)
-    hist = tk.history(period='2d')
+def get_dxy_index():
+    ticker = yf.Ticker("DX-Y.NYB")
+    hist = ticker.history(period="2d")
     if len(hist) < 2:
-        data[t] = {"close": None, "change": None}
-    else:
-        latest, prev = hist.iloc[-1], hist.iloc[-2]
-        data[t] = {
-            "close": round(latest['Close'], 2),
-            "change": round((latest['Close']-prev['Close'])/prev['Close']*100, 2)
-        }
+        return "美元指數資料不足"
+    today = hist.iloc[-1]
+    prev = hist.iloc[-2]
+    change = today["Close"] - prev["Close"]
+    percent = (change / prev["Close"]) * 100
+    return f"美元指數目前 {today['Close']:.2f}（{percent:+.2f}%）"
 
-btc = yf.Ticker('BTC-USD').history(period='2d')
-if len(btc) < 2:
-    data['BTC'] = {"close": None, "change": None}
-else:
-    data['BTC'] = {
-        "close": round(btc.iloc[-1]['Close'], 2),
-        "change": round((btc.iloc[-1]['Close']-btc.iloc[-2]['Close'])/btc.iloc[-2]['Close']*100, 2)
-    }
-
-gold = yf.Ticker('GC=F').history(period='2d')
-if len(gold) < 2:
-    data['Gold'] = {"close": None, "change": None}
-else:
-    data['Gold'] = {
-        "close": round(gold.iloc[-1]['Close'], 2),
-        "change": round((gold.iloc[-1]['Close']-gold.iloc[-2]['Close'])/gold.iloc[-2]['Close']*100, 2)
-    }
-
-treasury = yf.Ticker('^TNX').history(period='2d')
-if len(treasury) < 2:
-    data['US10Y'] = {"close": None, "change": None}
-else:
-    data['US10Y'] = {
-        "close": round(treasury.iloc[-1]['Close'], 2),
-        "change": round((treasury.iloc[-1]['Close']-treasury.iloc[-2]['Close'])/treasury.iloc[-2]['Close']*100, 2)
-    }
-
-# 熱門股以成交量排序
-sp500 = yf.Ticker('^GSPC').constituents if hasattr(yf.Ticker('^GSPC'), 'constituents') else []
-if sp500:
-    tickers_str = " ".join(sp500[:50])
-    top_stocks = yf.download(tickers_str, period="1d", interval="1d")["Volume"].sort_values(ascending=False).head(5)
-    data['Top5'] = list(top_stocks.index)
-else:
-    data['Top5'] = ['AAPL', 'TSLA', 'NVDA', 'AMZN', 'META']
-
-with open('podcast/latest/market.json', 'w') as f:
-    json.dump(data, f, ensure_ascii=False)
+def get_yield_10y():
+    ticker = yf.Ticker("^TNX")
+    hist = ticker.history(period="2d")
+    if len(hist) < 2:
+        return "10 年期美債殖利率資料不足"
+    today = hist.iloc[-1]
+    return f"美國 10 年期公債殖利率為 {today['Close']:.2f}%"
