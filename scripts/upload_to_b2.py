@@ -9,7 +9,7 @@ print("🪪 上傳的 identifier 為：", identifier)
 
 # 讀取環境變數
 key_id = os.environ["B2_KEY_ID"]
-application_key = os.environ["B2_KEY"]
+application_key = os.environ.get("B2_APPLICATION_KEY") or os.environ.get("B2_KEY")
 bucket_name = os.environ["B2_BUCKET_NAME"]
 
 # 初始化 B2
