@@ -12,7 +12,7 @@ if not ACCESS_KEY or not SECRET_KEY:
 
 # 今天的日期與資料夾
 today = datetime.datetime.utcnow().strftime("%Y%m%d")
-local_dir = f"podcast/{today}"
+local_dir = f"docs/podcast/{today}"
 docs_dir = f"docs/podcast/{today}"
 
 # DNS-safe identifier（符合 archive.org 要求）
