@@ -18,9 +18,9 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: 安裝 Python 套件
+      - name: Install dependencies
         run: |
-          pip install feedgen requests edge-tts mutagen yfinance b2sdk
+          pip install -r requirements.txt
 
       - name: 產生逐字稿
         run: python scripts/generate_script_kimi.py
