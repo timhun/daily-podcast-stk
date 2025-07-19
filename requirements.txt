@@ -1,5 +1,5 @@
 requests
-feedgen
+feedgen[podcast]
 xai-sdk
 edge-tts
 yfinance
