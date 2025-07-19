@@ -26,7 +26,7 @@ jobs:
         run: python scripts/generate_script_kimi.py
         env:
           MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
-
+          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
       - name: 語音合成
         run: python scripts/synthesize_audio.py
 
