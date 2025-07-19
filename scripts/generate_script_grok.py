@@ -2,14 +2,14 @@ import os
 import datetime
 import requests
 
-GROK3_API_URL = "https://api.grok3.ai/v1/chat/completions"  # 假設為範例 API，請更換為實際端點
-GROK3_API_KEY = os.getenv("GROK_API_KEY")  # 環境變數中取得 API 金鑰
+GROK_API_URL = "https://api.grok3.ai/v1/chat/completions"  # 假設為範例 API，請更換為實際端點
+GROK_API_KEY = os.getenv("GROK_API_KEY")  # 環境變數中取得 API 金鑰
 
 def generate_script_from_grok(prompt: str) -> str:
     """
     呼叫 Grok API 產生 Podcast 逐字稿，並儲存至 docs/podcast/{YYYYMMDD}/script.txt
     """
-    if not GROK3_API_KEY:
+    if not GROK_API_KEY:
         raise RuntimeError("❌ GROK3_API_KEY 環境變數未設定")
 
     headers = {
@@ -29,7 +29,7 @@ def generate_script_from_grok(prompt: str) -> str:
 
     print("🤖 使用 Grok3 嘗試產生逐字稿...")
 
-    response = requests.post(GROK3_API_URL, headers=headers, json=payload)
+    response = requests.post(GROK_API_URL, headers=headers, json=payload)
 
     if response.status_code == 200:
         result = response.json()
