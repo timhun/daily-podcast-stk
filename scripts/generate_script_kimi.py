@@ -129,4 +129,8 @@ if not script_text:
 os.makedirs(output_dir, exist_ok=True)
 with open(script_path, "w", encoding="utf-8") as f:
     f.write(script_text)
-print(f"✅ 已儲存逐字稿至： {script_path}")
+
+if os.path.exists(output_path):
+    print(f"✅ 確實儲存成功：{output_path}")
+else:
+    print(f"❌ 儲存失敗：{output_path} 不存在")
