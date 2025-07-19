@@ -6,4 +6,4 @@ yfinance
 mutagen
 b2sdk
 pytz
-python-dotenv
+
