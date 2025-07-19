@@ -10,9 +10,6 @@ base_audio_url = "https://f005.backblazeb2.com/file/daily-podcast-stk"
 fg = FeedGenerator()
 fg.load_extension("podcast")
 
-# 正確設定 iTunes 命名空間
-fg._feed.attrib["xmlns:itunes"] = "http://www.itunes.com/dtds/podcast-1.0.dtd"
-
 # 基本資訊
 fg.title("幫幫忙說財經科技投資")
 fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self")
