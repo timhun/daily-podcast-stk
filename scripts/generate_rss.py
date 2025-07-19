@@ -12,7 +12,7 @@ RSS_FILE_PATH = "docs/rss/podcast.xml"
 
 # 建立 FeedGenerator
 fg = FeedGenerator()
-fg.load_extension('podcast')  # 為未來支援 podcast namespace 留用（不影響相容）
+fg.load_extension('podcast')  # 支援 itunes namespace
 fg.id(SITE_URL)
 fg.title("幫幫忙說財經科技投資")
 fg.author({'name': '幫幫忙', 'email': 'tim.oneway@gmail.com'})
@@ -48,19 +48,32 @@ for folder in folders:
         print(f"⚠️ 無法讀取 mp3 時長：{e}")
         duration = None
 
-    with open(script_path, "r", encoding="utf-8") as f:
-        description = f.read().strip()
+    try:
+        with open(script_path, "r", encoding="utf-8") as f:
+            description = f.read().strip()
+    except Exception as e:
+        print(f"⚠️ 無法讀取逐字稿：{e}")
+        description = "本日無法取得內容"
 
     audio_url = f"{AUDIO_BASE_URL}/daily-podcast-stk-{folder}.mp3"
 
-    fe = fg.add_entry()
-    fe.id(audio_url)
-    fe.title(f"幫幫忙每日投資快報 - {folder}")
-    fe.description(description)
-    fe.enclosure(audio_url, str(os.path.getsize(audio_path)), 'audio/mpeg')
-    fe.pubDate(datetime.datetime.strptime(folder, "%Y%m%d").replace(tzinfo=pytz.UTC))
-    if duration:
-        fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
+    try:
+        fe = fg.add_entry()
+        fe.id(audio_url)
+        fe.guid(audio_url, permalink=True)
+        fe.title(f"幫幫忙每日投資快報 - {folder}")
+        fe.description(description)
+        fe.podcast.itunes_summary(description)
+        fe.podcast.itunes_subtitle(description.splitlines()[0] if description else "幫幫忙每日投資快報")
+        fe.enclosure(audio_url, str(os.path.getsize(audio_path)), 'audio/mpeg')
+        pub_dt = datetime.datetime.strptime(folder, "%Y%m%d").replace(tzinfo=pytz.UTC)
+        fe.pubDate(pub_dt)
+        fe.podcast.itunes_explicit("no")
+        if duration:
+            fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
+    except Exception as e:
+        print(f"⚠️ 發生錯誤，跳過 {folder}：{e}")
+        continue
 
 # 儲存 RSS 檔案
 os.makedirs(os.path.dirname(RSS_FILE_PATH), exist_ok=True)
