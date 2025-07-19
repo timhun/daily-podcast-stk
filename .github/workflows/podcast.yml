@@ -1,49 +1,56 @@
-name: 每日自動產生 Podcast
+name: Daily Podcast Auto Generate
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 台灣時間 06:00 執行
+    # 每天 6:00 AM（UTC+8） → 22:00 UTC 前一天（PODCAST_MODE=us）
+    - cron: '0 22 * * *'
+    # 每天 16:00 PM（UTC+8） → 8:00 UTC 當天（PODCAST_MODE=tw）
+    - cron: '0 8 * * *'
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mode: [us, tw]
 
     steps:
-      - name: 取得 GitHub 專案程式碼
+      - name: 📦 Checkout repo
         uses: actions/checkout@v3
 
-      - name: 設定 Python 環境
+      - name: 🐍 Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: '3.11'
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: 🧠 Generate script
         run: |
-          pip install -r requirements.txt
+          PODCAST_MODE=${{ matrix.mode }} python scripts/generate_script_kimi.py
 
-      - name: 產生逐字稿
-        run: python scripts/generate_script_kimi.py
-        env:
-          MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
-          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
-      - name: 語音合成
-        run: python scripts/synthesize_audio.py
+      - name: 🗣️ Synthesize audio
+        run: |
+          PODCAST_MODE=${{ matrix.mode }} python scripts/synthesize_audio.py
 
-      - name: 上傳音檔至 Backblaze B2
-        run: python scripts/upload_to_b2.py
+      - name: ☁️ Upload to B2
+        run: |
+          PODCAST_MODE=${{ matrix.mode }} python scripts/upload_to_b2.py
         env:
           B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
           B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
 
-      - name: 產生 RSS Feed
+      - name: 📰 Generate RSS
         run: python scripts/generate_rss.py
 
-      - name: Commit 並推送 RSS Feed
+      - name: 📤 Commit RSS & push
         run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git pull origin main --rebase
           git add docs/rss/podcast.xml
-          git commit -m "更新 RSS Feed"
-          git push origin main
+          git commit -m "🔄 Update RSS feed"
+          git push
