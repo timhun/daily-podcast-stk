@@ -1,4 +1,5 @@
 import os
+import json
 import datetime
 from fetch_market_data import (
     get_stock_index_data,
@@ -11,12 +12,12 @@ from fetch_market_data import (
 from generate_script_grok import generate_script_from_grok
 import requests
 
-# 準備日期與目錄
-utc_today = datetime.datetime.utcnow()
-today_str = utc_today.strftime("%Y%m%d")
+# 取得今天日期
+now = datetime.datetime.now(datetime.timezone.utc)
+today_str = now.strftime("%Y%m%d")
 output_dir = f"docs/podcast/{today_str}"
 os.makedirs(output_dir, exist_ok=True)
-output_path = f"{output_dir}/script.txt"
+script_path = f"{output_dir}/script.txt"
 
 # 擷取行情資料
 stock_summary = "\n".join(get_stock_index_data())
@@ -40,13 +41,14 @@ market_data = f"""
 {dxy}
 """.strip()
 
-# 嘗試讀取主題設定
-theme_path = f"docs/podcast/{today_str}/theme.txt"
-if os.path.exists(theme_path):
-    with open(theme_path, "r", encoding="utf-8") as tf:
-        theme_text = tf.read().strip()
-else:
-    theme_text = ""
+# 嘗試讀取主題
+theme_text = ""
+theme_file = "themes.txt"
+if os.path.exists(theme_file):
+    with open(theme_file, "r", encoding="utf-8") as f:
+        lines = [line.strip() for line in f.readlines() if line.strip()]
+        if lines:
+            theme_text = lines[-1]
 
 # 建立 prompt
 prompt = f"""
@@ -75,15 +77,20 @@ prompt = f"""
 - 僅輸出繁體中文逐字稿正文，勿輸出任何說明或 JSON，僅逐字稿正文
 """
 
-# 嘗試使用 Grok3
-try:
-    print("🤖 使用 Grok3 嘗試產生逐字稿...")
-    script_text = generate_script_from_grok(prompt)
-    if not script_text or len(script_text.strip()) < 100:
-        raise ValueError("Grok 回傳內容過短")
-    print("✅ 成功產生 Podcast 逐字稿（Grok）：", output_path)
-except Exception as e:
-    print("⚠️ Grok3 失敗：", e)
+# 嘗試先用 Grok，再 fallback 到 Kimi
+def generate_with_grok():
+    try:
+        print("🤖 使用 Grok3 嘗試產生逐字稿...")
+        result = generate_script_from_grok(prompt)
+        if result:
+            print("✅ 成功使用 Grok3 產生逐字稿")
+            return result
+        raise Exception("Grok 回傳為空")
+    except Exception as e:
+        print(f"⚠️ Grok3 失敗： {e}")
+        return None
+
+def generate_with_kimi():
     print("🔁 改用 Kimi API 產生逐字稿...")
     api_key = os.getenv("MOONSHOT_API_KEY")
     if not api_key:
@@ -108,13 +115,18 @@ except Exception as e:
     )
 
     if response.status_code == 200:
-        result = response.json()
-        script_text = result["choices"][0]["message"]["content"].strip()
+        return response.json()["choices"][0]["message"]["content"].strip()
     else:
-        print("❌ Kimi 發生錯誤：", response.status_code, response.text)
+        print("❌ 發生錯誤：", response.status_code, response.text)
         raise RuntimeError("Kimi API 回傳錯誤")
 
+# 主執行流程
+script_text = generate_with_grok()
+if not script_text:
+    script_text = generate_with_kimi()
+
 # 儲存逐字稿
-with open(output_path, "w", encoding="utf-8") as f:
+os.makedirs(output_dir, exist_ok=True)
+with open(script_path, "w", encoding="utf-8") as f:
     f.write(script_text)
-print("✅ 已儲存逐字稿至：", output_path)
+print(f"✅ 已儲存逐字稿至： {script_path}")
