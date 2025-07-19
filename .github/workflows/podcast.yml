@@ -2,21 +2,30 @@ name: Daily Podcast Auto Generate
 
 on:
   schedule:
-    # 每天 6:00 AM（UTC+8） → 22:00 UTC 前一天（PODCAST_MODE=us）
+    # 美股版：台灣早上 6:00（UTC 22:00 前一天）
     - cron: '0 22 * * *'
-    # 每天 16:00 PM（UTC+8） → 8:00 UTC 當天（PODCAST_MODE=tw）
+    # 台股版：台灣下午 16:00（UTC 08:00 當天）
     - cron: '0 8 * * *'
   workflow_dispatch:
 
 jobs:
-  build-and-publish:
+  generate-podcast:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         mode: [us, tw]
 
+    env:
+      PODCAST_MODE: ${{ matrix.mode }}
+      GROK_API_URL: ${{ secrets.GROK_API_URL }}
+      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+      MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+      B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+      B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+      B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+
     steps:
-      - name: 📦 Checkout repo
+      - name: 📦 Checkout repository
         uses: actions/checkout@v3
 
       - name: 🐍 Setup Python
@@ -24,33 +33,31 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 📦 Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: 🧠 Generate script
+      - name: 📥 Install dependencies
         run: |
-          PODCAST_MODE=${{ matrix.mode }} python scripts/generate_script_kimi.py
+          pip install -r requirements.txt
+
+      - name: 🧠 Generate script (Grok + Kimi)
+        run: |
+          python scripts/generate_script_kimi.py
 
       - name: 🗣️ Synthesize audio
         run: |
-          PODCAST_MODE=${{ matrix.mode }} python scripts/synthesize_audio.py
+          python scripts/synthesize_audio.py
 
-      - name: ☁️ Upload to B2
+      - name: ☁️ Upload to Backblaze B2
         run: |
-          PODCAST_MODE=${{ matrix.mode }} python scripts/upload_to_b2.py
-        env:
-          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
-          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+          python scripts/upload_to_b2.py
 
-      - name: 📰 Generate RSS
-        run: python scripts/generate_rss.py
+      - name: 📰 Generate RSS feed
+        run: |
+          python scripts/generate_rss.py
 
-      - name: 📤 Commit RSS & push
+      - name: 📤 Commit and push RSS
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git pull origin main --rebase
           git add docs/rss/podcast.xml
-          git commit -m "🔄 Update RSS feed"
+          git commit -m "🔄 Update podcast RSS"
           git push
