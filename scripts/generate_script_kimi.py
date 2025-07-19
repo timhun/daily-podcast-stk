@@ -4,8 +4,7 @@ import datetime
 from fetch_market_data import get_market_data_by_mode
 from generate_script_grok import generate_script_from_grok
 import requests
-from dotenv import load_dotenv
-load_dotenv()
+
 
 # 取得模式與日期
 mode = os.getenv("PODCAST_MODE", "us")
