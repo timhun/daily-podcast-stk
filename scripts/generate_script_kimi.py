@@ -48,7 +48,9 @@ if os.path.exists(theme_file):
     with open(theme_file, "r", encoding="utf-8") as f:
         lines = [line.strip() for line in f.readlines() if line.strip()]
         if lines:
-            theme_text = lines[-1]
+            theme_text = lines[-1].strip()
+            if theme_text and theme_text[-1] not in "。！？":
+                theme_text += "。"
 
 # 建立 prompt
 prompt = f"""
@@ -130,7 +132,6 @@ os.makedirs(output_dir, exist_ok=True)
 with open(script_path, "w", encoding="utf-8") as f:
     f.write(script_text)
 
-# ✅ 檢查儲存是否成功
 if os.path.exists(script_path):
     print(f"✅ 已儲存逐字稿至：{script_path}")
 else:
