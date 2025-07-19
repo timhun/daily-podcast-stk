@@ -1,66 +1,68 @@
 import os
 import datetime
-from feedgen.feed import FeedGenerator
+import pytz
 from mutagen.mp3 import MP3
+from feedgen.feed import FeedGenerator
 
-# 設定參數
-rss_output_path = "docs/rss/podcast.xml"
-base_audio_url = "https://daily-podcast-stk.s3.us-east-005.backblazeb2.com"
+# RSS 基本設定
+SITE_URL = "https://timhun.github.io/daily-podcast-stk"
+AUDIO_BASE_URL = "https://f005.backblazeb2.com/file/daily-podcast-stk"
+COVER_URL = f"{SITE_URL}/img/cover.jpg"
+RSS_FILE_PATH = "docs/rss/podcast.xml"
 
-# 建立 Feed
+# 建立 FeedGenerator
 fg = FeedGenerator()
-fg.load_extension('podcast')  # for itunes
-fg.id("https://timhun.github.io/daily-podcast-stk/rss/podcast.xml")
+fg.load_extension('podcast')  # 為未來支援 podcast namespace 留用（不影響相容）
+fg.id(SITE_URL)
 fg.title("幫幫忙說財經科技投資")
 fg.author({'name': '幫幫忙', 'email': 'tim.oneway@gmail.com'})
-fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self")
-fg.link(href="https://timhun.github.io/daily-podcast-stk/", rel="alternate")
-fg.language("zh-tw")
-fg.description("每日更新的美股財經、科技、AI 投資 podcast，7 分鐘掌握市場趨勢。")
-fg.logo("https://timhun.github.io/daily-podcast-stk/img/cover.jpg")
+fg.link(href=SITE_URL, rel='alternate')
+fg.language('zh-TW')
+fg.description("用台灣專業大叔口吻，陪你掌握財經、科技、AI、投資，輕鬆又有料的早晨 podcast！")
+fg.logo(COVER_URL)
+fg.link(href=f"{SITE_URL}/rss/podcast.xml", rel='self')
 fg.podcast.itunes_category('Business', 'Investing')
+fg.podcast.itunes_image(COVER_URL)
 fg.podcast.itunes_explicit('no')
-fg.podcast.itunes_author('幫幫忙')
 fg.podcast.itunes_owner(name='幫幫忙', email='tim.oneway@gmail.com')
-fg.podcast.itunes_image("https://timhun.github.io/daily-podcast-stk/img/cover.jpg")
 
-# 掃描每日目錄
-podcast_root = "docs/podcast"
-if not os.path.isdir(podcast_root):
-    raise FileNotFoundError("找不到 docs/podcast 目錄")
+# 掃描音檔資料夾
+episodes_dir = "docs/podcast"
+folders = sorted(
+    [f for f in os.listdir(episodes_dir) if os.path.isdir(os.path.join(episodes_dir, f))],
+    reverse=True
+)
 
-for folder in sorted(os.listdir(podcast_root), reverse=True):
-    folder_path = os.path.join(podcast_root, folder)
+for folder in folders:
+    folder_path = os.path.join(episodes_dir, folder)
     audio_path = os.path.join(folder_path, "audio.mp3")
     script_path = os.path.join(folder_path, "script.txt")
-    if not os.path.isfile(audio_path) or not os.path.isfile(script_path):
+
+    if not os.path.exists(audio_path) or not os.path.exists(script_path):
         continue
 
     try:
         audio = MP3(audio_path)
-        duration_secs = int(audio.info.length)
-        minutes = duration_secs // 60
-        seconds = duration_secs % 60
-        duration_str = f"{minutes}:{seconds:02d}"
+        duration = int(audio.info.length)
     except Exception as e:
         print(f"⚠️ 無法讀取 mp3 時長：{e}")
-        duration_str = "7:00"
+        duration = None
 
     with open(script_path, "r", encoding="utf-8") as f:
-        script = f.read()
+        description = f.read().strip()
 
-    audio_url = f"{base_audio_url}/daily-podcast-stk-{folder}.mp3"
+    audio_url = f"{AUDIO_BASE_URL}/daily-podcast-stk-{folder}.mp3"
+
     fe = fg.add_entry()
     fe.id(audio_url)
-    fe.title(f"每日投資播報 - {folder}")
-    fe.description(script[:200] + "…")
-    fe.content(script, type='text')
-    fe.enclosure(audio_url, str(os.path.getsize(audio_path)), "audio/mpeg")
-    pub_date = datetime.datetime.strptime(folder, "%Y%m%d").replace(tzinfo=datetime.timezone.utc)
-    fe.pubDate(pub_date)
-    fe.podcast.itunes_duration(duration_str)
+    fe.title(f"幫幫忙每日投資快報 - {folder}")
+    fe.description(description)
+    fe.enclosure(audio_url, str(os.path.getsize(audio_path)), 'audio/mpeg')
+    fe.pubDate(datetime.datetime.strptime(folder, "%Y%m%d").replace(tzinfo=pytz.UTC))
+    if duration:
+        fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
 
-# 寫入 RSS
-os.makedirs(os.path.dirname(rss_output_path), exist_ok=True)
-fg.rss_file(rss_output_path)
-print(f"✅ 成功產生 RSS feed：{rss_output_path}")
+# 儲存 RSS 檔案
+os.makedirs(os.path.dirname(RSS_FILE_PATH), exist_ok=True)
+fg.rss_file(RSS_FILE_PATH)
+print("✅ 成功產生 RSS feed：", RSS_FILE_PATH)
