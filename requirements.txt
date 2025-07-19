@@ -4,3 +4,4 @@ xai-sdk
 edge-tts
 yfinance
 mutagen
+b2sdk
