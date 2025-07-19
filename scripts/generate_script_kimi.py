@@ -1,7 +1,6 @@
 import os
+import datetime
 import requests
-import json
-from datetime import datetime
 from fetch_market_data import (
     get_stock_index_data,
     get_etf_data,
@@ -11,12 +10,11 @@ from fetch_market_data import (
     get_yield_10y
 )
 
-# 讀取 API 金鑰
-KIMI_API_KEY = os.getenv("MOONSHOT_API_KEY")
+# API key 設定
+MOONSHOT_API_KEY = os.getenv("MOONSHOT_API_KEY")
 GROK_API_KEY = os.getenv("GROK_API_KEY")
 
-# 產出日期與路徑
-today = datetime.utcnow().strftime("%Y%m%d")
+today = datetime.datetime.utcnow().strftime("%Y%m%d")
 output_dir = f"docs/podcast/{today}"
 os.makedirs(output_dir, exist_ok=True)
 output_path = f"{output_dir}/script.txt"
@@ -43,13 +41,6 @@ market_data = f"""
 {dxy}
 """.strip()
 
-# 主題檔案（可選）
-theme_path = f"{output_dir}/theme.txt"
-theme_text = ""
-if os.path.exists(theme_path):
-    with open(theme_path, "r", encoding="utf-8") as f:
-        theme_text = f.read().strip()
-
 # 建立 prompt
 prompt = f"""
 你是一位專業財經科技主持人-幫幫忙，請用繁體中文撰寫一段約10 分鐘 Podcast 播報逐字稿，語氣自然、專業投資人的口吻。
@@ -74,62 +65,72 @@ prompt = f"""
 - 內容需符合一般人聽得懂的用詞,使用台灣慣用語，語調高低不一，語速快慢不一
 - 公司與金融名詞直接用英文播報，例如 Nvidia、Fed 等
 - 全文控制在約 2200～5800 字
-- 僅輸出繁體中文逐字稿正文，勿補充任何說明
+- 僅輸出繁體中文逐字稿正文，勿輸出任何說明或 JSON，僅逐字稿正文
 """
 
-# 優先使用 Kimi API
-def generate_script_with_kimi():
-    response = requests.post(
+# 優先使用 Grok，失敗時 fallback 到 Kimi
+def try_grok():
+    if not GROK_API_KEY:
+        return None
+    try:
+        grok_resp = requests.post(
+            url="https://api.groq.com/openai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {GROK_API_KEY}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "mixtral-8x7b-32768",
+                "messages": [
+                    {"role": "system", "content": "你是專業 Podcast 撰稿助手"},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.7,
+                "max_tokens": 2048
+            },
+            timeout=60
+        )
+        if grok_resp.status_code == 200:
+            return grok_resp.json()["choices"][0]["message"]["content"].strip()
+        else:
+            print(f"⚠️ Grok 回傳錯誤：{grok_resp.status_code} {grok_resp.text}")
+    except Exception as e:
+        print(f"⚠️ Grok 發生錯誤：{e}")
+    return None
+
+def try_kimi():
+    if not MOONSHOT_API_KEY:
+        raise ValueError("請設定環境變數 MOONSHOT_API_KEY")
+    kimi_resp = requests.post(
         url="https://api.moonshot.cn/v1/chat/completions",
         headers={
-            "Authorization": f"Bearer {KIMI_API_KEY}",
+            "Authorization": f"Bearer {MOONSHOT_API_KEY}",
             "Content-Type": "application/json"
         },
         json={
             "model": "moonshot-v1-128k",
             "messages": [
-                {"role": "system", "content": "你是專業的 Podcast 撰稿助手"},
+                {"role": "system", "content": "你是專業 Podcast 撰稿助手"},
                 {"role": "user", "content": prompt}
             ],
             "temperature": 0.7,
             "max_tokens": 2048,
             "top_p": 0.95
-        }
-    )
-    if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"].strip()
-    else:
-        raise RuntimeError("Kimi 失敗")
-
-# 備援使用 Grok3 API
-def generate_script_with_grok():
-    grok_prompt = """請用繁體中文撰寫一段 Podcast 播報逐字稿，內容如下：\n""" + prompt
-    response = requests.post(
-        url="https://grok.openai.com/api/chat",  # 假設 URL，實際需替換
-        headers={
-            "Authorization": f"Bearer {GROK_API_KEY}",
-            "Content-Type": "application/json"
         },
-        json={
-            "model": "grok-1",  # 假設 model 名，實際需替換
-            "messages": [
-                {"role": "user", "content": grok_prompt}
-            ]
-        }
+        timeout=60
     )
-    if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"].strip()
+    if kimi_resp.status_code == 200:
+        return kimi_resp.json()["choices"][0]["message"]["content"].strip()
     else:
-        raise RuntimeError("Grok3 也失敗")
+        raise RuntimeError(f"Kimi API 回傳錯誤：{kimi_resp.status_code} {kimi_resp.text}")
 
-# 執行腳本產生流程
-try:
-    script_text = generate_script_with_kimi()
-except Exception as e:
-    print("⚠️ Kimi 失敗，改用 Grok3：", e)
-    script_text = generate_script_with_grok()
+# 嘗試產出逐字稿
+generated = try_grok() or try_kimi()
+if not generated:
+    raise RuntimeError("❌ Grok 與 Kimi 都無法產出逐字稿")
 
-# 儲存至檔案
+# 寫入逐字稿文字檔
 with open(output_path, "w", encoding="utf-8") as f:
-    f.write(script_text)
+    f.write(generated)
+
 print("✅ 成功產生 Podcast 逐字稿：", output_path)
