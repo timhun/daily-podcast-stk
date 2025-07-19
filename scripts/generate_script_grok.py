@@ -2,7 +2,7 @@ import os
 import datetime
 import requests
 
-GROK_API_URL = "https://api.grok3.ai/v1/chat/completions"  # 假設為範例 API，請更換為實際端點
+GROK_API_URL = "https://api.x.ai/v1/chat/completions"  # 假設為範例 API，請更換為實際端點
 GROK_API_KEY = os.getenv("GROK_API_KEY")  # 環境變數中取得 API 金鑰
 
 def generate_script_from_grok(prompt: str) -> str:
