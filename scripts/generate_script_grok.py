@@ -18,7 +18,7 @@ def generate_script_from_grok(prompt: str) -> str:
     }
 
     payload = {
-        "model": "grok-1",
+        "model": "grok-3",
         "messages": [
             {"role": "system", "content": "你是專業的 Podcast 撰稿助手"},
             {"role": "user", "content": prompt}
