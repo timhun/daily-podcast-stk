@@ -54,7 +54,7 @@ if os.path.exists(theme_file):
 prompt = f"""
 你是一位專業財經科技主持人-幫幫忙，請用繁體中文撰寫一段約10 分鐘 Podcast 播報逐字稿，語氣自然、專業投資人的口吻。
 
-請以以下行情資訊為基礎，加入簡要評論與延伸深入內容：
+請以以下行情資訊為基礎，加入評論與整體經濟深入內容：
 
 {market_data}
 
@@ -80,14 +80,14 @@ prompt = f"""
 # 嘗試先用 Grok，再 fallback 到 Kimi
 def generate_with_grok():
     try:
-        print("🤖 使用 Grok3 嘗試產生逐字稿...")
+        print("🤖 使用 Grok 嘗試產生逐字稿...")
         result = generate_script_from_grok(prompt)
         if result:
-            print("✅ 成功使用 Grok3 產生逐字稿")
+            print("✅ 成功使用 Grok 產生逐字稿")
             return result
         raise Exception("Grok 回傳為空")
     except Exception as e:
-        print(f"⚠️ Grok3 失敗： {e}")
+        print(f"⚠️ Grok 失敗： {e}")
         return None
 
 def generate_with_kimi():
