@@ -12,7 +12,7 @@ fg = FeedGenerator()
 fg.load_extension('podcast')  # for itunes
 fg.id("https://timhun.github.io/daily-podcast-stk/rss/podcast.xml")
 fg.title("幫幫忙說財經科技投資")
-fg.author({'name': '幫幫忙', 'email': 'bang@bang.help'})
+fg.author({'name': '幫幫忙', 'email': 'tim.oneway@gmail.com'})
 fg.link(href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml", rel="self")
 fg.link(href="https://timhun.github.io/daily-podcast-stk/", rel="alternate")
 fg.language("zh-tw")
