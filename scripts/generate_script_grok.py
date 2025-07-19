@@ -13,7 +13,7 @@ def generate_script_from_grok(prompt: str) -> str:
         raise RuntimeError("❌ GROK3_API_KEY 環境變數未設定")
 
     headers = {
-        "Authorization": f"Bearer {GROK3_API_KEY}",
+        "Authorization": f"Bearer {GROK_API_KEY}",
         "Content-Type": "application/json"
     }
 
