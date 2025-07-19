@@ -130,7 +130,7 @@ os.makedirs(output_dir, exist_ok=True)
 with open(script_path, "w", encoding="utf-8") as f:
     f.write(script_text)
 
-if os.path.exists(output_path):
-    print(f"✅ 確實儲存成功：{output_path}")
+if os.path.exists(output_dir):
+    print(f"✅ 確實儲存成功：{output_dir}")
 else:
-    print(f"❌ 儲存失敗：{output_path} 不存在")
+    print(f"❌ 儲存失敗：{output_dir} 不存在")
