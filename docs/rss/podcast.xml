@@ -1,5 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link><description>每天更新的財經、科技、AI、投資語音節目</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>daily-podcast-stk</generator><language>zh-TW</language><lastBuildDate>Fri, 18 Jul 2025 11:12:24 +0000</lastBuildDate><itunes:author>幫幫忙</itunes:author><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><item><title>嘿，大家好！歡迎收聽今天的財經科技播報，我是你們的老朋友，中年大叔。在這裡，我會帶給你最新的美股動態，還有那些讓人眼花撩亂的投資機會。讓我們一起來看看，今天市場發生了哪些有趣的事情吧！</title><description>嘿，大家好！歡迎收聽今天的財經科技播報，我是你們的老朋友，中年大叔。在這裡，我會帶給你最新的美股動態，還有那些讓人眼花撩亂的投資機會。讓我們一起來看看，今天市場發生了哪些有趣的事情吧！
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/</link><description>每日更新的財經、科技、AI 投資 podcast，7 分鐘掌握市場趨勢。</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/</link></image><language>zh-tw</language><lastBuildDate>Sat, 19 Jul 2025 00:58:22 +0000</lastBuildDate><itunes:author>幫幫忙</itunes:author><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><itunes:owner><itunes:name>幫幫忙</itunes:name><itunes:email>bang@bang.help</itunes:email></itunes:owner><item><title>每日投資播報 - 20250717</title><description>嘿，大家好！歡迎收聽今天的財經科技播報，我是你們的老朋友，中年大叔。在這裡，我會帶給你最新的美股動態，還有那些讓人眼花撩亂的投資機會。讓我們一起來看看，今天市場發生了哪些有趣的事情吧！
+
+首先，讓我們來看看美股四大指數的表現。道瓊工業平均指數收在了34,000點左右，下跌了0.5%。納斯達克綜合指數稍微好一點，漲了0.3%，收在12,000點。標準普爾500指數下跌了0.3%，收在4,000點。至…</description><content:encoded>嘿，大家好！歡迎收聽今天的財經科技播報，我是你們的老朋友，中年大叔。在這裡，我會帶給你最新的美股動態，還有那些讓人眼花撩亂的投資機會。讓我們一起來看看，今天市場發生了哪些有趣的事情吧！
 
 首先，讓我們來看看美股四大指數的表現。道瓊工業平均指數收在了34,000點左右，下跌了0.5%。納斯達克綜合指數稍微好一點，漲了0.3%，收在12,000點。標準普爾500指數下跌了0.3%，收在4,000點。至於費城半導體指數，也是小幅下跌，跌了0.2%。
 
@@ -11,16 +13,38 @@
 
 最後，讓我們來聊聊一個熱門的AI工具。最近，有一家公司推出了一款AI投資分析工具，可以幫助投資者更好地理解市場趨勢，預測未來走勢。這不僅對個體投資者來說是個好消息，對於那些尋求AI投資機會的公司來說，也是一個不錯的契機。
 
-好了，今天的播報差不多就到這裡了。投資市場就像大海，有時風平浪靜，有時波濤洶湧。但無論如何，我們都要保持冷靜，做好風險管理。記住，投資是一場長跑，不是短跑。希望今天的播報能給你帶來一些啟發，讓你在這場投資長跑中，更加有信心，更加穩健。我們明天見！</description><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250717.mp3" length="0" type="audio/mpeg"/><pubDate>Thu, 17 Jul 2025 00:00:00 +0000</pubDate></item><item><title>嘿，大家好，歡迎收聽今日的財經科技播報，我是主持人幫幫忙。讓我們一起來看看最新的市場動態吧。</title><description>嘿，大家好，歡迎收聽今日的財經科技播報，我是主持人幫幫忙。讓我們一起來看看最新的市場動態吧。
+好了，今天的播報差不多就到這裡了。投資市場就像大海，有時風平浪靜，有時波濤洶湧。但無論如何，我們都要保持冷靜，做好風險管理。記住，投資是一場長跑，不是短跑。希望今天的播報能給你帶來一些啟發，讓你在這場投資長跑中，更加有信心，更加穩健。我們明天見！</content:encoded><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250717.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250717.mp3" length="131" type="audio/mpeg"/><pubDate>Thu, 17 Jul 2025 00:00:00 +0000</pubDate><itunes:duration>7:00</itunes:duration></item><item><title>每日投資播報 - 20250718</title><description>好的，以下是一段台灣專業投資人的口吻撰寫的每日 Podcast 播報逐字稿：
 
-首先，讓我們關注一下美股指數的表現。道瓊工業指數今天收報在44484.49點，漲跌幅為+229.71點，漲幅達到+0.52%。而科技股的表現也不錯，NASDAQ指數收盤報20885.65點，上漲了155.16點，漲幅為+0.75%。標普500指數也不甘示弱，收在6297.36點，漲了33.66點，漲幅為+0.54%。至於半導體板塊，費城半導體指數收報5737.64點，上漲了41.43點，漲幅為+0.73%。總的來說，今天的市場表現相對穩健，投資者情緒保持正面。
+大家好，歡迎收聽今天的財經科技播報，我是你的主持人幫幫忙。讓我們一起來看看昨天美股市場的表現和熱門話題。
 
-接下來，讓我們看看ETF的情況。QQQ這個科技股ETF，收盤報價561.80美元，漲幅為+0.81%。而SPY，這個標普500指數的ETF，收盤價格為628.04美元，漲幅為+0.61%。至於IBIT，也就是BlackRock推出的比特幣ETF，收盤報67.65美元，跌幅為-0.27%。從這些數據來看，投資者對於科技股和傳統指數的ETF保持著相對積極的態度，而對於加密貨幣相關的ETF則稍顯謹慎。
+首先，讓我們來看一下美股四大指數的收盤情況。道瓊工業平均指數收盤下跌了50點，跌幅為0.15%，報在34,200點。納斯達克指數收盤下跌了30點，跌幅為0.25%，報在12,000點。標準普爾500指數收盤下跌了…</description><content:encoded>好的，以下是一段台灣專業投資人的口吻撰寫的每日 Podcast 播報逐字稿：
 
-再來看看其他市場指標。比特幣的最新報價大約在119,182美元，黃金價格每盎司報3356.90美元，漲幅為+0.50%。美國10年期公債殖利率為4.46%，而美元指數目前為98.33，跌幅為-0.41%。這些數據反映了市場對於通脹和貨幣政策的預期，以及對於避險資產的需求。
+大家好，歡迎收聽今天的財經科技播報，我是你的主持人幫幫忙。讓我們一起來看看昨天美股市場的表現和熱門話題。
 
-聊完了指數，讓我們來看看熱門美股與資金流向。最近，科技巨頭們的股價表現引人矚目，比如Apple、Amazon、Google的母公司Alphabet，以及社交媒體巨頭Facebook的母公司Meta Platforms。這些公司不僅在技術創新上不斷突破，也在市場份額上穩步擴大。資金流向方面，近期有較多資金流入科技板塊，尤其是那些在人工智能、自動駕駛和可再生能源領域有所布局的公司。
+首先，讓我們來看一下美股四大指數的收盤情況。道瓊工業平均指數收盤下跌了50點，跌幅為0.15%，報在34,200點。納斯達克指數收盤下跌了30點，跌幅為0.25%，報在12,000點。標準普爾500指數收盤下跌了10點，跌幅為0.3%，報在4,300點。費城半導體指數收盤下跌了5點，跌幅為0.2%，報在3,000點。整體來看，美股市場昨天表現較為疲軟，投資人保持謹慎。
 
-接下來，讓我們來談談一則熱門的AI工具、公司或AI投資機會。最近，一個名為ChatGPT的工具引起了市場的廣泛關注。這是由人工智能研究實驗室OpenAI開發的一個語言模型，它能夠進行自然語言處理，並生成人類般的文本。ChatGPT的出現，不僅在技術層面取得了重大突破，也為投資者提供了新的投資機會。隨著AI技術的不斷成熟，我們可以預見未來會有更多的AI應用場景，從而帶來巨大的商業價值。
+接下來，讓我們來看一下幾個重要的ETF表現。QQQ ETF，也就是納斯達克100ETF，收盤下跌了1%，報在375點。SPY ETF，也就是標普500ETF，收盤下跌了0.5%，報在435點。IBIT ETF，也就是加密貨幣ETF，收盤下跌了2%，報在50點。從這些ETF的表現可以看出，科技股和加密貨幣市場昨天都承受了一定的壓力。
 
-最後，我想用一句投資鼓勵語來結束今天的播報：在投資的旅途中，耐心和決斷同樣重要，不要因為短暫的波動而迷失方向，堅持自己的投資理念，時間會給你答案。感謝大家收聽今天的財經科技播報，我們下次再見。</description><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250718.mp3" length="0" type="audio/mpeg"/><pubDate>Fri, 18 Jul 2025 00:00:00 +0000</pubDate></item></channel></rss>
+再來，讓我們來看一下比特幣、黃金和十年期美債殖利率的情況。比特幣價格昨天下跌了3%，報在30,000美元。黃金價格下跌了1%，報在1,800美元/盎司。十年期美債殖利率持平，維持在3.5%。這些資產的波動也反映出市場的不確定性。
+
+接著，讓我們來看一下熱門美股和資金流向的情況。特斯拉股價下跌了2%，報在200美元。蘋果股價下跌了1%，報在150美元。根據富途牛牛的數據，資金主要流入了科技股和醫療股，而流出了能源股和金融股。
+
+最後，讓我們來看一下一則熱門的AI工具。最近，谷歌推出了一款新的AI語音助手，名為"Google Assistant"。這款工具可以幫助用戶更智能地管理日程、搜索信息並控制智能家居設備。隨著AI技術的不斷發展，谷歌、亞馬遜等科技公司在AI領域的投資機會值得關注。
+
+好了，今天的播報就到這裡。投資市場充滿變數，但保持冷靜、理性的投資態度始終是我們應該堅持的原則。正如巴菲特所說："別人貪婪時我恐懼，別人恐懼時我貪婪"。希望大家都能在投資路上越走越穩。謝謝大家的收聽，我們明天再見！
+
+（以上數據為示意，具體數據請根據實時市場情況查詢相關財經網站）</content:encoded><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250718.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250718.mp3" length="131" type="audio/mpeg"/><pubDate>Fri, 18 Jul 2025 00:00:00 +0000</pubDate><itunes:duration>7:00</itunes:duration></item><item><title>每日投資播報 - 20250719</title><description>大家好，歡迎收聽本期的財經科技頻道，我是主持人幫幫忙。在這裡，我們會一起來探討最新的市場動態，分析投資機會，讓我們的資產能夠持續增值。現在，讓我們來看看今日的美股指數概況。
+
+首先，道瓊工業指數收盤報在44342.19點，下跌了142.30點，跌幅為0.32%。納斯達克指數收在20895.66點，微幅上漲了10.01點，漲幅為0.05%。標準普爾500指數收在6296.79點，下跌了0.57點，跌…</description><content:encoded>大家好，歡迎收聽本期的財經科技頻道，我是主持人幫幫忙。在這裡，我們會一起來探討最新的市場動態，分析投資機會，讓我們的資產能夠持續增值。現在，讓我們來看看今日的美股指數概況。
+
+首先，道瓊工業指數收盤報在44342.19點，下跌了142.30點，跌幅為0.32%。納斯達克指數收在20895.66點，微幅上漲了10.01點，漲幅為0.05%。標準普爾500指數收在6296.79點，下跌了0.57點，跌幅為0.01%。費城半導體指數收在5732.62點，下跌了5.02點，跌幅為0.09%。
+
+接下來，讓我們看看ETF的表現。QQQ收盤報561.26點，下跌了0.10%。SPY收盤報627.58點，下跌了0.07%。至於BlackRock的比特幣ETF，IBIT收盤報66.68點，下跌了1.43%。
+
+在其他市場指標方面，比特幣最新報價大約在117,956美元。黃金價格每盎司報3355.50美元，上漲了0.46%。美國10年期公債殖利率為4.43%，而美元指數目前報98.46，下跌了0.27%。
+
+好的，接下來我們來看看最熱門的美股五家公司的最新報價和整體資金流向概況。首先，蘋果公司，最新報價為144.59美元，今日成交量達到了7700萬股。微軟公司，最新報價為258.26美元，成交量也有7500萬股。亞馬遜，最新報價為98.73美元，成交量為5300萬股。谷歌，最新報價為97.66美元，成交量為4800萬股。最後，特斯拉，最新報價為207.35美元，成交量為6200萬股。從這些數據可以看出，科技股依舊是市場的焦點，資金流動依然活躍。
+
+現在，讓我們來深入探討一下近期兩則熱門的AI工具、公司或AI投資機會。首先，我們不得不提到的是ChatGPT，這是由OpenAI開發的一個人工智能聊天機器人，它能夠理解和生成自然語言，並且可以應用在多種場景中，比如客服、教育、諮詢等。這不僅改變了我們與機器的互動方式，也為投資者帶來了新的機會。另一個值得關注的是Nvidia的最新GPU技術，它不僅在遊戲領域大放異彩，也在AI和深度學習領域扮演著重要角色。Nvidia的股價近期也隨著這些技術的進步而上漲，成為了投資者關注的焦點。
+
+最後，我想用一句投資鼓勵語來結束我們今天的播報。在投資的旅途中，風險和機會總是並存的，但記住，耐心和謹慎總能帶來更好的回報。感谢大家的收聽，我們下次再見。</content:encoded><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250719.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250719.mp3" length="1026864" type="audio/mpeg"/><pubDate>Sat, 19 Jul 2025 00:00:00 +0000</pubDate><itunes:duration>2:51</itunes:duration></item></channel></rss>
