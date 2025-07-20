@@ -130,8 +130,8 @@ script_text = generate_with_grok()
 if not script_text:
     script_text = generate_with_kimi()
 if not script_text:
-    script_text = generate_with_openai()
-if not script_text:
+    #script_text = generate_with_openai()
+#if not script_text:
     raise RuntimeError("❌ 所有來源皆失敗")
 
 # 儲存
