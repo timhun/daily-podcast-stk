@@ -3,6 +3,7 @@
 import os
 import json
 import datetime
+from zoneinfo import ZoneInfo
 from fetch_market_data import (
     get_stock_index_data,
     get_etf_data,
@@ -11,20 +12,14 @@ from fetch_market_data import (
     get_dxy_index,
     get_yield_10y
 )
-
-now = datetime.datetime.now(datetime.timezone.utc)
-today_str = now.strftime("%Y%m%d")
-today_display = now.strftime("%Y年%m月%d日")
-
 from generate_script_grok import generate_script_from_grok
 from generate_script_openrouter import generate_script_from_openrouter
 import requests
 
-# 取得日期與模式
-now = datetime.datetime.now(datetime.timezone.utc)
+# 取得日期與模式（使用台灣時區）
+now = datetime.datetime.now(ZoneInfo("Asia/Taipei"))
 today_str = now.strftime("%Y%m%d")
-today_display = now.strftime("%Y年%m月%d日")  # 加入這一行
-
+today_display = now.strftime("%Y年%m月%d日")
 
 PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
 output_dir = f"docs/podcast/{today_str}_{PODCAST_MODE}"
@@ -122,13 +117,12 @@ def generate_with_kimi():
     except Exception as e:
         print(f"⚠️ Kimi 失敗：{e}")
         return None
-        
-        
+
 # OpenAI fallback
 def generate_with_openai():
     try:
         print("📡 嘗試使用 OpenAI GPT-4...")
-        result = generate_script_from_openai(prompt)
+        result = generate_script_from_openrouter(prompt)
         if result:
             print("✅ 成功使用 OpenAI GPT-4")
             return result
@@ -142,8 +136,8 @@ script_text = generate_with_grok()
 if not script_text:
     script_text = generate_with_kimi()
 if not script_text:
-    #script_text = generate_with_openai()
-#if not script_text:
+    script_text = generate_with_openai()
+if not script_text:
     raise RuntimeError("❌ 所有來源皆失敗")
 
 # 儲存
