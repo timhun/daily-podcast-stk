@@ -1,12 +1,11 @@
 import os
 import datetime
-from edge_tts import Communicate
 import asyncio
+from edge_tts import Communicate
 
-# 日期與模式
-mode = os.getenv("PODCAST_MODE", "us")
+PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
 today = datetime.datetime.utcnow().strftime("%Y%m%d")
-base_dir = f"docs/podcast/{today}-{mode}"
+base_dir = f"docs/podcast/{today}_{PODCAST_MODE}"
 script_path = os.path.join(base_dir, "script.txt")
 audio_path = os.path.join(base_dir, "audio.mp3")
 
@@ -22,6 +21,6 @@ RATE = "+15%"
 async def synthesize():
     communicate = Communicate(text, voice=VOICE, rate=RATE)
     await communicate.save(audio_path)
-    print(f"✅ 語音合成完成：{audio_path}")
+    print(f"✅ 已完成語音合成：{audio_path}")
 
 asyncio.run(synthesize())
