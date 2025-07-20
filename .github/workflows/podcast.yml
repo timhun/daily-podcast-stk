@@ -84,10 +84,13 @@ jobs:
       - name: Generate RSS
         run: python scripts/generate_rss.py
 
-      - name: Commit RSS Feed
+      - name: Commit & Push RSS Feed
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+          git fetch origin
+          git checkout main
+          git pull origin main
           git add docs/rss/podcast.xml
-          git commit -m "更新 RSS Feed（tw）" || echo "無變更"
+          git commit -m "更新 RSS Feed（${{ matrix.mode }}）" || echo "No changes to commit"
           git push origin main
