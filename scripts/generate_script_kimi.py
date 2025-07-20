@@ -18,6 +18,9 @@ import requests
 # 取得日期與模式
 now = datetime.datetime.now(datetime.timezone.utc)
 today_str = now.strftime("%Y%m%d")
+today_display = now.strftime("%Y年%m月%d日")  # 加入這一行
+
+
 PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
 output_dir = f"docs/podcast/{today_str}_{PODCAST_MODE}"
 os.makedirs(output_dir, exist_ok=True)
