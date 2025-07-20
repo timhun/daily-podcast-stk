@@ -11,6 +11,11 @@ from fetch_market_data import (
     get_dxy_index,
     get_yield_10y
 )
+
+now = datetime.datetime.now(datetime.timezone.utc)
+today_str = now.strftime("%Y%m%d")
+today_display = now.strftime("%Y年%m月%d日")
+
 from generate_script_grok import generate_script_from_grok
 from generate_script_openrouter import generate_script_from_openrouter
 import requests
