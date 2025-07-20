@@ -1,3 +1,5 @@
+# ✅ 檔案：scripts/generate_script_kimi.py
+
 import os
 import json
 import datetime
@@ -17,9 +19,9 @@ import requests
 now = datetime.datetime.now(datetime.timezone.utc)
 today_str = now.strftime("%Y%m%d")
 PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
-output_dir = f"docs/podcast/{today_str}"
+output_dir = f"docs/podcast/{today_str}_{PODCAST_MODE}"
 os.makedirs(output_dir, exist_ok=True)
-script_path = f"{output_dir}/script.txt"
+script_path = os.path.join(output_dir, "script.txt")
 
 # 擷取行情資料
 stock_summary = "\n".join(get_stock_index_data(mode=PODCAST_MODE))
