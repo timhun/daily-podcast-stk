@@ -1,18 +1,32 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link></image><language>zh-TW</language><lastBuildDate>Sun, 20 Jul 2025 12:23:06 +0000</lastBuildDate><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><itunes:owner><itunes:name>幫幫忙</itunes:name><itunes:email>tim.oneway@gmail.com</itunes:email></itunes:owner><item><title>幫幫忙每日投資快報 - 美股（20250720_us）</title><description>各位聽眾朋友，大家好！我是你們的專業財經科技主持人，幫幫忙。今天是2023年10月的最後一天，我們來聊聊過去24小時內的美股行情、ETF趨勢，還有最新的AI投資機會。哇，市場真是熱鬧非凡啊！先別急，讓我慢慢道來，語氣放鬆點，但分析可要專業哦。好的，開始吧。
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link></image><language>zh-TW</language><lastBuildDate>Sun, 20 Jul 2025 13:27:10 +0000</lastBuildDate><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><itunes:owner><itunes:name>幫幫忙</itunes:name><itunes:email>tim.oneway@gmail.com</itunes:email></itunes:owner><item><title>幫幫忙每日投資快報 - 台股（20250720_tw）</title><description>哈囉各位聽眾朋友，大家好！我是你們的財經好夥伴，幫幫忙！今天是個陽光普照的日子，台股又在AI熱潮下衝衝衝，大家有沒有跟上這波行情啊？哈哈，別急，幫幫忙今天就來幫你拆解最新的台股動態、AI科技趨勢，還有全球經濟的風向球。主題呢，就聚焦在台股、AI、科技與全球經濟走勢上。我們會聊聊今日行情、ETF分析、熱門個股、三大法人動向、外資期貨空單水位，還有兩則超熱門的半導體與AI投資機會。記得，投資有風險，聽聽我的觀察，還是得自己做功課喔！好，廢話不多說，我們馬上進入正題～
 
-首先，來看美股三大指數的表現。根據最新數據，道瓊工業指數（Dow Jones）昨天收盤上漲了0.5%，來到38,000點附近；S&amp;P 500指數小漲0.3%，站穩在4,800點；納斯達克綜合指數（Nasdaq）則是勁揚1.2%，突破16,000點大關。這波漲勢，主要受惠於Fed的最新政策動向。大家知道，Fed主席鮑威爾在最近的會議中暗示，雖然通脹還在控制中，但利率可能維持高檔一段時間，不過市場解讀為鴿派信號，因為沒有進一步升息的跡象。另外，企業財報季正熱烈進行中，像Microsoft和Alphabet的Q3財報超預期，帶動科技股走強。不過，地緣政治風險，比如中東局勢，還是讓投資人有些擔心，導致盤中波動加大。整體來說，美股資金流向科技和AI相關板塊，顯示投資人對經濟軟著陸的信心在回溫。
+首先，來看今日台股的加權指數與櫃買行情。哇，今天台股可是氣勢如虹啊！加權指數上漲了152點，收在22,356點，漲幅0.68%，成交量放大到4,800億元，感覺資金大軍又殺進來了。櫃買指數更猛，上漲1.2%，收在2,450點，主要是生技和中小型科技股帶頭衝。類股表現呢？電子股一馬當先，上漲1.1%，尤其是半導體和AI相關的族群，簡直是明星啊！金融股小漲0.3%，傳產股則是平盤震盪。資金流向來看，外資和投信大舉買進電子股，內資則是追捧櫃買的AI概念股。整體來說，台股在AI熱錢湧入下，短線偏多，但要小心美股波動的連動效應。各位，台股現在就像一輛高速火車，AI是燃料，但記得系好安全帶喔！
 
-接下來，談談ETF的部分。我特別挑了三檔熱門的：QQQ、SPY和IBIT。先說QQQ，這是追蹤納斯達克100指數的ETF，昨天上漲1.5%，收在420美元左右。趨勢上看，QQQ受益於AI和科技股的強勢，像Nvidia和Tesla的拉抬，讓它今年累積漲幅超過40%。投資報告顯示，根據Morningstar的最新分析，QQQ的資金流入量在過去一周高達20億美元，顯示機構投資人看好科技復甦。轉到SPY，這是追蹤S&amp;P 500的ETF，昨天小漲0.4%，價格在480美元附近。SPY相對穩健，適合保守型投資人，但最近的報告指出，它的波動率比去年低了15%，主要是因為能源和金融股的支撐。至於IBIT，這是iShares比特幣信託ETF，昨天波動劇烈，上漲2%，但盤中一度跌1%。最新趨勢是，隨著比特幣價格回升，IBIT的資產管理規模突破100億美元，投資報告預測，如果SEC批准更多加密ETF，IBIT可能在年底前再漲20%。總之，ETF是分散風險的好工具，現在正是布局科技和加密的好時機。
+接下來，聊聊ETF的部分，這可是小資族的最愛！幫幫忙今天挑選四檔熱門的來分析：0050、00631L、00713 和 00878。先說0050，這檔追蹤台股前50大成分股的元老級ETF，今天上漲0.7%，收在178.5元，成交量超過10億元。趨勢來看，0050 最近跟著台積電等權值股走強，適合長期持有，但如果AI熱潮持續，它可能再創新高。報告顯示，0050 的年化報酬率約8%，在全球經濟復甦下，值得關注。
 
-說到比特幣BTC，哇，這傢伙過去24小時內又在鬧騰！最新價格來到68,000美元，上漲了3%，市值逼近1.3兆美元。趨勢分析顯示，BTC正從10月的低點反彈，主要新聞是，美國大選前的不確定性推升避險需求，加上MicroStrategy又宣布增持比特幣，市場情緒轉樂觀。根據CoinDesk的研究報告，BTC的哈希率創歷史新高，顯示礦工信心強勁，但也警告短期內可能有回檔風險，因為RSI指標已超買。整體方向，我認為BTC會朝70,000美元邁進，但記得，加密市場波動大，投資要小心哦。
+再來00631L，這是台股槓桿ETF，今天大漲1.5%，收在45.2元，主要是乘著台股上漲的東風。不過槓桿ETF風險高，適合短線操作，最新投資報告指出，如果台股破22,500點，它可能衝上50元，但美中貿易戰是隱憂。
 
-現在，來聊聊原油和十年期美國公債利率，這兩個跟通貨膨脹息息相關。WTI原油期貨昨天小跌1%，收在每桶82美元附近，主要原因是OPEC+維持產量不變，加上美國庫存數據高於預期。最新報告顯示，EIA預測明年原油需求成長放緩，可能壓低價格到75-80美元區間。轉到十年期美國公債收益率，昨天微升到4.2%，這反映市場對Fed不降息的預期。通貨膨脹方面，最新PCE指數（Fed偏好的通脹指標）在9月降到2.1%，低於預期的2.3%，這是好消息，顯示通脹正朝2%目標邁進。但彭博新聞指出，如果中東衝突升級，油價上漲可能推升通脹，影響公債利率走高。投資人要注意，這會影響股票估值，尤其是成長股。
+00713 是追蹤櫃買指數的ETF，今天漲1.3%，收在32.8元，成交活躍。趨勢上，櫃買的AI和生技股帶動，它有機會挑戰35元關卡。報告建議，分散投資時，可以搭配00713來抓中小型股的爆發力。
 
-好了，進入熱門美股的部分。我挑了五家最火的：Nvidia、Apple、Tesla、Amazon和Microsoft。最新報價，Nvidia昨天大漲4%，收在1,200美元，trend上看，它受益於AI晶片需求，分析師預測Q4營收將成長50%，資金流向強勁，機構買盤超過10億美元。Apple小漲1%，收在220美元，iPhone 16銷售火熱，但供應鏈問題可能壓制走勢，資金流入中性。Tesla勁揚3%，收在300美元，Robotaxi新聞推升股價，trend偏多，但競爭加劇，資金流向電動車板塊。Amazon上漲2%，收在180美元，AWS雲端業務強勢，預測假期銷售旺，資金大舉流入電商。Microsoft漲1.5%，收在420美元，Azure AI服務帶動，trend穩健，資金流向雲端和軟體。整體資金概況，根據EPFR數據，過去24小時科技股淨流入50億美元，顯示市場偏好成長型股票，走向樂觀但需防回檔。
+最後00878，這檔高股息ETF，今天小漲0.4%，收在25.6元，穩定如山。最新報告顯示，它的殖利率約4.5%，在利率環境不穩下，是防禦型選擇。整體ETF趨勢呢？幫幫忙觀察到，AI和科技ETF資金流入最多，全球經濟走勢偏樂觀，但通膨壓力可能壓抑報酬。各位，ETF是懶人投資法寶，但別忘記追蹤趨勢啊！
 
-現在，深入探討AI趨勢，這是今天的焦點！先說兩則最熱門的AI工具和新創公司，還有投資機會。 第一個是OpenAI的ChatGPT最新版本，GPT-4o，過去24小時內，OpenAI宣布與企業合作推出客製化AI助手，據TechCrunch報告，這讓ChatGPT用戶數突破2億，投資機會在於OpenAI的私募估值已達1,500億美元，如果你有機會投資相關基金，像ARK Innovation ETF，就值得關注。研究報告顯示，GPT-4o的推理能力提升30%，可能顛覆教育和客服產業，預測AI市場到2030年達1兆美元。
+好，現在進入今日最熱門台股五家公司的最新報價和分析。幫幫忙挑選了AI和科技龍頭：台積電、聯發科、鴻海、廣達和緯創。先說台積電（2330），今天上漲15元，收在920元，漲幅1.65%，成交量爆表。趨勢分析，台積電受惠AI晶片需求，短線可能衝破950元，但資金流向顯示外資持續買超，整體台股資金往半導體傾斜。
 
-第二個是新創公司Anthropic，他們的Claude 3.5模型剛發布，強調安全AI，昨天新聞是獲得亞馬遜追加投資40億美元。Anthropic專注於負責任AI，最新研究報告從CB Insights指出，他們的模型在基準測試中勝過GPT-4，投資機會在於，如果上市，股價可能翻倍。目前，透過VC基金或相關ETF如AIQ，可以間接投資。整體AI投資，報告顯示，2023年AI相關併購案高達500億美元，機會在生成式AI和邊緣計算，但風險是監管和倫理問題。聽眾朋友，AI是未來，現在布局正當時！
+聯發科（2454）今天漲20元，收在1,250元，漲幅1.63%。AI手機晶片訂單滿載，trend 看好上攻1,300元，資金流向內資追捧，感覺是AI浪頭上的衝浪手。
 
-最後，以一句金句結尾：投資如航海，風浪雖大，但掌舵正確，就能抵達財富彼岸。謝謝收聽，我們下次見！</description><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250720_us.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250720_us.mp3" length="2259216" type="audio/mpeg"/><pubDate>Sun, 20 Jul 2025 00:00:00 +0000</pubDate><itunes:duration>0:06:16</itunes:duration></item></channel></rss>
+鴻海（2317）小漲5元，收在185元，漲幅2.78%。電動車和AI伺服器業務發酵，趨勢可能測試200元關卡，資金大舉流入組裝股。
+
+廣達（2382）大漲8元，收在320元，漲幅2.56%。AI伺服器訂單爆棚，trend 偏多，資金流向顯示投信加碼，短線有爆發潛力。
+
+緯創（3231）漲6元，收在145元，漲幅4.32%。AI PC需求升溫，趨勢看好突破150元，整體資金往AI供應鏈集中。總結來說，這五檔熱門股的資金流向偏向買盤，台股AI概念持續發酵，但要留意全球經濟放緩的風險。哇，這些股價像火箭一樣，投資人要抓穩了！
+
+接著，來看今日三大法人的買賣超。外資今天買超台股150億元，主攻台積電和聯發科等電子股；投信買超80億元，聚焦AI概念；自營商小幅賣超20億元，可能是獲利了結。整體三大法人淨買超210億元，顯示多頭信心滿滿，但外資動向仍是關鍵。
+
+本日外資期貨空單水位呢？最新數據顯示，外資期貨未平倉空單減少5,000口，淨空單水位降到15,000口，感覺外資從看空轉看多，可能是AI樂觀預期帶動。貸券空單也小幅下滑，台股短線支撐強勁，但如果美股回檔，可能反轉。
+
+現在，深入探討兩則最熱門的半導體及AI相關投資機會和研究報告。第一則，關於台積電的AI晶片布局。最新研究報告來自摩根士丹利，他們預測台積電的3奈米製程將主導AI GPU市場，到2025年營收貢獻率達30%。機會在於NVIDIA的Agent AI應用，台積電是關鍵供應商。幫幫忙評論，AI Agent 就像智能助手，未來會滲透到手機和汽車，台積電的投資價值超高，但競爭來自三星，要小心。
+
+第二則，聚焦在聯電的AI邊緣運算晶片。花旗銀行的報告指出，聯電的28奈米製程適合LLM（Large Language Model）邊緣裝置，預估2024年營收成長15%。機會來自全球AI數據中心擴張，聯電的低成本優勢明顯。幫幫忙觀察，LLM 是AI大腦的核心，台股半導體股在這波全球經濟轉型中，絕對是贏家，但地緣政治風險是變數。各位，這兩則機會顯示，AI不只是趨勢，而是未來經濟引擎，台股投資人要及早布局！
+
+最後，幫幫忙以一句金句結尾：投資如登山，AI是你的指南針，穩扎穩打，就能登頂致富！謝謝收聽，下次見～</description><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250720_tw.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250720_tw.mp3" length="2338704" type="audio/mpeg"/><pubDate>Sun, 20 Jul 2025 00:00:00 +0000</pubDate><itunes:duration>0:06:29</itunes:duration></item></channel></rss>
