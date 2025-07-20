@@ -62,7 +62,11 @@ with open(prompt_file, "r", encoding="utf-8") as f:
     prompt_template = f.read()
 
 # 組合完整 prompt
-prompt = prompt_template.format(market_data=market_data, theme=theme_text)
+prompt = prompt_template.format(
+    market_data=market_data,
+    theme=theme_text,
+    date=today_display
+)
 
 # Grok3
 def generate_with_grok():
