@@ -1,56 +1,117 @@
+import os
+import datetime
+import yfinance as yf
+import requests
+
 def get_stock_index_data_us():
-    # 這是原本的美股資料擷取邏輯
-    return [
-        "🔹 S&P 500 上漲 1.2%",
-        "🔸 Nasdaq 下跌 0.6%",
-        "🔺 Dow Jones 持平"
-    ]
+    tickers = {
+        "^DJI": "道瓊指數",
+        "^GSPC": "標普500",
+        "^IXIC": "那斯達克"
+    }
+    summary = []
+    for symbol, name in tickers.items():
+        data = yf.Ticker(symbol)
+        price = data.history(period="1d")
+        if price.empty:
+            continue
+        last = price["Close"].iloc[-1]
+        summary.append(f"{name}: {last:.2f}")
+    return summary
 
 def get_stock_index_data_tw():
-    return [
-        "📈 加權指數上漲 0.85%，收在 17600 點",
-        "📉 櫃買指數下跌 0.3%，AI 概念股震盪整理",
-        "🏦 電金族群穩健支撐台股"
-    ]
+    tickers = {
+        "^TWII": "加權指數",
+        "^TWOII": "櫃買指數"
+    }
+    summary = []
+    for symbol, name in tickers.items():
+        data = yf.Ticker(symbol)
+        price = data.history(period="1d")
+        if price.empty:
+            continue
+        last = price["Close"].iloc[-1]
+        summary.append(f"{name}: {last:.2f}")
+    return summary
 
 def get_etf_data_us():
-    return [
-        "📊 QQQ 上漲 1.1%，科技股回溫",
-        "📊 SPY 上漲 0.5%，金融與能源支撐走勢",
-        "📊 IBIT 微幅震盪"
-    ]
+    tickers = {
+        "QQQ": "QQQ",
+        "SPY": "SPY",
+        "IBIT": "IBIT"
+    }
+    summary = []
+    for symbol, name in tickers.items():
+        data = yf.Ticker(symbol)
+        price = data.history(period="1d")
+        if price.empty:
+            continue
+        last = price["Close"].iloc[-1]
+        summary.append(f"{name}: {last:.2f}")
+    return summary
 
 def get_etf_data_tw():
-    return [
-        "📊 台灣 0050 上漲 0.7%，AI、半導體領漲",
-        "📊 00878 持續吸引高股息族群",
-        "📊 00929 短期波動加劇"
-    ]
+    tickers = {
+        "0050.TW": "0050 台灣50",
+        "00878.TW": "00878 高股息",
+        "006208.TW": "富邦台50"
+    }
+    summary = []
+    for symbol, name in tickers.items():
+        data = yf.Ticker(symbol)
+        price = data.history(period="1d")
+        if price.empty:
+            continue
+        last = price["Close"].iloc[-1]
+        summary.append(f"{name}: {last:.2f}")
+    return summary
 
-# 其他共用資料
-def get_bitcoin_price(): return "₿ 比特幣現價 $63,500"
-def get_gold_price(): return "🪙 黃金每盎司 $2,390"
-def get_dxy_index(): return "💵 美元指數 DXY 為 103.5"
-def get_yield_10y(): return "📉 美國 10Y 殖利率為 4.10%"
+def get_bitcoin_price():
+    try:
+        r = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd")
+        data = r.json()
+        price = data["bitcoin"]["usd"]
+        return f"比特幣: ${price}"
+    except:
+        return "比特幣價格讀取失敗"
 
-def get_market_data_by_mode(mode: str) -> str:
+def get_gold_price():
+    try:
+        r = requests.get("https://data-asg.goldprice.org/dbXRates/USD")
+        data = r.json()
+        price = data["items"][0]["xauPrice"]
+        return f"黃金價格: ${price:.2f}"
+    except:
+        return "黃金價格讀取失敗"
+
+def get_dxy_index():
+    try:
+        data = yf.Ticker("DX-Y.NYB").history(period="1d")
+        if data.empty:
+            return "美元指數讀取失敗"
+        last = data["Close"].iloc[-1]
+        return f"美元指數 DXY: {last:.2f}"
+    except:
+        return "美元指數讀取失敗"
+
+def get_yield_10y():
+    try:
+        data = yf.Ticker("^TNX").history(period="1d")
+        if data.empty:
+            return "10年期公債殖利率讀取失敗"
+        last = data["Close"].iloc[-1]
+        return f"美國十年期公債殖利率: {last:.2f}%"
+    except:
+        return "10年期公債殖利率讀取失敗"
+
+def get_stock_index_data(mode="us"):
     if mode == "tw":
-        stock_summary = "\n".join(get_stock_index_data_tw())
-        etf_summary = "\n".join(get_etf_data_tw())
+        return get_stock_index_data_tw()
     else:
-        stock_summary = "\n".join(get_stock_index_data_us())
-        etf_summary = "\n".join(get_etf_data_us())
+        return get_stock_index_data_us()
 
-    return f"""
-【股市概況】
-{stock_summary}
-
-【ETF 概況】
-{etf_summary}
-
-【其他市場指標】
-{get_bitcoin_price()}
-{get_gold_price()}
-{get_yield_10y()}
-{get_dxy_index()}
-""".strip()
+def get_etf_data(mode="us"):
+    if mode == "tw":
+        return get_etf_data_tw()
+    else:
+        return get_etf_data_us()
