@@ -1,3 +1,4 @@
+# scripts/generate_script_kimi.py
 import os
 import json
 import datetime
@@ -13,9 +14,9 @@ from generate_script_grok import generate_script_from_grok
 from generate_script_openrouter import generate_script_from_openrouter
 import requests
 
+# 讀取 PODCAST_MODE（us / tw）
 PODCAST_MODE = os.getenv("PODCAST_MODE", "us")
-now = datetime.datetime.now(datetime.timezone.utc)
-today_str = now.strftime("%Y%m%d")
+today_str = datetime.datetime.utcnow().strftime("%Y%m%d")
 output_dir = f"docs/podcast/{today_str}/{PODCAST_MODE}"
 os.makedirs(output_dir, exist_ok=True)
 script_path = f"{output_dir}/script.txt"
@@ -42,30 +43,26 @@ market_data = f"""
 {dxy}
 """.strip()
 
-# 主題
+# 嘗試讀取主題
 theme_text = ""
 theme_file = "themes.txt"
 if os.path.exists(theme_file):
     with open(theme_file, "r", encoding="utf-8") as f:
-        lines = [line.strip().strip('，。！') for line in f if line.strip()]
+        lines = [line.strip() for line in f.readlines() if line.strip()]
         if lines:
-            theme_text = lines[-1]
+            theme_text = lines[-1].strip("：:。.")
 
-# Prompt 載入（根據模式）
-prompt_file = f"prompt/{PODCAST_MODE}.txt"
-if not os.path.exists(prompt_file):
-    raise FileNotFoundError(f"找不到 prompt 模板：{prompt_file}")
+# 讀取 prompt 檔案
+prompt_path = f"prompt/{PODCAST_MODE}.txt"
+if not os.path.exists(prompt_path):
+    raise FileNotFoundError(f"找不到 prompt 模板：{prompt_path}")
 
-with open(prompt_file, "r", encoding="utf-8") as f:
-    prompt_template = f.read().strip()
+with open(prompt_path, "r", encoding="utf-8") as f:
+    prompt_template = f.read()
 
-# 建立 prompt
-prompt = prompt_template.format(
-    market_data=market_data,
-    theme=("請以以下主題切入角度撰寫：" + theme_text if theme_text else "")
-)
+prompt = prompt_template.format(market_data=market_data, theme=theme_text)
 
-# Fallback 呼叫流程
+# Grok
 def generate_with_grok():
     try:
         print("🤖 使用 Grok3 嘗試產生逐字稿...")
@@ -73,49 +70,57 @@ def generate_with_grok():
         if result:
             print("✅ 成功使用 Grok3 產生逐字稿")
             return result
-        raise Exception("Grok3 回傳為空")
     except Exception as e:
-        print(f"⚠️ Grok3 失敗：{e}")
-        return None
+        print(f"⚠️ Grok3 失敗： {e}")
+    return None
 
+# Kimi
 def generate_with_kimi():
-    print("🔁 改用 Kimi API 產生逐字稿...")
-    api_key = os.getenv("MOONSHOT_API_KEY")
-    if not api_key:
-        raise ValueError("請設定環境變數 MOONSHOT_API_KEY")
+    try:
+        print("🔁 改用 Kimi API...")
+        api_key = os.getenv("MOONSHOT_API_KEY")
+        if not api_key:
+            raise ValueError("請設定 MOONSHOT_API_KEY")
 
-    response = requests.post(
-        url="https://api.moonshot.cn/v1/chat/completions",
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
-        },
-        json={
-            "model": "moonshot-v1-128k",
-            "messages": [
-                {"role": "system", "content": "你是專業的 Podcast 撰稿助手"},
-                {"role": "user", "content": prompt}
-            ],
-            "temperature": 0.7,
-            "max_tokens": 2048,
-            "top_p": 0.95
-        }
-    )
+        response = requests.post(
+            url="https://api.moonshot.cn/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": "moonshot-v1-128k",
+                "messages": [
+                    {"role": "system", "content": "你是專業的 Podcast 撰稿助手"},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.7,
+                "max_tokens": 2048,
+                "top_p": 0.95
+            }
+        )
+        if response.status_code == 200:
+            return response.json()["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        print(f"❌ Kimi 失敗： {e}")
+    return None
 
-    if response.status_code == 200:
-        return response.json()["choices"][0]["message"]["content"].strip()
-    else:
-        print("❌ 發生錯誤：", response.status_code, response.text)
-        return None
-
+# OpenRouter
 def generate_with_openrouter():
-    print("🔁 最後使用 OpenRouter 嘗試產生逐字稿...")
-    return generate_script_from_openrouter(prompt)
+    try:
+        print("📡 嘗試使用 OpenRouter GPT-4...")
+        return generate_script_from_openrouter(prompt)
+    except Exception as e:
+        print(f"⚠️ OpenRouter 失敗： {e}")
+    return None
 
-# 主流程
-script_text = generate_with_grok() or generate_with_kimi() or generate_with_openrouter()
+# 優先順序：Grok → Kimi → OpenRouter
+script = generate_with_grok() or generate_with_kimi() or generate_with_openrouter()
+
+if not script:
+    raise RuntimeError("❌ 所有來源皆失敗")
 
 # 儲存逐字稿
 with open(script_path, "w", encoding="utf-8") as f:
-    f.write(script_text)
+    f.write(script)
 print(f"✅ 已儲存逐字稿至：{script_path}")
