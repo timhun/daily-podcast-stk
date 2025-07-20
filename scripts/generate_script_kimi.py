@@ -110,18 +110,19 @@ def generate_with_kimi():
     except Exception as e:
         print(f"⚠️ Kimi 失敗：{e}")
         return None
-
-# OpenRouter
-def generate_with_openrouter():
+        
+        
+# OpenAI fallback
+def generate_with_openai():
     try:
-        print("📡 嘗試使用 OpenRouter GPT-4...")
-        result = generate_script_from_openrouter(prompt)
+        print("📡 嘗試使用 OpenAI GPT-4...")
+        result = generate_script_from_openai(prompt)
         if result:
-            print("✅ 成功使用 OpenRouter GPT-4")
+            print("✅ 成功使用 OpenAI GPT-4")
             return result
-        raise Exception("OpenRouter 回傳為空")
+        raise Exception("OpenAI 回傳為空")
     except Exception as e:
-        print(f"⚠️ OpenRouter 失敗：{e}")
+        print(f"⚠️ OpenAI 失敗：{e}")
         return None
 
 # 主流程
@@ -129,7 +130,7 @@ script_text = generate_with_grok()
 if not script_text:
     script_text = generate_with_kimi()
 if not script_text:
-    script_text = generate_with_openrouter()
+    script_text = generate_with_openai()
 if not script_text:
     raise RuntimeError("❌ 所有來源皆失敗")
 
