@@ -54,7 +54,8 @@ def get_etf_data_tw():
     tickers = {
         "0050.TW": "0050 台灣50",
         "00878.TW": "00878 高股息",
-        "006208.TW": "富邦台50"
+        "006208.TW": "富邦台50",
+        "00631L.TW": "00631L 元大台灣50正2"
     }
     summary = []
     for symbol, name in tickers.items():
