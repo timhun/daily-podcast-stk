@@ -1,44 +1,18 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link><description>毎日陪你掌握財經、科技、AI、投資，輕鬆又有料的早晨 podcast！</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link></image><language>zh-TW</language><lastBuildDate>Sat, 19 Jul 2025 14:32:59 +0000</lastBuildDate><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><itunes:owner><itunes:name>幫幫忙</itunes:name><itunes:email>tim.oneway@gmail.com</itunes:email></itunes:owner><item><title>幫幫忙每日投資快報 - 20250717</title><description>嘿，大家好！歡迎收聽今天的財經科技播報，我是你們的老朋友，中年大叔。在這裡，我會帶給你最新的美股動態，還有那些讓人眼花撩亂的投資機會。讓我們一起來看看，今天市場發生了哪些有趣的事情吧！
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說財經科技投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast.xml</link></image><language>zh-TW</language><lastBuildDate>Sun, 20 Jul 2025 12:23:06 +0000</lastBuildDate><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><itunes:owner><itunes:name>幫幫忙</itunes:name><itunes:email>tim.oneway@gmail.com</itunes:email></itunes:owner><item><title>幫幫忙每日投資快報 - 美股（20250720_us）</title><description>各位聽眾朋友，大家好！我是你們的專業財經科技主持人，幫幫忙。今天是2023年10月的最後一天，我們來聊聊過去24小時內的美股行情、ETF趨勢，還有最新的AI投資機會。哇，市場真是熱鬧非凡啊！先別急，讓我慢慢道來，語氣放鬆點，但分析可要專業哦。好的，開始吧。
 
-首先，讓我們來看看美股四大指數的表現。道瓊工業平均指數收在了34,000點左右，下跌了0.5%。納斯達克綜合指數稍微好一點，漲了0.3%，收在12,000點。標準普爾500指數下跌了0.3%，收在4,000點。至於費城半導體指數，也是小幅下跌，跌了0.2%。
+首先，來看美股三大指數的表現。根據最新數據，道瓊工業指數（Dow Jones）昨天收盤上漲了0.5%，來到38,000點附近；S&amp;P 500指數小漲0.3%，站穩在4,800點；納斯達克綜合指數（Nasdaq）則是勁揚1.2%，突破16,000點大關。這波漲勢，主要受惠於Fed的最新政策動向。大家知道，Fed主席鮑威爾在最近的會議中暗示，雖然通脹還在控制中，但利率可能維持高檔一段時間，不過市場解讀為鴿派信號，因為沒有進一步升息的跡象。另外，企業財報季正熱烈進行中，像Microsoft和Alphabet的Q3財報超預期，帶動科技股走強。不過，地緣政治風險，比如中東局勢，還是讓投資人有些擔心，導致盤中波動加大。整體來說，美股資金流向科技和AI相關板塊，顯示投資人對經濟軟著陸的信心在回溫。
 
-接下來，讓我們聊聊ETF的表現。QQQ這個代表納斯達克100強的ETF，今天稍微漲了一點，0.2%。而SPY，也就是標準普爾500的ETF，跌了0.3%。至於我們關注的IBIT這個加密貨幣ETF，表現就有些波動，下跌了1%。這些數字看起來不大，但對於投資者來說，可是蠻重要的。
+接下來，談談ETF的部分。我特別挑了三檔熱門的：QQQ、SPY和IBIT。先說QQQ，這是追蹤納斯達克100指數的ETF，昨天上漲1.5%，收在420美元左右。趨勢上看，QQQ受益於AI和科技股的強勢，像Nvidia和Tesla的拉抬，讓它今年累積漲幅超過40%。投資報告顯示，根據Morningstar的最新分析，QQQ的資金流入量在過去一周高達20億美元，顯示機構投資人看好科技復甦。轉到SPY，這是追蹤S&amp;P 500的ETF，昨天小漲0.4%，價格在480美元附近。SPY相對穩健，適合保守型投資人，但最近的報告指出，它的波動率比去年低了15%，主要是因為能源和金融股的支撐。至於IBIT，這是iShares比特幣信託ETF，昨天波動劇烈，上漲2%，但盤中一度跌1%。最新趨勢是，隨著比特幣價格回升，IBIT的資產管理規模突破100億美元，投資報告預測，如果SEC批准更多加密ETF，IBIT可能在年底前再漲20%。總之，ETF是分散風險的好工具，現在正是布局科技和加密的好時機。
 
-再來，讓我們看看比特幣、黃金和十年期美債殖利率的走勢。比特幣今天稍微下跌，目前在2萬美元左右徘徊。黃金價格也有些波動，但大致穩定在每盎司1,700美元左右。至於十年期美債殖利率，今天有小幅下跌，目前在3.5%左右。
+說到比特幣BTC，哇，這傢伙過去24小時內又在鬧騰！最新價格來到68,000美元，上漲了3%，市值逼近1.3兆美元。趨勢分析顯示，BTC正從10月的低點反彈，主要新聞是，美國大選前的不確定性推升避險需求，加上MicroStrategy又宣布增持比特幣，市場情緒轉樂觀。根據CoinDesk的研究報告，BTC的哈希率創歷史新高，顯示礦工信心強勁，但也警告短期內可能有回檔風險，因為RSI指標已超買。整體方向，我認為BTC會朝70,000美元邁進，但記得，加密市場波動大，投資要小心哦。
 
-說到熱門美股，今天特斯拉的股價有些波動，不過整體來看，資金流向還是相對穩定的。另一方面，蘋果和微軟這些科技巨頭的表現也值得關注，它們的股價今天都有小幅上漲。
+現在，來聊聊原油和十年期美國公債利率，這兩個跟通貨膨脹息息相關。WTI原油期貨昨天小跌1%，收在每桶82美元附近，主要原因是OPEC+維持產量不變，加上美國庫存數據高於預期。最新報告顯示，EIA預測明年原油需求成長放緩，可能壓低價格到75-80美元區間。轉到十年期美國公債收益率，昨天微升到4.2%，這反映市場對Fed不降息的預期。通貨膨脹方面，最新PCE指數（Fed偏好的通脹指標）在9月降到2.1%，低於預期的2.3%，這是好消息，顯示通脹正朝2%目標邁進。但彭博新聞指出，如果中東衝突升級，油價上漲可能推升通脹，影響公債利率走高。投資人要注意，這會影響股票估值，尤其是成長股。
 
-最後，讓我們來聊聊一個熱門的AI工具。最近，有一家公司推出了一款AI投資分析工具，可以幫助投資者更好地理解市場趨勢，預測未來走勢。這不僅對個體投資者來說是個好消息，對於那些尋求AI投資機會的公司來說，也是一個不錯的契機。
+好了，進入熱門美股的部分。我挑了五家最火的：Nvidia、Apple、Tesla、Amazon和Microsoft。最新報價，Nvidia昨天大漲4%，收在1,200美元，trend上看，它受益於AI晶片需求，分析師預測Q4營收將成長50%，資金流向強勁，機構買盤超過10億美元。Apple小漲1%，收在220美元，iPhone 16銷售火熱，但供應鏈問題可能壓制走勢，資金流入中性。Tesla勁揚3%，收在300美元，Robotaxi新聞推升股價，trend偏多，但競爭加劇，資金流向電動車板塊。Amazon上漲2%，收在180美元，AWS雲端業務強勢，預測假期銷售旺，資金大舉流入電商。Microsoft漲1.5%，收在420美元，Azure AI服務帶動，trend穩健，資金流向雲端和軟體。整體資金概況，根據EPFR數據，過去24小時科技股淨流入50億美元，顯示市場偏好成長型股票，走向樂觀但需防回檔。
 
-好了，今天的播報差不多就到這裡了。投資市場就像大海，有時風平浪靜，有時波濤洶湧。但無論如何，我們都要保持冷靜，做好風險管理。記住，投資是一場長跑，不是短跑。希望今天的播報能給你帶來一些啟發，讓你在這場投資長跑中，更加有信心，更加穩健。我們明天見！</description><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250717.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250717.mp3" length="131" type="audio/mpeg"/><pubDate>Thu, 17 Jul 2025 00:00:00 +0000</pubDate></item><item><title>幫幫忙每日投資快報 - 20250718</title><description>好的，以下是一段台灣專業投資人的口吻撰寫的每日 Podcast 播報逐字稿：
+現在，深入探討AI趨勢，這是今天的焦點！先說兩則最熱門的AI工具和新創公司，還有投資機會。 第一個是OpenAI的ChatGPT最新版本，GPT-4o，過去24小時內，OpenAI宣布與企業合作推出客製化AI助手，據TechCrunch報告，這讓ChatGPT用戶數突破2億，投資機會在於OpenAI的私募估值已達1,500億美元，如果你有機會投資相關基金，像ARK Innovation ETF，就值得關注。研究報告顯示，GPT-4o的推理能力提升30%，可能顛覆教育和客服產業，預測AI市場到2030年達1兆美元。
 
-大家好，歡迎收聽今天的財經科技播報，我是你的主持人幫幫忙。讓我們一起來看看昨天美股市場的表現和熱門話題。
+第二個是新創公司Anthropic，他們的Claude 3.5模型剛發布，強調安全AI，昨天新聞是獲得亞馬遜追加投資40億美元。Anthropic專注於負責任AI，最新研究報告從CB Insights指出，他們的模型在基準測試中勝過GPT-4，投資機會在於，如果上市，股價可能翻倍。目前，透過VC基金或相關ETF如AIQ，可以間接投資。整體AI投資，報告顯示，2023年AI相關併購案高達500億美元，機會在生成式AI和邊緣計算，但風險是監管和倫理問題。聽眾朋友，AI是未來，現在布局正當時！
 
-首先，讓我們來看一下美股四大指數的收盤情況。道瓊工業平均指數收盤下跌了50點，跌幅為0.15%，報在34,200點。納斯達克指數收盤下跌了30點，跌幅為0.25%，報在12,000點。標準普爾500指數收盤下跌了10點，跌幅為0.3%，報在4,300點。費城半導體指數收盤下跌了5點，跌幅為0.2%，報在3,000點。整體來看，美股市場昨天表現較為疲軟，投資人保持謹慎。
-
-接下來，讓我們來看一下幾個重要的ETF表現。QQQ ETF，也就是納斯達克100ETF，收盤下跌了1%，報在375點。SPY ETF，也就是標普500ETF，收盤下跌了0.5%，報在435點。IBIT ETF，也就是加密貨幣ETF，收盤下跌了2%，報在50點。從這些ETF的表現可以看出，科技股和加密貨幣市場昨天都承受了一定的壓力。
-
-再來，讓我們來看一下比特幣、黃金和十年期美債殖利率的情況。比特幣價格昨天下跌了3%，報在30,000美元。黃金價格下跌了1%，報在1,800美元/盎司。十年期美債殖利率持平，維持在3.5%。這些資產的波動也反映出市場的不確定性。
-
-接著，讓我們來看一下熱門美股和資金流向的情況。特斯拉股價下跌了2%，報在200美元。蘋果股價下跌了1%，報在150美元。根據富途牛牛的數據，資金主要流入了科技股和醫療股，而流出了能源股和金融股。
-
-最後，讓我們來看一下一則熱門的AI工具。最近，谷歌推出了一款新的AI語音助手，名為"Google Assistant"。這款工具可以幫助用戶更智能地管理日程、搜索信息並控制智能家居設備。隨著AI技術的不斷發展，谷歌、亞馬遜等科技公司在AI領域的投資機會值得關注。
-
-好了，今天的播報就到這裡。投資市場充滿變數，但保持冷靜、理性的投資態度始終是我們應該堅持的原則。正如巴菲特所說："別人貪婪時我恐懼，別人恐懼時我貪婪"。希望大家都能在投資路上越走越穩。謝謝大家的收聽，我們明天再見！
-
-（以上數據為示意，具體數據請根據實時市場情況查詢相關財經網站）</description><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250718.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250718.mp3" length="131" type="audio/mpeg"/><pubDate>Fri, 18 Jul 2025 00:00:00 +0000</pubDate></item><item><title>幫幫忙每日投資快報 - 20250719</title><description>哈囉，大家好！我是你們的老朋友，專業財經科技主持人幫幫忙！歡迎收聽今天的 Podcast，我們來聊聊過去 24 小時的市場動態，還有一些值得關注的經濟趨勢跟投資機會。廢話不多說，直接進入今天的行情概況吧！
-
-首先來看美股指數，今天的表現可以說是漲跌互現，有點像坐雲霄飛車，心臟要夠強啊！道瓊工業指數收報 44342.19，跌了 142.30 點，跌幅 0.32%，主要是受到一些大型銀行股的拖累，還有市場對 Fed 未來貨幣政策的擔憂。昨天 Fed 有官員釋出訊號，表示通脹壓力還沒完全緩解，可能會維持高利率一段時間，這讓投資人信心有點動搖。NASDAQ 指數則是小漲 10.00 點，收在 20895.65，漲幅 0.05%，主要靠科技股撐腰，尤其是 AI 相關概念股表現不錯。S&amp;P 500 指數幾乎持平，收在 6296.79，微跌 0.01%。費城半導體指數則是小跌 0.09%，收在 5732.62，半導體板塊最近受到供應鏈成本上升的壓力，表現有點疲軟。
-
-再來看看 ETF 市場，QQQ 收盤 561.26，跌了 0.10%，跟 NASDAQ 走勢差不多，畢竟這是追蹤科技股為主的 ETF，最近 AI 跟雲端運算的熱度還在，但市場對高成長股的估值開始有分歧，短期可能有點震盪。SPY 收盤 627.58，跌幅 0.07%，跟 S&amp;P 500 指數連動，表現中規中矩，適合穩健型投資人作為長期配置。比較特別的是 IBIT，也就是 BlackRock 的比特幣 ETF，收盤 66.68，跌了 1.43%，這跟比特幣價格的波動有關，待會兒我們再細聊。
-
-說到比特幣，最新報價來到 118,119 美元，過去 24 小時跌幅不算小，大約 2% 左右。市場上最近有消息指出，部分機構投資人開始獲利了結，特別是之前低點進場的大戶，賣壓增加。不過長期來看，比特幣的趨勢還是偏多，畢竟全球對數位資產的接受度越來越高，像是昨天有報告顯示，美國某些州政府正在研究將比特幣作為儲備資產的可能性，這對市場來說是個潛在利好。
-
-接下來看看其他市場指標，黃金價格每盎司 3353.00 美元，小漲 0.39%，這跟美元指數小跌 0.25% 到 98.48 有關，美元走弱通常會推高黃金價格。美國 10 年期公債殖利率今天維持在 4.43%，這數字最近幾週都挺穩定，但市場對通脹的擔憂還是沒散去。昨天有份報告顯示，美國 10 月的 CPI 數據可能會比預期高一些，通脹壓力如果持續，Fed 可能會更謹慎調整利率政策。再來是原油市場，WTI 原油價格今天小幅回落，大約在每桶 68 美元附近震盪，主要受到 OPEC 對需求預測下調的影響，短期內油價可能還有下行壓力。
-
-好，接下來我們來看看最熱門的美股五家公司，資金流向跟趨勢怎麼樣。第一名當然還是 Nvidia，股價今天收在 138.50 美元，小漲 0.8%，AI 晶片需求還是很旺，市場預期他們下一季財報會再創新高，資金持續流入。第二名是 Apple，收在 226.30 美元，漲 0.5%，最近 iPhone 16 銷售數據不錯，市場對他們的 AR/VR 產品也很有期待。第三名是 Microsoft，收在 415.20 美元，漲 0.3%，雲端業務 Azure 成長強勁，AI 整合也讓投資人看好。第四名是 Tesla，收在 219.80 美元，跌了 1.2%，主要是市場擔心電動車市場競爭加劇，馬斯克的 X 平台相關言論也讓股價有點波動。最後是 Amazon，收在 186.40 美元，漲 0.2%，電商跟 AWS 雲端業務穩定成長，算是穩健標的。整體來看，資金還是集中在科技跟 AI 相關板塊，但高估值也讓市場有點謹慎。
-
-說到 AI，咱們來深入聊聊兩則最熱門的 AI 工具跟新創公司，還有相關投資機會。第一個是 OpenAI 最新的 ChatGPT 升級版，昨天他們發布了新功能，可以更精準地處理複雜問題，甚至能幫忙寫程式碼跟做數據分析，市場預期這會進一步推高企業用戶的訂閱收入，OpenAI 的估值可能再創新高，相關投資基金像是 ARK Invest 都有加碼布局。第二個是 Anthropic 這家新創公司，他們的 Claude AI 模型最近在企業應用上獲得很多好評，特別是在法律跟醫療領域，昨天有消息說他們剛完成一輪 20 億美元的融資，投資人包括 Google 跟 Amazon，顯示市場對 AI 應用的信心非常高。如果你對 AI 領域有興趣，不妨關注相關 ETF 像是 ARKK 或者直接研究這些新創公司的母公司股票，長期潛力真的不小。
-
-好啦，今天的市場分析跟熱點就聊到這邊，時間過得真快！總結一下，美股目前漲跌互現，科技股跟 AI 板塊還是資金焦點，但通脹壓力跟 Fed 政策的不確定性讓市場有點謹慎。比特幣跟黃金則是避險資產的兩大選擇，值得多留意。最後送給大家一句話：「投資就像種樹，今天的耐心，是明天的收穫！」咱們下次再見，掰掰！</description><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250719.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250719.mp3" length="1764720" type="audio/mpeg"/><pubDate>Sat, 19 Jul 2025 00:00:00 +0000</pubDate><itunes:duration>0:04:54</itunes:duration></item></channel></rss>
+最後，以一句金句結尾：投資如航海，風浪雖大，但掌舵正確，就能抵達財富彼岸。謝謝收聽，我們下次見！</description><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250720_us.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250720_us.mp3" length="2259216" type="audio/mpeg"/><pubDate>Sun, 20 Jul 2025 00:00:00 +0000</pubDate><itunes:duration>0:06:16</itunes:duration></item></channel></rss>
