@@ -1,17 +1,20 @@
 name: Generate Daily Podcast (US & TW)
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "0 22 * * *"  # 美股版，台灣早上 06:00
-    - cron: "0 8 * * *"   # 台股版，台灣下午 16:00
+    - cron: "0 22 * * *"  # 每天台灣早上 6 點（美股）
+    - cron: "0 8 * * *"   # 每天下午 4 點（台股）
+  workflow_dispatch:
 
 jobs:
-  podcast_us:
-    if: github.event.schedule == '0 22 * * *' || github.event_name == 'workflow_dispatch'
+  podcast:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        mode: [us, tw]
+
     env:
-      PODCAST_MODE: us
+      PODCAST_MODE: ${{ matrix.mode }}
       MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
@@ -22,7 +25,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
@@ -45,51 +50,9 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+          git fetch origin main
+          git checkout main
+          git merge origin/main --strategy=ours --no-edit || true
           git add docs/rss/podcast.xml
-          git commit -m "更新 RSS Feed（us）" || echo "無變更"
-          git pull --rebase --autostash || true
-          git push --force-with-lease
-
-  podcast_tw:
-    if: github.event.schedule == '0 8 * * *' || github.event_name == 'workflow_dispatch'
-    runs-on: ubuntu-latest
-    env:
-      PODCAST_MODE: tw
-      MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
-      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
-      GROK_API_URL: ${{ secrets.GROK_API_URL }}
-      B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-      B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
-      B2_BUCKET_NAME: daily-podcast-stk
-
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Generate Script
-        run: python scripts/generate_script_kimi.py
-
-      - name: Generate Audio
-        run: python scripts/synthesize_audio.py
-
-      - name: Upload to B2
-        run: python scripts/upload_to_b2.py
-
-      - name: Generate RSS
-        run: python scripts/generate_rss.py
-
-      - name: Commit RSS Feed
-  run: |
-    git config user.name "GitHub Actions"
-    git config user.email "actions@github.com"
-    git fetch origin main
-    git add docs/rss/podcast.xml
-    git commit -m "更新 RSS Feed" || echo "⚠️ 無需提交"
-    git merge origin/main --strategy-option theirs || true
-    git push origin HEAD:main
+          git commit -m "更新 RSS Feed（${{ matrix.mode }}）" || echo "✅ 無需提交"
+          git push origin main
