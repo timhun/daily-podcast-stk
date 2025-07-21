@@ -46,13 +46,13 @@ jobs:
       - name: Generate RSS
         run: python scripts/generate_rss.py
 
-      - name: Commit and Push RSS Feed safely
+      - name: Commit and push RSS feed
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           
           git add docs/rss/podcast.xml || echo "✅ 沒有變更"
-          git commit -m "更新 RSS Feed" || echo "✅ 無需提交"
+          git commit -m "更新 RSS Feed（${{ env.PODCAST_MODE }}）" || echo "✅ 無需提交"
 
-          # 直接強制推送，避免 pull 鎖死
-          git push origin HEAD:main --force || echo "⚠️ 無變更可推送"
+          # 不要 pull，也不要 rebase，直接 push
+          git push origin HEAD:main || echo "⚠️ 無變更可推送"
