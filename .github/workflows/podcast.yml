@@ -50,11 +50,11 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+
+          git fetch origin main
           
           git add docs/rss/podcast.xml
           git commit -m "更新 RSS Feed（${{ matrix.mode }}）" || echo "✅ 無需提交"
-
-          git fetch origin main
-          git pull --rebase origin main || git rebase --abort
-
+          
+          git pull --rebase || git rebase --abort
           git push origin HEAD:main
