@@ -5,8 +5,10 @@ import json
 import datetime
 from zoneinfo import ZoneInfo
 from fetch_market_data import (
-    get_stock_index_data,
-    get_etf_data,
+    get_stock_index_data_tw,
+    get_stock_index_data_us,
+    get_etf_data_us,
+    get_etf_data_tw,
     get_bitcoin_price,
     get_gold_price,
     get_dxy_index,
