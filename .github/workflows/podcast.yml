@@ -46,15 +46,19 @@ jobs:
       - name: Generate RSS
         run: python scripts/generate_rss.py
 
-      - name: Commit RSS Feed
+      - name: Commit RSS Feed safely
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
 
-          git fetch origin main
-          
-          git add docs/rss/podcast.xml
-          git commit -m "更新 RSS Feed（${{ matrix.mode }}）" || echo "✅ 無需提交"
-          
+          # 暫存變更（如果有）
+          git add docs/rss/podcast.xml || echo "✅ 沒有變更可加入"
+
+          # 嘗試提交（若無變更會失敗但不中斷）
+          git commit -m "更新 RSS Feed" || echo "✅ 無需提交"
+
+          # 嘗試拉取遠端變更，若有衝突則自動中止
           git pull --rebase || git rebase --abort
-          git push origin HEAD:main
+
+          # 推送更新
+          git push || echo "⚠️ 無變更可推送"
