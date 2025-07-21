@@ -51,23 +51,23 @@ jobs:
       - name: Generate RSS
         run: python scripts/generate_rss.py
 
-      - name: Commit & Push RSS Feed (Safe Sync)
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
+- name: Commit & Push RSS Feed (Safe Sync)
+  run: |
+    git config user.name "GitHub Actions"
+    git config user.email "actions@github.com"
 
-          for i in 1 2 3; do
-            git pull --rebase origin main && break
-            echo "⚠️ 第 $i 次 rebase 失敗，嘗試重新執行..."
-            sleep 2
-          done
+    for i in 1 2 3; do
+      git pull --rebase origin main && break
+      echo "⚠️ 第 $i 次 rebase 失敗，嘗試重新執行..."
+      sleep 2
+    done
 
-          git add docs/rss/podcast.xml
-          git commit -m "更新 RSS Feed：${{ matrix.mode }}" || echo "ℹ️ 無變更可提交"
+    git add docs/rss/podcast.xml
+    git commit -m "更新 RSS Feed：${{ matrix.mode }}" || echo "ℹ️ 無變更可提交"
 
-          for i in 1 2 3; do
-            git push origin main && break
-            echo "⚠️ 第 $i 次 push 失敗，嘗試重新執行..."
-            git pull --rebase origin main
-            sleep 2
-          done
+    for i in 1 2 3; do
+      git push origin main && break
+      echo "⚠️ 第 $i 次 push 失敗，嘗試重新執行..."
+      git pull --rebase origin main
+      sleep 2
+    done
