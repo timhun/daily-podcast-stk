@@ -2,19 +2,19 @@ name: Generate Daily Podcast (US & TW)
 
 on:
   schedule:
-    - cron: "0 22 * * *"  # 每天台灣早上 6 點（美股）
-    - cron: "0 8 * * *"   # 每天下午 4 點（台股）
+    - cron: "0 22 * * *"  # 美股版，台灣早上 6 點
+    - cron: "0 8 * * *"   # 台股版，台灣下午 4 點
   workflow_dispatch:
 
 jobs:
-  podcast:
+  generate-us:
+    name: Generate US Podcast
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        mode: [us, tw]
-
+    concurrency:
+      group: podcast-us
+      cancel-in-progress: false
     env:
-      PODCAST_MODE: ${{ matrix.mode }}
+      PODCAST_MODE: us
       MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
@@ -25,34 +25,66 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-
       - name: Install dependencies
         run: pip install -r requirements.txt
-
-      - name: Generate Script
+      - name: Generate Script (US)
         run: python scripts/generate_script_kimi.py
-
-      - name: Generate Audio
+      - name: Generate Audio (US)
         run: python scripts/synthesize_audio.py
-
-      - name: Upload to B2
+      - name: Upload to B2 (US)
         run: python scripts/upload_to_b2.py
-
-      - name: Generate RSS
+      - name: Generate RSS (US)
         run: python scripts/generate_rss.py
-
-      - name: Commit and push RSS feed
+      - name: Commit RSS Feed (US)
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          
-          git add docs/rss/podcast.xml || echo "✅ 沒有變更"
-          git commit -m "更新 RSS Feed（${{ env.PODCAST_MODE }}）" || echo "✅ 無需提交"
+          git pull origin gh-pages --no-rebase --allow-unrelated-histories || true
+          git add docs/rss/podcast.xml
+          git commit -m "更新 RSS Feed（US）" || echo "No changes to commit"
+          git push origin HEAD:gh-pages || echo "Push skipped"
 
-          # 不要 pull，也不要 rebase，直接 push
-          git push origin HEAD:main || echo "⚠️ 無變更可推送"
+  generate-tw:
+    name: Generate TW Podcast
+    runs-on: ubuntu-latest
+    concurrency:
+      group: podcast-tw
+      cancel-in-progress: false
+    env:
+      PODCAST_MODE: tw
+      MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+      GROK_API_URL: ${{ secrets.GROK_API_URL }}
+      B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+      B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+      B2_BUCKET_NAME: daily-podcast-stk
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Generate Script (TW)
+        run: python scripts/generate_script_kimi.py
+      - name: Generate Audio (TW)
+        run: python scripts/synthesize_audio.py
+      - name: Upload to B2 (TW)
+        run: python scripts/upload_to_b2.py
+      - name: Generate RSS (TW)
+        run: python scripts/generate_rss.py
+      - name: Commit RSS Feed (TW)
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git pull origin gh-pages --no-rebase --allow-unrelated-histories || true
+          git add docs/rss/podcast.xml
+          git commit -m "更新 RSS Feed（TW）" || echo "No changes to commit"
+          git push origin HEAD:gh-pages || echo "Push skipped"
