@@ -34,9 +34,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      #- name: Clean up old podcast folders (US)
-        #run: python scripts/cleanup_old_episodes.py us
-
       - name: Generate Script (US)
         run: python scripts/generate_script_kimi.py
 
@@ -49,12 +46,15 @@ jobs:
       - name: Generate RSS (US)
         run: python scripts/generate_rss.py
 
-      - name: Commit & Push RSS Feed (US)
+      - name: Merge US + TW RSS
+        run: python scripts/merge_rss_feeds.py
+
+      - name: Commit & Push RSS Feed
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git pull --rebase || true
-          git add docs/rss/podcast.xml
+          git add docs/rss/podcast*.xml
           git commit -m "更新 RSS Feed - US" || echo "No changes to commit"
           git push origin HEAD:main || echo "⚠️ Push skipped"
 
@@ -85,9 +85,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      #- name: Clean up old podcast folders (TW)
-        #run: python scripts/cleanup_old_episodes.py tw
-
       - name: Generate Script (TW)
         run: python scripts/generate_script_kimi.py
 
@@ -100,11 +97,14 @@ jobs:
       - name: Generate RSS (TW)
         run: python scripts/generate_rss.py
 
-      - name: Commit & Push RSS Feed (TW)
+      - name: Merge US + TW RSS
+        run: python scripts/merge_rss_feeds.py
+
+      - name: Commit & Push RSS Feed
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git pull --rebase || true
-          git add docs/rss/podcast.xml
+          git add docs/rss/podcast*.xml
           git commit -m "更新 RSS Feed - TW" || echo "No changes to commit"
           git push origin HEAD:main || echo "⚠️ Push skipped"
