@@ -1,13 +1,12 @@
-# ✅ 檔案：scripts/generate_script_kimi.py
-
 import os
 import json
 import datetime
-from zoneinfo import ZoneInfo
+import requests
+
 from fetch_market_data import (
-    get_stock_index_data_tw,
     get_stock_index_data_us,
     get_etf_data_us,
+    get_stock_index_data_tw,
     get_etf_data_tw,
     get_bitcoin_price,
     get_gold_price,
@@ -16,21 +15,25 @@ from fetch_market_data import (
 )
 from generate_script_grok import generate_script_from_grok
 from generate_script_openrouter import generate_script_from_openrouter
-import requests
+from generate_script_openai import generate_script_from_openai
 
-# 取得日期與模式（使用台灣時區）
-now = datetime.datetime.now(ZoneInfo("Asia/Taipei"))
+# 取得日期與模式
+now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))  # 台灣時間
+PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
 today_str = now.strftime("%Y%m%d")
 today_display = now.strftime("%Y年%m月%d日")
-
-PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
 output_dir = f"docs/podcast/{today_str}_{PODCAST_MODE}"
 os.makedirs(output_dir, exist_ok=True)
 script_path = os.path.join(output_dir, "script.txt")
 
 # 擷取行情資料
-stock_summary = "\n".join(get_stock_index_data(mode=PODCAST_MODE))
-etf_summary = "\n".join(get_etf_data(mode=PODCAST_MODE))
+if PODCAST_MODE == "tw":
+    stock_summary = "\n".join(get_stock_index_data_tw())
+    etf_summary = "\n".join(get_etf_data_tw())
+else:
+    stock_summary = "\n".join(get_stock_index_data_us())
+    etf_summary = "\n".join(get_etf_data_us())
+
 bitcoin = get_bitcoin_price()
 gold = get_gold_price()
 dxy = get_dxy_index()
@@ -74,6 +77,7 @@ prompt = prompt_template.format(
 )
 
 # Grok3
+
 def generate_with_grok():
     try:
         print("🤖 使用 Grok3 嘗試產生逐字稿...")
@@ -87,6 +91,7 @@ def generate_with_grok():
         return None
 
 # Kimi
+
 def generate_with_kimi():
     try:
         print("🔁 改用 Kimi API...")
@@ -121,10 +126,11 @@ def generate_with_kimi():
         return None
 
 # OpenAI fallback
+
 def generate_with_openai():
     try:
         print("📡 嘗試使用 OpenAI GPT-4...")
-        result = generate_script_from_openrouter(prompt)
+        result = generate_script_from_openai(prompt)
         if result:
             print("✅ 成功使用 OpenAI GPT-4")
             return result
