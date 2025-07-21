@@ -1,3 +1,5 @@
+# scripts/generate_rss.py
+
 import os
 import datetime
 import pytz
@@ -12,7 +14,7 @@ RSS_FILE = "docs/rss/podcast.xml"
 fg = FeedGenerator()
 fg.load_extension("podcast")
 fg.id(SITE_URL)
-fg.title("幫幫忙說財經科技投資")
+fg.title("幫幫忙說AI.投資")
 fg.author({"name": "幫幫忙", "email": "tim.oneway@gmail.com"})
 fg.link(href=SITE_URL, rel="alternate")
 fg.language("zh-TW")
@@ -37,34 +39,40 @@ for folder in folders:
     archive_url_file = os.path.join(base_path, "archive_audio_url.txt")
 
     if not (os.path.exists(audio) and os.path.exists(script) and os.path.exists(archive_url_file)):
+        print(f"⚠️ 略過缺檔案的資料夾：{folder}")
         continue
 
-    with open(archive_url_file, "r") as f:
-        audio_url = f.read().strip()
-
-    with open(script, "r", encoding="utf-8") as f:
-        description = f.read().strip()
-
     try:
-        mp3 = MP3(audio)
-        duration = int(mp3.info.length)
+        with open(archive_url_file, "r") as f:
+            audio_url = f.read().strip()
+
+        with open(script, "r", encoding="utf-8") as f:
+            description = f.read().strip()
+
+        try:
+            mp3 = MP3(audio)
+            duration = int(mp3.info.length)
+        except Exception as e:
+            print(f"⚠️ 讀取 mp3 時長失敗：{audio} - {e}")
+            duration = None
+
+        pub_date = datetime.datetime.strptime(folder.split("_")[0], "%Y%m%d").replace(tzinfo=pytz.UTC)
+        mode = folder.split("_")[1].upper()
+        title = f"幫幫忙每日投資 - {'美股' if mode == 'US' else '台股'}（{folder}）"
+
+        fe = fg.add_entry()
+        fe.id(audio_url)
+        fe.title(title)
+        fe.description(description)
+        fe.enclosure(audio_url, str(os.path.getsize(audio)), "audio/mpeg")
+        fe.pubDate(pub_date)
+        if duration:
+            fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
+
     except Exception as e:
-        print(f"⚠️ 讀取 mp3 時長失敗：{e}")
-        duration = None
+        print(f"❌ 建立 RSS 項目失敗：{folder} - {e}")
 
-    pub_date = datetime.datetime.strptime(folder.split("_")[0], "%Y%m%d").replace(tzinfo=pytz.UTC)
-    mode = folder.split("_")[1].upper()
-    title = f"幫幫忙每日投資快報 - {'美股' if mode == 'US' else '台股'}（{folder}）"
-
-    fe = fg.add_entry()
-    fe.id(audio_url)
-    fe.title(title)
-    fe.description(description)
-    fe.enclosure(audio_url, str(os.path.getsize(audio)), "audio/mpeg")
-    fe.pubDate(pub_date)
-    if duration:
-        fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
-
+# 儲存 RSS 檔案
 os.makedirs(os.path.dirname(RSS_FILE), exist_ok=True)
 fg.rss_file(RSS_FILE)
 print("✅ 已產生 RSS Feed：", RSS_FILE)
