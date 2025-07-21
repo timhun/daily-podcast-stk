@@ -6,16 +6,17 @@ on:
     - cron: "0 8 * * *"   # UTC 16:00 台灣時間，台股版
   workflow_dispatch:
 
+concurrency:
+  group: podcast-publish
+  cancel-in-progress: false
+
 jobs:
   podcast:
+    name: Generate Podcast - ${{ matrix.mode }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
         mode: [us, tw]
-
-    concurrency:
-      group: podcast-${{ matrix.mode }}
-      cancel-in-progress: false
 
     env:
       PODCAST_MODE: ${{ matrix.mode }}
@@ -28,7 +29,7 @@ jobs:
       B2_BUCKET_NAME: daily-podcast-stk
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -48,26 +49,16 @@ jobs:
       - name: Upload to B2
         run: python scripts/upload_to_b2.py
 
-      - name: Generate RSS
+      - name: Generate RSS Feed
         run: python scripts/generate_rss.py
 
-- name: Commit & Push RSS Feed (Safe Sync)
-  run: |
-    git config user.name "GitHub Actions"
-    git config user.email "actions@github.com"
-
-    for i in 1 2 3; do
-      git pull --rebase origin main && break
-      echo "⚠️ 第 $i 次 rebase 失敗，嘗試重新執行..."
-      sleep 2
-    done
-
-    git add docs/rss/podcast.xml
-    git commit -m "更新 RSS Feed：${{ matrix.mode }}" || echo "ℹ️ 無變更可提交"
-
-    for i in 1 2 3; do
-      git push origin main && break
-      echo "⚠️ 第 $i 次 push 失敗，嘗試重新執行..."
-      git pull --rebase origin main
-      sleep 2
-    done
+      - name: Commit & Push RSS Feed
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git fetch origin gh-pages
+          git checkout gh-pages || git checkout --orphan gh-pages
+          git pull --rebase origin gh-pages || true
+          git add docs/rss/podcast.xml
+          git commit -m "更新 RSS Feed for ${{ env.PODCAST_MODE }}" || echo "⚠️ No changes to commit"
+          git push origin gh-pages --force-with-lease
