@@ -38,22 +38,22 @@ def get_etf_data_us():
         lines.append(f"{name}：{close:.2f}（{change:+.2f}, {percent:+.2f}%）")
     return lines
 
-
 def get_stock_index_data_tw():
     url = "https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST?date=&response=json"
-    resp = requests.get(url)
-    data = resp.json()
-    items = data.get("data", [])
-    if items:
-        latest = items[-1]
-        try:
-            # 嘗試取得必要欄位
-            close = latest[4]
-            change = latest[5]
-            return [f"台股加權指數：{close}（漲跌 {change}）"]
-        except IndexError:
-            return ["⚠️ 無法解析台股加權指數欄位"]
-    return ["⚠️ 無法取得台股加權指數"]
+    try:
+        resp = requests.get(url, timeout=10)
+        data = resp.json()
+        items = data.get("data", [])
+        if items:
+            latest = items[-1]
+            # 範例格式：[時間, 開盤, 最高, 最低, 收盤]
+            time_str, open_, high, low, close = latest[:5]
+            return [
+                f"台股加權指數（{time_str}）：{close} 點（開盤 {open_}，最高 {high}，最低 {low}）"
+            ]
+        return ["⚠️ 無法取得台股加權指數"]
+    except Exception as e:
+        return [f"⚠️ 擷取台股指數失敗：{e}"]
     
 
 def get_etf_data_tw():
