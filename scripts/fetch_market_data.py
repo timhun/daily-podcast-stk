@@ -1,118 +1,114 @@
-import os
-import datetime
-import yfinance as yf
+# ✅ fetch_market_data.py（更新後）
 import requests
+import yfinance as yf
+from bs4 import BeautifulSoup
 
 def get_stock_index_data_us():
-    tickers = {
-        "^DJI": "道瓊指數",
-        "^GSPC": "標普500",
-        "^IXIC": "那斯達克"
+    # 使用 Yahoo Finance
+    indices = {
+        "Dow Jones": "^DJI",
+        "S&P 500": "^GSPC",
+        "Nasdaq": "^IXIC"
     }
-    summary = []
-    for symbol, name in tickers.items():
-        data = yf.Ticker(symbol)
-        price = data.history(period="1d")
-        if price.empty:
-            continue
-        last = price["Close"].iloc[-1]
-        summary.append(f"{name}: {last:.2f}")
-    return summary
-
-def get_stock_index_data_tw():
-    tickers = {
-        "^TWII": "加權指數",
-        "^TWOII": "櫃買指數"
-    }
-    summary = []
-    for symbol, name in tickers.items():
-        data = yf.Ticker(symbol)
-        price = data.history(period="1d")
-        if price.empty:
-            continue
-        last = price["Close"].iloc[-1]
-        summary.append(f"{name}: {last:.2f}")
-    return summary
+    lines = []
+    for name, symbol in indices.items():
+        ticker = yf.Ticker(symbol)
+        data = ticker.history(period="1d")
+        close = data['Close'].iloc[-1]
+        change = data['Close'].iloc[-1] - data['Open'].iloc[-1]
+        percent = change / data['Open'].iloc[-1] * 100
+        lines.append(f"{name}：{close:.2f}（{change:+.2f}, {percent:+.2f}%）")
+    return lines
 
 def get_etf_data_us():
-    tickers = {
+    etfs = {
         "QQQ": "QQQ",
         "SPY": "SPY",
         "IBIT": "IBIT"
     }
-    summary = []
-    for symbol, name in tickers.items():
-        data = yf.Ticker(symbol)
-        price = data.history(period="1d")
-        if price.empty:
-            continue
-        last = price["Close"].iloc[-1]
-        summary.append(f"{name}: {last:.2f}")
-    return summary
+    lines = []
+    for name, symbol in etfs.items():
+        ticker = yf.Ticker(symbol)
+        data = ticker.history(period="1d")
+        close = data['Close'].iloc[-1]
+        change = data['Close'].iloc[-1] - data['Open'].iloc[-1]
+        percent = change / data['Open'].iloc[-1] * 100
+        lines.append(f"{name}：{close:.2f}（{change:+.2f}, {percent:+.2f}%）")
+    return lines
+
+def get_stock_index_data_tw():
+    url = "https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST?date=&response=json"
+    resp = requests.get(url)
+    data = resp.json()
+    items = data.get("data", [])
+    if items:
+        latest = items[-1]
+        date, open_, high, low, close, change, volume = latest[:7]
+        return [
+            f"台股加權指數：{close}（漲跌 {change}）",
+        ]
+    return ["⚠️ 無法取得台股加權指數"]
 
 def get_etf_data_tw():
-    tickers = {
-        "0050.TW": "0050 台灣50",
-        "00878.TW": "00878 高股息",
-        "006208.TW": "富邦台50",
-        "00631L.TW": "00631L 元大台灣50正2"
+    urls = {
+        "0050": "https://tw.stock.yahoo.com/quote/0050.TW",
+        "00631L": "https://tw.stock.yahoo.com/quote/00631L.TW",
+        "00713": "https://tw.stock.yahoo.com/quote/00713.TW",
+        "00878": "https://tw.stock.yahoo.com/quote/00878.TW"
     }
-    summary = []
-    for symbol, name in tickers.items():
-        data = yf.Ticker(symbol)
-        price = data.history(period="1d")
-        if price.empty:
-            continue
-        last = price["Close"].iloc[-1]
-        summary.append(f"{name}: {last:.2f}")
-    return summary
+    results = []
+    for name, url in urls.items():
+        resp = requests.get(url)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        try:
+            price = soup.select_one("[data-test='qsp-price"]").text
+            results.append(f"{name}：{price}")
+        except:
+            results.append(f"{name}：⚠️ 無法取得資料")
+    return results
 
 def get_bitcoin_price():
-    try:
-        r = requests.get("https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd")
-        data = r.json()
-        price = data["bitcoin"]["usd"]
-        return f"比特幣: ${price}"
-    except:
-        return "比特幣價格讀取失敗"
+    ticker = yf.Ticker("BTC-USD")
+    data = ticker.history(period="1d")
+    close = data['Close'].iloc[-1]
+    return f"比特幣：{close:.0f} 美元"
 
 def get_gold_price():
-    try:
-        r = requests.get("https://data-asg.goldprice.org/dbXRates/USD")
-        data = r.json()
-        price = data["items"][0]["xauPrice"]
-        return f"黃金價格: ${price:.2f}"
-    except:
-        return "黃金價格讀取失敗"
+    ticker = yf.Ticker("GC=F")
+    data = ticker.history(period="1d")
+    close = data['Close'].iloc[-1]
+    return f"黃金：{close:.2f} 美元/盎司"
 
 def get_dxy_index():
-    try:
-        data = yf.Ticker("DX-Y.NYB").history(period="1d")
-        if data.empty:
-            return "美元指數讀取失敗"
-        last = data["Close"].iloc[-1]
-        return f"美元指數 DXY: {last:.2f}"
-    except:
-        return "美元指數讀取失敗"
+    ticker = yf.Ticker("DX-Y.NYB")
+    data = ticker.history(period="1d")
+    close = data['Close'].iloc[-1]
+    return f"美元指數：{close:.2f}"
 
 def get_yield_10y():
-    try:
-        data = yf.Ticker("^TNX").history(period="1d")
-        if data.empty:
-            return "10年期公債殖利率讀取失敗"
-        last = data["Close"].iloc[-1]
-        return f"美國十年期公債殖利率: {last:.2f}%"
-    except:
-        return "10年期公債殖利率讀取失敗"
+    ticker = yf.Ticker("^TNX")
+    data = ticker.history(period="1d")
+    close = data['Close'].iloc[-1] / 100
+    return f"美國十年期公債殖利率：{close:.2%}"
 
-def get_stock_index_data(mode="us"):
-    if mode == "tw":
-        return get_stock_index_data_tw()
-    else:
-        return get_stock_index_data_us()
 
-def get_etf_data(mode="us"):
-    if mode == "tw":
-        return get_etf_data_tw()
-    else:
-        return get_etf_data_us()
+# ✅ generate_script_kimi.py 中擷取邏輯更新如下：
+#（插入在行前面，替代原 get_stock_index_data 與 get_etf_data）
+
+from fetch_market_data import (
+    get_stock_index_data_us,
+    get_etf_data_us,
+    get_stock_index_data_tw,
+    get_etf_data_tw,
+    get_bitcoin_price,
+    get_gold_price,
+    get_dxy_index,
+    get_yield_10y
+)
+
+if PODCAST_MODE == "tw":
+    stock_summary = "\n".join(get_stock_index_data_tw())
+    etf_summary = "\n".join(get_etf_data_tw())
+else:
+    stock_summary = "\n".join(get_stock_index_data_us())
+    etf_summary = "\n".join(get_etf_data_us())
