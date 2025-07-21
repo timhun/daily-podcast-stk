@@ -1,10 +1,12 @@
-# ✅ fetch_market_data.py（更新後）
+# ✅ fetch_market_data.py（已擴充法人與期貨未平倉）
+
 import requests
 import yfinance as yf
 from bs4 import BeautifulSoup
+from datetime import datetime
+import time
 
 def get_stock_index_data_us():
-    # 使用 Yahoo Finance
     indices = {
         "Dow Jones": "^DJI",
         "S&P 500": "^GSPC",
@@ -44,9 +46,7 @@ def get_stock_index_data_tw():
     if items:
         latest = items[-1]
         date, open_, high, low, close, change, volume = latest[:7]
-        return [
-            f"台股加權指數：{close}（漲跌 {change}）",
-        ]
+        return [f"台股加權指數：{close}（漲跌 {change}）"]
     return ["⚠️ 無法取得台股加權指數"]
 
 def get_etf_data_tw():
@@ -61,11 +61,52 @@ def get_etf_data_tw():
         resp = requests.get(url)
         soup = BeautifulSoup(resp.text, "html.parser")
         try:
-            price = soup.select_one("[data-test='qsp-price"]").text
+            price = soup.select_one("[data-test='qsp-price']").text
             results.append(f"{name}：{price}")
         except:
             results.append(f"{name}：⚠️ 無法取得資料")
     return results
+
+def get_three_major_investors():
+    today = datetime.now().strftime("%Y%m%d")
+    url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX3?date={today}&response=json"
+    resp = requests.get(url)
+    data = resp.json()
+    try:
+        rows = data['tables'][0]['data']
+        result = ["【三大法人買賣超（單位：張）】"]
+        for row in rows:
+            name = row[0].strip()
+            buy_sell = row[4].strip()
+            result.append(f"{name}：{buy_sell}")
+        return result
+    except:
+        return ["⚠️ 無法取得三大法人資料"]
+
+def get_futures_open_interest():
+    today = datetime.now().strftime("%Y%m%d")
+    url = f"https://www.taifex.com.tw/cht/3/futContractsDate"
+    resp = requests.post(url, data={
+        'queryType': '1',
+        'marketCode': '0',
+        'dateaddcnt': '',
+        'commodity_id': 'TX',
+        'queryDate': datetime.now().strftime("%Y/%m/%d")
+    })
+    soup = BeautifulSoup(resp.text, "html.parser")
+    table = soup.find("table", class_="table_f")
+    if not table:
+        return ["⚠️ 無法取得期貨未平倉資料"]
+
+    rows = table.find_all("tr")
+    for row in rows:
+        cells = row.find_all("td")
+        if len(cells) >= 17 and "外資" in cells[0].text:
+            long = cells[8].text.strip()
+            short = cells[9].text.strip()
+            net = cells[10].text.strip()
+            return [f"外資期貨未平倉：多單 {long}、空單 {short}、淨額 {net}"]
+    return ["⚠️ 找不到外資期貨資料"]
 
 def get_bitcoin_price():
     ticker = yf.Ticker("BTC-USD")
@@ -90,25 +131,3 @@ def get_yield_10y():
     data = ticker.history(period="1d")
     close = data['Close'].iloc[-1] / 100
     return f"美國十年期公債殖利率：{close:.2%}"
-
-
-# ✅ generate_script_kimi.py 中擷取邏輯更新如下：
-#（插入在行前面，替代原 get_stock_index_data 與 get_etf_data）
-
-from fetch_market_data import (
-    get_stock_index_data_us,
-    get_etf_data_us,
-    get_stock_index_data_tw,
-    get_etf_data_tw,
-    get_bitcoin_price,
-    get_gold_price,
-    get_dxy_index,
-    get_yield_10y
-)
-
-if PODCAST_MODE == "tw":
-    stock_summary = "\n".join(get_stock_index_data_tw())
-    etf_summary = "\n".join(get_etf_data_tw())
-else:
-    stock_summary = "\n".join(get_stock_index_data_us())
-    etf_summary = "\n".join(get_etf_data_us())
