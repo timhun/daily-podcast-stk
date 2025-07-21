@@ -5,8 +5,8 @@ import requests
 
 from fetch_market_data import (
     get_stock_index_data_us,
-    get_etf_data_us,
     get_stock_index_data_tw,
+    get_etf_data_us,
     get_etf_data_tw,
     get_bitcoin_price,
     get_gold_price,
@@ -15,18 +15,18 @@ from fetch_market_data import (
 )
 from generate_script_grok import generate_script_from_grok
 from generate_script_openrouter import generate_script_from_openrouter
-from generate_script_openai import generate_script_from_openai
 
 # 取得日期與模式
-now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))  # 台灣時間
-PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
+now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))  # 台灣時區
 today_str = now.strftime("%Y%m%d")
 today_display = now.strftime("%Y年%m月%d日")
+PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
+
 output_dir = f"docs/podcast/{today_str}_{PODCAST_MODE}"
 os.makedirs(output_dir, exist_ok=True)
 script_path = os.path.join(output_dir, "script.txt")
 
-# 擷取行情資料
+# 擷取行情資料（依模式切換）
 if PODCAST_MODE == "tw":
     stock_summary = "\n".join(get_stock_index_data_tw())
     etf_summary = "\n".join(get_etf_data_tw())
@@ -76,22 +76,20 @@ prompt = prompt_template.format(
     date=today_display
 )
 
-# Grok3
-
+# Grok
 def generate_with_grok():
     try:
-        print("🤖 使用 Grok3 嘗試產生逐字稿...")
+        print("🤖 使用 Grok 嘗試產生逐字稿...")
         result = generate_script_from_grok(prompt)
         if result:
-            print("✅ 成功使用 Grok3 產生逐字稿")
+            print("✅ 成功使用 Grok 產生逐字稿")
             return result
         raise Exception("Grok 回傳為空")
     except Exception as e:
-        print(f"⚠️ Grok3 失敗：{e}")
+        print(f"⚠️ Grok 失敗：{e}")
         return None
 
 # Kimi
-
 def generate_with_kimi():
     try:
         print("🔁 改用 Kimi API...")
@@ -125,18 +123,17 @@ def generate_with_kimi():
         print(f"⚠️ Kimi 失敗：{e}")
         return None
 
-# OpenAI fallback
-
+# OpenRouter fallback
 def generate_with_openai():
     try:
-        print("📡 嘗試使用 OpenAI GPT-4...")
-        result = generate_script_from_openai(prompt)
+        print("📡 嘗試使用 OpenRouter GPT-4...")
+        result = generate_script_from_openrouter(prompt)
         if result:
-            print("✅ 成功使用 OpenAI GPT-4")
+            print("✅ 成功使用 OpenRouter GPT-4")
             return result
-        raise Exception("OpenAI 回傳為空")
+        raise Exception("OpenRouter 回傳為空")
     except Exception as e:
-        print(f"⚠️ OpenAI 失敗：{e}")
+        print(f"⚠️ OpenRouter 失敗：{e}")
         return None
 
 # 主流程
