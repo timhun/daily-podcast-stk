@@ -3,13 +3,14 @@ name: Merge RSS Feeds
 on:
   workflow_dispatch:
   schedule:
-    - cron: '5 8,22 * * *'  # 合併在 us 與 tw 各執行完 5 分鐘後
+    - cron: '5 8,22 * * *'  # 台灣時間 16:05 / 06:05 合併 US + TW feed
 
 jobs:
   merge:
     runs-on: ubuntu-latest
     concurrency:
       group: podcast-merge
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -23,13 +24,21 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Merge RSS
-        run: python scripts/merge_rss_feeds.py
+        run: |
+          echo "🔍 檢查 US / TW RSS feed..."
+          ls -l docs/rss/
+          python scripts/merge_rss_feeds.py
 
-      - name: Commit & Push (Merged)
+      - name: Commit & Push Merged RSS
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git pull --rebase origin main || true
-          git add docs/podcast.xml
-          git commit -m "🔗 合併 US / TW 為主 RSS Feed" || echo "No changes"
-          git push origin HEAD:main
+
+          if [ -f docs/rss/podcast.xml ]; then
+            git add -A
+            git commit -m "🔗 合併 US / TW 為主 RSS Feed" || echo "No changes"
+            git pull --rebase origin main || true
+            git push origin HEAD:main
+          else
+            echo "❌ 找不到 docs/rss/podcast.xml，跳過 push。"
+          fi
