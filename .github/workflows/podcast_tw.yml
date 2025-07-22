@@ -11,8 +11,8 @@ jobs:
     concurrency:
       group: podcast-tw
 
-      env:
-      PODCAST_MODE: us
+    env:
+      PODCAST_MODE: tw
       MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
@@ -20,7 +20,7 @@ jobs:
       B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
       B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
       B2_BUCKET_NAME: daily-podcast-stk
-      
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -34,16 +34,16 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Generate TW Script & Audio
-        run: PODCAST_MODE=tw python scripts/generate_script_kimi.py
+        run: python scripts/generate_script_kimi.py
 
       - name: Synthesize Audio
-        run: PODCAST_MODE=tw python scripts/synthesize_audio.py
+        run: python scripts/synthesize_audio.py
 
       - name: Upload Audio to B2
-        run: PODCAST_MODE=tw python scripts/upload_to_b2.py
+        run: python scripts/upload_to_b2.py
 
       - name: Generate RSS Feed (TW)
-        run: PODCAST_MODE=tw python scripts/generate_rss.py
+        run: python scripts/generate_rss.py
 
       - name: Commit & Push (TW)
         run: |
