@@ -1,5 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_tw.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast_tw.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_tw.xml</link></image><language>zh-TW</language><lastBuildDate>Tue, 22 Jul 2025 13:14:23 +0000</lastBuildDate><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><itunes:owner><itunes:name>幫幫忙</itunes:name><itunes:email>tim.oneway@gmail.com</itunes:email></itunes:owner><item><title>幫幫忙每日投資快報 - 台股（20250722_tw）</title><description>各位聽眾朋友，大家好！我是你們的財經好夥伴，阿財！歡迎來到《台股AI財經直擊》，今天是2025年7月22日，哇，這日子過得真快，轉眼就到下半年了。今天的節目，我們要來聊聊台股的最新動態，還有AI、科技股的火熱趨勢，以及全球經濟的風吹草動。各位，準備好了嗎？我們就直奔主題吧！
+各位聽眾朋友，大家好！我是你們的財經好夥伴，阿財！歡迎來到《台股AI財經直擊》，今天是2025年7月22日，哇，這日子過得真快，轉眼就到下半年了。今天的節目，我們要來聊聊台股的最新動態，還有AI、科技股的火熱趨勢，以及全球經濟的風吹草動。各位，準備好了嗎？我們就直奔主題吧！
 
 首先，來看今天的台股行情。哎喲喂，加權指數今天收在22,987.92點，開盤23,301.66點，最高衝到23,486.08點，最低則是滑到22,985.90點。整體來說，是個小幅回檔的日子，比昨天跌了大概1.3%左右。各位聽眾，你們有沒有感覺到市場的波動啊？櫃買指數呢，也跟著大哥走，收在差不多2,150點左右，同樣小跌0.8%。類股表現上，電子股還是主力，但今天半導體類股有點疲軟，資金流向看起來是從科技股稍微轉向傳產和金融股。為什麼呢？可能是投資人擔心全球經濟復甦的速度，導致資金避險到比較穩定的板塊。阿財我的觀察是，台股現在就像在坐雲霄飛車，高點低點來來去去，但整體趨勢還是向上，因為AI和科技的浪潮還在推波助瀾。大家記得，投資要穩穩來，不要追高殺低哦！
 
@@ -15,4 +14,4 @@
 
 最後，來看全球經濟指標。比特幣今天衝到119,445美元，哇，簡直是瘋狂！黃金3420美元一盎司，顯示避險情緒高漲。美國十年期公債殖利率4.36%，美元指數97.79，都在告訴我們，全球經濟復甦中帶點不確定。台股呢？在AI和科技的加持下，還是充滿機會。
 
-好啦，今天的節目就到這裡。記得，投資就像人生，穩紮穩打才能長長久久！下次見，拜拜！</description><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250722_tw.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250722_tw.mp3" length="2318112" type="audio/mpeg"/><pubDate>Tue, 22 Jul 2025 00:00:00 +0800</pubDate><itunes:duration>0:06:26</itunes:duration></item></channel></rss>
+好啦，今天的節目就到這裡。記得，投資就像人生，穩紮穩打才能長長久久！下次見，拜拜！
