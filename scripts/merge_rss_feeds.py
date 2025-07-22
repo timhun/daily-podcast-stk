@@ -2,8 +2,8 @@ import xml.etree.ElementTree as ET
 from email.utils import parsedate_to_datetime
 
 # 載入兩個 feed
-tree_us = ET.parse("docs/podcast_us.xml")
-tree_tw = ET.parse("docs/podcast_tw.xml")
+tree_us = ET.parse("docs/rss/podcast_us.xml")
+tree_tw = ET.parse("docs/rss/podcast_tw.xml")
 
 root_us = tree_us.getroot()
 root_tw = tree_tw.getroot()
