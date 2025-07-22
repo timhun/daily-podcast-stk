@@ -46,15 +46,12 @@ jobs:
       - name: Generate RSS (US)
         run: python scripts/generate_rss.py
 
-      - name: Merge US + TW RSS
-        run: python scripts/merge_rss_feeds.py
-
-      - name: Commit & Push RSS Feed
+      - name: Commit & Push RSS Feed (US)
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git pull --rebase || true
-          git add docs/rss/podcast*.xml
+          git add docs/rss/podcast_us.xml
           git commit -m "更新 RSS Feed - US" || echo "No changes to commit"
           git push origin HEAD:main || echo "⚠️ Push skipped"
 
@@ -97,14 +94,38 @@ jobs:
       - name: Generate RSS (TW)
         run: python scripts/generate_rss.py
 
-      - name: Merge US + TW RSS
-        run: python scripts/merge_rss_feeds.py
-
-      - name: Commit & Push RSS Feed
+      - name: Commit & Push RSS Feed (TW)
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git pull --rebase || true
-          git add docs/rss/podcast*.xml
+          git add docs/rss/podcast_tw.xml
           git commit -m "更新 RSS Feed - TW" || echo "No changes to commit"
+          git push origin HEAD:main || echo "⚠️ Push skipped"
+
+  merge-feed:
+    name: Merge RSS Feeds
+    runs-on: ubuntu-latest
+    needs: [generate-us, generate-tw]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Merge RSS Feeds
+        run: python scripts/merge_rss_feeds.py
+
+      - name: Commit & Push Merged Feed
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git pull --rebase || true
+          git add docs/rss/podcast.xml
+          git commit -m "合併 RSS Feed" || echo "No changes to commit"
           git push origin HEAD:main || echo "⚠️ Push skipped"
