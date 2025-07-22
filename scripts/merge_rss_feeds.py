@@ -33,6 +33,7 @@ for path in rss_files:
     if items:
         main_channel.append(items[0])
 
+
 # 輸出合併後 RSS
 tree = ET.ElementTree(main_channel.getparent())
 tree.write(output_file, encoding="utf-8", xml_declaration=True)
