@@ -27,46 +27,54 @@ fg.podcast.itunes_image(COVER_URL)
 fg.podcast.itunes_explicit("no")
 fg.podcast.itunes_owner(name="幫幫忙", email="tim.oneway@gmail.com")
 
-# 找出所有符合當前模式的 podcast 資料夾（僅保留最新一集）
+# 找出符合模式的資料夾（保留最新）
 episodes_dir = "docs/podcast"
 matching_folders = sorted([
     f for f in os.listdir(episodes_dir)
     if os.path.isdir(os.path.join(episodes_dir, f)) and f.endswith(f"_{PODCAST_MODE}")
 ], reverse=True)
 
-if matching_folders:
-    latest_folder = matching_folders[0]
-    base_path = os.path.join(episodes_dir, latest_folder)
-    audio = os.path.join(base_path, "audio.mp3")
-    script = os.path.join(base_path, "script.txt")
-    archive_url_file = os.path.join(base_path, "archive_audio_url.txt")
+if not matching_folders:
+    print(f"⚠️ 找不到符合模式 '{PODCAST_MODE}' 的 podcast 資料夾，RSS 未產生")
+    exit(0)
 
-    if os.path.exists(audio) and os.path.exists(script) and os.path.exists(archive_url_file):
-        with open(archive_url_file, "r") as f:
-            audio_url = f.read().strip()
+latest_folder = matching_folders[0]
+base_path = os.path.join(episodes_dir, latest_folder)
+audio = os.path.join(base_path, "audio.mp3")
+script = os.path.join(base_path, "script.txt")
+archive_url_file = os.path.join(base_path, "archive_audio_url.txt")
 
-        with open(script, "r", encoding="utf-8") as f:
-            description = f.read().strip()
+if os.path.exists(audio) and os.path.exists(script) and os.path.exists(archive_url_file):
+    with open(archive_url_file, "r") as f:
+        audio_url = f.read().strip()
 
-        try:
-            mp3 = MP3(audio)
-            duration = int(mp3.info.length)
-        except Exception as e:
-            print(f"⚠️ 讀取 mp3 時長失敗：{e}")
-            duration = None
+    with open(script, "r", encoding="utf-8") as f:
+        description = f.read().strip()
 
-        pub_date = datetime.datetime.strptime(latest_folder.split("_")[0], "%Y%m%d").replace(tzinfo=pytz.UTC)
-        title = f"幫幫忙每日投資快報 - {'美股' if PODCAST_MODE == 'us' else '台股'}（{latest_folder}）"
+    try:
+        mp3 = MP3(audio)
+        duration = int(mp3.info.length)
+    except Exception as e:
+        print(f"⚠️ 讀取 mp3 時長失敗：{e}")
+        duration = None
 
-        fe = fg.add_entry()
-        fe.id(audio_url)
-        fe.title(title)
-        fe.description(description)
-        fe.enclosure(audio_url, str(os.path.getsize(audio)), "audio/mpeg")
-        fe.pubDate(pub_date)
-        if duration:
-            fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
+    # 用台灣時區解析日期
+    tz = pytz.timezone("Asia/Taipei")
+    pub_date = tz.localize(datetime.datetime.strptime(latest_folder.split("_")[0], "%Y%m%d"))
 
-os.makedirs(os.path.dirname(RSS_FILE), exist_ok=True)
-fg.rss_file(RSS_FILE)
-print(f"✅ 已產生 RSS Feed：{RSS_FILE}")
+    title = f"幫幫忙每日投資快報 - {'美股' if PODCAST_MODE == 'us' else '台股'}（{latest_folder}）"
+
+    fe = fg.add_entry()
+    fe.id(audio_url)
+    fe.title(title)
+    fe.description(description)
+    fe.enclosure(audio_url, str(os.path.getsize(audio)), "audio/mpeg")
+    fe.pubDate(pub_date)
+    if duration:
+        fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
+
+    os.makedirs(os.path.dirname(RSS_FILE), exist_ok=True)
+    fg.rss_file(RSS_FILE)
+    print(f"✅ 已產生 RSS Feed：{RSS_FILE}")
+else:
+    print(f"⚠️ 缺少必要檔案，無法產生 RSS：{audio}, {script}, {archive_url_file}")
