@@ -10,6 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     concurrency:
       group: podcast-us
+
+      env:
+      PODCAST_MODE: us
+      MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+      GROK_API_URL: ${{ secrets.GROK_API_URL }}
+      B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+      B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+      B2_BUCKET_NAME: daily-podcast-stk
+
+      
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
