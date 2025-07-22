@@ -1,69 +1,85 @@
-import os
 import xml.etree.ElementTree as ET
+from email.utils import parsedate_to_datetime
+import os
 
-rss_dir = "docs/rss"
-us_feed_path = os.path.join(rss_dir, "podcast_us.xml")
-tw_feed_path = os.path.join(rss_dir, "podcast_tw.xml")
-merged_feed_path = os.path.join(rss_dir, "podcast.xml")
+# 路徑設定
+rss_us_path = "docs/rss/podcast_us.xml"
+rss_tw_path = "docs/rss/podcast_tw.xml"
+output_path = "docs/rss/podcast.xml"
 
-# ✅ 檢查檔案是否存在
-feeds = []
-if os.path.exists(us_feed_path):
-    print("✅ 發現 podcast_us.xml")
-    feeds.append(ET.parse(us_feed_path))
-else:
-    print("⚠️ 找不到 podcast_us.xml")
+# ✅ 檢查來源檔案
+if not os.path.exists(rss_us_path) or not os.path.exists(rss_tw_path):
+    print("❌ 缺少 podcast_us.xml 或 podcast_tw.xml")
+    exit(1)
 
-if os.path.exists(tw_feed_path):
-    print("✅ 發現 podcast_tw.xml")
-    feeds.append(ET.parse(tw_feed_path))
-else:
-    print("⚠️ 找不到 podcast_tw.xml")
+print("✅ 發現 podcast_us.xml")
+print("✅ 發現 podcast_tw.xml")
 
-if not feeds:
-    raise FileNotFoundError("❌ 無任何可用 RSS feed 來源，無法合併")
+tree_us = ET.parse(rss_us_path)
+tree_tw = ET.parse(rss_tw_path)
+root_us = tree_us.getroot()
+root_tw = tree_tw.getroot()
 
-# ✅ 取第一個為主架構
-base_tree = feeds[0]
-base_root = base_tree.getroot()
-base_channel = base_root.find("channel")
+channel_us = root_us.find("channel")
+channel_tw = root_tw.find("channel")
 
-# 移除現有項目
-for item in base_channel.findall("item"):
-    base_channel.remove(item)
+# ✅ 建立新的 RSS root，手動指定命名空間
+rss = ET.Element(
+    "rss",
+    {
+        "version": "2.0",
+        "xmlns:itunes": "http://www.itunes.com/dtds/podcast-1.0.dtd",
+        "xmlns:atom": "http://www.w3.org/2005/Atom"
+    }
+)
+channel = ET.SubElement(rss, "channel")
 
-# 加入每個來源的 items
-all_items = []
-for tree in feeds:
-    root = tree.getroot()
-    channel = root.find("channel")
-    items = channel.findall("item")
-    all_items.extend(items)
+# ✅ 複製 US 的 channel metadata（非 item）
+for child in channel_us:
+    if child.tag != "item":
+        channel.append(child)
 
-# 依 pubDate 排序（新 → 舊）
-def get_pubdate(item):
-    pub_date = item.find("pubDate")
-    return pub_date.text if pub_date is not None else ""
+# ✅ 收集 item
+items = channel_us.findall("item") + channel_tw.findall("item")
 
-all_items.sort(key=get_pubdate, reverse=True)
-
-# 只保留同一天最新的 us 與 tw 各一集
+# ✅ 分類 item，依 pubDate 留下 us / tw 各一集最新
 latest = {}
-for item in all_items:
-    title = item.findtext("title", default="")
-    if "_us" in title.lower():
-        key = "us"
-    elif "_tw" in title.lower():
-        key = "tw"
-    else:
+
+for item in items:
+    title_elem = item.find("title")
+    pub_elem = item.find("pubDate")
+
+    if title_elem is None or pub_elem is None:
         continue
-    if key not in latest:
-        latest[key] = item
 
-# 寫入合併結果
-for item in latest.values():
-    base_channel.append(item)
+    title = title_elem.text or ""
+    pub_date = pub_elem.text
 
-ET.indent(base_tree, space="  ", level=0)
-base_tree.write(merged_feed_path, encoding="utf-8", xml_declaration=True)
-print(f"✅ 已合併 RSS feed，輸出至：{merged_feed_path}")
+    try:
+        dt = parsedate_to_datetime(pub_date)
+    except Exception:
+        print(f"⚠️ 跳過無法解析時間的集數：{title}")
+        continue
+
+    if "_us" in title.lower():
+        mode = "us"
+    elif "_tw" in title.lower():
+        mode = "tw"
+    else:
+        print(f"⚠️ 無法判斷模式（us/tw）：{title}")
+        continue
+
+    print(f"✅ 發現 {mode} 節目：{title}")
+
+    if mode not in latest or dt > latest[mode][0]:
+        latest[mode] = (dt, item)
+
+# ✅ 寫入兩集
+for _, item in sorted(latest.values(), key=lambda x: x[0], reverse=True):
+    channel.append(item)
+
+# ✅ 輸出結果
+tree = ET.ElementTree(rss)
+os.makedirs(os.path.dirname(output_path), exist_ok=True)
+tree.write(output_path, encoding="utf-8", xml_declaration=True)
+print(f"✅ 已合併 RSS feed，輸出至：{output_path}")
