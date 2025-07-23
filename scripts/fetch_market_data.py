@@ -129,7 +129,7 @@ def get_etf_data_tw():
         try:
             resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
             soup = BeautifulSoup(resp.text, "html.parser")
-            tag = soup.select_one("[data-test='qsp-price']")
+            tag = soup.find("fin-streamer", {"data-field": "regularMarketPrice"})
             price = tag.text.strip() if tag else "N/A"
             results.append(f"{name}：{price}")
         except:
@@ -146,7 +146,7 @@ def get_hot_stocks_tw_from_list():
         try:
             resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
             soup = BeautifulSoup(resp.text, "html.parser")
-            tag = soup.select_one("[data-test='qsp-price']")
+            tag = soup.find("fin-streamer", {"data-field": "regularMarketPrice"})
             price = tag.text.strip() if tag else "N/A"
             results.append(f"{name}：{price}")
         except:
