@@ -4,7 +4,7 @@ import pytz
 from mutagen.mp3 import MP3
 from feedgen.feed import FeedGenerator
 
-# 常數設定
+# ===== 基本常數設定 =====
 SITE_URL = "https://timhun.github.io/daily-podcast-stk"
 B2_BASE = "https://f005.backblazeb2.com/file/daily-podcast-stk"
 COVER_URL = f"{SITE_URL}/img/cover.jpg"
@@ -18,7 +18,7 @@ FIXED_DESCRIPTION = """掌握每日美股、台股、AI 工具與新創投資機
 🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。
 📮 主持人：幫幫忙"""
 
-
+# ===== 初始化 Feed =====
 fg = FeedGenerator()
 fg.load_extension("podcast")
 fg.id(SITE_URL)
@@ -34,7 +34,7 @@ fg.podcast.itunes_image(COVER_URL)
 fg.podcast.itunes_explicit("no")
 fg.podcast.itunes_owner(name="幫幫忙", email="tim.oneway@gmail.com")
 
-# 找出符合模式的資料夾（保留最新）
+# ===== 找出符合模式的最新資料夾 =====
 episodes_dir = "docs/podcast"
 matching_folders = sorted([
     f for f in os.listdir(episodes_dir)
@@ -48,15 +48,11 @@ if not matching_folders:
 latest_folder = matching_folders[0]
 base_path = os.path.join(episodes_dir, latest_folder)
 audio = os.path.join(base_path, "audio.mp3")
-#script = os.path.join(base_path, "script.txt")
 archive_url_file = os.path.join(base_path, "archive_audio_url.txt")
 
 if os.path.exists(audio) and os.path.exists(archive_url_file):
     with open(archive_url_file, "r") as f:
         audio_url = f.read().strip()
-
-   # with open(script, "r", encoding="utf-8") as f:
-        #description = f.read().strip()
 
     try:
         mp3 = MP3(audio)
@@ -65,7 +61,6 @@ if os.path.exists(audio) and os.path.exists(archive_url_file):
         print(f"⚠️ 讀取 mp3 時長失敗：{e}")
         duration = None
 
-    # 用台灣時區解析日期
     tz = pytz.timezone("Asia/Taipei")
     pub_date = tz.localize(datetime.datetime.strptime(latest_folder.split("_")[0], "%Y%m%d"))
 
@@ -86,3 +81,4 @@ if os.path.exists(audio) and os.path.exists(archive_url_file):
     print(f"✅ 已產生 RSS Feed：{RSS_FILE}")
 else:
     print(f"⚠️ 缺少必要檔案，無法產生 RSS：{audio}, {archive_url_file}")
+
