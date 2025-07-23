@@ -32,6 +32,7 @@ fg.link(href=f"{SITE_URL}/rss/podcast_{PODCAST_MODE}.xml", rel="self")
 fg.podcast.itunes_category("Business", "Investing")
 fg.podcast.itunes_image(COVER_URL)
 fg.podcast.itunes_explicit("no")
+fg.podcast.itunes_author("幫幫忙")  # Spotify 驗證需要
 fg.podcast.itunes_owner(name="幫幫忙", email="tim.oneway@gmail.com")
 
 # ===== 找出符合模式的最新資料夾 =====
