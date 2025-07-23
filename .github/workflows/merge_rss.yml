@@ -3,7 +3,7 @@ name: Merge RSS Feeds
 on:
   workflow_dispatch:
   schedule:
-    - cron: '10 8,22 * * *'  # 台灣時間 16:10 / 06:10 合併 US + TW feed
+    - cron: '10 8,21 * * *'  # 台灣時間 16:10 / 06:10 合併 US + TW feed
 
 jobs:
   merge:
