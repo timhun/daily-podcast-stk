@@ -45,11 +45,13 @@ jobs:
       - name: Generate RSS Feed (US)
         run: python scripts/generate_rss.py
 
-      - name: Commit & Push (US)
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git pull --rebase origin main || true
-          git add .
-          git commit -m "📡 更新 US Podcast RSS" || echo "No changes"
-          git push origin HEAD:main
+- name: Commit & Push with Rebase
+  run: |
+    git config user.name "GitHub Actions"
+    git config user.email "actions@github.com"
+
+    git add .
+    git commit -m "📡 更新 US Podcast RSS" || echo "Nothing to commit"
+
+    git pull --rebase origin main || echo "🔁 rebase 發生衝突，略過"
+    git push origin HEAD:main
