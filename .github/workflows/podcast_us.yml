@@ -10,7 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     concurrency:
       group: podcast-us
-      cancel-in-progress: true
 
     env:
       PODCAST_MODE: us
@@ -24,10 +23,10 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
@@ -50,7 +49,7 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git pull --rebase || true
-          git add docs/rss/podcast_us.xml docs/podcast/
+          git pull --rebase origin main || true
+          git add .
           git commit -m "📡 更新 US Podcast RSS" || echo "No changes"
-          git push
+          git push origin HEAD:main
