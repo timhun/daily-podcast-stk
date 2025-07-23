@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     concurrency:
       group: podcast-tw
+      cancel-in-progress: true
 
     env:
       PODCAST_MODE: tw
@@ -23,10 +24,10 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -49,7 +50,7 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git pull --rebase origin main || true
-          git add .
+          git pull --rebase || true
+          git add docs/rss/podcast_tw.xml docs/podcast/
           git commit -m "📡 更新 TW Podcast RSS" || echo "No changes"
-          git push origin HEAD:main
+          git push
