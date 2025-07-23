@@ -3,16 +3,7 @@ import json
 import datetime
 import requests
 
-from fetch_market_data import (
-    get_stock_index_data_us,
-    get_stock_index_data_tw,
-    get_etf_data_us,
-    get_etf_data_tw,
-    get_bitcoin_price,
-    get_gold_price,
-    get_dxy_index,
-    get_yield_10y
-)
+from fetch_market_data import get_market_summary
 from generate_script_grok import generate_script_from_grok
 from generate_script_openrouter import generate_script_from_openrouter
 
@@ -26,32 +17,8 @@ output_dir = f"docs/podcast/{today_str}_{PODCAST_MODE}"
 os.makedirs(output_dir, exist_ok=True)
 script_path = os.path.join(output_dir, "script.txt")
 
-# 擷取行情資料（依模式切換）
-if PODCAST_MODE == "tw":
-    stock_summary = "\n".join(get_stock_index_data_tw())
-    etf_summary = "\n".join(get_etf_data_tw())
-else:
-    stock_summary = "\n".join(get_stock_index_data_us())
-    etf_summary = "\n".join(get_etf_data_us())
-
-bitcoin = get_bitcoin_price()
-gold = get_gold_price()
-dxy = get_dxy_index()
-yield10y = get_yield_10y()
-
-market_data = f"""
-【今日主要指數概況】
-{stock_summary}
-
-【ETF 概況】
-{etf_summary}
-
-【其他市場指標】
-{bitcoin}
-{gold}
-{yield10y}
-{dxy}
-""".strip()
+# 取得完整行情摘要
+market_data = get_market_summary(PODCAST_MODE)
 
 # 載入主題
 theme_text = ""
