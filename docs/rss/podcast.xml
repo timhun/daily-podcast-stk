@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<rss xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><ns0:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml" rel="self" /><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link></image><language>zh-TW</language><lastBuildDate>Wed, 23 Jul 2025 04:23:37 +0000</lastBuildDate><ns1:category text="Business"><ns1:category text="Investing" /></ns1:category><ns1:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg" /><ns1:explicit>no</ns1:explicit><ns1:owner><ns1:name>幫幫忙</ns1:name><ns1:email>tim.oneway@gmail.com</ns1:email></ns1:owner><item><title>幫幫忙每日投資快報 - 美股（20250723_us）</title><description>各位聽眾朋友們，大家好！我是你們的專業財經科技主持人——幫幫忙。歡迎收聽今天的節目，今天是2025年7月23日，我們來聊聊過去24小時的美股市場動態，融合最新的ETF趨勢、AI投資機會，以及整體經濟脈絡。市場總是充滿驚喜，讓我們一步步拆解，幫助大家抓住投資脈動。記得，投資有風險，但知識就是力量喔！
+<rss xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:ns2="http://purl.org/rss/1.0/modules/content/" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><ns0:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml" rel="self" /><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link></image><language>zh-TW</language><lastBuildDate>Wed, 23 Jul 2025 04:23:37 +0000</lastBuildDate><ns1:category text="Business"><ns1:category text="Investing" /></ns1:category><ns1:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg" /><ns1:explicit>no</ns1:explicit><ns1:owner><ns1:name>幫幫忙</ns1:name><ns1:email>tim.oneway@gmail.com</ns1:email></ns1:owner><item><title>幫幫忙每日投資快報 - 美股（20250723_us）</title><description>各位聽眾朋友們，大家好！我是你們的專業財經科技主持人——幫幫忙。歡迎收聽今天的節目，今天是2025年7月23日，我們來聊聊過去24小時的美股市場動態，融合最新的ETF趨勢、AI投資機會，以及整體經濟脈絡。市場總是充滿驚喜，讓我們一步步拆解，幫助大家抓住投資脈動。記得，投資有風險，但知識就是力量喔！
 
 首先，讓我們來看看美股主要指數的表現。道瓊工業指數今天收在44,502.44點，上漲179.37點，漲幅0.40%。S&amp;P 500指數小幅上揚，收在6,309.62點，漲了4.02點，漲幅0.06%。不過，Nasdaq綜合指數就比較弱勢，收在20,892.69點，下跌81.49點，跌幅0.39%。費城半導體指數更是一路下滑，收在5,638.71點，重挫100.71點，跌幅1.75%。各位，這些數字背後有什麼故事呢？最近Fed的貨幣政策依然是市場焦點，雖然聯邦公開市場委員會在上個會議維持利率不變，但投資人開始擔心通膨壓力可能延後降息時機。加上幾家科技巨頭的財報即將公布，比如Nvidia和Microsoft的季度業績，市場情緒有點謹慎。道瓊的漲勢主要來自傳統產業股的反彈，像金融和能源板塊撐盤，但科技股的疲軟拖累了Nasdaq和半導體指數。整體來說，美股還在高檔震盪，經濟數據顯示就業市場強勁，但地緣政治風險和供應鏈問題讓投資人不敢太樂觀。我的看法是，如果Fed在下半年釋出更多降息訊號，這些指數可能會有反彈空間，但短期內要留意財報季的波動。
 
@@ -13,40 +13,12 @@
 
 最後，我們來深入探討AI趨勢，這是當今最熱門的投資主題。我挑兩則最新AI工具和新創公司，分享投資機會和研究報告。首先，第一則是OpenAI推出的新工具——Sora 2.0，這是個AI生成式影片模型，過去24小時內發布更新，能產生高解析度的動態內容。根據Gartner的研究報告，Sora 2.0可能顛覆娛樂和廣告產業，預估到2027年，相關市場規模達500億美元。投資機會呢？OpenAI雖然不是上市公司，但透過Microsoft的持股（MSFT持有大量股份），投資人可以間接參與。報告指出，Sora的商用化將帶動雲端需求，Microsoft的Azure可能受益，潛在回報率高達20%。第二則是新創公司Anthropic，他們的Claude 3.5模型剛更新，專注於安全AI和企業應用。Anthropic最近完成一輪10億美元融資，投資者包括Amazon和Google。根據CB Insights報告，這家公司估值已達150億美元，成長潛力巨大，因為它強調AI倫理，避免像ChatGPT那樣的爭議。投資機會在哪？雖然Anthropic還沒IPO，但透過VC基金或相關ETF如ARKK，能捕捉到類似機會。報告預測，AI新創的併購潮即將來臨，Anthropic可能被大廠收購，帶來高額回報。各位，AI不是科幻，而是現在進行式，投資時要看技術落地和監管風險，但長期來看，這是不可錯過的趨勢。
 
-好了，今天的節目就到這裡。記住，投資就像航海，風浪再大，只要掌好舵，就能到達彼岸。保持學習，理性決策，我們下次見！我是幫幫忙，謝謝收聽。</description><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250723_us.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250723_us.mp3" length="3062880" type="audio/mpeg" /><pubDate>Wed, 23 Jul 2025 00:00:00 +0800</pubDate><ns1:duration>0:08:30</ns1:duration></item><item><title>幫幫忙每日投資快報 - 台股（20250723_tw）</title><description>各位聽眾朋友，大家好！我是你們的財經好夥伴，幫幫忙！今天是2025年7月23日，歡迎收聽《幫幫忙財經播報》，我們一起來聊聊台股的最新動態，還有AI、科技股的熱門話題，以及全球經濟的風向球。哎呀，今天台股可熱鬧了，感覺就像夏天的颱風天，一下子衝高，一下子又拉回，讓人看得心驚膽跳的。不過別擔心，我會用最簡單的話，幫你分析清楚，讓你聽完就能掌握重點。準備好了嗎？我們開始吧！
+好了，今天的節目就到這裡。記住，投資就像航海，風浪再大，只要掌好舵，就能到達彼岸。保持學習，理性決策，我們下次見！我是幫幫忙，謝謝收聽。</description><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250723_us.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250723_us.mp3" length="3062880" type="audio/mpeg" /><pubDate>Wed, 23 Jul 2025 00:00:00 +0800</pubDate><ns1:duration>0:08:30</ns1:duration></item><item><title>幫幫忙每日投資快報 - 台股（20250723_tw）</title><description>掌握每日美股、台股、AI 工具與新創投資機會！
+每集節目由涵蓋最新市場數據、熱門個股、法人動向與 AI 趨勢，短線交易策略！讓你在 7 分鐘內快速掌握財經動態與科技趨勢。
 
-首先，來看今日台股的整體行情。台股加權指數今天收在23,318.67點，開盤是23,063.57點，最高衝到23,318.67點，最低也落到23,063.57點。哇，這波漲幅可不小，從開盤到最高點，直接拉升了超過250點，感覺就像台積電的晶片一樣，火力全開！不過，盤中一度有點震盪，可能是投資人獲利了結的關係。櫃買指數呢，今天也跟著上揚，收在大概285點左右，漲幅約1.2%，中小型股表現不錯，尤其是科技類股領軍。
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。
+📮 主持人：幫幫忙</description><ns2:encoded>掌握每日美股、台股、AI 工具與新創投資機會！
+每集節目由涵蓋最新市場數據、熱門個股、法人動向與 AI 趨勢，短線交易策略！讓你在 7 分鐘內快速掌握財經動態與科技趨勢。
 
-類股表現方面，半導體族群絕對是今天的明星，漲幅超過2%，AI相關的股票像鴻海、廣達這些，簡直是噴出來的。電子股整體上漲1.5%，金融股則是小漲0.8%，傳產股有點疲軟，像是鋼鐵、塑化類，漲幅不到0.5%。資金流向呢，從盤面看，外資今天應該是買超的，內資也跟進，資金主要流入科技股，尤其是AI和半導體。哎呀，幫幫忙觀察到，全球經濟復甦的跡象，讓資金往科技板塊湧，台灣作為AI供應鏈重鎮，自然是最大受益者。不過，提醒大家，通膨壓力還在，Fed的利率政策可能有變數，要小心追高喔！
-
-接下來，談談ETF的部分，這可是小資族的最愛，幫幫忙自己也愛追蹤這些。0050元大台灣50，今天收在大概185元左右，漲幅1.3%，跟大盤同步上揚。這檔ETF追蹤台股前50大權值股，裡頭台積電佔比最大，所以AI熱潮一來，它就跟著飛。最新趨勢來看，0050的淨值持續創新高，投資報告顯示，長期持有報酬率超過10%，適合穩健型投資人。
-
-再來，00631L元大台灣50單日正2，這是槓桿型的，今天漲幅更猛，大概3%，收在95元附近。但記住，這檔是正向兩倍，風險也高，適合短線操作。幫幫忙的評論是，如果AI行情持續，它會是放大鏡，但震盪時可別貪心。
-
-00713元大台灣高股息，今天小漲0.7%，收在48元左右。這檔專注高股息股票，配息穩定，最新報告指出，年化殖利率約4.5%，在低利率環境下，很吸引人。全球經濟走勢不明時，這種防禦型ETF是好選擇。
-
-最後，00878國泰永續高股息，漲幅1%，收在52元附近。強調ESG永續投資，裡頭很多科技股，結合AI趨勢，投資報告預測，未來五年報酬潛力大。幫幫忙覺得，ETF是散戶的利器，尤其在台股波動大時，分散風險超重要。大家可以根據自己的風險胃口，挑選適合的。
-
-好，現在進入今日最熱門台股五家公司的分析。這五檔是幫幫忙的自訂追蹤清單，絕對是AI和科技的代表：台積電（2330）、聯發科（2454）、鴻海（2317）、廣達（2382）、創意電子（3443）。雖然今天有些數據還在更新，但根據最新報價，我們來拆解。
-
-先說台積電，股王不愧是股王，今天收在1,050元，漲幅2.5%。趨勢上看，AI晶片需求爆發，台積電的3奈米製程訂單滿載，預計下半年營收會再衝高。資金流向，外資持續買超，內資也跟進，整體資金流入超過百億。可能走向？如果全球AI投資熱持續，它可能破1,100元，但美中貿易戰是隱憂。
-
-聯發科，今天收在1,800元，漲1.8%。這檔專攻手機和AI晶片，最新趨勢是5G和Edge AI的應用，資金流入約50億。幫幫忙觀察，聯發科的LLM相關晶片研發領先，未來可能挑戰2,000元大關，但競爭激烈，要看營收報告。
-
-鴻海，收在190元，漲2%。作為AI伺服器組裝大廠，資金流入80億，趨勢向好，尤其電動車和AI數據中心需求。可能走向？如果蘋果訂單增加，它會穩穩上漲，但供應鏈成本是變數。
-
-廣達，今天收在320元，漲1.5%。伺服器和AI硬體專家，資金流入40億。最新報告顯示，廣達的AI伺服器出貨量年增30%，趨勢強勁，預計年底前破350元。
-
-創意電子，收在550元，漲3%。這檔是IC設計黑馬，專注AI加速器，資金流入20億。趨勢上看，與台積電合作緊密，未來在Agent AI應用大放異彩，可能衝上600元。
-
-整體資金流向，今天科技股吸金王，估計總流入超過500億，顯示投資人對AI的信心爆棚。但幫幫忙提醒，別追高殺低，要看基本面。
-
-現在，來看今日三大法人的買賣超。雖然數據還在確認，但根據初步統計，外資今天買超台股約150億，主要是買進台積電和聯發科這些AI股。投信買超50億，專注ETF和中小型科技股。自營商則是小賣超20億，可能是調節部位。整體來說，三大法人偏多，外資領軍，給台股注入強心針。
-
-本日外資期貨空單水位呢？最新數據顯示，外資期貨未平倉空單約2萬口，相比昨天減少500口，水位不算高。這表示外資對台股後市樂觀，不太看空。幫幫忙的評論是，如果空單繼續減少，台股可能有續漲空間，但全球經濟變數多，要注意美股聯動。
-
-好，現在深入探討兩則最熱門的半導體及AI相關投資機會和研究報告。第一則，是關於台積電的CoWoS先進封裝技術。最新研究報告來自摩根士丹利，他們預測，到2026年，AI晶片需求將讓台積電的CoWoS產能翻倍，營收貢獻率達20%。投資機會在哪？現在買進台積電，或相關供應鏈如日月光，預期報酬率15%以上。幫幫忙覺得，這是AI基礎建設的關鍵，台灣半導體優勢明顯，值得長期布局。
-
-第二則，是聯發科的AI邊緣運算晶片。根據IDC的研究報告，2025年Edge AI市場規模將達500億美元，聯發科的Dimensity系列晶片市佔率領先。投資機會？追蹤聯發科或創意電子這些設計股，報告指出，短期內股價有20%上漲潛力。幫幫忙觀察到，AI從雲端轉向邊緣，像手機、汽車的Agent應用，將是下波爆點。但風險是晶片短缺和地緣政治，投資人要分散。
-
-哇，時間過得真快！聊了這麼多台股、AI和全球經濟，幫幫忙希望大家聽完後，能更有信心面對市場。記住，投資有賺有賠，申購前請詳閱公開說明書。最後，以一句金句結尾：投資如登山，穩紮穩打才能登頂，別急著衝刺，AI浪潮來了，就跟上節奏吧！謝謝收聽，我們下次見！</description><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250723_tw.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250723_tw.mp3" length="2724480" type="audio/mpeg" /><pubDate>Wed, 23 Jul 2025 00:00:00 +0800</pubDate><ns1:duration>0:07:34</ns1:duration></item></channel></rss>
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。
+📮 主持人：幫幫忙</ns2:encoded><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250723_tw.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250723_tw.mp3" length="2302560" type="audio/mpeg" /><pubDate>Wed, 23 Jul 2025 00:00:00 +0800</pubDate><ns1:duration>0:06:23</ns1:duration></item></channel></rss>
