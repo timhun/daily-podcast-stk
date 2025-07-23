@@ -55,8 +55,8 @@ if os.path.exists(audio) and os.path.exists(archive_url_file):
     with open(archive_url_file, "r") as f:
         audio_url = f.read().strip()
 
-    with open(script, "r", encoding="utf-8") as f:
-        description = f.read().strip()
+   # with open(script, "r", encoding="utf-8") as f:
+        #description = f.read().strip()
 
     try:
         mp3 = MP3(audio)
