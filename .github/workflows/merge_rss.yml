@@ -10,13 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     concurrency:
       group: podcast-merge
+      cancel-in-progress: true
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
@@ -35,10 +36,9 @@ jobs:
           git config user.email "actions@github.com"
 
           if [ -f docs/rss/podcast.xml ]; then
-            git add -A
+            git pull --rebase || true
+            git add docs/rss/podcast.xml
             git commit -m "🔗 合併 US / TW 為主 RSS Feed" || echo "No changes"
-            git pull --rebase origin main || true
-            git push origin HEAD:main
+            git push
           else
             echo "❌ 找不到 docs/rss/podcast.xml，跳過 push。"
-          fi
