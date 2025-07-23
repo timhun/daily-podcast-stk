@@ -74,7 +74,8 @@ if os.path.exists(audio) and os.path.exists(script) and os.path.exists(archive_u
     fe = fg.add_entry()
     fe.id(audio_url)
     fe.title(title)
-    fe.description(description)
+    fe.description(FIXED_DESCRIPTION)
+    fe.content(FIXED_DESCRIPTION, type="CDATA")
     fe.enclosure(audio_url, str(os.path.getsize(audio)), "audio/mpeg")
     fe.pubDate(pub_date)
     if duration:
