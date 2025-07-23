@@ -48,10 +48,10 @@ if not matching_folders:
 latest_folder = matching_folders[0]
 base_path = os.path.join(episodes_dir, latest_folder)
 audio = os.path.join(base_path, "audio.mp3")
-script = os.path.join(base_path, "script.txt")
+#script = os.path.join(base_path, "script.txt")
 archive_url_file = os.path.join(base_path, "archive_audio_url.txt")
 
-if os.path.exists(audio) and os.path.exists(script) and os.path.exists(archive_url_file):
+if os.path.exists(audio) and os.path.exists(archive_url_file):
     with open(archive_url_file, "r") as f:
         audio_url = f.read().strip()
 
@@ -85,4 +85,4 @@ if os.path.exists(audio) and os.path.exists(script) and os.path.exists(archive_u
     fg.rss_file(RSS_FILE)
     print(f"✅ 已產生 RSS Feed：{RSS_FILE}")
 else:
-    print(f"⚠️ 缺少必要檔案，無法產生 RSS：{audio}, {script}, {archive_url_file}")
+    print(f"⚠️ 缺少必要檔案，無法產生 RSS：{audio}, {archive_url_file}")
