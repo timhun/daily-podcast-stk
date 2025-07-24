@@ -7,3 +7,4 @@ mutagen
 b2sdk
 pytz
 beautifulsoup4
+lxml
