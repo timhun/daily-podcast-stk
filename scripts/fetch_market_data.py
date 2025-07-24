@@ -135,10 +135,17 @@ def get_etf_data_tw():
             resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
             soup = BeautifulSoup(resp.text, "html.parser")
             tag = soup.find("fin-streamer", {"data-field": "regularMarketPrice"})
-            price = tag.text.strip() if tag else "N/A"
-            results.append(f"{name}：{price}")
+            if tag and tag.text:
+                results.append(f"{name}：{tag.text.strip()}")
+                continue
         except:
-            results.append(f"{name}：⚠️ 無法取得資料")
+            pass
+        # 備援：用 yfinance
+        try:
+            result = get_stock_price(f"{name}.TW", name, mode="daily")
+        except:
+            result = f"{name}：⚠️ 無法取得資料"
+        results.append(result)
     return results
 
 def get_hot_stocks_tw_from_list():
