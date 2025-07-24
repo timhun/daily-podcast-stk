@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from datetime import datetime
 import json
 
-### ===== 通用工具 =====
+# ===== 通用工具 =====
 
 def get_stock_price(symbol, name=None, mode="intraday"):
     try:
@@ -36,7 +36,7 @@ def load_json_dict(path):
             return json.load(f)
     return {}
 
-### ===== 美股區 =====
+# ===== 美股區 =====
 
 def get_stock_index_data_us():
     indices = {
@@ -101,19 +101,24 @@ def get_yield_10y():
     except:
         return "⚠️ 無法取得十年期殖利率"
 
-### ===== 台股區 =====
+# ===== 台股區 =====
 
 def get_stock_index_data_tw():
-    url = "https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST?date=&response=json"
+    today = datetime.now().strftime("%Y%m%d")
+    url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={today}&type=ALL&response=json"
     try:
         resp = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
         data = resp.json()
-        items = data.get("data", [])
-        if items:
-            latest = items[-1]
-            time_str, open_, high, low, close = latest[:5]
-            return [f"台股加權指數（{time_str}）：{close} 點（開盤 {open_}，最高 {high}，最低 {low}）"]
-        return ["⚠️ 無法取得台股加權指數"]
+        table = data.get("tables", [])[0]
+        rows = table.get("data", [])
+        for row in rows:
+            if row[0].strip() == "台灣加權指數":
+                index = row[1].strip()
+                change = row[2].strip()
+                percent = row[3].strip()
+                volume = row[4].strip()
+                return [f"台股加權指數：{index}（{change}, {percent}），成交值 {volume}"]
+        return ["⚠️ 找不到台股加權指數資料"]
     except Exception as e:
         return [f"⚠️ 擷取台股指數失敗：{e}"]
 
@@ -208,7 +213,7 @@ def get_futures_open_interest():
     except:
         return ["⚠️ 無法取得期貨未平倉資料"]
 
-### ===== 統一輸出函式 =====
+# ===== 統一輸出 =====
 
 def get_market_summary(mode: str) -> str:
     if mode == "us":
