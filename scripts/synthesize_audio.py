@@ -24,7 +24,7 @@ with open(script_path, "r", encoding="utf-8") as f:
     text = f.read()
 
 # Edge TTS 設定
-VOICE = "YunJheNeural"
+VOICE = "zh-TW-YunJheNeural"
 RATE = "+15%"
 
 # 語音合成函式
