@@ -105,22 +105,23 @@ def get_yield_10y():
 
 def get_stock_index_data_tw():
     today = datetime.now().strftime("%Y%m%d")
-    url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={today}&type=ALL&response=json"
+    url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?date={today}&type=IND&response=json"
     try:
         resp = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
         data = resp.json()
         table = data.get("tables", [])[0]
         rows = table.get("data", [])
         for row in rows:
-            if row[0].strip() == "台灣加權指數":
-                index = row[1].strip()
-                change = row[2].strip()
-                percent = row[3].strip()
-                volume = row[4].strip()
-                return [f"台股加權指數：{index}（{change}, {percent}），成交值 {volume}"]
+            if "發行量加權股價指數" in row[0]:
+                index = row[1].replace(",", "")
+                change = row[2].replace(",", "")
+                percent = row[3].replace(",", "")
+                volume = row[4].replace(",", "")
+                return [f"台股加權指數：{float(index):,.2f}（{float(change):+.2f}, {float(percent):+.2f}%），成交值 {float(volume):,.0f} 億"]
         return ["⚠️ 找不到台股加權指數資料"]
     except Exception as e:
         return [f"⚠️ 擷取台股指數失敗：{e}"]
+
 
 def get_etf_data_tw():
     urls = {
