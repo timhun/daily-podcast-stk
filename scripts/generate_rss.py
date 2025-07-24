@@ -12,8 +12,8 @@ COVER_URL = f"{SITE_URL}/img/cover.jpg"
 PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
 RSS_FILE = f"docs/rss/podcast_{PODCAST_MODE}.xml"
 
-FIXED_DESCRIPTION = """掌握每日美股、台股、AI 工具與新創投資機會！
-每集節目由涵蓋最新市場數據、熱門個股、法人動向與 AI 趨勢，短線交易策略！讓你在 7 分鐘內快速掌握財經動態與科技趨勢。
+FIXED_DESCRIPTION = """掌握每日美股、台股、AI工具與新創投資機會！
+每集節目由涵蓋最新市場數據、法人動向與 AI 趨勢，專注市值型ETF短線交易策略！讓你在 7 分鐘內快速掌握財經動態與科技趨勢。
 
 🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。
 📮 主持人：幫幫忙"""
