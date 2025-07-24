@@ -23,7 +23,7 @@ fg = FeedGenerator()
 fg.load_extension("podcast")
 fg.id(SITE_URL)
 fg.title("幫幫忙說AI.投資")
-fg.author({"name": "幫幫忙", "email": "tim.oneway@gmail.com"})
+fg.author({"name": "幫幫忙AI投資腦", "email": "tim.oneway@gmail.com"})
 fg.link(href=SITE_URL, rel="alternate")
 fg.language("zh-TW")
 fg.description("掌握美股台股、科技、AI 與投資機會，每日兩集！")
@@ -32,8 +32,8 @@ fg.link(href=f"{SITE_URL}/rss/podcast_{PODCAST_MODE}.xml", rel="self")
 fg.podcast.itunes_category("Business", "Investing")
 fg.podcast.itunes_image(COVER_URL)
 fg.podcast.itunes_explicit("no")
-fg.podcast.itunes_author("幫幫忙")  # Spotify 驗證需要
-fg.podcast.itunes_owner(name="幫幫忙", email="tim.oneway@gmail.com")
+fg.podcast.itunes_author("幫幫忙AI投資腦")  # Spotify 驗證需要
+fg.podcast.itunes_owner(name="幫幫忙AI投資腦", email="tim.oneway@gmail.com")
 
 # ===== 找出符合模式的最新資料夾 =====
 episodes_dir = "docs/podcast"
