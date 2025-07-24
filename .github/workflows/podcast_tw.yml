@@ -49,7 +49,7 @@ jobs:
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-     git add .
-git commit -m "📡 更新 TW Podcast RSS" || echo "No changes"
-git pull --rebase origin main || true
-git push origin HEAD:main || echo "⚠️ Push 被拒絕，請手動處理或等待下一輪排程"
+          git add -A
+          git commit -m "📡 更新 TW Podcast RSS" || echo "No changes"
+          git pull --rebase origin main || true
+          git push origin HEAD:main || echo "⚠️ Push 被拒絕，請稍後同步"
