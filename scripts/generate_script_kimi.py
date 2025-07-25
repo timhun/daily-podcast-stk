@@ -20,6 +20,14 @@ script_path = os.path.join(output_dir, "script.txt")
 # 取得完整行情摘要
 market_data = get_market_summary(PODCAST_MODE)
 
+# 讀取多空判斷（僅台股支援）
+bullish_signal = ""
+if PODCAST_MODE == "tw":
+    signal_path = "docs/podcast/bullish_signal_tw.txt"
+    if os.path.exists(signal_path):
+        with open(signal_path, "r", encoding="utf-8") as f:
+            bullish_signal = f.read().strip()
+
 # 載入主題
 theme_text = ""
 theme_file = f"prompt/theme-{PODCAST_MODE}.txt"
@@ -29,7 +37,7 @@ if os.path.exists(theme_file):
         if raw:
             theme_text = raw if raw[-1] in "。！？" else raw + "。"
 
-# 判斷是否為週末，週末只切換 tw 模式
+# 判斷是否為週末（週末只切換 tw 模式）
 is_weekend = now.weekday() >= 5 and PODCAST_MODE == "tw"
 prompt_file = f"prompt/{PODCAST_MODE}{'_weekend' if is_weekend else ''}.txt"
 
@@ -43,7 +51,8 @@ with open(prompt_file, "r", encoding="utf-8") as f:
 prompt = prompt_template.format(
     market_data=market_data,
     theme=theme_text,
-    date=today_display
+    date=today_display,
+    bullish_signal=bullish_signal  # 新增佔位符
 )
 
 # Grok
@@ -115,15 +124,14 @@ if not script_text:
 if not script_text:
     raise RuntimeError("❌ 所有來源皆失敗")
 
-# 儲存
+# 儲存逐字稿
 with open(script_path, "w", encoding="utf-8") as f:
     f.write(script_text)
 print(f"✅ 已儲存逐字稿至：{script_path}")
 
 # 🔽 自動產出 summary.txt（擷取前約 200 字摘要）
 summary_path = os.path.join(output_dir, "summary.txt")
-summary_text = script_text.strip().replace("\n", "").replace("  ", "")
-summary_text = summary_text[:200]
+summary_text = script_text.strip().replace("\n", "").replace("  ", "")[:200]
 with open(summary_path, "w", encoding="utf-8") as f:
     f.write(summary_text)
 print(f"✅ 已產出節目摘要至：{summary_path}")
