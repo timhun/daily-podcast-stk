@@ -2,13 +2,16 @@ name: Daily Podcast
 
 on:
   schedule:
-    # 台灣時間 14:00，每日執行
-    - cron: '0 6 * * *'  # UTC+0 時區 = 台灣時間 14:00
+    # 台灣時間 14:00 = UTC 06:00
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
 jobs:
   analyze-tw-signal:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scripts  # ✅ 所有指令都在 scripts/ 執行
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -20,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          pip install -r ../requirements.txt  # ✅ 安裝根目錄的 requirements.txt
 
       - name: Run bullish signal analysis
         run: |
@@ -31,6 +34,6 @@ jobs:
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git pull --rebase
-          git add docs/podcast/bullish_signal_tw.txt
+          git add ../docs/podcast/bullish_signal_tw.txt
           git commit -m "🔍 更新台股多空判斷"
           git push
