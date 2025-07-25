@@ -30,21 +30,70 @@ def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
         try:
             prices, volumes = fetcher(symbol, start_date, end_date)
             if len(prices) >= min_days and len(volumes) >= min_days and prices.index.equals(volumes.index):
-                logger.info(f"成功從 {fetcher.__name__} 取得 {symbol} 數據，{len(prices)} 天")
+                logger.info(f"✅ 成功從 {fetcher.__name__} 取得 {symbol} 數據，共 {len(prices)} 天")
                 return prices, volumes
             else:
-                logger.warning(f"{fetcher.__name__} 返回數據少於 {min_days} 天或索引不一致")
+                logger.warning(f"⚠️ {fetcher.__name__} 返回資料不足或索引不一致：{len(prices)} 天")
         except Exception as e:
             logger.error(f"⚠️ {fetcher.__name__} 錯誤：{str(e)}")
     raise RuntimeError(f"❌ 所有備援資料來源皆失敗，無法取得 {symbol} 資料")
 
+
+
 # ===== 第一層：TWSE（證交所歷史資料） =====
 
-def fetch_from_twse(symbol, start_date, end_date):
-    if symbol == "TAIEX":
-        return fetch_taiex_from_twse(start_date, end_date)
-    else:
-        return fetch_stock_from_twse(symbol, start_date, end_date)
+def fetch_taiex_from_twse(start_date, end_date):
+    prices, volumes, dates = [], [], []
+    current_date = start_date
+    session = requests.Session()
+    session.headers.update({"User-Agent": "Mozilla/5.0"})
+
+    while current_date <= end_date:
+        date_str = current_date.strftime("%Y%m%d")
+        url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=IND&response=json&date={date_str}"
+        try:
+            resp = session.get(url, timeout=10)
+            if not resp.text.strip():
+                logger.warning(f"TWSE TAIEX {date_str} 回傳空白，跳過")
+                current_date += timedelta(days=1)
+                continue
+
+            try:
+                data = resp.json()
+            except ValueError:
+                raise RuntimeError(f"TWSE TAIEX {date_str} 回傳非 JSON 格式：{resp.text[:80]}...")
+
+            if "tables" not in data or not data["tables"]:
+                logger.warning(f"TWSE TAIEX {date_str} 無 tables 資料")
+                current_date += timedelta(days=1)
+                continue
+
+            found = False
+            for row in data["tables"][0].get("data", []):
+                if row[0].strip() == "發行量加權股價指數":
+                    try:
+                        close = float(row[2].replace(",", ""))
+                        vol = float(row[4].replace(",", "")) * 1e6  # 億元 → 元
+                        prices.append(close)
+                        volumes.append(vol)
+                        dates.append(current_date)
+                        found = True
+                    except Exception as e:
+                        logger.warning(f"TWSE TAIEX {date_str} 資料解析錯誤: {e}")
+            if not found:
+                logger.warning(f"TWSE TAIEX {date_str} 找不到加權指數欄位")
+        except Exception as e:
+            logger.error(f"TWSE TAIEX {date_str} 請求失敗: {e}")
+        current_date += timedelta(days=1)
+
+    if not prices:
+        raise RuntimeError("TWSE TAIEX 無有效數據")
+
+    df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
+    df = df.loc[~df.index.duplicated(keep='last')].sort_index()
+    return df["Price"], df["Volume"]
+
+
 
 def fetch_taiex_from_twse(start_date, end_date):
     prices, volumes, dates = [], [], []
