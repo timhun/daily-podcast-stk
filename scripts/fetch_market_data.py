@@ -93,27 +93,36 @@ def get_yield_10y():
 # ===== 台股區 =====
 
 def get_stock_index_data_tw():
-    url = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=IND&response=json"
     try:
+        url = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=IND&response=json"
         resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
         data = resp.json()
         rows = data["tables"][0]["data"]
         for row in rows:
             if "發行量加權股價指數" in row[0]:
-                index = row[1].strip().replace(",", "")
-                change = row[2].strip()
-                percent = row[3].strip()
-                volume = row[4].strip()
+                index = row[1].replace(",", "")
+                change = row[2]
+                percent = row[3]
+                volume = row[4]
                 return [f"台股加權指數：{index}（{change}, {percent}），成交值 {volume}"]
-        return ["⚠️ 找不到加權指數資料"]
+        return ["⚠️ 找不到加權指數"]
     except:
-        return ["⚠️ 無法取得加權指數資料"]
+        # 備援 Cnyes
+        try:
+            url = "https://www.cnyes.com/twstock/TWS/T00"
+            resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+            soup = BeautifulSoup(resp.text, "html.parser")
+            points = soup.select_one(".price")
+            change = soup.select_one(".change")
+            percent = soup.select_one(".change__percent")
+            return [f"台股加權指數：{points.text}（{change.text}, {percent.text}），來源：Cnyes"]
+        except:
+            return ["⚠️ 無法取得加權指數資料"]
 
 def get_etf_data_tw():
     urls = {
         "0050": "https://tw.stock.yahoo.com/quote/0050.TW",
         "00631L": "https://tw.stock.yahoo.com/quote/00631L.TW",
-        "00713": "https://tw.stock.yahoo.com/quote/00713.TW",
         "00878": "https://tw.stock.yahoo.com/quote/00878.TW"
     }
     results = ["【台股 ETF】"]
@@ -129,8 +138,8 @@ def get_etf_data_tw():
     return results
 
 def get_hot_stocks_tw_by_volume():
-    url = "https://www.twse.com.tw/exchangeReport/MI_INDEX20?response=json&type=ALLBUT0999"
     try:
+        url = "https://www.twse.com.tw/exchangeReport/MI_INDEX20?response=json&type=ALLBUT0999"
         resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
         data = resp.json()
         rows = data["data5"][:3]
@@ -144,9 +153,9 @@ def get_hot_stocks_tw_by_volume():
         return ["⚠️ 無法取得成交量排行"]
 
 def get_three_major_investors():
-    today = datetime.now().strftime("%Y%m%d")
-    url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX3?date={today}&response=json"
     try:
+        today = datetime.now().strftime("%Y%m%d")
+        url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX3?date={today}&response=json"
         resp = requests.get(url)
         data = resp.json()
         rows = data["tables"][0]["data"]
@@ -160,8 +169,8 @@ def get_three_major_investors():
         return ["⚠️ 無法取得三大法人資料"]
 
 def get_futures_open_interest():
-    url = "https://www.taifex.com.tw/cht/3/futContractsDate"
     try:
+        url = "https://www.taifex.com.tw/cht/3/futContractsDate"
         resp = requests.post(url, data={
             'queryType': '1',
             'marketCode': '0',
@@ -184,14 +193,14 @@ def get_futures_open_interest():
         return ["⚠️ 無法取得期貨資料"]
 
 def get_tw_margin_balance():
-    url = "https://www.twse.com.tw/exchangeReport/TWT93U?response=json"
-    targets = {
-        "0050": "0050 元大台灣50",
-        "00631L": "00631L 元大台灣50正2",
-        "2330": "2330 台積電",
-        "大盤": "合計"
-    }
     try:
+        url = "https://www.twse.com.tw/exchangeReport/TWT93U?response=json"
+        targets = {
+            "0050": "0050 元大台灣50",
+            "00631L": "00631L 元大台灣50正2",
+            "2330": "2330 台積電",
+            "大盤": "合計"
+        }
         resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
         data = resp.json()
         rows = data["data"]
@@ -210,7 +219,7 @@ def get_tw_margin_balance():
     except:
         return ["⚠️ 無法取得融資融券資料"]
 
-# ===== 統一輸出 =====
+# ===== 主整合入口 =====
 
 def get_market_summary(mode: str) -> str:
     if mode == "us":
