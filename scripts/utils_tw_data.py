@@ -32,7 +32,7 @@ def fetch_taiex_from_twse():
     resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
     data = resp.json()
 
-    if "data" not in 
+    if "data" not in data:
         raise RuntimeError("TWSE 沒有有效價格資料")
 
     records = data["data"]
@@ -58,7 +58,7 @@ def fetch_stock_from_twse(symbol):
     resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
     data = resp.json()
 
-    if "data" not in 
+    if "data" not in data:
         raise RuntimeError("TWSE 股票資料錯誤")
 
     records = data["data"]
