@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from datetime import datetime
-from fetch_market_data import get_tw_price_volume_history
+from utils_tw_data import get_price_volume_tw  # ✅ 更新 import
 
 def calculate_ma(prices, window):
     return prices.rolling(window=window).mean()
@@ -32,32 +32,27 @@ def analyze_bullish_signal_tw():
     today = datetime.now().strftime("%Y%m%d")
     print(f"📊 分析日期：{today}")
 
-    # 取得台股大盤資料（加權指數）
-    twii = get_tw_price_volume_history("twii")
-    if twii is None:
-        raise RuntimeError("❌ 無法取得台股加權指數資料")
+    # ✅ 加權指數資料
+    prices_twii, volumes_twii = get_price_volume_tw("TAIEX")
+    df_twii = composite_index_with_volume_and_bullish(prices_twii, volumes_twii)
 
-    # 取得 0050 ETF 資料
-    etf_0050 = get_tw_price_volume_history("0050")
-    if etf_0050 is None:
-        raise RuntimeError("❌ 無法取得 0050 資料")
-
-    df_twii = composite_index_with_volume_and_bullish(twii["close"], twii["volume"])
-    df_0050 = composite_index_with_volume_and_bullish(etf_0050["close"], etf_0050["volume"])
+    # ✅ 0050 ETF 資料
+    prices_0050, volumes_0050 = get_price_volume_tw("0050")
+    df_0050 = composite_index_with_volume_and_bullish(prices_0050, volumes_0050)
 
     latest_twii = df_twii.iloc[-1]
     latest_0050 = df_0050.iloc[-1]
-
-    msg = []
 
     def line(name, df):
         bullish = "✅ 多頭排列" if df["Bullish"] else "⚠️ 非多頭"
         trend = "📈 大盤線上升" if df["BigLine_Diff"] > 0 else "📉 大盤線下滑"
         return f"{name}：{bullish}，{trend}"
 
-    msg.append("【台股多空訊號判斷】")
-    msg.append(line("加權指數", latest_twii))
-    msg.append(line("0050", latest_0050))
+    msg = [
+        "【台股多空訊號判斷】",
+        line("加權指數", latest_twii),
+        line("0050", latest_0050)
+    ]
 
     # 儲存結果
     output_path = "docs/podcast/bullish_signal_tw.txt"
