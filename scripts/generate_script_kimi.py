@@ -119,3 +119,11 @@ if not script_text:
 with open(script_path, "w", encoding="utf-8") as f:
     f.write(script_text)
 print(f"✅ 已儲存逐字稿至：{script_path}")
+
+# 🔽 自動產出 summary.txt（擷取前約 200 字摘要）
+summary_path = os.path.join(output_dir, "summary.txt")
+summary_text = script_text.strip().replace("\n", "").replace("  ", "")
+summary_text = summary_text[:200]
+with open(summary_path, "w", encoding="utf-8") as f:
+    f.write(summary_text)
+print(f"✅ 已產出節目摘要至：{summary_path}")
