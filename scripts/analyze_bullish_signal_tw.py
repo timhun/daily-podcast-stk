@@ -1,7 +1,7 @@
 import os
 import pandas as pd
-from datetime import datetime
-from utils_tw_data import get_price_volume_tw  # ✅ 改為從 utils_tw_data 匯入
+from datetime import datetime, timedelta
+from utils_tw_data import get_price_volume_tw  # ✅ 使用新版 fallback 架構
 
 def calculate_ma(prices, window):
     return prices.rolling(window=window).mean()
@@ -29,17 +29,18 @@ def composite_index_with_volume_and_bullish(prices, volume, weights=[0.4, 0.35, 
     })
 
 def analyze_bullish_signal_tw():
-    today = datetime.now().strftime("%Y%m%d")
-    print(f"📊 分析日期：{today}")
+    today = datetime.today().date()
+    start_date = today - timedelta(days=90)
+    print(f"📊 分析日期：{today.isoformat()}")
 
-    # 加權指數
-    twii_price, twii_vol = get_price_volume_tw("TAIEX")
-    if twii_price is None:
+    # 取得 TAIEX 資料
+    twii_price, twii_vol = get_price_volume_tw("TAIEX", start_date=start_date, end_date=today)
+    if twii_price is None or len(twii_price) < 60:
         raise RuntimeError("❌ 無法取得台股加權指數資料")
 
-    # 0050 ETF
-    etf_price, etf_vol = get_price_volume_tw("0050")
-    if etf_price is None:
+    # 取得 0050 資料
+    etf_price, etf_vol = get_price_volume_tw("0050", start_date=start_date, end_date=today)
+    if etf_price is None or len(etf_price) < 60:
         raise RuntimeError("❌ 無法取得 0050 資料")
 
     df_twii = composite_index_with_volume_and_bullish(twii_price, twii_vol)
@@ -48,18 +49,18 @@ def analyze_bullish_signal_tw():
     latest_twii = df_twii.iloc[-1]
     latest_0050 = df_0050.iloc[-1]
 
-    msg = []
-
     def line(name, df):
         bullish = "✅ 多頭排列" if df["Bullish"] else "⚠️ 非多頭"
         trend = "📈 大盤線上升" if df["BigLine_Diff"] > 0 else "📉 大盤線下滑"
         return f"{name}：{bullish}，{trend}"
 
-    msg.append("【台股多空訊號判斷】")
-    msg.append(line("加權指數", latest_twii))
-    msg.append(line("0050", latest_0050))
+    msg = [
+        "【台股多空訊號判斷】",
+        line("加權指數", latest_twii),
+        line("0050", latest_0050)
+    ]
 
-    # 儲存
+    # 儲存結果
     output_path = "docs/podcast/bullish_signal_tw.txt"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
