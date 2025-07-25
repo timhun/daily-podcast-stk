@@ -18,7 +18,7 @@ def get_price_volume_tw(symbol):
             print(f"⚠️ 備援來源錯誤：{e}")
     raise RuntimeError(f"❌ 所有備援資料來源皆失敗，無法取得 {symbol} 資料")
 
-# ===== 第一層：TWSE（證交所歷史 CSV） =====
+# ===== 第一層：TWSE（證交所歷史資料） =====
 
 def fetch_from_twse(symbol):
     if symbol == "TAIEX":
@@ -27,30 +27,35 @@ def fetch_from_twse(symbol):
         return fetch_stock_from_twse(symbol)
 
 def fetch_taiex_from_twse():
-    date = datetime.today().strftime("%Y%m%d")
-    url = f"https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST?date={date}&response=json"
+    today = datetime.today().strftime("%Y%m%d")
+    url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=IND&response=json&date={today}"
     resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
     data = resp.json()
 
-    if "data" not in data:
-        raise RuntimeError("TWSE 沒有有效價格資料")
+    if "tables" not in data:
+        raise RuntimeError("TWSE 沒有 tables 欄位")
 
-    records = data["data"]
+    rows = data["tables"][0].get("data", [])
+    if not rows:
+        raise RuntimeError("TWSE 無加權指數資料")
+
     dates, prices, volumes = [], [], []
-    for row in records:
+    for row in rows:
         try:
-            date_str = row[0].replace("/", "-")
-            close = float(row[6].replace(",", ""))
-            vol = float(row[1].replace(",", ""))
-            dates.append(date_str)
-            prices.append(close)
-            volumes.append(vol)
+            if row[0].strip() == "發行量加權股價指數":
+                close = float(row[2].replace(",", ""))
+                vol = float(row[4].replace(",", "")) * 1e6  # 單位：億元轉成元
+                dates.append(datetime.today().date())
+                prices.append(close)
+                volumes.append(vol)
         except Exception as e:
             print(f"⚠️ TWSE row error: {e}")
             continue
 
+    if not prices:
+        raise RuntimeError("TWSE 加權指數資料格式錯誤")
+
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
-    df = df.sort_index()
     return df["Price"], df["Volume"]
 
 def fetch_stock_from_twse(symbol):
@@ -67,7 +72,7 @@ def fetch_stock_from_twse(symbol):
         try:
             date_str = row[0].replace("/", "-")
             close = float(row[6].replace(",", ""))
-            vol = float(row[1].replace(",", ""))
+            vol = float(row[1].replace(",", "")) * 1000  # 單位：千股
             dates.append(date_str)
             prices.append(close)
             volumes.append(vol)
@@ -76,14 +81,13 @@ def fetch_stock_from_twse(symbol):
             continue
 
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
-    df = df.sort_index()
     return df["Price"], df["Volume"]
 
 # ===== 第二層：Cnyes API =====
 
 def fetch_from_cnyes(symbol):
     if symbol == "TAIEX":
-        url = "https://www.cnyes.com/api/v1/charting/index_0050"
+        url = "https://www.cnyes.com/api/v1/charting/index_0000"  # 0000 = TAIEX
     elif symbol == "0050":
         url = "https://www.cnyes.com/api/v1/charting/etf_0050"
     else:
@@ -101,7 +105,6 @@ def fetch_from_cnyes(symbol):
     volumes = [x["v"] for x in data]
 
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
-    df = df.sort_index()
     return df["Price"], df["Volume"]
 
 # ===== 第三層：PChome 網頁爬蟲 =====
@@ -136,5 +139,4 @@ def fetch_from_pchome(symbol):
         "Price": prices,
         "Volume": volumes
     }, index=pd.to_datetime(dates))
-    df = df.sort_index()
     return df["Price"], df["Volume"]
