@@ -32,6 +32,7 @@ def analyze_bullish_signal_tw():
     today = datetime.now().strftime("%Y%m%d")
     print(f"📊 分析日期：{today}")
 
+    # ✅ 改用 utils_tw_data 的新版函式
     twii_price, twii_vol = get_price_volume_tw("TAIEX")
     etf_price, etf_vol = get_price_volume_tw("0050")
 
@@ -60,4 +61,3 @@ def analyze_bullish_signal_tw():
 
 if __name__ == "__main__":
     analyze_bullish_signal_tw()
-
