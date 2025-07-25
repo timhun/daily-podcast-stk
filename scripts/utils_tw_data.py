@@ -1,8 +1,8 @@
-# utils_tw_data.py
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from datetime import datetime
+import ast
 
 def get_price_volume_tw(symbol):
     """
@@ -29,10 +29,10 @@ def fetch_from_twse(symbol):
 def fetch_taiex_from_twse():
     date = datetime.today().strftime("%Y%m%d")
     url = f"https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST?date={date}&response=json"
-    resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+    resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
     data = resp.json()
 
-    if "data" not in data:
+    if "data" not in 
         raise RuntimeError("TWSE 沒有有效價格資料")
 
     records = data["data"]
@@ -55,10 +55,10 @@ def fetch_taiex_from_twse():
 
 def fetch_stock_from_twse(symbol):
     url = f"https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?stockNo={symbol}&response=json"
-    resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+    resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
     data = resp.json()
 
-    if "data" not in data:
+    if "data" not in 
         raise RuntimeError("TWSE 股票資料錯誤")
 
     records = data["data"]
@@ -71,7 +71,8 @@ def fetch_stock_from_twse(symbol):
             dates.append(date_str)
             prices.append(close)
             volumes.append(vol)
-        except:
+        except Exception as e:
+            print(f"⚠️ TWSE 股票資料錯誤: {e}")
             continue
 
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
@@ -88,7 +89,8 @@ def fetch_from_cnyes(symbol):
     else:
         raise ValueError("Unsupported symbol")
 
-    resp = requests.get(url)
+    resp = requests.get(url, timeout=10)
+    resp.raise_for_status()
     raw = resp.json()
     if "data" not in raw or "chart" not in raw["data"]:
         raise RuntimeError("Cnyes 無資料")
@@ -112,7 +114,7 @@ def fetch_from_pchome(symbol):
     else:
         raise ValueError("Unsupported symbol")
 
-    resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+    resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"}, timeout=10)
     soup = BeautifulSoup(resp.text, "html.parser")
 
     script_tag = soup.find("script", string=lambda s: s and "dateList" in s)
@@ -121,13 +123,14 @@ def fetch_from_pchome(symbol):
 
     raw = script_tag.string
     lines = raw.splitlines()
+
     price_line = [l for l in lines if "priceList" in l][0]
     vol_line = [l for l in lines if "volumeList" in l][0]
     date_line = [l for l in lines if "dateList" in l][0]
 
-    prices = eval(price_line.split("=", 1)[1].strip(" ;"))
-    volumes = eval(vol_line.split("=", 1)[1].strip(" ;"))
-    dates = eval(date_line.split("=", 1)[1].strip(" ;"))
+    prices = ast.literal_eval(price_line.split("=", 1)[1].strip(" ;"))
+    volumes = ast.literal_eval(vol_line.split("=", 1)[1].strip(" ;"))
+    dates = ast.literal_eval(date_line.split("=", 1)[1].strip(" ;"))
 
     df = pd.DataFrame({
         "Price": prices,
