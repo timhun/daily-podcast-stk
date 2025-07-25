@@ -1,13 +1,11 @@
-# utils_tw_data.py
-
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
-from datetime import datetime, timedelta
+from datetime import datetime
 
 def get_price_volume_tw(symbol):
     """
-    回傳 (prices: pd.Series, volumes: pd.Series)，日期為 index
+    回傳 (prices: pd.Series, volumes: pd.Series)，index 為日期
     支援 symbol = 'TAIEX'（加權指數）或 '0050'
     """
     for fetcher in [fetch_from_twse, fetch_from_cnyes, fetch_from_pchome]:
@@ -19,22 +17,17 @@ def get_price_volume_tw(symbol):
             print(f"⚠️ 備援來源錯誤：{e}")
     raise RuntimeError(f"❌ 所有備援資料來源皆失敗，無法取得 {symbol} 資料")
 
-# ========== 第一層：TWSE（證交所歷史 CSV） ==========
+# ========== 第一層：TWSE（證交所歷史資料） ==========
+
 def fetch_from_twse(symbol):
-    name_map = {
-        "0050": "0050",
-        "TAIEX": "TX"
-    }
     if symbol == "TAIEX":
         return fetch_taiex_from_twse()
     else:
         return fetch_stock_from_twse(symbol)
 
 def fetch_taiex_from_twse():
-    today = datetime.today()
-    end_date = today.strftime("%Y%m%d")
-    url = f"https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST?date={end_date}&response=json"
-
+    today = datetime.today().strftime("%Y%m%d")
+    url = f"https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST?date={today}&response=json"
     resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
     data = resp.json()
 
@@ -52,15 +45,14 @@ def fetch_taiex_from_twse():
             continue
 
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
-    df = df.sort_index()
-    return df["Price"], df["Volume"]
+    return df["Price"].sort_index(), df["Volume"].sort_index()
 
 def fetch_stock_from_twse(symbol):
     url = f"https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?stockNo={symbol}&response=json"
     resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
     data = resp.json()
-
     records = data["data"]
+
     dates, prices, volumes = [], [], []
     for row in records:
         try:
@@ -74,10 +66,10 @@ def fetch_stock_from_twse(symbol):
             continue
 
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
-    df = df.sort_index()
-    return df["Price"], df["Volume"]
+    return df["Price"].sort_index(), df["Volume"].sort_index()
 
 # ========== 第二層：Cnyes API ==========
+
 def fetch_from_cnyes(symbol):
     if symbol == "TAIEX":
         url = "https://www.cnyes.com/api/v1/charting/index_0050"
@@ -94,10 +86,10 @@ def fetch_from_cnyes(symbol):
     volumes = [x["v"] for x in data]
 
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
-    df = df.sort_index()
-    return df["Price"], df["Volume"]
+    return df["Price"].sort_index(), df["Volume"].sort_index()
 
-# ========== 第三層：PChome 網頁爬蟲 ==========
+# ========== 第三層：PChome 爬蟲 ==========
+
 def fetch_from_pchome(symbol):
     if symbol == "TAIEX":
         url = "https://pchome.megatime.com.tw/stock/sidchart/sidchart/trendchart/0000/0"
@@ -127,5 +119,4 @@ def fetch_from_pchome(symbol):
         "Price": prices,
         "Volume": volumes
     }, index=pd.to_datetime(dates))
-    df = df.sort_index()
-    return df["Price"], df["Volume"]
+    return df["Price"].sort_index(), df["Volume"].sort_index()
