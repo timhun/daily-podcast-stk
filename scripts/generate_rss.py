@@ -70,8 +70,19 @@ if os.path.exists(audio) and os.path.exists(archive_url_file):
     fe = fg.add_entry()
     fe.id(audio_url)
     fe.title(title)
-    fe.description(FIXED_DESCRIPTION)
-    fe.content(FIXED_DESCRIPTION, type="CDATA")
+    #fe.description(FIXED_DESCRIPTION)
+    #fe.content(FIXED_DESCRIPTION, type="CDATA")
+    summary_path = os.path.join(base_path, "summary.txt")
+if os.path.exists(summary_path):
+    with open(summary_path, "r", encoding="utf-8") as f:
+        summary_text = f.read().strip()
+    full_description = f"{FIXED_DESCRIPTION}\n\n🎯 今日摘要：{summary_text}"
+else:
+    full_description = FIXED_DESCRIPTION
+
+fe.description(full_description)
+fe.content(full_description, type="CDATA")
+
     fe.enclosure(audio_url, str(os.path.getsize(audio)), "audio/mpeg")
     fe.pubDate(pub_date)
     if duration:
