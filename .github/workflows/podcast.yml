@@ -25,9 +25,8 @@ jobs:
         run: |
           pip install -r ../requirements.txt  # ✅ 安裝根目錄的 requirements.txt
 
-      - name: Run bullish signal analysis
-        run: |
-          python analyze_bullish_signal_tw.py
+      - name: 📊 分析台股多空訊號
+        run: python scripts/analyze_bullish_signal_tw.py
 
       - name: Commit bullish signal file
         run: |
