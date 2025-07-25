@@ -94,6 +94,7 @@ def get_yield_10y():
 
 def get_stock_index_data_tw():
     try:
+        # 第一層：TWSE
         url = "https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=IND&response=json"
         resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
         data = resp.json()
@@ -104,37 +105,56 @@ def get_stock_index_data_tw():
                 change = row[2]
                 percent = row[3]
                 volume = row[4]
-                return [f"台股加權指數：{index}（{change}, {percent}），成交值 {volume}"]
-        return ["⚠️ 找不到加權指數"]
+                return [f"台股加權指數：{index}（{change}, {percent}），成交值 {volume}，來源：TWSE"]
     except:
-        # 備援 Cnyes
-        try:
-            url = "https://www.cnyes.com/twstock/TWS/T00"
-            resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-            soup = BeautifulSoup(resp.text, "html.parser")
-            points = soup.select_one(".price")
-            change = soup.select_one(".change")
-            percent = soup.select_one(".change__percent")
-            return [f"台股加權指數：{points.text}（{change.text}, {percent.text}），來源：Cnyes"]
-        except:
-            return ["⚠️ 無法取得加權指數資料"]
+        pass
+
+    try:
+        # 第二層：Cnyes
+        url = "https://www.cnyes.com/twstock/TWS/T00"
+        resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        soup = BeautifulSoup(resp.text, "html.parser")
+        points = soup.select_one(".price")
+        change = soup.select_one(".change")
+        percent = soup.select_one(".change__percent")
+        return [f"台股加權指數：{points.text}（{change.text}, {percent.text}），來源：Cnyes"]
+    except:
+        pass
+
+    try:
+        # 第三層：PChome（非結構化備援）
+        url = "https://pchome.megatime.com.tw/stock/sto0/ock0/sidchart/trendchart/0000/0"
+        resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        if resp.status_code == 200:
+            return ["台股加權指數：⚠️ 備援資料來自 PChome（需手動解析）"]
+    except:
+        pass
+
+    return ["⚠️ 無法取得加權指數資料（TWSE, Cnyes, PChome 均失敗）"]
+
+def fetch_etf_price_from_twse(code):
+    try:
+        url = f"https://www.twse.com.tw/rwd/zh/afterTrading/STOCK_DAY?stockNo={code}&response=json"
+        resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
+        data = resp.json()
+        rows = data.get("data", [])
+        if not rows:
+            return "⚠️ 無資料"
+        last_row = rows[-1]
+        return last_row[6]
+    except:
+        return "⚠️ 錯誤"
 
 def get_etf_data_tw():
-    urls = {
-        "0050": "https://tw.stock.yahoo.com/quote/0050.TW",
-        "00631L": "https://tw.stock.yahoo.com/quote/00631L.TW",
-        "00878": "https://tw.stock.yahoo.com/quote/00878.TW"
+    etf_list = {
+        "0050": "0050",
+        "00631L": "00631L",
+        "00878": "00878"
     }
     results = ["【台股 ETF】"]
-    for name, url in urls.items():
-        try:
-            resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
-            soup = BeautifulSoup(resp.text, "html.parser")
-            tag = soup.find("fin-streamer", {"data-field": "regularMarketPrice"})
-            price = tag.text.strip() if tag else "N/A"
-            results.append(f"{name}：{price}")
-        except:
-            results.append(f"{name}：⚠️ 無法取得資料")
+    for name, code in etf_list.items():
+        price = fetch_etf_price_from_twse(code)
+        results.append(f"{name}：{price}")
     return results
 
 def get_hot_stocks_tw_by_volume():
