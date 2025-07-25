@@ -7,8 +7,8 @@ from fetch_market_data import get_market_summary
 from generate_script_grok import generate_script_from_grok
 from generate_script_openrouter import generate_script_from_openrouter
 
-# 取得日期與模式
-now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))  # 台灣時區
+# 台灣時區
+now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
 today_str = now.strftime("%Y%m%d")
 today_display = now.strftime("%Y年%m月%d日")
 PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
@@ -29,10 +29,13 @@ if os.path.exists(theme_file):
         if raw:
             theme_text = raw if raw[-1] in "。！？" else raw + "。"
 
-# 載入 Prompt 主體
-prompt_file = f"prompt/{PODCAST_MODE}.txt"
+# 判斷是否為週末，週末只切換 tw 模式
+is_weekend = now.weekday() >= 5 and PODCAST_MODE == "tw"
+prompt_file = f"prompt/{PODCAST_MODE}{'_weekend' if is_weekend else ''}.txt"
+
 if not os.path.exists(prompt_file):
     raise FileNotFoundError(f"❌ 缺少 prompt 檔案：{prompt_file}")
+
 with open(prompt_file, "r", encoding="utf-8") as f:
     prompt_template = f.read()
 
