@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from datetime import datetime
-from utils_tw_data import get_price_volume_tw
+from utils_tw_data import get_price_volume_tw  # ✅ 改為從 utils_tw_data 匯入
 
 def calculate_ma(prices, window):
     return prices.rolling(window=window).mean()
@@ -32,9 +32,15 @@ def analyze_bullish_signal_tw():
     today = datetime.now().strftime("%Y%m%d")
     print(f"📊 分析日期：{today}")
 
-    # ✅ 改用 utils_tw_data 的新版函式
+    # 加權指數
     twii_price, twii_vol = get_price_volume_tw("TAIEX")
+    if twii_price is None:
+        raise RuntimeError("❌ 無法取得台股加權指數資料")
+
+    # 0050 ETF
     etf_price, etf_vol = get_price_volume_tw("0050")
+    if etf_price is None:
+        raise RuntimeError("❌ 無法取得 0050 資料")
 
     df_twii = composite_index_with_volume_and_bullish(twii_price, twii_vol)
     df_0050 = composite_index_with_volume_and_bullish(etf_price, etf_vol)
@@ -53,6 +59,7 @@ def analyze_bullish_signal_tw():
     msg.append(line("加權指數", latest_twii))
     msg.append(line("0050", latest_0050))
 
+    # 儲存
     output_path = "docs/podcast/bullish_signal_tw.txt"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
