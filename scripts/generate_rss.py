@@ -64,33 +64,31 @@ if os.path.exists(audio) and os.path.exists(archive_url_file):
 
     tz = pytz.timezone("Asia/Taipei")
     pub_date = tz.localize(datetime.datetime.strptime(latest_folder.split("_")[0], "%Y%m%d"))
-
     title = f"幫幫忙每日投資快報 - {'美股' if PODCAST_MODE == 'us' else '台股'}（{latest_folder}）"
 
+    # === 摘要處理區塊 ===
+    summary_path = os.path.join(base_path, "summary.txt")
+    if os.path.exists(summary_path):
+        with open(summary_path, "r", encoding="utf-8") as f:
+            summary_text = f.read().strip()
+        full_description = f"{FIXED_DESCRIPTION}\n\n🎯 今日摘要：{summary_text}"
+    else:
+        full_description = FIXED_DESCRIPTION
+
+    # === Feed Entry ===
     fe = fg.add_entry()
     fe.id(audio_url)
     fe.title(title)
-    #fe.description(FIXED_DESCRIPTION)
-    #fe.content(FIXED_DESCRIPTION, type="CDATA")
-    summary_path = os.path.join(base_path, "summary.txt")
-if os.path.exists(summary_path):
-    with open(summary_path, "r", encoding="utf-8") as f:
-        summary_text = f.read().strip()
-    full_description = f"{FIXED_DESCRIPTION}\n\n🎯 今日摘要：{summary_text}"
-else:
-    full_description = FIXED_DESCRIPTION
-
-fe.description(full_description)
-fe.content(full_description, type="CDATA")
-
+    fe.description(full_description)
+    fe.content(full_description, type="CDATA")
     fe.enclosure(audio_url, str(os.path.getsize(audio)), "audio/mpeg")
     fe.pubDate(pub_date)
     if duration:
         fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
 
+    # 輸出 RSS
     os.makedirs(os.path.dirname(RSS_FILE), exist_ok=True)
     fg.rss_file(RSS_FILE)
     print(f"✅ 已產生 RSS Feed：{RSS_FILE}")
 else:
     print(f"⚠️ 缺少必要檔案，無法產生 RSS：{audio}, {archive_url_file}")
-
