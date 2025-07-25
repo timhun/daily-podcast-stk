@@ -19,47 +19,33 @@ def get_price_volume_tw(symbol):
             print(f"⚠️ 備援來源錯誤：{e}")
     raise RuntimeError(f"❌ 所有備援資料來源皆失敗，無法取得 {symbol} 資料")
 
-# ========== 第一層：TWSE ==========
+# ========== 第一層：TWSE（證交所日資料） ==========
 def fetch_from_twse(symbol):
     if symbol == "TAIEX":
         return fetch_taiex_from_twse()
     else:
         return fetch_stock_from_twse(symbol)
 
-def clean_cell(value):
-    """移除 HTML 標籤與特殊符號"""
-    if not isinstance(value, str):
-        return value
-    return (
-        value.replace(",", "")
-             .replace("<p style ='color:green'>", "")
-             .replace("<p style ='color:red'>", "")
-             .replace("</p>", "")
-             .strip()
-             .replace("-", "0")
-    )
-
 def fetch_taiex_from_twse():
     today = datetime.today()
-    end_date = today.strftime("%Y%m%d")
-    url = f"https://www.twse.com.tw/rwd/zh/TAIEX/MI_5MINS_HIST?date={end_date}&response=json"
+    date_str = today.strftime("%Y%m%d")
+    url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=IND&response=json&date={date_str}"
 
     resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
     data = resp.json()
+    rows = data.get("tables", [{}])[0].get("data", [])
 
-    if "data" not in data:
-        raise ValueError("TWSE 沒有回傳有效資料")
-
-    records = data["data"]
     dates, prices, volumes = [], [], []
-    for row in records:
+    for row in rows:
         try:
-            date_str = row[0].replace("/", "-")
-            close = float(clean_cell(row[6]))
-            vol = float(clean_cell(row[1]))
-            dates.append(date_str)
+            if "發行量加權股價指數" not in row[0]:
+                continue
+            date = today.strftime("%Y-%m-%d")
+            close = float(row[1].replace(",", ""))
+            volume = float(row[4].replace(",", "")) * 100  # 億轉為億元
+            dates.append(date)
             prices.append(close)
-            volumes.append(vol)
+            volumes.append(volume)
         except Exception as e:
             print(f"⚠️ TWSE row error: {e}")
             continue
@@ -68,7 +54,6 @@ def fetch_taiex_from_twse():
         raise ValueError("TWSE 沒有有效價格資料")
 
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
-    df = df.sort_index()
     return df["Price"], df["Volume"]
 
 def fetch_stock_from_twse(symbol):
@@ -76,16 +61,13 @@ def fetch_stock_from_twse(symbol):
     resp = requests.get(url, headers={"User-Agent": "Mozilla/5.0"})
     data = resp.json()
 
-    if "data" not in data:
-        raise ValueError("TWSE STOCK_DAY 無資料")
-
     records = data["data"]
     dates, prices, volumes = [], [], []
     for row in records:
         try:
             date_str = row[0].replace("/", "-")
-            close = float(clean_cell(row[6]))
-            vol = float(clean_cell(row[1]))
+            close = float(row[6].replace(",", ""))
+            vol = float(row[1].replace(",", ""))  # 張
             dates.append(date_str)
             prices.append(close)
             volumes.append(vol)
@@ -106,14 +88,13 @@ def fetch_from_cnyes(symbol):
         raise ValueError("Unsupported symbol")
 
     resp = requests.get(url)
-    data = resp.json().get("data", {}).get("chart", [])
+    chart = resp.json()["data"]["chart"]
+    if not chart:
+        raise RuntimeError("Cnyes 無資料")
 
-    if not data:
-        raise ValueError("Cnyes 無資料")
-
-    dates = [datetime.fromtimestamp(x["t"] / 1000).date() for x in data]
-    prices = [x["c"] for x in data]
-    volumes = [x["v"] for x in data]
+    dates = [datetime.fromtimestamp(x["t"] / 1000).date() for x in chart]
+    prices = [x["c"] for x in chart]
+    volumes = [x["v"] for x in chart]
 
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
     df = df.sort_index()
@@ -146,7 +127,7 @@ def fetch_from_pchome(symbol):
         volumes = eval(vol_line.split("=", 1)[1].strip(" ;"))
         dates = eval(date_line.split("=", 1)[1].strip(" ;"))
     except Exception as e:
-        raise RuntimeError(f"⚠️ PChome 資料解析失敗：{e}")
+        raise RuntimeError(f"⚠️ PChome 解析失敗：{e}")
 
     df = pd.DataFrame({
         "Price": prices,
