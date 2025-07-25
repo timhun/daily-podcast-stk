@@ -3,7 +3,7 @@ name: Generate TW Podcast
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 8 * * *'  # 台灣時間 16:00（UTC+8）
+    - cron: '0 7 * * *'  # 台灣時間 16:00（UTC+8）
 
 jobs:
   podcast-tw:
