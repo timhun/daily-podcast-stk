@@ -8,9 +8,6 @@ on:
 jobs:
   analyze-tw-signal:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: scripts
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,11 +18,10 @@ jobs:
           python-version: 3.11
 
       - name: Install dependencies
-        run: |
-          pip install -r ../requirements.txt
+        run: pip install -r requirements.txt
 
       - name: 📊 分析台股多空訊號
-        run: python analyze_bullish_signal_tw.py
+        run: python scripts/analyze_bullish_signal_tw.py
 
       - name: Commit bullish signal file
         run: |
