@@ -1,6 +1,7 @@
 # utils_tw_data.py
 import pandas as pd
 import requests
+import yfinance as yf
 from datetime import datetime, timedelta
 import logging
 import os
@@ -14,7 +15,8 @@ logger = logging.getLogger(__name__)
 # 2025 年休市日（參考 TWSE 公告，含春節等）
 HOLIDAYS = [
     "2025-01-01", "2025-01-27", "2025-01-28", "2025-01-29", "2025-01-30", "2025-01-31",
-    "2025-02-28", "2025-04-04", "2025-05-01", "2025-06-06", "2025-09-17", "2025-10-10"
+    "2025-02-28", "2025-04-04", "2025-04-18", "2025-05-01", "2025-06-06", "2025-09-17",
+    "2025-10-10"
 ]
 HOLIDAYS = set(pd.to_datetime(HOLIDAYS).date)
 
@@ -48,10 +50,10 @@ def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
         end_date = pd.to_datetime(end_date).date()
 
     # 防止未來日期
-    latest_trading_day = max(get_trading_days(start_date, end_date))
-    if end_date > latest_trading_day:
-        logger.warning(f"end_date {end_date} 為未來日期，調整為最新交易日 {latest_trading_day}")
-        end_date = latest_trading_day
+    current_date = datetime.today().date()
+    if end_date > current_date:
+        logger.warning(f"end_date {end_date} 為未來日期，調整為 {current_date}")
+        end_date = current_date
 
     # 檢查快取
     cache_file = f"{symbol}_cache.csv"
@@ -63,8 +65,9 @@ def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
             logger.info(f"✅ 使用快取數據 {cache_file}，共 {len(df)} 天")
             return df["Price"], df["Volume"]
 
+    # 優先嘗試 Yahoo Finance
     try:
-        prices, volumes = fetch_from_twse(symbol, start_date, end_date)
+        prices, volumes = fetch_from_yahoo(symbol, start_date, end_date)
         df = pd.DataFrame({"Price": prices, "Volume": volumes})
         df = df[df.index.to_series().apply(lambda d: is_trading_day(d.date()))]
         if (
@@ -76,14 +79,35 @@ def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
             and not volumes.isna().any()
         ):
             df.to_csv(cache_file)
-            logger.info(f"✅ 成功從 TWSE 取得 {symbol} 數據，共 {len(df)} 天")
+            logger.info(f"✅ 成功從 Yahoo Finance 取得 {symbol} 數據，共 {len(df)} 天")
             return df["Price"], df["Volume"]
         else:
-            logger.warning(f"⚠️ TWSE 返回資料不足 {min_days} 天或數據無效")
-            raise RuntimeError(f"TWSE {symbol} 資料不足或無效，取得 {len(df)} 天")
-    except Exception as e:
-        logger.error(f"⚠️ TWSE 錯誤：{e}")
-        raise RuntimeError(f"TWSE 無法取得 {symbol} 資料: {str(e)}")
+            logger.warning(f"⚠️ Yahoo Finance 返回資料不足 {min_days} 天，嘗試 TWSE")
+            raise RuntimeError(f"Yahoo Finance {symbol} 資料不足，取得 {len(df)} 天")
+    except Exception as yf_e:
+        logger.error(f"⚠️ Yahoo Finance 錯誤：{yf_e}")
+        # 回退至 TWSE
+        try:
+            prices, volumes = fetch_from_twse(symbol, start_date, end_date)
+            df = pd.DataFrame({"Price": prices, "Volume": volumes})
+            df = df[df.index.to_series().apply(lambda d: is_trading_day(d.date()))]
+            if (
+                isinstance(prices, pd.Series)
+                and isinstance(volumes, pd.Series)
+                and len(df) >= min_days
+                and prices.index.equals(volumes.index)
+                and not prices.isna().any()
+                and not volumes.isna().any()
+            ):
+                df.to_csv(cache_file)
+                logger.info(f"✅ 成功從 TWSE 取得 {symbol} 數據，共 {len(df)} 天")
+                return df["Price"], df["Volume"]
+            else:
+                logger.warning(f"⚠️ TWSE 返回資料不足 {min_days} 天")
+                raise RuntimeError(f"TWSE {symbol} 資料不足，取得 {len(df)} 天")
+        except Exception as e:
+            logger.error(f"⚠️ TWSE 錯誤：{e}")
+            raise RuntimeError(f"Yahoo Finance 無法取得 {symbol} 資料: {str(yf_e)}；TWSE 也失敗: {str(e)}")
 
 def _twse_session():
     session = requests.Session()
@@ -118,23 +142,23 @@ def fetch_taiex_from_twse(start_date, end_date):
             data = resp.json()
             logger.debug(f"TWSE TAIEX {date_str} 回應: stat={data.get('stat', 'N/A')}, data_len={len(data.get('data', []))}")
             if "data" not in data or not data["data"]:
-                logger.warning(f"TWSE TAIEX {date_str} 無資料")
+                logger.warning(f"TWSE TAIEX {date_str} 無資料，stat={data.get('stat', 'N/A')}")
                 continue
             for row in data["data"]:
                 if len(row) > 10 and isinstance(row[0], str) and row[0].strip() == "發行量加權股價指數":
                     try:
-                        date = pd.to_datetime(row[1], errors='coerce').date()
+                        date = pd.to_datetime(row[1], format='%Y/%m/%d', errors='coerce').date()
                         if pd.isna(date) or date != current_date:
                             continue
                         close = float(row[8].replace(",", ""))
-                        vol = float(row[10].replace(",", "")) * 1e6  # 億元轉新台幣
+                        vol = float(row[10].replace(",", "")) * 1e8  # 億元轉新台幣
                         dates.append(date)
                         prices.append(close)
                         volumes.append(vol)
                     except Exception as e:
                         logger.warning(f"TWSE TAIEX {date_str} 行解析錯誤: {e}")
         except requests.RequestException as e:
-            logger.error(f"TWSE TAIEX {date_str} 請求失敗: {e}, Redirect URL: {resp.url if 'resp' in locals() else 'N/A'}, Status Code: {resp.status_code if 'resp' in locals() else 'N/A'}")
+            logger.error(f"TWSE TAIEX {date_str} 請求失敗: {e}, URL: {resp.url if 'resp' in locals() else url}, Status Code: {resp.status_code if 'resp' in locals() else 'N/A'}")
 
     if not prices:
         raise RuntimeError(f"TWSE TAIEX 無有效數據，請求範圍 {start_date} 至 {end_date}")
@@ -146,8 +170,6 @@ def fetch_taiex_from_twse(start_date, end_date):
 def fetch_stock_from_twse(symbol, start_date, end_date):
     prices, volumes, dates = [], [], []
     session = _twse_session()
-    trading_days = get_trading_days(start_date, end_date)
-
     current_date = start_date
     while current_date <= end_date:
         date_str = current_date.strftime("%Y%m%d")
@@ -158,12 +180,12 @@ def fetch_stock_from_twse(symbol, start_date, end_date):
             data = resp.json()
             logger.debug(f"TWSE 股票 {symbol} {date_str} 回應: stat={data.get('stat', 'N/A')}, data_len={len(data.get('data', []))}")
             if "data" not in data or not data["data"]:
-                logger.warning(f"TWSE 股票 {symbol} {date_str} 無資料")
+                logger.warning(f"TWSE 股票 {symbol} {date_str} 無資料，stat={data.get('stat', 'N/A')}")
                 current_date += timedelta(days=31)
                 continue
             for row in data["data"]:
                 try:
-                    date = pd.to_datetime(row[0], errors='coerce').date()
+                    date = pd.to_datetime(row[0], format='%Y/%m/%d', errors='coerce').date()
                     if pd.isna(date) or date < start_date or date > end_date or not is_trading_day(date):
                         continue
                     close = float(row[6].replace(",", ""))
@@ -174,7 +196,7 @@ def fetch_stock_from_twse(symbol, start_date, end_date):
                 except Exception as e:
                     logger.warning(f"TWSE 股票 {symbol} {date_str} 行解析錯誤: {e}")
         except requests.RequestException as e:
-            logger.error(f"TWSE 股票 {symbol} {date_str} 請求失敗: {e}, Redirect URL: {resp.url if 'resp' in locals() else 'N/A'}, Status Code: {resp.status_code if 'resp' in locals() else 'N/A'}")
+            logger.error(f"TWSE 股票 {symbol} {date_str} 請求失敗: {e}, URL: {resp.url if 'resp' in locals() else url}, Status Code: {resp.status_code if 'resp' in locals() else 'N/A'}")
         current_date += timedelta(days=31)
 
     if not prices:
@@ -183,3 +205,19 @@ def fetch_stock_from_twse(symbol, start_date, end_date):
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
     df = df.loc[~df.index.duplicated(keep='last')]
     return df["Price"], df["Volume"]
+
+def fetch_from_yahoo(symbol, start_date, end_date):
+    """從 Yahoo Finance 獲取數據"""
+    yf_symbol = "^TWII" if symbol == "TAIEX" else "0050.TW"
+    try:
+        df = yf.download(yf_symbol, start=start_date, end=end_date + timedelta(days=1), progress=False)
+        if df.empty or len(df) < 60:
+            raise RuntimeError(f"Yahoo Finance {yf_symbol} 無有效數據或不足 60 天")
+        prices = df["Close"]
+        volumes = df["Volume"]
+        # TAIEX 成交量轉新台幣（假設每點約 2 億新台幣，近似）
+        if symbol == "TAIEX":
+            volumes = volumes * 2e8
+        return prices, volumes
+    except Exception as e:
+        raise RuntimeError(f"Yahoo Finance 獲取 {yf_symbol} 失敗: {str(e)}")
