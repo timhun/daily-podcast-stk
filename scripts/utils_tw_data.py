@@ -1,3 +1,5 @@
+# utils_tw_data.py
+
 import pandas as pd
 import requests
 import yfinance as yf
@@ -87,13 +89,8 @@ def fetch_ma_from_goodinfo():
         logger.error(f"❌ Goodinfo 均線資料抓取失敗: {e}")
     return {}
 
-def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
-    """歷史資料抓取（略）"""
-    # 保留原本實作
-    raise NotImplementedError("請用原本的 get_price_volume_tw() 實作")
-
-# ✅ 外部統一匯入用
 def get_latest_taiex_summary():
+    """對外統一接口：取得最新收盤資料與各均線"""
     try:
         close, volume, date = fetch_latest_taiex_from_twse()
         ma_data = fetch_ma_from_goodinfo()
@@ -109,3 +106,7 @@ def get_latest_taiex_summary():
     except Exception as e:
         logger.error(f"❌ 加權指數最新摘要抓取失敗: {e}")
         return {}
+
+def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
+    """歷史資料抓取（略）"""
+    raise NotImplementedError("請使用主流程版本的 get_price_volume_tw() 實作")
