@@ -9,4 +9,4 @@ pytz
 beautifulsoup4
 lxml
 selenium
-python-dateutil
+python-dateutil==2.8.1
