@@ -2,7 +2,7 @@
 import os
 import pandas as pd
 from datetime import datetime, timedelta
-from utils_tw_data import get_price_volume_tw, get_trading_days  # ✅ 匯入 get_trading_days
+from utils_tw_data import get_price_volume_tw, get_trading_days
 
 def calculate_ma(prices, window):
     return prices.rolling(window=window).mean()
@@ -32,11 +32,9 @@ def composite_index_with_volume_and_bullish(prices, volume, weights=[0.4, 0.35, 
 def analyze_bullish_signal_tw():
     today = datetime.today().date()
     start_date = today - timedelta(days=90)
-    # 調整 today 為最新交易日
     today = max(get_trading_days(start_date, today))
     print(f"📊 分析日期範圍：{start_date.isoformat()} 至 {today.isoformat()}")
 
-    # 取得 TAIEX 資料
     try:
         twii_price, twii_vol = get_price_volume_tw("TAIEX", start_date=start_date, end_date=today)
         if twii_price is None or len(twii_price) < 60:
@@ -44,7 +42,6 @@ def analyze_bullish_signal_tw():
     except Exception as e:
         raise RuntimeError(f"❌ TAIEX 數據獲取失敗（{start_date} 至 {today}）：{str(e)}")
 
-    # 取得 0050 資料
     try:
         etf_price, etf_vol = get_price_volume_tw("0050", start_date=start_date, end_date=today)
         if etf_price is None or len(etf_price) < 60:
@@ -69,7 +66,6 @@ def analyze_bullish_signal_tw():
         line("0050", latest_0050)
     ]
 
-    # 儲存結果
     output_path = "docs/podcast/bullish_signal_tw.txt"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
