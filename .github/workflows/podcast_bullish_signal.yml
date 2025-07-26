@@ -9,6 +9,9 @@ on:
 jobs:
   analyze-tw-signal:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: scripts  # 確保在 scripts/ 執行 python 檔案
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,17 +21,22 @@ jobs:
         with:
           python-version: 3.11
 
+      - name: Clear pip cache
+        run: pip cache purge
+
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install --upgrade pip
+          pip install --upgrade --force-reinstall -r ../requirements.txt
 
       - name: 📊 分析台股多空訊號
-        run: python scripts/analyze_bullish_signal_tw.py
+        run: python analyze_bullish_signal_tw.py
 
       - name: Commit bullish signal file
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git pull --rebase
-          git add docs/podcast/bullish_signal_tw.txt
+          git add ../docs/podcast/bullish_signal_tw.txt
           git commit -m "🔍 更新台股多空判斷"
           git push
