@@ -1,19 +1,18 @@
 #utils_tw_data.py
+import logging
 import requests
 import pandas as pd
 from datetime import datetime
 from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-import logging
 import pytz
+import yfinance as yf
 
-# ====== 基本設定 ======
+# ====== 設定 ======
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 TW_TZ = pytz.timezone("Asia/Taipei")
-
-# ====== 工具函式 ======
 
 def _today_tw_ymd() -> str:
     return datetime.now(TW_TZ).strftime("%Y%m%d")
@@ -27,8 +26,6 @@ def _safe_float(x, default=None):
         return default
 
 def _roc_to_gregorian(roc_yyyymmdd: str) -> datetime.date:
-    if len(roc_yyyymmdd) != 7:
-        raise ValueError(f"ROC 日期格式不正確：{roc_yyyymmdd}")
     roc_year = int(roc_yyyymmdd[:3])
     month = int(roc_yyyymmdd[3:5])
     day = int(roc_yyyymmdd[5:7])
@@ -47,94 +44,60 @@ def _build_retry_session(total=3, backoff_factor=0.5, status_forcelist=(429, 500
     s.headers.update({"User-Agent": "utils_tw_data/1.0 (TWSE OpenAPI fetcher)"})
     return s
 
-# ====== Goodinfo 均線資料擷取 ======
-
 def get_goodinfo_taiex_summary() -> dict | None:
     url = "https://goodinfo.tw/tw/StockIdxDetail.asp?STOCK_ID=加權指數"
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://goodinfo.tw/"
-    }
-
+    headers = {"User-Agent": "Mozilla/5.0", "Referer": "https://goodinfo.tw/"}
     try:
         res = requests.get(url, headers=headers, timeout=10)
         res.encoding = "utf-8"
         soup = BeautifulSoup(res.text, "html.parser")
-
         table = soup.find("table", class_="solid_1_padding_4_0_tbl")
         if not table:
             logger.warning("⚠️ 找不到 Goodinfo 均線表格")
             return None
-
         result = {}
         for row in table.find_all("tr"):
             tds = row.find_all("td")
             if len(tds) < 6:
                 continue
-
             label = tds[0].get_text(strip=True)
-            ma_text = tds[5].get_text(strip=True)
-
-            for arrow in ["↗", "↘"]:
-                ma_text = ma_text.replace(arrow, "")
+            ma_text = tds[5].get_text(strip=True).replace("↗", "").replace("↘", "")
             value = _safe_float(ma_text)
-
-            if label == "5日":
-                result["ma5"] = value
-            elif label == "10日":
-                result["ma10"] = value
-            elif label == "月":
-                result["ma20"] = value
-            elif label == "季":
-                result["ma60"] = value
-
+            if label == "5日": result["ma5"] = value
+            elif label == "10日": result["ma10"] = value
+            elif label == "月": result["ma20"] = value
+            elif label == "季": result["ma60"] = value
         if all(k in result for k in ("ma5", "ma10", "ma20", "ma60")):
             logger.info(f"✅ Goodinfo 均線資料: {result}")
             return result
-        else:
-            logger.warning(f"⚠️ Goodinfo 資料不完整: {result}")
-            return None
-
+        logger.warning(f"⚠️ Goodinfo 資料不完整: {result}")
+        return None
     except Exception as e:
         logger.exception(f"❌ 擷取 Goodinfo 均線失敗: {e}")
         return None
-
-# ====== TWSE 指數資料擷取 ======
 
 def fetch_taiex_from_twse_latest(date_ymd: str | None = None, session: requests.Session | None = None) -> pd.DataFrame | None:
     date_ymd = date_ymd or _today_tw_ymd()
     session = session or _build_retry_session()
     url = f"https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX?date={date_ymd}"
-
     try:
         resp = session.get(url, timeout=10)
         if resp.status_code != 200:
             logger.error(f"❌ TWSE 回應非 200: {resp.status_code} - {resp.text[:200]}")
             return None
-
         data = resp.json()
-        if not isinstance(data, list):
-            logger.error(f"❌ TWSE 回傳格式錯誤：{type(data)}")
-            return None
-
         target = next((item for item in data if item.get("指數") == "發行量加權股價指數"), None)
         if not target:
             logger.error("❌ 找不到『發行量加權股價指數』欄位")
             return None
-
         roc_date_str = target.get("日期")
         close = _safe_float(target.get("收盤指數"))
         chg_sign = target.get("漲跌")
         chg_pts = _safe_float(target.get("漲跌點數"), default=0.0)
-
-        if chg_sign == "-":
-            chg_pts = -abs(chg_pts)
-        elif chg_sign == "+":
-            chg_pts = abs(chg_pts)
-
+        if chg_sign == "-": chg_pts = -abs(chg_pts)
+        elif chg_sign == "+": chg_pts = abs(chg_pts)
         chg_pct = _safe_float(target.get("漲跌百分比"), default=0.0)
         date_gregorian = _roc_to_gregorian(roc_date_str)
-
         df = pd.DataFrame([{
             "date": date_gregorian,
             "close": close,
@@ -145,25 +108,43 @@ def fetch_taiex_from_twse_latest(date_ymd: str | None = None, session: requests.
         }])
         logger.info(f"✅ TWSE 加權指數：{df.iloc[0].to_dict()}")
         return df
-
     except Exception as e:
         logger.exception(f"❌ TWSE 擷取失敗: {e}")
         return None
 
-# ====== 外部存取介面 ======
-
 def get_latest_taiex_summary() -> pd.DataFrame | None:
-    df = fetch_taiex_from_twse_latest()
-    if df is not None and not df.empty:
-        goodinfo = get_goodinfo_taiex_summary()
-        if goodinfo:
-            for k, v in goodinfo.items():
-                df[k] = v
-        return df
-    logger.warning("⚠️ fallback 尚未實作其他來源")
-    return None
+    try:
+        ticker = "^TWII"
+        df = yf.download(ticker, period="90d", interval="1d", progress=False)
+        if df.empty or len(df) < 60:
+            raise ValueError("資料不足")
+        df["ma5"] = df["Close"].rolling(5).mean()
+        df["ma10"] = df["Close"].rolling(10).mean()
+        df["ma20"] = df["Close"].rolling(20).mean()
+        df["ma60"] = df["Close"].rolling(60).mean()
+        latest = df.iloc[-1]
+        result = pd.DataFrame([{
+            "date": latest.name.date(),
+            "close": latest["Close"],
+            "ma5": latest["ma5"],
+            "ma10": latest["ma10"],
+            "ma20": latest["ma20"],
+            "ma60": latest["ma60"],
+            "source": "YahooFinance"
+        }])
+        logger.info(f"✅ Yahoo 加權指數：{result.iloc[0].to_dict()}")
+        return result
+    except Exception as e:
+        logger.warning(f"⚠️ Yahoo Finance 失敗，改用 TWSE 備援：{e}")
+        df = fetch_taiex_from_twse_latest()
+        if df is not None and not df.empty:
+            goodinfo = get_goodinfo_taiex_summary()
+            if goodinfo:
+                for k, v in goodinfo.items():
+                    df[k] = v
+            return df
+        return None
 
-# ====== 測試區 ======
 if __name__ == "__main__":
     df = get_latest_taiex_summary()
     if df is not None:
