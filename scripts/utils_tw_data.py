@@ -1,112 +1,127 @@
-# utils_tw_data.py
-
-import pandas as pd
 import requests
-import yfinance as yf
-from datetime import datetime, timedelta
-from bs4 import BeautifulSoup
-import logging
-import os
+import pandas as pd
+from datetime import datetime
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
+import logging
+import pytz
 
-# 設定日誌
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# ====== 基本設定 ======
 logger = logging.getLogger(__name__)
+TW_TZ = pytz.timezone("Asia/Taipei")
 
-# 台股假日定義
-HOLIDAYS = set(pd.to_datetime([
-    "2025-01-01", "2025-02-28", "2025-04-04", "2025-05-01", "2025-06-06",
-    "2025-09-17", "2025-10-10"
-]).date)
+# ====== 工具函式 ======
 
-def is_trading_day(date):
-    return date.weekday() < 5 and date not in HOLIDAYS
+def _today_tw_ymd() -> str:
+    return datetime.now(TW_TZ).strftime("%Y%m%d")
 
-def _twse_session():
-    session = requests.Session()
-    retry = Retry(total=3, backoff_factor=0.5, status_forcelist=[429, 500, 502, 503, 504])
-    session.mount("https://", HTTPAdapter(max_retries=retry))
-    session.headers.update({
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://www.twse.com.tw",
-        "Accept": "application/json"
-    })
-    return session
-
-def fetch_latest_taiex_from_twse():
-    """抓取最新一日大盤收盤價與成交值"""
-    today = datetime.today()
-    for i in range(5):
-        date = today - timedelta(days=i)
-        if not is_trading_day(date.date()):
-            continue
-        date_str = date.strftime("%Y%m%d")
-        url = f"https://www.twse.com.tw/rwd/zh/afterTrading/MI_INDEX?type=IND&date={date_str}&response=json"
-        try:
-            session = _twse_session()
-            r = session.get(url, timeout=10)
-            r.raise_for_status()
-            data = r.json()
-            for row in data.get("data9", []):
-                if row[0].strip() == "發行量加權股價指數":
-                    close = float(row[2].replace(",", ""))
-                    volume = float(row[4].replace(",", "")) * 1e8  # 億元轉新台幣
-                    logger.info(f"✅ TWSE 最新加權指數：{close} 點，成交值：{volume:,.0f} 元")
-                    return close, volume, date.date()
-        except Exception as e:
-            logger.warning(f"TWSE 最新資料抓取失敗 ({date_str}): {e}")
-    raise RuntimeError("❌ 無法從 TWSE 擷取加權指數最新收盤資料")
-
-def fetch_ma_from_goodinfo():
-    """從 Goodinfo 抓取 5MA、10MA、月線與季線點位"""
-    url = "https://goodinfo.tw/tw/StockIdxDetail.asp?STOCK_ID=%E5%8A%A0%E6%AC%8A%E6%8C%87%E6%95%B8"
-    headers = {
-        "User-Agent": "Mozilla/5.0",
-        "Referer": "https://goodinfo.tw/tw/index.asp"
-    }
+def _safe_float(x, default=None):
+    if x is None or x == "" or x == "--":
+        return default
     try:
-        r = requests.get(url, headers=headers, timeout=10)
-        r.encoding = "utf-8"
-        soup = BeautifulSoup(r.text, "html.parser")
-        table = soup.find("table", class_="b1 p4_2 r10 box_shadow")
-        rows = table.find_all("tr")
-        for row in rows:
-            cells = row.find_all("td")
-            if len(cells) >= 10 and "5日均價" in cells[0].text:
-                ma5 = float(cells[1].text.replace(",", ""))
-                ma10 = float(cells[3].text.replace(",", ""))
-                ma_month = float(cells[5].text.replace(",", ""))
-                ma_quarter = float(cells[7].text.replace(",", ""))
-                logger.info(f"✅ Goodinfo 均線：5MA={ma5}, 10MA={ma10}, 月線={ma_month}, 季線={ma_quarter}")
-                return {
-                    "5MA": ma5,
-                    "10MA": ma10,
-                    "Monthly": ma_month,
-                    "Quarterly": ma_quarter
-                }
-    except Exception as e:
-        logger.error(f"❌ Goodinfo 均線資料抓取失敗: {e}")
-    return {}
+        return float(str(x).replace(",", "").replace("%", ""))
+    except Exception:
+        return default
 
-def get_latest_taiex_summary():
-    """對外統一接口：取得最新收盤資料與各均線"""
+def _roc_to_gregorian(roc_yyyymmdd: str) -> datetime.date:
+    """
+    民國年月日轉西元日期，例如 '1140725' → 2025-07-25
+    """
+    if len(roc_yyyymmdd) != 7:
+        raise ValueError(f"ROC 日期格式不正確：{roc_yyyymmdd}")
+    roc_year = int(roc_yyyymmdd[:3])
+    month = int(roc_yyyymmdd[3:5])
+    day = int(roc_yyyymmdd[5:7])
+    return datetime(roc_year + 1911, month, day).date()
+
+def _build_retry_session(total=3, backoff_factor=0.5, status_forcelist=(429, 500, 502, 503, 504)) -> requests.Session:
+    s = requests.Session()
+    retries = Retry(
+        total=total,
+        backoff_factor=backoff_factor,
+        status_forcelist=status_forcelist,
+        allowed_methods=["GET"],
+        raise_on_status=False,
+    )
+    s.mount("https://", HTTPAdapter(max_retries=retries))
+    s.headers.update({"User-Agent": "utils_tw_data/1.0 (TWSE OpenAPI fetcher)"})
+    return s
+
+# ====== 主要函式：從 TWSE OpenAPI 擷取加權指數 ======
+
+def fetch_taiex_from_twse_latest(date_ymd: str | None = None, session: requests.Session | None = None) -> pd.DataFrame | None:
+    """
+    從 TWSE OpenAPI 擷取最新「發行量加權股價指數」資料。
+    API: https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX?date=YYYYMMDD
+    """
+    date_ymd = date_ymd or _today_tw_ymd()
+    session = session or _build_retry_session()
+    url = f"https://openapi.twse.com.tw/v1/exchangeReport/MI_INDEX?date={date_ymd}"
+
     try:
-        close, volume, date = fetch_latest_taiex_from_twse()
-        ma_data = fetch_ma_from_goodinfo()
-        return {
-            "date": date.strftime("%Y-%m-%d"),
+        resp = session.get(url, timeout=10)
+        if resp.status_code != 200:
+            logger.error(f"❌ TWSE OpenAPI 回應非 200: {resp.status_code} - {resp.text[:200]}")
+            return None
+
+        data = resp.json()
+        if not isinstance(data, list):
+            logger.error(f"❌ TWSE OpenAPI 回傳格式錯誤：{type(data)}")
+            return None
+
+        # 找加權指數項目
+        target = next((item for item in data if item.get("指數") == "發行量加權股價指數"), None)
+        if not target:
+            logger.error("❌ 找不到『發行量加權股價指數』欄位")
+            return None
+
+        roc_date_str = target.get("日期")
+        close = _safe_float(target.get("收盤指數"))
+        chg_sign = target.get("漲跌")
+        chg_pts = _safe_float(target.get("漲跌點數"), default=0.0)
+
+        if chg_sign == "-":
+            chg_pts = -abs(chg_pts)
+        elif chg_sign == "+":
+            chg_pts = abs(chg_pts)
+
+        chg_pct = _safe_float(target.get("漲跌百分比"), default=0.0)
+        date_gregorian = _roc_to_gregorian(roc_date_str)
+
+        df = pd.DataFrame([{
+            "date": date_gregorian,
             "close": close,
-            "volume": volume,
-            "5MA": ma_data.get("5MA"),
-            "10MA": ma_data.get("10MA"),
-            "monthly": ma_data.get("Monthly"),
-            "quarterly": ma_data.get("Quarterly")
-        }
-    except Exception as e:
-        logger.error(f"❌ 加權指數最新摘要抓取失敗: {e}")
-        return {}
+            "change": chg_pts,
+            "change_pct": chg_pct,
+            "source": "TWSE_OPENAPI",
+            "raw": target
+        }])
+        logger.info(f"✅ TWSE 加權指數：{df.iloc[0].to_dict()}")
+        return df
 
-def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
-    """歷史資料抓取（略）"""
-    raise NotImplementedError("請使用主流程版本的 get_price_volume_tw() 實作")
+    except Exception as e:
+        logger.exception(f"❌ TWSE OpenAPI 擷取失敗: {e}")
+        return None
+
+# ====== 外部存取介面 ======
+
+def get_latest_taiex_summary() -> pd.DataFrame | None:
+    """
+    回傳加權指數的最新資料 DataFrame。
+    fallback 可加上 Yahoo Finance 或 Goodinfo 等邏輯。
+    """
+    df = fetch_taiex_from_twse_latest()
+    if df is not None and not df.empty:
+        return df
+
+    logger.warning("⚠️ fallback：尚未實作 Yahoo Finance / Goodinfo 備援")
+    return None
+
+# ====== 測試區 ======
+
+if __name__ == "__main__":
+    df = get_latest_taiex_summary()
+    if df is not None:
+        print(df)
+    else:
+        print("❌ 無法取得加權指數資料")
