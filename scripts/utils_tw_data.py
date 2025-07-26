@@ -7,20 +7,18 @@ import logging
 import os
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from dateutil.relativedelta import relativedelta  # 請先安裝 python-dateutil
+from dateutil.relativedelta import relativedelta
 
 # 設置日誌
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# 2025 年休市日（參考 TWSE 公告，含春節等）
+# 2025 年休市日（參考 TWSE 公告）
 HOLIDAYS = [
     "2025-01-01", "2025-01-27", "2025-01-28", "2025-01-29", "2025-01-30", "2025-01-31",
     "2025-02-28", "2025-04-04", "2025-04-18", "2025-05-01", "2025-06-06", "2025-09-17",
     "2025-10-10"
 ]
-
-# 修正 HOLIDAYS 轉換，確保是 date 物件集合
 HOLIDAYS = set(d.date() for d in pd.to_datetime(HOLIDAYS))
 
 def is_trading_day(date):
@@ -52,58 +50,6 @@ def prepare_df(prices, volumes, min_days, symbol):
         raise RuntimeError(f"{symbol} 資料中有缺失值")
     return df
 
-def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
-    """
-    回傳 (prices: pd.Series, volumes: pd.Series)，日期為 index
-    支援 symbol = 'TAIEX'（加權指數）或 '0050'
-    start_date, end_date: 格式 'YYYY-MM-DD' 或 datetime.date，預設為最近 90 天
-    min_days: 最小天數要求，預設 60
-    """
-    if end_date is None:
-        end_date = datetime.today().date()
-    if start_date is None:
-        start_date = end_date - timedelta(days=90)
-    if isinstance(start_date, str):
-        start_date = pd.to_datetime(start_date).date()
-    if isinstance(end_date, str):
-        end_date = pd.to_datetime(end_date).date()
-
-    # 防止未來日期
-    current_date = datetime.today().date()
-    if end_date > current_date:
-        logger.warning(f"end_date {end_date} 為未來日期，調整為 {current_date}")
-        end_date = current_date
-
-    # 快取檔案增加日期範圍標示
-    cache_file = f"{symbol}_{start_date}_{end_date}_cache.csv"
-    if os.path.exists(cache_file):
-        df = pd.read_csv(cache_file, index_col=0, parse_dates=True)
-        df = df[df.index.to_series().apply(lambda d: is_trading_day(d.date()))]
-        df = df.loc[(df.index >= start_date) & (df.index <= end_date)]
-        if len(df) >= min_days and not df["Price"].isna().any() and not df["Volume"].isna().any():
-            logger.info(f"✅ 使用快取數據 {cache_file}，共 {len(df)} 天")
-            return df["Price"], df["Volume"]
-
-    # 優先嘗試 Yahoo Finance
-    try:
-        prices, volumes = fetch_from_yahoo(symbol, start_date, end_date)
-        df = prepare_df(prices, volumes, min_days, symbol)
-        df.to_csv(cache_file)
-        logger.info(f"✅ 成功從 Yahoo Finance 取得 {symbol} 數據，共 {len(df)} 天")
-        return df["Price"], df["Volume"]
-    except Exception as yf_e:
-        logger.error(f"⚠️ Yahoo Finance 錯誤：{yf_e}")
-        # 回退至 TWSE
-        try:
-            prices, volumes = fetch_from_twse(symbol, start_date, end_date)
-            df = prepare_df(prices, volumes, min_days, symbol)
-            df.to_csv(cache_file)
-            logger.info(f"✅ 成功從 TWSE 取得 {symbol} 數據，共 {len(df)} 天")
-            return df["Price"], df["Volume"]
-        except Exception as e:
-            logger.error(f"⚠️ TWSE 錯誤：{e}")
-            raise RuntimeError(f"Yahoo Finance 無法取得 {symbol} 資料: {str(yf_e)}；TWSE 也失敗: {str(e)}")
-
 def _twse_session():
     session = requests.Session()
     retry = Retry(total=3, backoff_factor=0.5, status_forcelist=[429, 500, 502, 503, 504])
@@ -116,12 +62,6 @@ def _twse_session():
         # "Authorization": "Bearer YOUR_API_KEY"
     })
     return session
-
-def fetch_from_twse(symbol, start_date, end_date):
-    if symbol == "TAIEX":
-        return fetch_taiex_from_twse(start_date, end_date)
-    else:
-        return fetch_stock_from_twse(symbol, start_date, end_date)
 
 def fetch_taiex_from_twse(start_date, end_date):
     prices, volumes, dates = [], [], []
@@ -177,7 +117,7 @@ def fetch_stock_from_twse(symbol, start_date, end_date):
             logger.debug(f"TWSE 股票 {symbol} {date_str} 回應: stat={data.get('stat', 'N/A')}, data_len={len(data.get('data', []))}")
             if "data" not in data or not data["data"]:
                 logger.warning(f"TWSE 股票 {symbol} {date_str} 無資料，stat={data.get('stat', 'N/A')}")
-                # 改用下個月第一天，避免跳過中間日期
+                # 用下個月第一天避免跳過
                 current_date = (current_date.replace(day=1) + relativedelta(months=1))
                 continue
             for row in data["data"]:
@@ -195,7 +135,6 @@ def fetch_stock_from_twse(symbol, start_date, end_date):
         except requests.RequestException as e:
             logger.error(f"TWSE 股票 {symbol} {date_str} 請求失敗: {e}, URL: {resp.url if 'resp' in locals() else url}, Status Code: {resp.status_code if 'resp' in locals() else 'N/A'}")
         else:
-            # 若成功抓到資料，跳到下個月第一天
             current_date = (current_date.replace(day=1) + relativedelta(months=1))
 
     if not prices or not volumes:
@@ -205,8 +144,13 @@ def fetch_stock_from_twse(symbol, start_date, end_date):
     df = df.loc[~df.index.duplicated(keep='last')]
     return df["Price"], df["Volume"]
 
+def fetch_from_twse(symbol, start_date, end_date):
+    if symbol == "TAIEX":
+        return fetch_taiex_from_twse(start_date, end_date)
+    else:
+        return fetch_stock_from_twse(symbol, start_date, end_date)
+
 def fetch_from_yahoo(symbol, start_date, end_date):
-    """從 Yahoo Finance 獲取數據"""
     yf_symbol = "^TWII" if symbol == "TAIEX" else "0050.TW"
     try:
         df = yf.download(yf_symbol, start=start_date, end=end_date + timedelta(days=1), progress=False)
@@ -216,9 +160,96 @@ def fetch_from_yahoo(symbol, start_date, end_date):
         volumes = df["Volume"]
         if prices.empty or volumes.empty:
             raise RuntimeError(f"Yahoo Finance {yf_symbol} 資料為空")
-        # TAIEX 成交量轉新台幣（假設每點約 2 億新台幣，近似）
         if symbol == "TAIEX":
             volumes = volumes * 2e8
         return prices, volumes
     except Exception as e:
         raise RuntimeError(f"Yahoo Finance 獲取 {yf_symbol} 失敗: {str(e)}")
+
+def get_price_volume_tw_single(symbol, start_date=None, end_date=None, min_days=60):
+    # 單段抓取主流程，不做分段。由 get_price_volume_tw 分段調用。
+    if end_date is None:
+        end_date = datetime.today().date()
+    if start_date is None:
+        start_date = end_date - timedelta(days=90)
+    if isinstance(start_date, str):
+        start_date = pd.to_datetime(start_date).date()
+    if isinstance(end_date, str):
+        end_date = pd.to_datetime(end_date).date()
+
+    current_date = datetime.today().date()
+    if end_date > current_date:
+        logger.warning(f"end_date {end_date} 為未來日期，調整為 {current_date}")
+        end_date = current_date
+
+    cache_file = f"{symbol}_{start_date}_{end_date}_cache.csv"
+    if os.path.exists(cache_file):
+        df = pd.read_csv(cache_file, index_col=0, parse_dates=True)
+        df = df[df.index.to_series().apply(lambda d: is_trading_day(d.date()))]
+        df = df.loc[(df.index >= start_date) & (df.index <= end_date)]
+        if len(df) >= min_days and not df["Price"].isna().any() and not df["Volume"].isna().any():
+            logger.info(f"✅ 使用快取數據 {cache_file}，共 {len(df)} 天")
+            return df["Price"], df["Volume"]
+
+    try:
+        prices, volumes = fetch_from_yahoo(symbol, start_date, end_date)
+        df = prepare_df(prices, volumes, min_days, symbol)
+        df.to_csv(cache_file)
+        logger.info(f"✅ 成功從 Yahoo Finance 取得 {symbol} 數據，共 {len(df)} 天")
+        return df["Price"], df["Volume"]
+    except Exception as yf_e:
+        logger.error(f"⚠️ Yahoo Finance 錯誤：{yf_e}")
+        try:
+            prices, volumes = fetch_from_twse(symbol, start_date, end_date)
+            df = prepare_df(prices, volumes, min_days, symbol)
+            df.to_csv(cache_file)
+            logger.info(f"✅ 成功從 TWSE 取得 {symbol} 數據，共 {len(df)} 天")
+            return df["Price"], df["Volume"]
+        except Exception as e:
+            logger.error(f"⚠️ TWSE 錯誤：{e}")
+            raise RuntimeError(f"Yahoo Finance 無法取得 {symbol} 資料: {str(yf_e)}；TWSE 也失敗: {str(e)}")
+
+def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
+    """
+    依月分段呼叫 get_price_volume_tw_single，避免單次大幅區間資料缺失導致取不到資料。
+    """
+    if end_date is None:
+        end_date = datetime.today().date()
+    if start_date is None:
+        start_date = end_date - timedelta(days=90)
+    if isinstance(start_date, str):
+        start_date = pd.to_datetime(start_date).date()
+    if isinstance(end_date, str):
+        end_date = pd.to_datetime(end_date).date()
+    if end_date > datetime.today().date():
+        logger.warning(f"end_date {end_date} 為未來日期，調整為今天")
+        end_date = datetime.today().date()
+
+    prices_all = pd.Series(dtype=float)
+    volumes_all = pd.Series(dtype=float)
+    current_start = start_date
+
+    while current_start <= end_date:
+        current_end = min(current_start + relativedelta(months=1) - timedelta(days=1), end_date)
+        try:
+            p, v = get_price_volume_tw_single(symbol, current_start, current_end, min_days=1)
+            prices_all = pd.concat([prices_all, p])
+            volumes_all = pd.concat([volumes_all, v])
+        except Exception as e:
+            logger.warning(f"分段抓取 {current_start} ~ {current_end} 失敗：{e}")
+        current_start = current_end + timedelta(days=1)
+
+    prices_all = prices_all[~prices_all.index.duplicated(keep='last')].sort_index()
+    volumes_all = volumes_all[~volumes_all.index.duplicated(keep='last')].sort_index()
+
+    if len(prices_all) < min_days or len(volumes_all) < min_days:
+        raise RuntimeError(f"{symbol} 資料少於最低 {min_days} 天，實有 {len(prices_all)} 天")
+
+    df = pd.DataFrame({"Price": prices_all, "Volume": volumes_all})
+    df = df[df.index.to_series().apply(lambda d: is_trading_day(d.date()))]
+
+    if df["Price"].isna().any() or df["Volume"].isna().any():
+        raise RuntimeError(f"{symbol} 分段資料中有缺失值")
+
+    logger.info(f"✅ 完成分段合併資料，共 {len(df)} 天")
+    return df["Price"], df["Volume"]
