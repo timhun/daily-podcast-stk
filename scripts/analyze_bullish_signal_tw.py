@@ -1,7 +1,8 @@
+# analyze_bullish_signal_tw.py
 import os
 import pandas as pd
 from datetime import datetime, timedelta
-from utils_tw_data import get_price_volume_tw  # ✅ 使用新版 fallback 架構
+from utils_tw_data import get_price_volume_tw, get_trading_days  # ✅ 匯入 get_trading_days
 
 def calculate_ma(prices, window):
     return prices.rolling(window=window).mean()
@@ -31,17 +32,25 @@ def composite_index_with_volume_and_bullish(prices, volume, weights=[0.4, 0.35, 
 def analyze_bullish_signal_tw():
     today = datetime.today().date()
     start_date = today - timedelta(days=90)
-    print(f"📊 分析日期：{today.isoformat()}")
+    # 調整 today 為最新交易日
+    today = max(get_trading_days(start_date, today))
+    print(f"📊 分析日期範圍：{start_date.isoformat()} 至 {today.isoformat()}")
 
     # 取得 TAIEX 資料
-    twii_price, twii_vol = get_price_volume_tw("TAIEX", start_date=start_date, end_date=today)
-    if twii_price is None or len(twii_price) < 60:
-        raise RuntimeError("❌ 無法取得台股加權指數資料")
+    try:
+        twii_price, twii_vol = get_price_volume_tw("TAIEX", start_date=start_date, end_date=today)
+        if twii_price is None or len(twii_price) < 60:
+            raise RuntimeError(f"❌ 無法取得台股加權指數資料（{start_date} 至 {today}）")
+    except Exception as e:
+        raise RuntimeError(f"❌ TAIEX 數據獲取失敗（{start_date} 至 {today}）：{str(e)}")
 
     # 取得 0050 資料
-    etf_price, etf_vol = get_price_volume_tw("0050", start_date=start_date, end_date=today)
-    if etf_price is None or len(etf_price) < 60:
-        raise RuntimeError("❌ 無法取得 0050 資料")
+    try:
+        etf_price, etf_vol = get_price_volume_tw("0050", start_date=start_date, end_date=today)
+        if etf_price is None or len(etf_price) < 60:
+            raise RuntimeError(f"❌ 無法取得 0050 資料（{start_date} 至 {today}）")
+    except Exception as e:
+        raise RuntimeError(f"❌ 0050 數據獲取失敗（{start_date} 至 {today}）：{str(e)}")
 
     df_twii = composite_index_with_volume_and_bullish(twii_price, twii_vol)
     df_0050 = composite_index_with_volume_and_bullish(etf_price, etf_vol)
