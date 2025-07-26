@@ -23,7 +23,11 @@ def is_trading_day(date):
     return date.weekday() < 5 and date not in HOLIDAYS
 
 def get_trading_days(start_date, end_date):
-    """生成交易日清單，依賴 HOLIDAYS"""
+    """生成交易日清單，限制不超過當前日期"""
+    current_date = datetime.today().date()
+    if end_date > current_date:
+        logger.warning(f"end_date {end_date} 超過當前日期 {current_date}，調整為 {current_date}")
+        end_date = current_date
     dates = pd.date_range(start_date, end_date, freq='B').date
     return [d for d in dates if is_trading_day(d)]
 
@@ -44,7 +48,7 @@ def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
         end_date = pd.to_datetime(end_date).date()
 
     # 防止未來日期
-    latest_trading_day = max(get_trading_days(start_date, datetime.today().date()))
+    latest_trading_day = max(get_trading_days(start_date, end_date))
     if end_date > latest_trading_day:
         logger.warning(f"end_date {end_date} 為未來日期，調整為最新交易日 {latest_trading_day}")
         end_date = latest_trading_day
@@ -76,7 +80,7 @@ def get_price_volume_tw(symbol, start_date=None, end_date=None, min_days=60):
             return df["Price"], df["Volume"]
         else:
             logger.warning(f"⚠️ TWSE 返回資料不足 {min_days} 天或數據無效")
-            raise RuntimeError(f"TWSE {symbol} 資料不足或無效")
+            raise RuntimeError(f"TWSE {symbol} 資料不足或無效，取得 {len(df)} 天")
     except Exception as e:
         logger.error(f"⚠️ TWSE 錯誤：{e}")
         raise RuntimeError(f"TWSE 無法取得 {symbol} 資料: {str(e)}")
@@ -112,6 +116,7 @@ def fetch_taiex_from_twse(start_date, end_date):
             resp = session.get(url, timeout=10, allow_redirects=True)
             resp.raise_for_status()
             data = resp.json()
+            logger.debug(f"TWSE TAIEX {date_str} 回應: stat={data.get('stat', 'N/A')}, data_len={len(data.get('data', []))}")
             if "data" not in data or not data["data"]:
                 logger.warning(f"TWSE TAIEX {date_str} 無資料")
                 continue
@@ -132,7 +137,7 @@ def fetch_taiex_from_twse(start_date, end_date):
             logger.error(f"TWSE TAIEX {date_str} 請求失敗: {e}, Redirect URL: {resp.url if 'resp' in locals() else 'N/A'}, Status Code: {resp.status_code if 'resp' in locals() else 'N/A'}")
 
     if not prices:
-        raise RuntimeError("TWSE TAIEX 無有效數據")
+        raise RuntimeError(f"TWSE TAIEX 無有效數據，請求範圍 {start_date} 至 {end_date}")
 
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
     df = df.loc[~df.index.duplicated(keep='last')]
@@ -151,6 +156,7 @@ def fetch_stock_from_twse(symbol, start_date, end_date):
             resp = session.get(url, timeout=10, allow_redirects=True)
             resp.raise_for_status()
             data = resp.json()
+            logger.debug(f"TWSE 股票 {symbol} {date_str} 回應: stat={data.get('stat', 'N/A')}, data_len={len(data.get('data', []))}")
             if "data" not in data or not data["data"]:
                 logger.warning(f"TWSE 股票 {symbol} {date_str} 無資料")
                 current_date += timedelta(days=31)
@@ -172,7 +178,7 @@ def fetch_stock_from_twse(symbol, start_date, end_date):
         current_date += timedelta(days=31)
 
     if not prices:
-        raise RuntimeError(f"TWSE 股票 {symbol} 無有效數據")
+        raise RuntimeError(f"TWSE 股票 {symbol} 無有效數據，請求範圍 {start_date} 至 {end_date}")
 
     df = pd.DataFrame({"Price": prices, "Volume": volumes}, index=pd.to_datetime(dates))
     df = df.loc[~df.index.duplicated(keep='last')]
