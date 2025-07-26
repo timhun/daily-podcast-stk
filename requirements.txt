@@ -9,4 +9,4 @@ pytz
 beautifulsoup4
 lxml
 selenium
-dateutil
+python-dateutil
