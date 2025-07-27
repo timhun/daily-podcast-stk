@@ -6,8 +6,9 @@ from datetime import datetime, timedelta
 import time
 import json
 import re
+from bs4 import BeautifulSoup
 
-# 假設 TW_TZ 為台北時區
+# 台北時區
 from datetime import timezone
 TW_TZ = timezone(timedelta(hours=8))
 
@@ -99,16 +100,35 @@ def get_yahoo_foreign_buy(start_date, end_date):
         response = requests.get(url, headers=headers)
         response.raise_for_status()
         
-        # 模擬數據（需實際解析JSON）
-        data = [
-            {'Date': '2025/07/25', 'ForeignBuy': 73.61, 'Investment': 20.31, 'Dealer': 10.87, 'TotalNetBuy': 104.79},
-            {'Date': '2025/07/24', 'ForeignBuy': 101.53, 'Investment': -7.55, 'Dealer': 33.13, 'TotalNetBuy': 127.11},
-            # 需替換為實際解析結果
-        ]
+        soup = BeautifulSoup(response.text, 'html.parser')
+        # 假設數據在表格中，需檢查實際結構
+        table = soup.find('table', class_='table')
+        if not table:
+            raise ValueError("無法找到Yahoo Finance表格")
+        
+        data = []
+        rows = table.find_all('tr')[1:]  # 跳過表頭
+        for row in rows:
+            cols = row.find_all('td')
+            if len(cols) >= 4:
+                date = pd.to_datetime(cols[0].text.strip())
+                if start_date <= date <= end_date:
+                    foreign = float(cols[1].text.strip().replace(',', ''))
+                    investment = float(cols[2].text.strip().replace(',', ''))
+                    dealer = float(cols[3].text.strip().replace(',', ''))
+                    total_netbuy = foreign + investment + dealer
+                    data.append({
+                        'Date': date,
+                        'ForeignBuy': foreign,
+                        'Investment': investment,
+                        'Dealer': dealer,
+                        'TotalNetBuy': total_netbuy
+                    })
         
         df = pd.DataFrame(data)
-        df['Date'] = pd.to_datetime(df['Date'])
-        df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
+        if not df.empty:
+            df['Date'] = pd.to_datetime(df['Date'])
+            df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
         return df.sort_values('Date').reset_index(drop=True)
     except Exception as e:
         print(f"Yahoo Finance外資買賣超取得失敗: {e}")
@@ -122,16 +142,35 @@ def get_wantgoo_foreign_buy(start_date, end_date):
         response = requests.get(url, headers=headers)
         response.raise_for_status()
         
-        # 模擬數據（需實際解析HTML/JSON）
-        data = [
-            {'Date': '2025/07/25', 'ForeignBuy': 73.61, 'Investment': 20.31, 'Dealer': 10.87, 'TotalNetBuy': 104.79},
-            {'Date': '2025/07/24', 'ForeignBuy': 101.53, 'Investment': -7.55, 'Dealer': 33.13, 'TotalNetBuy': 127.11},
-            # 需替換為實際解析結果
-        ]
+        soup = BeautifulSoup(response.text, 'html.parser')
+        # 假設數據在表格中，需檢查實際結構
+        table = soup.find('table', class_='table')
+        if not table:
+            raise ValueError("無法找到玩股網表格")
+        
+        data = []
+        rows = table.find_all('tr')[1:]  # 跳過表頭
+        for row in rows:
+            cols = row.find_all('td')
+            if len(cols) >= 4:
+                date = pd.to_datetime(cols[0].text.strip())
+                if start_date <= date <= end_date:
+                    foreign = float(cols[1].text.strip().replace(',', ''))
+                    investment = float(cols[2].text.strip().replace(',', ''))
+                    dealer = float(cols[3].text.strip().replace(',', ''))
+                    total_netbuy = foreign + investment + dealer
+                    data.append({
+                        'Date': date,
+                        'ForeignBuy': foreign,
+                        'Investment': investment,
+                        'Dealer': dealer,
+                        'TotalNetBuy': total_netbuy
+                    })
         
         df = pd.DataFrame(data)
-        df['Date'] = pd.to_datetime(df['Date'])
-        df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
+        if not df.empty:
+            df['Date'] = pd.to_datetime(df['Date'])
+            df = df[(df['Date'] >= start_date) & (df['Date'] <= end_date)]
         return df.sort_values('Date').reset_index(drop=True)
     except Exception as e:
         print(f"玩股網外資買賣超取得失敗: {e}")
@@ -140,7 +179,7 @@ def get_wantgoo_foreign_buy(start_date, end_date):
 def get_latest_taiex_summary():
     """取代原始get_latest_taiex_summary，取得歷史數據"""
     end_date = datetime.today()
-    start_date = end_date - timedelta(days=365)  # 取一年數據以計算均線和MACD
+    start_date = end_date - timedelta(days=60)  # 取60天數據以計算短期均線和MACD
     
     index_data = []
     volume_data = []
@@ -211,10 +250,10 @@ def calculate_macd_advanced(df):
     signal = macd.ewm(span=9, adjust=False).mean()
     return macd, signal
 
-def calculate_volume_avg(df, window=60):
+def calculate_volume_avg(df, window=20):  # 改為20天以適應短線
     return df['Volume'].rolling(window=window).mean()
 
-def calculate_dynamic_volume_threshold(df, window=60):
+def calculate_dynamic_volume_threshold(df, window=20):
     vol_std = df['Volume'].rolling(window=window).std()
     vol_avg = df['Volume'].rolling(window=window).mean()
     return vol_avg + vol_std
@@ -222,13 +261,13 @@ def calculate_dynamic_volume_threshold(df, window=60):
 def calculate_foreign_buy_sum(df, window=5):
     return df['ForeignBuy'].rolling(window=window).sum()
 
-def score_signal(row, ma20, ma60, ma120, macd, signal, foreign_buy_sum, vol_threshold):
+def score_signal(row, ma5, ma10, ma20, macd, signal, foreign_buy_sum, vol_threshold):
     score = 0
-    if row['Close'] > ma20:
+    if row['Close'] > ma5:
         score += 1
-    if row['Close'] > ma60:
+    if row['Close'] > ma10:
         score += 1.5
-    if row['Close'] > ma120:
+    if row['Close'] > ma20:
         score += 2
     if macd > signal and macd > 0:
         score += 1
@@ -239,21 +278,21 @@ def score_signal(row, ma20, ma60, ma120, macd, signal, foreign_buy_sum, vol_thre
     return score
 
 def analyze_bang_bang_line(row, df):
-    """融合幫幫忙大盤線的分析函數"""
-    # 從完整DataFrame計算所需指標
+    """融合幫幫忙大盤線的分析函數（短線版）"""
+    # 計算短期均線
+    df['MA5'] = calculate_ma(df, 5)
+    df['MA10'] = calculate_ma(df, 10)
     df['MA20'] = calculate_ma(df, 20)
-    df['MA60'] = calculate_ma(df, 60)
-    df['MA120'] = calculate_ma(df, 120)
     df['MACD'], df['Signal'] = calculate_macd_advanced(df)
-    df['VolThreshold'] = calculate_dynamic_volume_threshold(df, 60)
+    df['VolThreshold'] = calculate_dynamic_volume_threshold(df, 20)
     df['ForeignBuySum5'] = calculate_foreign_buy_sum(df, 5)
 
     # 提取當前行的指標
     current_row = df[df['Date'] == row['Date']].iloc[0]
     close = current_row['Close']
+    ma5 = current_row['MA5']
+    ma10 = current_row['MA10']
     ma20 = current_row['MA20']
-    ma60 = current_row['MA60']
-    ma120 = current_row['MA120']
     macd = current_row['MACD']
     signal = current_row['Signal']
     volume_billion = current_row.get('VolumeBillion', None)
@@ -266,7 +305,7 @@ def analyze_bang_bang_line(row, df):
     date = current_row['Date']
 
     # 計算幫幫忙大盤線分數
-    score = score_signal(current_row, ma20, ma60, ma120, macd, signal, 
+    score = score_signal(current_row, ma5, ma10, ma20, macd, signal, 
                          current_row['ForeignBuySum5'], current_row['VolThreshold'])
 
     # 判斷趨勢
@@ -293,12 +332,12 @@ def analyze_bang_bang_line(row, df):
     sustained_trend = 'Sustained Bull' if all(recent_trends.isin(['Bull'])) else \
                       'Sustained Bear' if all(recent_trends.isin(['Bear'])) else 'None'
     
-    # 輸出格式（保留原始風格）
+    # 輸出格式
     lines = []
     lines.append(f"📊 分析日期：{date.strftime('%Y%m%d')}")
     lines.append(f"收盤：{close:,.2f}（漲跌：{change:+.2f}，{change_pct:+.2f}%）" if change is not None and change_pct is not None else f"收盤：{close:,.2f}")
     lines.append(f"成交金額：約 {volume_billion:.0f} 億元" if volume_billion else "成交金額：資料缺失")
-    lines.append(f"均線：20日 {ma20:.2f}｜60日 {ma60:.2f}｜120日 {ma120:.2f}")
+    lines.append(f"均線：5日 {ma5:.2f}｜10日 {ma10:.2f}｜20日 {ma20:.2f}")
     lines.append(f"MACD 值：{macd:+.2f}")
     lines.append(f"幫幫忙大盤線分數：{score:.1f}（趨勢：{trend}）")
     if sustained_trend != 'None':
