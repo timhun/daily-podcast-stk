@@ -370,7 +370,7 @@ if __name__ == "__main__":
     date_str = datetime.now(TW_TZ).strftime("%Y%m%d")
     output_dir = f"docs/podcast"
     os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, "bullish_signal_tw.txt")
+    output_path = os.path.join(output_dir, "bullish_signal_tw_dev.txt")
     with open(output_path, "w", encoding="utf-8") as f:
         f.write(summary)
     print(f"✅ 已儲存多空判斷至：{output_path}")
