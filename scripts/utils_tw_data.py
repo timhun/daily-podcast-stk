@@ -13,8 +13,10 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 TW_TZ = pytz.timezone("Asia/Taipei")
 
+
 def _today_tw_ymd() -> str:
     return datetime.now(TW_TZ).strftime("%Y%m%d")
+
 
 def _safe_float(x, default=None):
     if x is None or x == "" or x == "--":
@@ -24,11 +26,13 @@ def _safe_float(x, default=None):
     except Exception:
         return default
 
+
 def _roc_to_gregorian(roc_yyyymmdd: str) -> datetime.date:
     roc_year = int(roc_yyyymmdd[:3])
     month = int(roc_yyyymmdd[3:5])
     day = int(roc_yyyymmdd[5:7])
     return datetime(roc_year + 1911, month, day).date()
+
 
 def _build_retry_session(total=3, backoff_factor=0.5, status_forcelist=(429, 500, 502, 503, 504)) -> requests.Session:
     s = requests.Session()
@@ -42,6 +46,7 @@ def _build_retry_session(total=3, backoff_factor=0.5, status_forcelist=(429, 500
     s.mount("https://", HTTPAdapter(max_retries=retries))
     s.headers.update({"User-Agent": "utils_tw_data/1.0 (TWSE OpenAPI fetcher)"})
     return s
+
 
 def get_goodinfo_taiex_summary() -> dict | None:
     url = "https://goodinfo.tw/tw/StockIdxDetail.asp?STOCK_ID=加權指數"
@@ -62,10 +67,14 @@ def get_goodinfo_taiex_summary() -> dict | None:
             label = tds[0].get_text(strip=True)
             ma_text = tds[5].get_text(strip=True).replace("↗", "").replace("↘", "")
             value = _safe_float(ma_text)
-            if label == "5日": result["ma5"] = value
-            elif label == "10日": result["ma10"] = value
-            elif label == "月": result["ma20"] = value
-            elif label == "季": result["ma60"] = value
+            if label == "5日":
+                result["ma5"] = value
+            elif label == "10日":
+                result["ma10"] = value
+            elif label == "月":
+                result["ma20"] = value
+            elif label == "季":
+                result["ma60"] = value
         if all(k in result for k in ("ma5", "ma10", "ma20", "ma60")):
             logger.info(f"✅ Goodinfo 均線資料: {result}")
             return result
@@ -74,6 +83,7 @@ def get_goodinfo_taiex_summary() -> dict | None:
     except Exception as e:
         logger.exception(f"❌ 擷取 Goodinfo 均線失敗: {e}")
         return None
+
 
 def fetch_taiex_from_twse_latest(date_ymd: str | None = None, session: requests.Session | None = None) -> pd.DataFrame | None:
     date_ymd = date_ymd or _today_tw_ymd()
@@ -93,8 +103,10 @@ def fetch_taiex_from_twse_latest(date_ymd: str | None = None, session: requests.
         close = _safe_float(target.get("收盤指數"))
         chg_sign = target.get("漲跌")
         chg_pts = _safe_float(target.get("漲跌點數"), default=0.0)
-        if chg_sign == "-": chg_pts = -abs(chg_pts)
-        elif chg_sign == "+": chg_pts = abs(chg_pts)
+        if chg_sign == "-":
+            chg_pts = -abs(chg_pts)
+        elif chg_sign == "+":
+            chg_pts = abs(chg_pts)
         chg_pct = _safe_float(target.get("漲跌百分比"), default=0.0)
         date_gregorian = _roc_to_gregorian(roc_date_str)
         df = pd.DataFrame([{
@@ -111,32 +123,25 @@ def fetch_taiex_from_twse_latest(date_ymd: str | None = None, session: requests.
         logger.exception(f"❌ TWSE 擷取失敗: {e}")
         return None
 
+
 def get_latest_taiex_summary() -> pd.DataFrame | None:
     try:
         ticker = "^TWII"
-        df = yf.download(ticker, period="90d", interval="1d", progress=False, group_by="ticker")
-
+        df = yf.download(ticker, period="90d", interval="1d", progress=False)
         if df.empty or len(df) < 60:
             raise ValueError("資料不足")
-
         df["ma5"] = df["Close"].rolling(5).mean()
         df["ma10"] = df["Close"].rolling(10).mean()
         df["ma20"] = df["Close"].rolling(20).mean()
         df["ma60"] = df["Close"].rolling(60).mean()
-
-        # ✅ 處理 multiindex，保留單層欄位
-        if isinstance(df.columns, pd.MultiIndex):
-            df.columns = df.columns.droplevel(0)
-
         latest = df.iloc[-1]
-
         result = pd.DataFrame([{
             "date": latest.name.date(),
-            "close": round(float(latest["Close"]), 2),
-            "ma5": round(float(latest["ma5"]), 2),
-            "ma10": round(float(latest["ma10"]), 2),
-            "ma20": round(float(latest["ma20"]), 2),
-            "ma60": round(float(latest["ma60"]), 2),
+            "close": float(latest["Close"]),
+            "ma5": float(latest["ma5"]),
+            "ma10": float(latest["ma10"]),
+            "ma20": float(latest["ma20"]),
+            "ma60": float(latest["ma60"]),
             "source": "YahooFinance"
         }])
         logger.info(f"✅ Yahoo 加權指數：{result.iloc[0].to_dict()}")
@@ -152,7 +157,7 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
             return df
         return None
 
-# ====== 測試區 ======
+
 if __name__ == "__main__":
     df = get_latest_taiex_summary()
     if df is not None:
