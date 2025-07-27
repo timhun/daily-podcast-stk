@@ -1,38 +1,51 @@
 # scripts/fetch_ai_topic.py
 import os
-import json
-import pytz
 import datetime
-from pathlib import Path
-import openai  # 或改用你已有的 Kimi / Grok 統一封裝
+from utils_podcast import get_podcast_mode, TW_TZ
+from generate_script_grok import generate_script_from_grok
+from generate_script_openrouter import generate_script_from_openrouter
 
-# ✅ 使用台灣時區
-tz = pytz.timezone("Asia/Taipei")
-now = datetime.datetime.now(tz)
-date_str = now.strftime("%Y%m%d")
-today_display = now.strftime("%Y年%m月%d日")
-mode = os.getenv("PODCAST_MODE", "us")
-folder = Path(f"docs/podcast/{date_str}_{mode}")
-folder.mkdir(parents=True, exist_ok=True)
+def get_ai_topic_text(mode: str = "us") -> str:
+    now = datetime.datetime.now(TW_TZ)
+    date_str = now.strftime("%Y年%m月%d日")
 
-# ✅ 呼叫 GPT-4 產生兩則 AI 主題
-openai.api_key = os.getenv("OPENAI_API_KEY")
+    # 讀取 prompt 檔
+    prompt_file = f"prompt/ai_topic-{mode}.txt"
+    if not os.path.exists(prompt_file):
+        print(f"⚠️ 找不到 AI 主題 prompt：{prompt_file}")
+        return ""
 
-prompt = f"""
-請以中文提供兩則今日最新的 AI 工具或新創公司相關新聞摘要，包含名稱、用途與亮點。內容需適合用在 Podcast 中口語播報，避免太技術性，長度約 200~400 字，格式如下：
+    with open(prompt_file, "r", encoding="utf-8") as f:
+        prompt_template = f.read()
 
-1️⃣ xxx
-2️⃣ xxx
+    # 填入 prompt
+    prompt = prompt_template.format(date=date_str)
 
-今日是 {today_display}，請根據最新資料撰寫。
-"""
+    # 使用 Grok → OpenRouter fallback
+    try:
+        print("🧠 使用 Grok 產生 AI 主題...")
+        result = generate_script_from_grok(prompt)
+        if result:
+            print("✅ 成功產出 AI 主題（Grok）")
+            return result.strip()
+        raise Exception("Grok 回傳為空")
+    except Exception as e:
+        print(f"⚠️ Grok 失敗：{e}")
+        try:
+            print("📡 使用 OpenRouter 產出 AI 主題...")
+            result = generate_script_from_openrouter(prompt)
+            if result:
+                print("✅ 成功產出 AI 主題（OpenRouter）")
+                return result.strip()
+        except Exception as e2:
+            print(f"❌ OpenRouter 也失敗：{e2}")
+            return ""
 
-response = openai.ChatCompletion.create(
-    model="gpt-4",
-    messages=[{"role": "user", "content": prompt}],
-    temperature=1.0,
-)
-
-ai_topic = response.choices[0].message.content.strip()
-(Path(folder) / "ai_topic.txt").write_text(ai_topic, encoding="utf-8")
-print("✅ 已產出 ai_topic.txt")
+# CLI 測試模式
+if __name__ == "__main__":
+    mode = get_podcast_mode()
+    ai_text = get_ai_topic_text(mode)
+    if ai_text:
+        print(f"\n🎯 AI 主題產出：\n{ai_text}")
+    else:
+        print("⚠️ 無法產出 AI 主題")
