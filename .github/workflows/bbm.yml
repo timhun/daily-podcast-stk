@@ -7,7 +7,7 @@ on:
   workflow_dispatch:  # 允許手動觸發
 
 jobs:
-  run-bbq:
+  run-bbm:
     runs-on: ubuntu-latest
 
     steps:
