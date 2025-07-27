@@ -95,16 +95,17 @@ def get_yield_10y():
 
 # ========= 台股區 =========
 
-df = get_latest_taiex_summary()
-if df is not None and not df.empty:
-    row = df.iloc[0]
-    index = row["close"]
-    change = row["change"]
-    percent = row["change_pct"]
-    return [f"台股加權指數：{index:.2f}（{change:+.2f}, {percent:+.2f}%）"]
-else:
-    return ["⚠️ 無法取得台股指數資料"]
-
+def get_stock_index_data_tw():
+    df = get_latest_taiex_summary()
+    if df is not None and not df.empty:
+        row = df.iloc[0]
+        index = row["close"]
+        change = row["change"]
+        percent = row["change_pct"]
+        return [f"台股加權指數：{index:.2f}（{change:+.2f}, {percent:+.2f}%）"]
+    else:
+        return ["⚠️ 無法取得台股指數資料"]
+        
 def get_etf_data_tw():
     urls = {
         "0050": "https://tw.stock.yahoo.com/quote/0050.TW",
