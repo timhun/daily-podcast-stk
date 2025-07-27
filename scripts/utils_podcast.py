@@ -93,11 +93,7 @@ def get_institutional_trading_wantgoo() -> dict:
                     data["dealer"] = value
 
         if all(k in data for k in ("foreign", "investment", "dealer")):
-            data["total_netbuy"] = sum([
-                data["foreign"],
-                data["investment"],
-                data["dealer"]
-            ])
+            data["total_netbuy"] = sum([data["foreign"], data["investment"], data["dealer"]])
             logger.info(f"✅ 法人買賣超：{data}")
             return data
         logger.warning(f"⚠️ 法人資料不完整：{data}")
@@ -106,7 +102,7 @@ def get_institutional_trading_wantgoo() -> dict:
         logger.warning(f"⚠️ 擷取法人買賣超失敗：{e}")
         return {}
 
-# ====== TAIEX 加權指數資料 ======
+# ====== TAIEX 資料主流程 ======
 
 def get_latest_taiex_summary() -> pd.DataFrame | None:
     try:
@@ -115,7 +111,6 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
         if df.empty or len(df) < 60:
             raise ValueError("資料不足")
 
-        # 均線與 MACD 計算
         df["ma5"] = df["Close"].rolling(5).mean()
         df["ma10"] = df["Close"].rolling(10).mean()
         df["ma20"] = df["Close"].rolling(20).mean()
@@ -127,16 +122,19 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
         latest = df.iloc[-1]
         prev = df.iloc[-2]
 
-        change = float((latest["Close"] - prev["Close"]).item())
-        change_pct = round(change / prev["Close"].item() * 100, 2)
+        close = latest["Close"].item() if hasattr(latest["Close"], "item") else float(latest["Close"])
+        prev_close = prev["Close"].item() if hasattr(prev["Close"], "item") else float(prev["Close"])
 
-        volume = float(latest["Volume"]) if not pd.isna(latest["Volume"]) else None
+        change = close - prev_close
+        change_pct = round(change / prev_close * 100, 2)
+
+        volume = latest["Volume"].item() if hasattr(latest["Volume"], "item") else float(latest["Volume"])
         volume_in_lots = volume / 1000 if volume else None
-        volume_billion_ntd = round(volume_in_lots * latest["Close"] / 10000) if volume_in_lots else None
+        volume_billion_ntd = round(volume_in_lots * close / 10000) if volume_in_lots else None
 
         data = {
             "date": latest.name.date(),
-            "close": float(latest["Close"]),
+            "close": close,
             "change": change,
             "change_pct": change_pct,
             "volume": volume,
@@ -149,12 +147,13 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
             "source": "YahooFinance"
         }
 
-        # 加入法人買賣超
+        # 整合法人資料
         inst = get_institutional_trading_wantgoo()
         data.update(inst)
 
         logger.info(f"✅ TAIEX 加權指數資料整合：{data}")
         return pd.DataFrame([data])
+
     except Exception as e:
         logger.warning(f"⚠️ Yahoo Finance 擷取失敗：{e}")
         return None
