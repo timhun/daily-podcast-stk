@@ -1,10 +1,9 @@
 name: Run BBM Script
 
 on:
-  push:
-    branches:
-      - main   # 監控 main 分支推送
-  workflow_dispatch:  # 允許手動觸發
+  schedule:
+    - cron: '0 9 * * *'  # 台灣時間 14:00
+  workflow_dispatch:
 
 jobs:
   run-bbm:
