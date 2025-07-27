@@ -165,13 +165,18 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
         df["ma20"] = df["Close"].rolling(20).mean()
         df["ma60"] = df["Close"].rolling(60).mean()
 
+        # MACD 計算
+        ema12 = df["Close"].ewm(span=12, adjust=False).mean()
+        ema26 = df["Close"].ewm(span=26, adjust=False).mean()
+        df["macd"] = ema12 - ema26
+        
         latest = df.iloc[-1]
         prev = df.iloc[-2]
 
         change = float(latest["Close"] - prev["Close"])
         change_pct = round(change / prev["Close"] * 100, 2)
         volume = float(latest["Volume"]) if not pd.isna(latest["Volume"]) else None
-        volume_ntd = round(volume / 1e8, 2) if volume else None  # 換算為新台幣百億元單位
+        volume_in_billion_ntd = round(volume_in_lots * latest["Close"] / 10000)  # 以張 * 價 格 / 10,000 得億元
 
         result = pd.DataFrame([{
             "date": latest.name.date(),
@@ -179,11 +184,12 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
             "change": change,
             "change_pct": change_pct,
             "volume": volume,
-            "volume_ntd": volume_ntd,
+            "volume_billion": volume_in_billion_ntd,
             "ma5": float(latest["ma5"]),
             "ma10": float(latest["ma10"]),
             "ma20": float(latest["ma20"]),
             "ma60": float(latest["ma60"]),
+            "macd": float(latest["macd"]),
             "source": "YahooFinance"
         }])
         logger.info(f"✅ Yahoo 加權指數：{result.iloc[0].to_dict()}")
