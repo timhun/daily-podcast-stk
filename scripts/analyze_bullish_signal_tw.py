@@ -9,7 +9,9 @@ def analyze_bullish_signal_taiex(row: dict) -> str:
     ma10 = row["ma10"]
     ma20 = row["ma20"]
     ma60 = row["ma60"]
-    volume = row.get("volume", None)
+    macd = row.get("macd")
+    volume_lots = row.get("volume_lots")
+    volume_billion = row.get("volume_billion")
     date = row["date"]
 
     # 判斷多頭排列
@@ -19,20 +21,17 @@ def analyze_bullish_signal_taiex(row: dict) -> str:
     lines.append(f"📊 分析日期：{date.strftime('%Y%m%d')}")
     lines.append(f"收盤：{close:,.2f}")
     lines.append(f"5日均線：{ma5:,.2f}，10日：{ma10:,.2f}，月線：{ma20:,.2f}，季線：{ma60:,.2f}")
-
-    # 成交量與估算金額（億元）
-    if volume and close:
-        shares = volume * 1000  # 張數轉換為股數
-        est_turnover = shares * close / 1e8  # 換算為億元
-        lines.append(f"成交量：約 {volume:,.0f} 張，概估成交金額：約 {est_turnover:,.0f} 億元")
+    if macd is not None:
+        lines.append(f"MACD 值：{macd:.2f}")
+    if volume_lots and volume_billion:
+        lines.append(f"成交量：約 {volume_lots:,} 張，推估成交金額：約 {volume_billion:,} 億元")
 
     if is_bullish:
-        lines.append("📈 加權指數呈現多頭排列，市場偏多，可以加倉0050或00631L。")
+        lines.append("📈 加權指數呈現多頭排列，市場偏多，可以加倉 0050 或 00631L。")
     else:
         lines.append("📉 均線尚未呈現多頭排列，市場觀望或整理。")
 
     return "\n".join(lines)
-
 
 if __name__ == "__main__":
     df = get_latest_taiex_summary()
