@@ -19,7 +19,7 @@ def analyze_bullish_signal_tw():
     ma20 = row.get("ma20")
     ma60 = row.get("ma60")
 
-    logger.info(f"✅ 均線：{ma5,  ma10,ma20, ma60}")
+    print("🔍 row data:", row.to_dict())
 
     try:
         signal = ""
