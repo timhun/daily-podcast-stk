@@ -11,20 +11,14 @@ from utils_podcast import (
     get_podcast_mode,
     get_today_display,
     is_weekend_prompt,
-    is_trading_day_taiwan,
     TW_TZ,
 )
 
-# === 基本參數與時間設定 ===
+# === 基本設定 ===
 PODCAST_MODE = get_podcast_mode()
 now = datetime.datetime.now(TW_TZ)
 today_str = now.strftime("%Y%m%d")
 today_display = get_today_display()
-
-# 台股假日跳過產出
-if PODCAST_MODE == "tw" and not is_trading_day_taiwan(now):
-    print("📴 今日為台股非交易日或尚未收盤，跳過腳本生成")
-    exit(0)
 
 # 輸出路徑
 output_dir = f"docs/podcast/{today_str}_{PODCAST_MODE}"
@@ -32,11 +26,11 @@ os.makedirs(output_dir, exist_ok=True)
 script_path = os.path.join(output_dir, "script.txt")
 summary_path = os.path.join(output_dir, "summary.txt")
 
-# 取得行情與 AI 主題
+# 取得行情摘要與 AI 主題
 market_data = get_market_summary(PODCAST_MODE)
 ai_topic = get_ai_topic_text(PODCAST_MODE)
 
-# 多空判斷（僅台股）
+# 多空判斷（僅台股支援）
 bullish_signal = ""
 if PODCAST_MODE == "tw":
     signal_path = "docs/podcast/bullish_signal_tw.txt"
@@ -44,7 +38,7 @@ if PODCAST_MODE == "tw":
         with open(signal_path, "r", encoding="utf-8") as f:
             bullish_signal = f.read().strip()
 
-# 自訂主題段落（非必須）
+# 主題檔案（非必須）
 theme_text = ""
 theme_file = f"prompt/theme-{PODCAST_MODE}.txt"
 if os.path.exists(theme_file):
@@ -53,7 +47,7 @@ if os.path.exists(theme_file):
         if raw:
             theme_text = raw if raw[-1] in "。！？" else raw + "。"
 
-# Prompt 選擇：週末切換
+# 判斷是否使用週末 prompt
 is_weekend = is_weekend_prompt(PODCAST_MODE, now)
 prompt_file = f"prompt/{PODCAST_MODE}{'_weekend' if is_weekend else ''}.txt"
 if not os.path.exists(prompt_file):
@@ -62,16 +56,16 @@ if not os.path.exists(prompt_file):
 with open(prompt_file, "r", encoding="utf-8") as f:
     prompt_template = f.read()
 
-# 組合完整 prompt
+# === 組合完整 prompt ===
 prompt = prompt_template.format(
     date=today_display,
     market_data=market_data,
     ai_topic=ai_topic,
     theme=theme_text,
-    bullish_signal=bullish_signal,
+    bullish_signal=bullish_signal
 )
 
-# === LLM 優先順序：Grok → Kimi → OpenRouter ===
+# === 優先順序：Grok → Kimi → OpenRouter ===
 
 def generate_with_grok():
     try:
@@ -135,11 +129,12 @@ script_text = generate_with_grok() or generate_with_kimi() or generate_with_open
 if not script_text:
     raise RuntimeError("❌ 所有來源皆失敗")
 
-# 儲存逐字稿與摘要
+# 儲存逐字稿
 with open(script_path, "w", encoding="utf-8") as f:
     f.write(script_text)
 print(f"✅ 已儲存逐字稿至：{script_path}")
 
+# 摘要產出（前200字）
 summary_text = script_text.strip().replace("\n", "").replace("  ", "")[:200]
 with open(summary_path, "w", encoding="utf-8") as f:
     f.write(summary_text)
