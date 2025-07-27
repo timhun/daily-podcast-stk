@@ -1,4 +1,3 @@
-#utils_tw_data.py
 import logging
 import requests
 import pandas as pd
@@ -115,21 +114,29 @@ def fetch_taiex_from_twse_latest(date_ymd: str | None = None, session: requests.
 def get_latest_taiex_summary() -> pd.DataFrame | None:
     try:
         ticker = "^TWII"
-        df = yf.download(ticker, period="90d", interval="1d", progress=False)
+        df = yf.download(ticker, period="90d", interval="1d", progress=False, group_by="ticker")
+
         if df.empty or len(df) < 60:
             raise ValueError("資料不足")
+
         df["ma5"] = df["Close"].rolling(5).mean()
         df["ma10"] = df["Close"].rolling(10).mean()
         df["ma20"] = df["Close"].rolling(20).mean()
         df["ma60"] = df["Close"].rolling(60).mean()
+
+        # ✅ 處理 multiindex，保留單層欄位
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = df.columns.droplevel(0)
+
         latest = df.iloc[-1]
+
         result = pd.DataFrame([{
             "date": latest.name.date(),
-            "close": float(latest["Close"]),
-            "ma5": float(latest["ma5"]),
-            "ma10": float(latest["ma10"]),
-            "ma20": float(latest["ma20"]),
-            "ma60": float(latest["ma60"]),
+            "close": round(float(latest["Close"]), 2),
+            "ma5": round(float(latest["ma5"]), 2),
+            "ma10": round(float(latest["ma10"]), 2),
+            "ma20": round(float(latest["ma20"]), 2),
+            "ma60": round(float(latest["ma60"]), 2),
             "source": "YahooFinance"
         }])
         logger.info(f"✅ Yahoo 加權指數：{result.iloc[0].to_dict()}")
@@ -145,6 +152,7 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
             return df
         return None
 
+# ====== 測試區 ======
 if __name__ == "__main__":
     df = get_latest_taiex_summary()
     if df is not None:
