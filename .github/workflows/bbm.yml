@@ -24,7 +24,7 @@ jobs:
           pip install requests pandas numpy
 
       - name: Run bbm.py
-        run: python scripts/bbm.py
+        run: python scripts/bbm_dev.py
 
       - name: Commit bullish signal file
         run: |
