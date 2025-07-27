@@ -218,13 +218,13 @@ def calculate_dynamic_volume_threshold(df, window=60):
 def calculate_foreign_buy_sum(df, window=5):
     return df['ForeignBuy'].rolling(window=window).sum()
 
-def score_signal(row, ma20, ma60, ma120, macd, signal, foreign_buy_sum, vol_threshold):
+def score_signal(row, ma10, ma20, ma60, macd, signal, foreign_buy_sum, vol_threshold):
     score = 0
-    if row['Close'] > ma20:
+    if row['Close'] > ma10:
         score += 1
-    if row['Close'] > ma60:
+    if row['Close'] > ma20:
         score += 1.5
-    if row['Close'] > ma120:
+    if row['Close'] > ma60:
         score += 2
     if macd > signal and macd > 0:
         score += 1
@@ -235,9 +235,9 @@ def score_signal(row, ma20, ma60, ma120, macd, signal, foreign_buy_sum, vol_thre
     return score
 
 def calculate_bang_bang_line(df):
+    df['MA10'] = calculate_ma(df, 10)
     df['MA20'] = calculate_ma(df, 20)
     df['MA60'] = calculate_ma(df, 60)
-    df['MA120'] = calculate_ma(df, 120)
     df['MACD'], df['Signal'] = calculate_macd_advanced(df)
     df['VolThreshold'] = calculate_dynamic_volume_threshold(df, 60)
     df['ForeignBuySum5'] = calculate_foreign_buy_sum(df, 5)
@@ -246,7 +246,7 @@ def calculate_bang_bang_line(df):
     for idx, row in df.iterrows():
         score = score_signal(
             row,
-            row['MA20'], row['MA60'], row['MA120'],
+            row['MA10'], row['MA20'], row['MA60'],
             row['MACD'], row['Signal'], row['ForeignBuySum5'], row['VolThreshold']
         )
         scores.append(score)
@@ -270,7 +270,7 @@ def calculate_bang_bang_line(df):
 # 主程式
 if __name__ == "__main__":
     end_date = datetime.today().strftime('%Y-%m-%d')
-    start_date = (datetime.today() - timedelta(days=365)).strftime('%Y-%m-%d')
+    start_date = (datetime.today() - timedelta(days=90)).strftime('%Y-%m-%d')
 
     data = get_combined_data(start_date, end_date)
     
