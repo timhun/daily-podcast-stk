@@ -270,8 +270,8 @@ def calculate_bang_bang_line(df):
 # 主程式
 if __name__ == "__main__":
     end_date = datetime.today().strftime('%Y-%m-%d')
-    start_date = (datetime.today() - timedelta(days=90)).strftime('%Y-%m-%d')
-
+    start_date = (datetime.today() - timedelta(days=10)).strftime('%Y-%m-%d')
+    # test first 10 days       
     data = get_combined_data(start_date, end_date)
     
     if data is not None:
