@@ -24,8 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install requests pandas numpy
 
-      - name: Run bbq.py
-        run: python bbq.py
+      - name: Run bbm.py
+        run: python scripts/bbm.py
 
       - name: Commit bullish signal file
         run: |
