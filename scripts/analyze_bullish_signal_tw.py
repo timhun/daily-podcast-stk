@@ -1,4 +1,3 @@
-# scripts/analyze_bullish_signal_tw.py
 from datetime import datetime
 from utils_tw_data import get_latest_taiex_summary
 
@@ -20,23 +19,20 @@ def analyze_bullish_signal_tw():
 
     print("🔍 row data:", row.to_dict())
 
-    signal = "⚠️ 均線資料不完整，無法判斷多空。"
+    # 多空邏輯
     try:
-        if all(isinstance(v, (int, float)) for v in [close, ma5, ma10, ma20, ma60]):
-            # ✅ 四捨五入後再進行判斷
-            close = round(close, 2)
-            ma5 = round(ma5, 2)
-            ma10 = round(ma10, 2)
-            ma20 = round(ma20, 2)
-            ma60 = round(ma60, 2)
-
+        values = [close, ma5, ma10, ma20, ma60]
+        if all(isinstance(v, (int, float)) for v in values):
             if close > ma5 > ma10 > ma20 > ma60:
                 signal = "📈 加權指數呈現多頭排列，市場偏多。"
             else:
                 signal = "📉 加權指數尚未形成多頭排列，需觀察。"
+        else:
+            signal = "⚠️ 均線資料不完整，無法判斷多空。"
     except Exception as e:
-        signal = f"⚠️ 無法進行均線判斷：{e}"
+        signal = f"⚠️ 多空判斷錯誤：{e}"
 
+    # 輸出文字內容
     output = [
         f"📊 分析日期：{row['date'].strftime('%Y%m%d')}",
         f"收盤：{close:.2f}" if isinstance(close, (int, float)) else "收盤：⚠️ 無資料",
@@ -46,10 +42,10 @@ def analyze_bullish_signal_tw():
         signal
     ]
 
-    with open("../docs/podcast/bullish_signal_tw.txt", "w", encoding="utf-8") as f:
+    output_path = "../docs/podcast/bullish_signal_tw.txt"
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write("\n".join(output))
 
-    print("\n".join(output))
     print("✅ 多空判斷完成")
 
 if __name__ == "__main__":
