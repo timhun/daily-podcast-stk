@@ -164,15 +164,22 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
         df["ma10"] = df["Close"].rolling(10).mean()
         df["ma20"] = df["Close"].rolling(20).mean()
         df["ma60"] = df["Close"].rolling(60).mean()
+
         latest = df.iloc[-1]
         prev = df.iloc[-2]
+
         change = float(latest["Close"] - prev["Close"])
         change_pct = round(change / prev["Close"] * 100, 2)
+        volume = float(latest["Volume"]) if not pd.isna(latest["Volume"]) else None
+        volume_ntd = round(volume / 1e8, 2) if volume else None  # 換算為新台幣百億元單位
+
         result = pd.DataFrame([{
             "date": latest.name.date(),
             "close": float(latest["Close"]),
             "change": change,
             "change_pct": change_pct,
+            "volume": volume,
+            "volume_ntd": volume_ntd,
             "ma5": float(latest["ma5"]),
             "ma10": float(latest["ma10"]),
             "ma20": float(latest["ma20"]),
