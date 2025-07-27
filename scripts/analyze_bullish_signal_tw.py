@@ -1,3 +1,4 @@
+#analyze_bullish_signal_tw.py
 import os
 from datetime import datetime
 from utils_podcast import get_latest_taiex_summary, TW_TZ
