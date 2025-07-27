@@ -27,9 +27,11 @@ jobs:
       - name: Run bbq.py
         run: python bbq.py
 
-      - name: Upload market_data.csv as artifact
-        if: success() && steps.run_bbq.outcome == 'success'
-        uses: actions/upload-artifact@v3
-        with:
-          name: market-data
-          path: market_data.csv
+      - name: Commit bullish signal file
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add docs/podcast/bbm.txt
+          git commit -m "🔍 更幫幫忙台股多空判斷" || echo "✅ 無需提交"
+          git pull --rebase --autostash
+          git push
