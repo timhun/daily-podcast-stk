@@ -12,7 +12,12 @@ def get_stock_index_data_tw():
         index = float(row["close"])
         change = float(row["change"])
         percent = float(row["change_pct"])
-        return [f"台股加權指數：{index:.2f}（{change:+.2f}, {percent:+.2f}%）"]
+        volume_billion = row.get("volume_billion", None)
+        lines = [f"台股加權指數：{index:.2f}（{change:+.2f}, {percent:+.2f}%）"]
+        if volume_billion:
+            lines.append(f"成交金額：約 {volume_billion:.0f} 億元")
+
+        return lines
     else:
         return ["⚠️ 無法取得台股指數資料"]
 
