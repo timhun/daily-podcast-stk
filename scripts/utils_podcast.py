@@ -14,7 +14,6 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 TW_TZ = pytz.timezone("Asia/Taipei")
 
-
 # ====== Podcast 用工具 ======
 
 def get_podcast_mode() -> str:
@@ -34,7 +33,6 @@ def is_weekend_prompt(mode: str, now: datetime | None = None) -> bool:
 def is_trading_day_taiwan(now: datetime | None = None) -> bool:
     now = now or datetime.now(TW_TZ)
     return now.weekday() < 5 and now.hour >= 14
-
 
 # ====== 工具函式 ======
 
@@ -68,8 +66,7 @@ def _build_retry_session(total=3, backoff_factor=0.5, status_forcelist=(429, 500
     s.headers.update({"User-Agent": "utils_podcast/1.0"})
     return s
 
-
-# ====== 法人買賣超 (WantGoo) ======
+# ====== 法人買賣超資料（WantGoo） ======
 
 def get_institutional_trading_wantgoo() -> dict:
     url = "https://www.wantgoo.com/stock/institutional-investors/three-trade-for-trading-amount"
@@ -105,8 +102,7 @@ def get_institutional_trading_wantgoo() -> dict:
         logger.warning(f"⚠️ 擷取法人買賣超失敗：{e}")
         return {}
 
-
-# ====== TAIEX 資料主流程 ======
+# ====== 加權指數資料（含 MACD + 均線 + 成交金額估算） ======
 
 def get_latest_taiex_summary() -> pd.DataFrame | None:
     try:
@@ -114,10 +110,14 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
         df = yf.download(ticker, period="90d", interval="1d", progress=False)
         if df.empty or len(df) < 60:
             raise ValueError("資料不足")
+
+        # 計算均線
         df["ma5"] = df["Close"].rolling(5).mean()
         df["ma10"] = df["Close"].rolling(10).mean()
         df["ma20"] = df["Close"].rolling(20).mean()
         df["ma60"] = df["Close"].rolling(60).mean()
+
+        # 計算 MACD（12日EMA - 26日EMA）
         ema12 = df["Close"].ewm(span=12, adjust=False).mean()
         ema26 = df["Close"].ewm(span=26, adjust=False).mean()
         df["macd"] = ema12 - ema26
@@ -125,8 +125,9 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
         latest = df.iloc[-1]
         prev = df.iloc[-2]
 
-        change = float(latest["Close"] - prev["Close"])
-        change_pct = round(change / prev["Close"] * 100, 2)
+        change = float((latest["Close"] - prev["Close"]).item())
+        change_pct = round(change / prev["Close"].item() * 100, 2)
+
         volume = float(latest["Volume"]) if not pd.isna(latest["Volume"]) else None
         volume_in_lots = volume / 1000 if volume else None
         volume_billion_ntd = round(volume_in_lots * latest["Close"] / 10000) if volume_in_lots else None
@@ -146,12 +147,13 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
             "source": "YahooFinance"
         }
 
-        # 法人資料整合
+        # 加入法人買賣超資料
         inst = get_institutional_trading_wantgoo()
         data.update(inst)
 
         logger.info(f"✅ TAIEX 加權指數資料整合：{data}")
         return pd.DataFrame([data])
+
     except Exception as e:
         logger.warning(f"⚠️ Yahoo Finance 擷取失敗：{e}")
         return None
