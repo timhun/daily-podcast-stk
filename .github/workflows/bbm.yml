@@ -19,9 +19,7 @@ jobs:
           python-version: '3.9'
 
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests pandas numpy
+        run: pip install -r requirements.txt
 
       - name: Run bbm.py
         run: python scripts/bbm_dev.py
