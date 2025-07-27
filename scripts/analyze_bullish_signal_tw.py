@@ -1,5 +1,4 @@
 # scripts/analyze_bullish_signal_tw.py
-
 from datetime import datetime
 from utils_tw_data import get_latest_taiex_summary
 
@@ -23,7 +22,7 @@ def analyze_bullish_signal_tw():
 
     try:
         signal = ""
-        if all(isinstance(v, (int, float)) for v in [close, ma5, ma10, ma20, ma60]):
+        if all(isinstance(v, (int, float, float)) for v in [close, ma5, ma10, ma20, ma60]):
             if close > ma5 > ma10 > ma20 > ma60:
                 signal = "📈 加權指數呈現多頭排列，市場偏多。"
             else:
@@ -34,7 +33,7 @@ def analyze_bullish_signal_tw():
         signal = f"⚠️ 無法進行均線判斷：{e}"
 
     output = [
-        f"📊 分析日期：{row['date'].strftime('%Y%m%d')}",
+        f"📊 分析日期：{row['date'].strftime('%Y%m%d') if row.get('date') else today}",
         f"收盤：{close:.2f}" if isinstance(close, (int, float)) else "收盤：⚠️ 無資料",
         f"5日均線：{ma5:.2f}，10日：{ma10:.2f}，月線：{ma20:.2f}，季線：{ma60:.2f}"
         if all(isinstance(v, (int, float)) for v in [ma5, ma10, ma20, ma60])
