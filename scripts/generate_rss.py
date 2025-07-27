@@ -12,10 +12,11 @@ COVER_URL = f"{SITE_URL}/img/cover.jpg"
 PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
 RSS_FILE = f"docs/rss/podcast_{PODCAST_MODE}.xml"
 
-FIXED_DESCRIPTION = """掌握每日美股、台股、AI工具與新創投資機會！
-每集節目由涵蓋最新市場數據、法人動向與 AI 趨勢，專注市值型ETF短線交易策略！讓你在 7 分鐘內快速掌握財經動態與科技趨勢。
+FIXED_DESCRIPTION = """一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，提供每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
 
-🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
 📮 主持人：幫幫忙"""
 
 # ===== 初始化 Feed =====
