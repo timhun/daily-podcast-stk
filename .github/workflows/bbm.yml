@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run bbm.py
+      - name: Run bbm_dev.py
         run: python scripts/bbm_dev.py
 
       - name: Commit bullish signal file
