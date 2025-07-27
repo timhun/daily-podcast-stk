@@ -1,4 +1,4 @@
-name: Daily_大盤線
+name: Daily_大盤線_開發版
 
 on:
   schedule:
