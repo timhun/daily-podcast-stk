@@ -125,11 +125,11 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
         latest = df.iloc[-1]
         result = pd.DataFrame([{
             "date": latest.name.date(),
-            "close": latest["Close"],
-            "ma5": latest["ma5"],
-            "ma10": latest["ma10"],
-            "ma20": latest["ma20"],
-            "ma60": latest["ma60"],
+            "close": float(latest["Close"]),
+            "ma5": float(latest["ma5"]),
+            "ma10": float(latest["ma10"]),
+            "ma20": float(latest["ma20"]),
+            "ma60": float(latest["ma60"]),
             "source": "YahooFinance"
         }])
         logger.info(f"✅ Yahoo 加權指數：{result.iloc[0].to_dict()}")
