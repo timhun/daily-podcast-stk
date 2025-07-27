@@ -66,7 +66,7 @@ def _build_retry_session(total=3, backoff_factor=0.5, status_forcelist=(429, 500
     s.headers.update({"User-Agent": "utils_podcast/1.0"})
     return s
 
-# ====== 法人買賣超資料（WantGoo） ======
+# ====== 法人買賣超 (WantGoo) ======
 
 def get_institutional_trading_wantgoo() -> dict:
     url = "https://www.wantgoo.com/stock/institutional-investors/three-trade-for-trading-amount"
@@ -93,7 +93,11 @@ def get_institutional_trading_wantgoo() -> dict:
                     data["dealer"] = value
 
         if all(k in data for k in ("foreign", "investment", "dealer")):
-            data["total_netbuy"] = sum([data["foreign"], data["investment"], data["dealer"]])
+            data["total_netbuy"] = sum([
+                data["foreign"],
+                data["investment"],
+                data["dealer"]
+            ])
             logger.info(f"✅ 法人買賣超：{data}")
             return data
         logger.warning(f"⚠️ 法人資料不完整：{data}")
@@ -102,22 +106,20 @@ def get_institutional_trading_wantgoo() -> dict:
         logger.warning(f"⚠️ 擷取法人買賣超失敗：{e}")
         return {}
 
-# ====== 加權指數資料（含 MACD + 均線 + 成交金額估算） ======
+# ====== TAIEX 加權指數資料 ======
 
 def get_latest_taiex_summary() -> pd.DataFrame | None:
     try:
         ticker = "^TWII"
-        df = yf.download(ticker, period="90d", interval="1d", progress=False)
+        df = yf.download(ticker, period="90d", interval="1d", progress=False, auto_adjust=False)
         if df.empty or len(df) < 60:
             raise ValueError("資料不足")
 
-        # 計算均線
+        # 均線與 MACD 計算
         df["ma5"] = df["Close"].rolling(5).mean()
         df["ma10"] = df["Close"].rolling(10).mean()
         df["ma20"] = df["Close"].rolling(20).mean()
         df["ma60"] = df["Close"].rolling(60).mean()
-
-        # 計算 MACD（12日EMA - 26日EMA）
         ema12 = df["Close"].ewm(span=12, adjust=False).mean()
         ema26 = df["Close"].ewm(span=26, adjust=False).mean()
         df["macd"] = ema12 - ema26
@@ -147,13 +149,12 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
             "source": "YahooFinance"
         }
 
-        # 加入法人買賣超資料
+        # 加入法人買賣超
         inst = get_institutional_trading_wantgoo()
         data.update(inst)
 
         logger.info(f"✅ TAIEX 加權指數資料整合：{data}")
         return pd.DataFrame([data])
-
     except Exception as e:
         logger.warning(f"⚠️ Yahoo Finance 擷取失敗：{e}")
         return None
