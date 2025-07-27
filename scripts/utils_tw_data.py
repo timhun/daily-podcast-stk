@@ -1,3 +1,4 @@
+import os
 import logging
 import requests
 import pandas as pd
@@ -13,6 +14,35 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 TW_TZ = pytz.timezone("Asia/Taipei")
 
+# ====== Podcast 用工具 ======
+
+def get_podcast_mode() -> str:
+    return os.getenv("PODCAST_MODE", "tw").lower()
+
+
+def get_today_display() -> str:
+    """返回台灣當地日期字串，例：2025年07月27日"""
+    return datetime.now(TW_TZ).strftime("%Y年%m月%d日")
+
+
+def is_weekend_prompt(mode: str, now: datetime | None = None) -> bool:
+    now = now or datetime.now(TW_TZ)
+    if mode == "tw":
+        return now.weekday() in (5, 6)  # 六日
+    elif mode == "us":
+        return now.weekday() in (6, 0)  # 日、一（以台灣時間為準）
+    return False
+
+
+def is_trading_day_taiwan(now: datetime | None = None) -> bool:
+    now = now or datetime.now(TW_TZ)
+    if now.weekday() >= 5:
+        return False  # 六日
+    if now.hour < 14:
+        return False  # 尚未收盤
+    return True
+
+# ====== 台股資料工具（原 utils_tw_data 整合） ======
 
 def _today_tw_ymd() -> str:
     return datetime.now(TW_TZ).strftime("%Y%m%d")
@@ -135,9 +165,14 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
         df["ma20"] = df["Close"].rolling(20).mean()
         df["ma60"] = df["Close"].rolling(60).mean()
         latest = df.iloc[-1]
+        prev = df.iloc[-2]
+        change = float(latest["Close"] - prev["Close"])
+        change_pct = round(change / prev["Close"] * 100, 2)
         result = pd.DataFrame([{
             "date": latest.name.date(),
             "close": float(latest["Close"]),
+            "change": change,
+            "change_pct": change_pct,
             "ma5": float(latest["ma5"]),
             "ma10": float(latest["ma10"]),
             "ma20": float(latest["ma20"]),
@@ -156,11 +191,3 @@ def get_latest_taiex_summary() -> pd.DataFrame | None:
                     df[k] = v
             return df
         return None
-
-
-if __name__ == "__main__":
-    df = get_latest_taiex_summary()
-    if df is not None:
-        print(df)
-    else:
-        print("❌ 無法取得加權指數資料")
