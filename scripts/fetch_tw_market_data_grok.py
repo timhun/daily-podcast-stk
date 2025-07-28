@@ -1,8 +1,7 @@
 import json
 import os
 import logging
-from xai_sdk import Client
-from xai_sdk.chat import user
+import requests
 
 # 設置日誌
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -23,20 +22,29 @@ def fetch_tw_market_data(input_file="tw_market_data.txt", output_file="market_da
         logger.error(f"讀取檔案 {input_file} 失敗: {e}")
         raise
 
-    # 初始化 xAI Client
+    # 初始化 API 請求
     try:
         api_key = os.getenv("GROK_API_KEY")
-        api_url = os.getenv("GROK_API_URL", "https://api.x.ai/v1")  # 默認 xAI API 端點
+        api_url = os.getenv("GROK_API_URL", "https://api.x.ai/v1/chat/completions")
         if not api_key:
             logger.error("未找到 GROK_API_KEY 環境變數")
             raise ValueError("請設置 GROK_API_KEY 環境變數")
-        client = Client(api_key=api_key, base_url=api_url)
-        chat = client.chat.create(model="grok-3-beta", temperature=0.5)
-        chat.append(user(prompt))
-        response = chat.sample()
-        result = response.content
+
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        payload = {
+            "model": "grok-3-beta",
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.5
+        }
+
+        response = requests.post(api_url, headers=headers, json=payload, timeout=30)
+        response.raise_for_status()  # 檢查 HTTP 錯誤
+        result = response.json().get("choices", [{}])[0].get("message", {}).get("content", "")
         logger.info("成功從 Grok 獲取回應")
-    except Exception as e:
+    except requests.RequestException as e:
         logger.error(f"Grok API 請求失敗: {e}")
         raise
 
