@@ -12,5 +12,5 @@ lxml
 selenium
 numpy==1.26.4
 pandas==2.2.2
-
+xai-sdk>=0.3.0
 
