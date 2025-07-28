@@ -2,7 +2,7 @@
 import json
 
 def analyze_bullish_signal():
-    with open("market_data_tw.json", "r", encoding="utf-8") as f:
+    with open("docs/podcast/market_data_tw.json", "r", encoding="utf-8") as f:
         data = json.load(f)
 
     try:
