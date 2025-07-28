@@ -25,11 +25,12 @@ def fetch_tw_market_data(input_file="tw_market_data.txt", output_file="market_da
 
     # 初始化 xAI Client
     try:
-        api_key = os.getenv("XAI_API_KEY")
+        api_key = os.getenv("GROK_API_KEY")
+        api_url = os.getenv("GROK_API_URL", "https://api.x.ai/v1")  # 默認 xAI API 端點
         if not api_key:
-            logger.error("未找到 XAI_API_KEY 環境變數")
-            raise ValueError("請設置 XAI_API_KEY 環境變數")
-        client = Client(api_key=api_key)
+            logger.error("未找到 GROK_API_KEY 環境變數")
+            raise ValueError("請設置 GROK_API_KEY 環境變數")
+        client = Client(api_key=api_key, base_url=api_url)
         chat = client.chat.create(model="grok-3-beta", temperature=0.5)
         chat.append(user(prompt))
         response = chat.sample()
