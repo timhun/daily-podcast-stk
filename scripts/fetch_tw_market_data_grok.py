@@ -2,12 +2,18 @@ import json
 import os
 import logging
 import requests
+from pathlib import Path
 
 # 設置日誌
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def fetch_tw_market_data(input_file="tw_market_data.txt", output_file="market_data_tw.json"):
+# 計算 scripts 目錄的根目錄
+BASE_DIR = Path(__file__).resolve().parent
+INPUT_FILE = BASE_DIR / "tw_market_data.txt"
+OUTPUT_FILE = BASE_DIR.parent / "docs/podcast/market_data_tw.json"
+
+def fetch_tw_market_data(input_file=INPUT_FILE, output_file=OUTPUT_FILE):
     # 檢查輸入檔案是否存在
     if not os.path.exists(input_file):
         logger.error(f"輸入檔案 {input_file} 不存在")
@@ -41,7 +47,7 @@ def fetch_tw_market_data(input_file="tw_market_data.txt", output_file="market_da
         }
 
         response = requests.post(api_url, headers=headers, json=payload, timeout=30)
-        response.raise_for_status()  # 檢查 HTTP 錯誤
+        response.raise_for_status()
         result = response.json().get("choices", [{}])[0].get("message", {}).get("content", "")
         logger.info("成功從 Grok 獲取回應")
     except requests.RequestException as e:
@@ -62,10 +68,8 @@ def fetch_tw_market_data(input_file="tw_market_data.txt", output_file="market_da
         raise RuntimeError(f"❌ Grok 回傳格式錯誤: {e}")
 
     # 檢查輸出路徑
-    output_dir = os.path.dirname(output_file) or "."
-    if not os.access(output_dir, os.W_OK):
-        logger.error(f"無法寫入輸出路徑: {output_dir}")
-        raise PermissionError(f"無法寫入輸出路徑: {output_dir}")
+    output_dir = os.path.dirname(output_file)
+    os.makedirs(output_dir, exist_ok=True)
 
     # 儲存 JSON
     try:
