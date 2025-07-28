@@ -3,7 +3,7 @@ name: Generate TW Podcast
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 7 * * *'  # 台灣時間 16:00（UTC+8）
+    - cron: '0 7 * * *'  # 台灣時間 15:00（UTC+8）
 
 jobs:
   podcast-tw:
@@ -33,16 +33,22 @@ jobs:
       - name: Install Dependencies
         run: pip install -r requirements.txt
 
-      - name: Generate TW Script & Audio
-        run: python scripts/generate_script_kimi.py
+      - name: Step 1 - 擷取台股市場資料（Grok）
+        run: python scripts/fetch_tw_market_data_grok.py
 
-      - name: Synthesize Audio
+      - name: Step 2 - 分析多空信號
+        run: python scripts/analyze_bullish_signal_from_prompt.py
+
+      - name: Step 3 - 產生逐字稿腳本
+        run: python scripts/generate_script_tw.py
+
+      - name: Step 4 - 合成語音
         run: python scripts/synthesize_audio.py
 
-      - name: Upload Audio to B2
+      - name: Step 5 - 上傳音檔至 B2
         run: python scripts/upload_to_b2.py
 
-      - name: Generate RSS Feed (TW)
+      - name: Step 6 - 產生 RSS Feed（TW）
         run: python scripts/generate_rss.py
 
       - name: Commit & Push (TW)
