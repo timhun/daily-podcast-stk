@@ -1,67 +1,83 @@
-name: Generate TW Podcast
+name: 🎧 台股 Podcast 自動化（tw）
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0 7 * * *'  # 台灣時間 15:00（UTC+8）
+    # 台灣時間 14:05 執行資料擷取與多空分析（UTC+8 → UTC 06:05）
+    - cron: '5 6 * * *'
+    # 台灣時間 16:00 執行腳本產出與語音合成（UTC+8 → UTC 08:00）
+    - cron: '0 8 * * *'
+  workflow_dispatch:
 
 jobs:
   podcast-tw:
+    name: 台股 Podcast 產製流程
     runs-on: ubuntu-latest
     concurrency:
       group: podcast-tw
+      cancel-in-progress: false
 
     env:
       PODCAST_MODE: tw
-      MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
-      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
-      GROK_API_URL: ${{ secrets.GROK_API_URL }}
-      B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-      B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
-      B2_BUCKET_NAME: daily-podcast-stk
 
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4  # 更新到最新版本
+      - name: 📥 Checkout 專案程式碼
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5  # 更新到最新版本
+      - name: 🐍 設定 Python 環境
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.11'
-          cache: 'pip'  # 啟用 pip 快取以加速依賴安裝
+          python-version: 3.11
 
-      - name: Install Dependencies
+      - name: 📦 安裝依賴套件
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Step 1 - 擷取台股市場資料（Grok）
+      - name: 🧠 第一步：取得台股 JSON 市場資料（Grok）
         run: python scripts/fetch_tw_market_data_grok.py
-        env:
-          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
-          GROK_API_URL: ${{ secrets.GROK_API_URL }}
 
-      - name: Step 2 - 分析多空信號
+      - name: 🧮 第二步：產出多空分析結果
         run: python scripts/analyze_bullish_signal_from_prompt.py
 
-      - name: Step 3 - 產生逐字稿腳本
+      - name: 🧭 判斷是否為台灣假日（只在假日略過後續步驟）
+        id: holiday_check
+        run: |
+          python -c "
+import sys
+from scripts.utils_podcast_tw import is_tw_holiday
+if is_tw_holiday():
+    print('::set-output name=is_holiday::true')
+else:
+    print('::set-output name=is_holiday::false')
+"
+        shell: bash
+
+      - name: ✏️ 第三步：產出逐字稿（假日也支援 holiday 模板）
+        if: steps.holiday_check.outputs.is_holiday == 'false' || steps.holiday_check.outputs.is_holiday == 'true'
         run: python scripts/generate_script_tw.py
 
-      - name: Step 4 - 合成語音
+      - name: 🗣️ 合成語音
+        if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/synthesize_audio.py
 
-      - name: Step 5 - 上傳音檔至 B2
+      - name: ☁️ 上傳音檔至 B2
+        if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/upload_to_b2.py
 
-      - name: Step 6 - 產生 RSS Feed（TW）
+      - name: 📰 產出 podcast_tw.xml
+        if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/generate_rss.py
 
-      - name: Commit & Push (TW)
+      - name: 🔁 合併 podcast.xml（tw+us）
+        if: steps.holiday_check.outputs.is_holiday == 'false'
+        run: python scripts/merge_rss_feeds.py
+
+      - name: ✅ 推送更新至 GitHub Pages
+        if: steps.holiday_check.outputs.is_holiday == 'false'
         run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-          git add -A
-          git commit -m "📡 更新 TW Podcast RSS" || echo "No changes to commit"
-          git pull --rebase origin main || true
-          git push origin main || echo "⚠️ Push failed, please check manually"
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git pull --rebase
+          git add .
+          git commit -m "🤖 Update podcast_tw ${GITHUB_RUN_ID}" || echo "Nothing to commit"
+          git push
