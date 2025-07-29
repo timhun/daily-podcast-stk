@@ -1,0 +1,61 @@
+name: Generate TW Podcast
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 7 * * *'  # 台灣時間 16:00（UTC+8）
+
+jobs:
+  podcast-tw:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: podcast-tw
+
+    env:
+      PODCAST_MODE: tw
+      MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+      GROK_API_URL: ${{ secrets.GROK_API_URL }}
+      B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+      B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+      B2_BUCKET_NAME: daily-podcast-stk
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate TW Script & Audio
+        run: python scripts/generate_script_kimi.py
+
+      - name: Synthesize Audio
+
+
+
+
+
+
+        run: python scripts/synthesize_audio.py
+
+      - name: Upload Audio to B2
+        run: python scripts/upload_to_b2.py
+
+      - name: Generate RSS Feed (TW)
+        run: python scripts/generate_rss.py
+
+      - name: Commit & Push (TW)
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add -A
+          git commit -m "📡 更新 TW Podcast RSS" || echo "No changes"
+          git pull --rebase origin main || true
+          git push origin HEAD:main || echo "⚠️ Push 被拒絕，請稍後同步"
