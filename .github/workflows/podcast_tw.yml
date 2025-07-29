@@ -1,4 +1,4 @@
-name: 台股 Podcast 自動化（tw）
+name: 台股_Podcast
 
 on:
   schedule:
