@@ -1,36 +1,67 @@
-# scripts/analyze_bullish_signal_from_prompt.py
 import json
+import os
+from datetime import datetime
+import pytz
 
-def analyze_bullish_signal():
-    with open("docs/podcast/market_data_tw.json", "r", encoding="utf-8") as f:
-        data = json.load(f)
+TW_TZ = pytz.timezone("Asia/Taipei")
+TODAY = datetime.now(TW_TZ).strftime("%Y%m%d")
 
+INPUT_JSON = f"docs/podcast/{TODAY}_tw/market_data_tw.json"
+OUTPUT_TXT = f"docs/podcast/{TODAY}_tw/bullish_signal_tw.txt"
+
+
+def analyze_bullish_signal(data: dict) -> str:
+    lines = []
+
+    # 均線判斷
     try:
-        close = float(data["taiex_close"])
         ma5 = float(data["ma5"])
         ma10 = float(data["ma10"])
         ma20 = float(data["ma20"])
+        index = float(data["close"])
+        if index > ma5 > ma10 > ma20:
+            lines.append("📈 加權指數呈現多頭排列，短期趨勢偏多。")
+        elif index < ma5 < ma10 < ma20:
+            lines.append("📉 加權指數呈現空頭排列，市場走勢偏弱。")
+        else:
+            lines.append("📊 均線尚未明確排列，短期走勢呈現震盪整理。")
+    except Exception:
+        lines.append("⚠️ 無法判斷均線排列，多空訊號不足。")
+
+    # MACD 判斷
+    try:
         macd = float(data["macd"])
-    except Exception as e:
-        print("⚠️ 資料錯誤，無法分析：", e)
-        return
+        if macd > 0:
+            lines.append("✅ MACD 為正，動能偏多。")
+        else:
+            lines.append("🚨 MACD 為負，動能轉弱。")
+    except Exception:
+        lines.append("⚠️ MACD 資料缺失。")
 
-    result = [f"📊 分析日期：{data['date']}"]
-    result.append(f"收盤：{close:.2f}，5日均：{ma5:.2f}，10日：{ma10:.2f}，20日：{ma20:.2f}，MACD：{macd:.2f}")
+    # 法人買賣超
+    try:
+        total_netbuy = int(data["total_netbuy"])
+        if total_netbuy > 0:
+            lines.append(f"💰 三大法人合計買超 {total_netbuy} 張，偏多看待。")
+        elif total_netbuy < 0:
+            lines.append(f"💸 三大法人合計賣超 {abs(total_netbuy)} 張，籌碼偏空。")
+        else:
+            lines.append("📎 三大法人買賣超持平，觀望氣氛濃厚。")
+    except Exception:
+        lines.append("⚠️ 法人買賣超資料不足。")
 
-    if close > ma5 > ma10 > ma20:
-        signal = "📈 多頭排列，市場偏多。"
-    elif macd > 0:
-        signal = "📈 MACD 為正，短期偏多。"
-    else:
-        signal = "📉 尚未出現明顯多頭訊號，市場觀望。"
+    return "\n".join(lines)
 
-    result.append(signal)
-
-    with open("bullish_signal_tw.txt", "w", encoding="utf-8") as f:
-        f.write("\n".join(result))
-
-    print("✅ 產出 bullish_signal_tw.txt")
 
 if __name__ == "__main__":
-    analyze_bullish_signal()
+    if not os.path.exists(INPUT_JSON):
+        raise FileNotFoundError(f"❌ 找不到 JSON 資料：{INPUT_JSON}")
+    with open(INPUT_JSON, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    result = analyze_bullish_signal(data)
+
+    os.makedirs(os.path.dirname(OUTPUT_TXT), exist_ok=True)
+    with open(OUTPUT_TXT, "w", encoding="utf-8") as f:
+        f.write(result)
+    print(f"✅ 已輸出多空分析至 {OUTPUT_TXT}")
