@@ -2,9 +2,9 @@ name: 🎧 台股 Podcast 自動化（tw）
 
 on:
   schedule:
-    # 台灣時間 14:05 執行資料擷取與多空分析（UTC+8 → UTC 06:05）
+    # 台灣時間 14:05（UTC 06:05）→ 擷取市場資料與多空分析
     - cron: '5 6 * * *'
-    # 台灣時間 16:00 執行腳本產出與語音合成（UTC+8 → UTC 08:00）
+    # 台灣時間 16:00（UTC 08:00）→ 產出逐字稿與語音上傳
     - cron: '0 8 * * *'
   workflow_dispatch:
 
@@ -20,30 +20,29 @@ jobs:
       PODCAST_MODE: tw
 
     steps:
-      - name: 📥 Checkout 專案程式碼
+      - name: 📥 取得程式碼
         uses: actions/checkout@v4
 
-      - name: 🐍 設定 Python 環境
+      - name: 🐍 安裝 Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: 3.11
 
-      - name: 📦 安裝依賴套件
+      - name: 📦 安裝 Python 套件
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: 🧠 第一步：取得台股 JSON 市場資料（Grok）
+      - name: 🧠 第一步：取得市場資料（Grok）
         run: python scripts/fetch_tw_market_data_grok.py
 
-      - name: 🧮 第二步：產出多空分析結果
+      - name: 🧮 第二步：分析多空判斷
         run: python scripts/analyze_bullish_signal_from_prompt.py
 
-      - name: 🧭 判斷是否為台灣假日（只在假日略過後續步驟）
+      - name: 🧭 檢查是否為台灣假日
         id: holiday_check
         run: |
           python -c "
-import sys
 from scripts.utils_podcast_tw import is_tw_holiday
 if is_tw_holiday():
     print('::set-output name=is_holiday::true')
@@ -52,32 +51,31 @@ else:
 "
         shell: bash
 
-      - name: ✏️ 第三步：產出逐字稿（假日也支援 holiday 模板）
-        if: steps.holiday_check.outputs.is_holiday == 'false' || steps.holiday_check.outputs.is_holiday == 'true'
+      - name: ✏️ 第三步：產出逐字稿
         run: python scripts/generate_script_tw.py
 
-      - name: 🗣️ 合成語音
+      - name: 🗣️ 合成語音（限非假日）
         if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/synthesize_audio.py
 
-      - name: ☁️ 上傳音檔至 B2
+      - name: ☁️ 上傳音檔至 B2（限非假日）
         if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/upload_to_b2.py
 
-      - name: 📰 產出 podcast_tw.xml
+      - name: 📰 產生 podcast_tw.xml（限非假日）
         if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/generate_rss.py
 
-      - name: 🔁 合併 podcast.xml（tw+us）
+      - name: 🔁 合併主 podcast.xml（限非假日）
         if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/merge_rss_feeds.py
 
-      - name: ✅ 推送更新至 GitHub Pages
+      - name: ✅ 推送更新至 GitHub Pages（限非假日）
         if: steps.holiday_check.outputs.is_holiday == 'false'
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git pull --rebase
           git add .
-          git commit -m "🤖 Update podcast_tw ${GITHUB_RUN_ID}" || echo "Nothing to commit"
+          git commit -m "🤖 Update podcast_tw ${{ github.run_id }}" || echo "Nothing to commit"
           git push
