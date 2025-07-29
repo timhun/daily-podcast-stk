@@ -12,7 +12,7 @@ COVER_URL = f"{SITE_URL}/img/cover.jpg"
 PODCAST_MODE = os.getenv("PODCAST_MODE", "us").lower()
 RSS_FILE = f"docs/rss/podcast_{PODCAST_MODE}.xml"
 
-FIXED_DESCRIPTION = """一個適合上班族在最短時間做短線交易策略的節目!
+FIXED_DESCRIPTION = """(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 \n\n讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
 提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。\n\n
