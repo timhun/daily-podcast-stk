@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import pytz
-
+import yfinance as yf
 
 # ====== 設定 ======
 logger = logging.getLogger(__name__)
