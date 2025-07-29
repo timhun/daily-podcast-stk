@@ -4,7 +4,7 @@ import os
 import requests
 import json
 
-GROK_API_URL = os.getenv("GROK_API_URL", "https://api.groq.com/v1/chat/completions")
+GROK_API_URL = os.getenv("GROK_API_URL", "https://api.x.ai/v1/chat/completions")
 GROK_API_KEY = os.getenv("GROK_API_KEY")
 
 
