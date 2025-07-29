@@ -1,11 +1,9 @@
-name: 台股_Podcast
+name: 🎧 台股 Podcast 自動化（tw）
 
 on:
   schedule:
-    # 台灣時間 14:05（UTC 06:05）→ 擷取市場資料與多空分析
-    - cron: '5 6 * * *'
-    # 台灣時間 16:00（UTC 08:00）→ 產出逐字稿與語音上傳
-    - cron: '0 8 * * *'
+    - cron: '5 6 * * *'   # 台灣時間 14:05 擷取市場資料
+    - cron: '0 8 * * *'   # 台灣時間 16:00 合成音檔與推播
   workflow_dispatch:
 
 jobs:
@@ -39,16 +37,20 @@ jobs:
       - name: 🧮 第二步：分析多空判斷
         run: python scripts/analyze_bullish_signal_from_prompt.py
 
-      - name: 🧭 檢查是否為台灣假日
+      - name: 🧭 檢查是否為台灣假日（使用 workalendar）
         id: holiday_check
         run: |
-          python -c "
-          from scripts.utils_podcast_tw import is_tw_holiday
-          if is_tw_holiday():
-            print('::set-output name=is_holiday::true')
-          else:
-            print('::set-output name=is_holiday::false')
-                    "
+          echo "import sys
+from workalendar.asia import Taiwan
+from datetime import date
+is_holiday = not Taiwan().is_working_day(date.today())
+print('是否為假日：', is_holiday)
+if is_holiday:
+    print('::set-output name=is_holiday::true')
+else:
+    print('::set-output name=is_holiday::false')
+" > check_holiday.py
+          python check_holiday.py
         shell: bash
 
       - name: ✏️ 第三步：產出逐字稿
