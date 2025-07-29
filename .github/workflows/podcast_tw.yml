@@ -41,15 +41,15 @@ jobs:
         id: holiday_check
         run: |
           echo "import sys
-from workalendar.asia import Taiwan
-from datetime import date
-is_holiday = not Taiwan().is_working_day(date.today())
-print('是否為假日：', is_holiday)
-if is_holiday:
-    print('::set-output name=is_holiday::true')
-else:
-    print('::set-output name=is_holiday::false')
-" > check_holiday.py
+          from workalendar.asia import Taiwan
+          from datetime import date
+          is_holiday = not Taiwan().is_working_day(date.today())
+          print('是否為假日：', is_holiday)
+          if is_holiday:
+          print('::set-output name=is_holiday::true')
+          else:
+          print('::set-output name=is_holiday::false')
+          " > check_holiday.py
           python check_holiday.py
         shell: bash
 
