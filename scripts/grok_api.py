@@ -33,7 +33,8 @@ def ask_grok(prompt: str, role: str = "user", model: str = "grok-4") -> str:
             {"role": role, "content": prompt}
         ],
         "temperature": 0.7,
-        "max_tokens": 512  # 明確指定 max_tokens
+        "max_tokens": 1024,  # 增加 max_tokens 以確保完整回應
+        "stream": False
     }
 
     try:
@@ -44,10 +45,11 @@ def ask_grok(prompt: str, role: str = "user", model: str = "grok-4") -> str:
         response = session.post(GROK_API_URL, headers=headers, json=payload, timeout=30)
         response.raise_for_status()
         data = response.json()
-        reply = data.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
-        if not reply:
-            logger.error("Grok 回傳內容為空")
-            raise RuntimeError("❌ Grok 回傳內容為空")
+        choices = data.get("choices", [])
+        if not choices or not choices[0].get("message", {}).get("content"):
+            logger.error(f"Grok 回傳無效內容: {data}")
+            raise RuntimeError("❌ Grok 回傳內容為空或無效")
+        reply = choices[0]["message"]["content"].strip()
         logger.info("成功從 Grok API 獲取回應")
         return reply
     except requests.RequestException as e:
@@ -62,14 +64,14 @@ def ask_grok_json(prompt: str, role: str = "user", model: str = "grok-4") -> dic
     try:
         # 使用正則表達式提取 JSON
         import re
-        json_match = re.search(r'\{.*\}', reply, re.DOTALL)
+        json_match = re.search(r'\{[\s\S]*\}', reply, re.DOTALL)
         if not json_match:
             logger.error("Grok 回傳資料不包含 JSON 格式")
-            raise ValueError("❌ Grok 回傳不是合法 JSON：\n" + reply)
+            raise ValueError(f"❌ Grok 回傳不是合法 JSON：\n{reply}")
         json_str = json_match.group(0)
         data = json.loads(json_str)
         logger.info("成功解析 JSON 資料")
         return data
     except json.JSONDecodeError as e:
         logger.error(f"JSON 解析失敗: {e}\n原始回應: {reply}")
-        raise ValueError("❌ Grok 回傳不是合法 JSON：\n" + reply)
+        raise ValueError(f"❌ Grok 回傳不是合法 JSON：\n{reply}")
