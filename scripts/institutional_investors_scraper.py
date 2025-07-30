@@ -14,7 +14,7 @@ def fetch_institutional_investors(output_file="data/institutional_investors.json
     try:
         # 設置台北時區
         taipei_tz = pytz.timezone('Asia/Taipei')
-        target_date = (datetime.now(taipei_tz) - timedelta(days=1)).strftime('%Y-%m-%d')
+        target_date = datetime.now(taipei_tz).strftime('%Y-%m-%d')
 
         # 從 TWSE API 獲取三大法人數據
         url = "https://openapi.twse.com.tw/v1/institutional/investors"
