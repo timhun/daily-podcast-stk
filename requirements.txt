@@ -1,7 +1,6 @@
 #requirements.txt
 requests
 feedgen
-xai-sdk
 edge-tts
 yfinance
 mutagen
