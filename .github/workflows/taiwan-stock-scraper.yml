@@ -3,11 +3,7 @@ name: Taiwan Stock Data Scraper
 
 on:
   schedule:
-    # 每週一到週五 台灣時間 15:30 (UTC+8)
-    # UTC時間為 07:30，考慮時區差異
-    - cron: '30 7 * * 1-5'
-  
-  # 允許手動觸發
+    - cron: '30 7 * * 1-5'  # 每週一到週五 15:30 (台北時間，UTC+8)
   workflow_dispatch:
 
 jobs:
@@ -24,11 +20,13 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.9'
+        cache: 'pip'
     
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests pandas pytz
+        pip install -r requirements.txt
+        pip list  # 輸出已安裝套件，方便除錯
     
     - name: Set timezone to Asia/Taipei
       run: |
@@ -44,7 +42,6 @@ jobs:
         python scripts/taiex_scraper.py
       env:
         TZ: Asia/Taipei
-      continue-on-error: true
     
     - name: Run Institutional Investors scraper
       run: |
@@ -52,15 +49,6 @@ jobs:
         python scripts/institutional_investors_scraper.py
       env:
         TZ: Asia/Taipei
-      continue-on-error: true
-    
-    - name: Run TAIEX Futures scraper
-      run: |
-        echo "🔄 執行台指期貨抓取..."
-        python scripts/taiex_futures_scraper.py
-      env:
-        TZ: Asia/Taipei
-      continue-on-error: true
     
     - name: Generate combined report
       run: |
@@ -68,7 +56,6 @@ jobs:
         python scripts/generate_report.py
       env:
         TZ: Asia/Taipei
-      continue-on-error: true
     
     - name: Check if data was updated
       id: check_changes
