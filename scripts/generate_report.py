@@ -13,7 +13,7 @@ def generate_report(taiex_file="data/taiex_data.json", inst_file="data/instituti
     try:
         # 設置台北時區
         taipei_tz = pytz.timezone('Asia/Taipei')
-        target_date = (datetime.now(taipei_tz) - timedelta(days=1)).strftime('%Y-%m-%d')
+        target_date = datetime.now(taipei_tz).strftime('%Y-%m-%d')
 
         # 讀取 TAIEX 數據
         if not os.path.exists(taiex_file):
