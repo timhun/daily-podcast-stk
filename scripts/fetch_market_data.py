@@ -1,5 +1,5 @@
-#fetch_market_data.py
 import os
+import yfinance as yf
 from utils_podcast import get_latest_taiex_summary
 
 def get_stock_index_data_tw():
@@ -21,31 +21,42 @@ def get_stock_index_data_tw():
     else:
         return ["⚠️ 無法取得台股指數資料"]
 
-
 def get_stock_index_data_us():
     """
-    擷取美股主要指數資訊（模擬，可依實際情況擴充）
+    擷取美國主要指數的實際收盤數據（道瓊、標普500、那斯達克）
     """
-    return [
-        "美股道瓊指數：38,000（+200, +0.53%）",
-        "標普500指數：5,000（+30, +0.60%）",
-        "那斯達克指數：16,000（+150, +0.95%）"
-    ]
-
+    try:
+        # 定義美國主要指數的代碼
+        indices = {
+            "道瓊指數": "^DJI",
+            "標普500指數": "^GSPC",
+            "那斯達克指數": "^IXIC"
+        }
+        
+        lines = []
+        for name, ticker in indices.items():
+            # 使用 yfinance 獲取最新數據
+            index_data = yf.Ticker(ticker).history(period="1d")
+            if not index_data.empty:
+                row = index_data.iloc[-1]
+                close = float(row["Close"])
+                change = float(row["Close"] - row["Open"])
+                percent = (change / row["Open"]) * 100
+                lines.append(f"美股{name}：{close:,.2f}（{change:+.2f}, {percent:+.2f}%）")
+            else:
+                lines.append(f"⚠️ 無法取得美股{name}資料")
+        
+        return lines
+    except Exception as e:
+        return ["⚠️ 無法取得美股指數資料，請檢查網路連線或數據源"]
 
 def get_market_summary(mode: str = "tw") -> str:
     """
     回傳整段 market_data 給 prompt 注入使用
     """
     if mode == "tw":
-        sections = get_stock_index_data_tw()
+        return "\n".join(get_stock_index_data_tw())
+    elif mode == "us":
+        return "\n".join(get_stock_index_data_us())
     else:
-        sections = get_stock_index_data_us()
-
-    return "\n".join(sections)
-
-
-# CLI 測試
-if __name__ == "__main__":
-    mode = os.getenv("PODCAST_MODE", "tw")
-    print(get_market_summary(mode))
+        return "\n".join(get_stock_index_data_tw() + get_stock_index_data_us())
