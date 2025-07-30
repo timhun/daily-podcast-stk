@@ -1,5 +1,6 @@
 # .github/workflows/taiwan-stock-scraper.yml
 name: Taiwan Stock Data Scraper
+
 on:
   schedule:
     # 每週一到週五 台灣時間 15:30 (UTC+8)
@@ -49,6 +50,14 @@ jobs:
       run: |
         echo "🔄 執行三大法人買賣超抓取..."
         python scripts/institutional_investors_scraper.py
+      env:
+        TZ: Asia/Taipei
+      continue-on-error: true
+    
+    - name: Run TAIEX Futures scraper
+      run: |
+        echo "🔄 執行台指期貨抓取..."
+        python scripts/taiex_futures_scraper.py
       env:
         TZ: Asia/Taipei
       continue-on-error: true
