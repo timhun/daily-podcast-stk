@@ -4,7 +4,7 @@ from utils_podcast import get_latest_taiex_summary
 
 def get_stock_index_data_tw():
     """
-    擷取台股加權指數資訊，回傳格式化後文字
+    擷取台灣時間今天台股加權指數資訊，回傳格式化後文字
     """
     df = get_latest_taiex_summary()
     if df is not None and not df.empty:
@@ -23,14 +23,17 @@ def get_stock_index_data_tw():
 
 def get_stock_index_data_us():
     """
-    擷取美國主要指數的實際收盤數據（道瓊、標普500、那斯達克）
+    擷取台灣時間今天上午美國主要指數的實際收盤數據（道瓊、標普500、那斯達克）
     """
     try:
         # 定義美國主要指數的代碼
         indices = {
             "道瓊指數": "^DJI",
-            "標普500指數": "^GSPC",
-            "那斯達克指數": "^IXIC"
+            "標普500指數": "^GSPC", 
+            "那斯達克指數": "^IXIC", 
+            "QQQ": "QQQ", 
+            "SPY": "SPY", 
+            "IBIT": "IBIT"
         }
         
         lines = []
