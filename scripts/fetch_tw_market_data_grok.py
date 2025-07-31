@@ -3,9 +3,13 @@ import os
 import json
 from datetime import datetime
 import pytz
-import holidays
+import logging
 
 from grok_api import ask_grok_json
+
+# 設置日誌
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 # 台灣時區
 TW_TZ = pytz.timezone("Asia/Taipei")
@@ -26,32 +30,17 @@ def save_json_to_file(data: dict):
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
-    print(f"✅ 已儲存市場資料 JSON 至 {OUTPUT_FILE}")
+    logger.info(f"✅ 已儲存市場資料 JSON 至 {OUTPUT_FILE}")
 
 def main():
-    # 檢查是否為交易日
-    tw_holidays = holidays.Taiwan(years=2025)
-    if TODAY.weekday() >= 5 or TODAY in tw_holidays:
-        print("❌ 今日非交易日，跳過數據獲取")
-        # 使用回退數據
-        market_data = {
-            "date": TODAY.strftime("%Y-%m-%d"),
-            "taiex": {"close": 23201.52, "change_percent": -0.9},
-            "volume": 3500,
-            "institutions": {"foreign": 50.0, "investment": -10.0, "dealer": 5.0},
-            "moving_averages": {"ma5": 22800.0, "ma10": 22500.0}
-        }
-        save_json_to_file(market_data)
-        return
-
     user_prompt = load_prompt()
-    print("📤 傳送 prompt 給 Grok：\n", user_prompt[:200], "...\n")
+    logger.info("📤 傳送 prompt 給 Grok：\n" + user_prompt[:200] + "...")
     try:
         market_data = ask_grok_json(user_prompt)
-        print("📥 接收市場數據：\n", json.dumps(market_data, ensure_ascii=False, indent=2))
+        logger.info("📥 接收市場數據：\n" + json.dumps(market_data, ensure_ascii=False, indent=2))
         save_json_to_file(market_data)
-    except ValueError as e:
-        print(f"❌ 獲取數據失敗：{e}")
+    except Exception as e:  # Catch all exceptions to include timeout
+        logger.error(f"❌ 獲取數據失敗：{e}")
         # 使用回退數據
         market_data = {
             "date": TODAY.strftime("%Y-%m-%d"),
