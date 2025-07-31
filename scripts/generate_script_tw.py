@@ -63,6 +63,7 @@ def main():
         market_data=market_data_str,
         bullish_signal=bullish_signal,
         ai_topic=ai_topic,
+        theme=theme
     )
 
     print("📨 傳送合成後 prompt 給 Grok...")
