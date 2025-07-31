@@ -1,34 +1,18 @@
 請幫我整理今天依照台灣證券交易所公告的台灣股市加權指數收盤的以下資訊，並以 JSON 格式輸出（不要加任何解說）：
-
-1. 台股加權指數（TAIEX）的收盤點位與漲跌幅（百分比，基於前一交易日）
-2. 今日成交金額（單位：新台幣億元）
-3. 三大法人買賣超金額（外資、投信、自營商，單位：新台幣億元）
-4. 今日加權指數的均線：5日（ma5）、10日（ma10）、20日（ma20），單位：點數
-5. 今日 MACD 數值（包含 DIF、MACD、Histogram，基於 12日、26日 EMA 和 9日信號線，單位：點數）
-
-請以以下格式輸出，不要多加說明：
-
-```json
+- date: 日期 (YYYY-MM-DD)
+- taiex: 收盤價 (close, 浮點數) 和漲跌百分比 (change_percent, 浮點數)
+- volume: 成交量 (整數，單位：億)
+- institutions: 外資 (foreign, 浮點數)、投信 (investment, 浮點數)、自營商 (dealer, 浮點數) 買賣超金額 (單位：億)
+- moving_averages: 5日均線 (ma5, 浮點數) 和 10日均線 (ma10, 浮點數)
+確保：
+1. 所有數值為有效數字（浮點數使用小數點後至少一位，例如 16510.0；整數不帶小數點）。
+2. JSON 格式完整，無多餘逗號或未閉合括號。
+3. 僅返回 JSON 內容，無額外文字或程式碼塊標記（```）。
+示例：
 {
-  "date": "2025-07-29",
-  "taiex": {
-    "close": 23373.12,
-    "change_percent": 0.24
-  },
-  "volume": 3407,
-  "institutions": {
-    "foreign": -50.3,
-    "investment": 12.1,
-    "dealer": -5.7
-  },
-  "moving_averages": {
-    "ma5": 23288.5,
-    "ma10": 23170.3,
-    "ma20": 22983.6
-  },
-  "macd": {
-    "dif": 58.2,
-    "macd": 42.1,
-    "histogram": 16.1
-  }
+  "date": "2025-07-31",
+  "taiex": {"close": 23201.52, "change_percent": -0.9},
+  "volume": 3500,
+  "institutions": {"foreign": 50.0, "investment": -10.0, "dealer": 5.0},
+  "moving_averages": {"ma5": 22800.0, "ma10": 22500.0}
 }
