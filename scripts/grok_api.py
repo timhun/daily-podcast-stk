@@ -34,15 +34,15 @@ def ask_grok(prompt: str, role: str = "user", model: str = "grok-4") -> str:
             {"role": role, "content": prompt}
         ],
         "temperature": 0.7,
-        "max_tokens": 2048,  # 增加 max_tokens 以避免截斷
+        "max_tokens": 2048,
         "stream": False
     }
 
     try:
         session = requests.Session()
-        retries = Retry(total=3, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
+        retries = Retry(total=5, backoff_factor=2, status_forcelist=[429, 500, 502, 503, 504])  # Increased retries and backoff
         session.mount("https://", HTTPAdapter(max_retries=retries))
-        response = session.post(GROK_API_URL, headers=headers, json=payload, timeout=30)
+        response = session.post(GROK_API_URL, headers=headers, json=payload, timeout=60)  # Increased timeout to 60s
         response.raise_for_status()
         data = response.json()
         choices = data.get("choices", [])
@@ -52,6 +52,9 @@ def ask_grok(prompt: str, role: str = "user", model: str = "grok-4") -> str:
         reply = choices[0]["message"]["content"].strip()
         logger.info("成功從 Grok API 獲取回應")
         return reply
+    except requests.Timeout as e:
+        logger.error(f"Grok API 請求超時: {e}")
+        raise
     except requests.RequestException as e:
         logger.error(f"Grok API 請求失敗: {e}")
         raise
@@ -62,14 +65,12 @@ def ask_grok_json(prompt: str, role: str = "user", model: str = "grok-4") -> dic
     """
     reply = ask_grok(prompt, role=role, model=model)
     try:
-        # 使用正則表達式提取 JSON
         json_match = re.search(r'\{[\s\S]*\}', reply, re.DOTALL)
         if not json_match:
             logger.error("Grok 回傳資料不包含 JSON 格式")
             raise ValueError(f"❌ Grok 回傳不是合法 JSON：\n{reply}")
         json_str = json_match.group(0)
-        # 修復不完整浮點數
-        json_str = re.sub(r'(\d+)\.(?!\d)', r'\1.0', json_str)  # 將 16510. 改為 16510.0
+        json_str = re.sub(r'(\d+)\.(?!\d)', r'\1.0', json_str)  # 修復不完整浮點數
         json_str = re.sub(r',\s*}', r'}', json_str)  # 移除末尾多餘逗號
         json_str = re.sub(r',\s*,', r',', json_str)  # 移除連續逗號
         data = json.loads(json_str)
