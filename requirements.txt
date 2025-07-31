@@ -13,3 +13,4 @@ numpy==1.26.4
 pandas==2.2.2
 workalendar>=17.0.0
 holidays
+boto3
