@@ -3,6 +3,7 @@ import os
 import requests
 import json
 import logging
+import re
 from time import sleep
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -33,12 +34,11 @@ def ask_grok(prompt: str, role: str = "user", model: str = "grok-4") -> str:
             {"role": role, "content": prompt}
         ],
         "temperature": 0.7,
-        "max_tokens": 1024,  # 增加 max_tokens 以確保完整回應
+        "max_tokens": 2048,  # 增加 max_tokens 以避免截斷
         "stream": False
     }
 
     try:
-        # 添加重試機制
         session = requests.Session()
         retries = Retry(total=3, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
         session.mount("https://", HTTPAdapter(max_retries=retries))
@@ -63,12 +63,15 @@ def ask_grok_json(prompt: str, role: str = "user", model: str = "grok-4") -> dic
     reply = ask_grok(prompt, role=role, model=model)
     try:
         # 使用正則表達式提取 JSON
-        import re
         json_match = re.search(r'\{[\s\S]*\}', reply, re.DOTALL)
         if not json_match:
             logger.error("Grok 回傳資料不包含 JSON 格式")
             raise ValueError(f"❌ Grok 回傳不是合法 JSON：\n{reply}")
         json_str = json_match.group(0)
+        # 修復不完整浮點數
+        json_str = re.sub(r'(\d+)\.(?!\d)', r'\1.0', json_str)  # 將 16510. 改為 16510.0
+        json_str = re.sub(r',\s*}', r'}', json_str)  # 移除末尾多餘逗號
+        json_str = re.sub(r',\s*,', r',', json_str)  # 移除連續逗號
         data = json.loads(json_str)
         logger.info("成功解析 JSON 資料")
         return data
