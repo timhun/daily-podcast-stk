@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<rss xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:ns2="http://purl.org/rss/1.0/modules/content/" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><ns0:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml" rel="self" /><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link></image><language>zh-TW</language><lastBuildDate>Fri, 01 Aug 2025 21:12:53 +0000</lastBuildDate><ns1:author>幫幫忙AI投資腦</ns1:author><ns1:category text="Business"><ns1:category text="Investing" /></ns1:category><ns1:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg" /><ns1:explicit>no</ns1:explicit><ns1:owner><ns1:name>幫幫忙AI投資腦</ns1:name><ns1:email>tim.oneway@gmail.com</ns1:email></ns1:owner><item><title>幫幫忙每日投資快報 - 美股（20250802_us）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+<rss xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:ns2="http://purl.org/rss/1.0/modules/content/" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><ns0:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml" rel="self" /><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link></image><language>zh-TW</language><lastBuildDate>Sat, 02 Aug 2025 21:11:50 +0000</lastBuildDate><ns1:author>幫幫忙AI投資腦</ns1:author><ns1:category text="Business"><ns1:category text="Investing" /></ns1:category><ns1:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg" /><ns1:explicit>no</ns1:explicit><ns1:owner><ns1:name>幫幫忙AI投資腦</ns1:name><ns1:email>tim.oneway@gmail.com</ns1:email></ns1:owner><item><title>幫幫忙每日投資快報 - 美股（20250803_us）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 
 
@@ -16,7 +16,7 @@
 
 📮 主持人：幫幫忙
 
-🎯 今日摘要：各位聽眾，大家好，我是幫幫忙，這裡是《幫幫忙說美股》，今天是2025年8月2日，我們來聊聊最新的美股動態、ETF分析，以及AI趨勢的投資機會。根據台灣時間今日凌晨的美股收盤數據，讓我們先來檢視整體市場表現。首先，道瓊工業指數收在43,588.58點，下跌193.22點，跌幅0.44%。標普500指數則是6,238.01點，下跌49.27點，跌幅0.78%。那斯達克綜合指數收在20,650.13點，</description><ns2:encoded>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+🎯 今日摘要：以下是根據使用者提供的結構和數據，撰寫的完整播客腳本。我以專業的科技與投資口吻撰寫，融合美股、ETF分析，以及最新的AI趨勢（基於2025年8月的虛構但合理的趨勢推斷，例如AI在生成式工具和投資應用的進展）。腳本維持中性、資訊導向，並融入全球資金流、避險情緒等投資視角。日期設定為2025年08月03日（週末），因此聚焦回顧與前瞻。---📅 2025年08月03日🎙️ 主題：週末投資整理與 AI 趨</description><ns2:encoded>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 
 
@@ -33,7 +33,7 @@
 
 📮 主持人：幫幫忙
 
-🎯 今日摘要：各位聽眾，大家好，我是幫幫忙，這裡是《幫幫忙說美股》，今天是2025年8月2日，我們來聊聊最新的美股動態、ETF分析，以及AI趨勢的投資機會。根據台灣時間今日凌晨的美股收盤數據，讓我們先來檢視整體市場表現。首先，道瓊工業指數收在43,588.58點，下跌193.22點，跌幅0.44%。標普500指數則是6,238.01點，下跌49.27點，跌幅0.78%。那斯達克綜合指數收在20,650.13點，</ns2:encoded><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250802_us.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250802_us.mp3" length="2262240" type="audio/mpeg" /><pubDate>Sat, 02 Aug 2025 00:00:00 +0800</pubDate><ns1:duration>0:06:17</ns1:duration></item><item><title>幫幫忙每日投資快報 - 台股（20250802_tw）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+🎯 今日摘要：以下是根據使用者提供的結構和數據，撰寫的完整播客腳本。我以專業的科技與投資口吻撰寫，融合美股、ETF分析，以及最新的AI趨勢（基於2025年8月的虛構但合理的趨勢推斷，例如AI在生成式工具和投資應用的進展）。腳本維持中性、資訊導向，並融入全球資金流、避險情緒等投資視角。日期設定為2025年08月03日（週末），因此聚焦回顧與前瞻。---📅 2025年08月03日🎙️ 主題：週末投資整理與 AI 趨</ns2:encoded><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250803_us.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250803_us.mp3" length="859680" type="audio/mpeg" /><pubDate>Sun, 03 Aug 2025 00:00:00 +0800</pubDate><ns1:duration>0:02:23</ns1:duration></item><item><title>幫幫忙每日投資快報 - 台股（20250802_tw）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 
 
