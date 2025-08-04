@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<rss xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:ns2="http://purl.org/rss/1.0/modules/content/" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><ns0:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml" rel="self" /><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link></image><language>zh-TW</language><lastBuildDate>Sun, 03 Aug 2025 21:12:01 +0000</lastBuildDate><ns1:author>幫幫忙AI投資腦</ns1:author><ns1:category text="Business"><ns1:category text="Investing" /></ns1:category><ns1:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg" /><ns1:explicit>no</ns1:explicit><ns1:owner><ns1:name>幫幫忙AI投資腦</ns1:name><ns1:email>tim.oneway@gmail.com</ns1:email></ns1:owner><item><title>幫幫忙每日投資快報 - 美股（20250804_us）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+<rss xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:ns1="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:ns2="http://purl.org/rss/1.0/modules/content/" version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/"><channel><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><ns0:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml" rel="self" /><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link></image><language>zh-TW</language><lastBuildDate>Mon, 04 Aug 2025 21:14:29 +0000</lastBuildDate><ns1:author>幫幫忙AI投資腦</ns1:author><ns1:category text="Business"><ns1:category text="Investing" /></ns1:category><ns1:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg" /><ns1:explicit>no</ns1:explicit><ns1:owner><ns1:name>幫幫忙AI投資腦</ns1:name><ns1:email>tim.oneway@gmail.com</ns1:email></ns1:owner><item><title>幫幫忙每日投資快報 - 美股（20250805_us）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 
 
@@ -16,7 +16,7 @@
 
 📮 主持人：幫幫忙
 
-🎯 今日摘要：以下是根據使用者提供的腳本結構和數據，撰寫的完整播客腳本。我以專業的科技與投資口吻撰寫，融合美股、ETF 分析，以及虛構但合理的最新 AI 趨勢（基於2025年情境，融入當前AI發展的延伸，如AI大模型進化與投資應用）。腳本維持簡潔、資訊豐富，並使用投資術語如“資金流入”、“修正風險”、“避險情緒”等，以營造專業感。日期設定為2025年08月04日，數據已融入分析中。---📅 2025年08月04</description><ns2:encoded>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+🎯 今日摘要：各位聽眾朋友，大家好！我是幫幫忙，這裡是《幫幫忙說美股》，今天是2025年8月5日，我們來聊聊最新的美股動態、科技投資趨勢，以及AI領域的熱門話題。根據台灣時間今日凌晨收盤的美股數據，讓我們先來快速回顧一下整體市場表現。首先，道瓊工業指數收在44,173.64點，上漲449.64點，漲幅1.03%；標普500指數來到6,329.94點，漲58.23點，漲幅0.93%；那斯達克綜合指數則是21,05</description><ns2:encoded>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 
 
@@ -33,7 +33,7 @@
 
 📮 主持人：幫幫忙
 
-🎯 今日摘要：以下是根據使用者提供的腳本結構和數據，撰寫的完整播客腳本。我以專業的科技與投資口吻撰寫，融合美股、ETF 分析，以及虛構但合理的最新 AI 趨勢（基於2025年情境，融入當前AI發展的延伸，如AI大模型進化與投資應用）。腳本維持簡潔、資訊豐富，並使用投資術語如“資金流入”、“修正風險”、“避險情緒”等，以營造專業感。日期設定為2025年08月04日，數據已融入分析中。---📅 2025年08月04</ns2:encoded><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250804_us.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250804_us.mp3" length="1898640" type="audio/mpeg" /><pubDate>Mon, 04 Aug 2025 00:00:00 +0800</pubDate><ns1:duration>0:05:16</ns1:duration></item><item><title>幫幫忙每日投資快報 - 台股（20250804_tw）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+🎯 今日摘要：各位聽眾朋友，大家好！我是幫幫忙，這裡是《幫幫忙說美股》，今天是2025年8月5日，我們來聊聊最新的美股動態、科技投資趨勢，以及AI領域的熱門話題。根據台灣時間今日凌晨收盤的美股數據，讓我們先來快速回顧一下整體市場表現。首先，道瓊工業指數收在44,173.64點，上漲449.64點，漲幅1.03%；標普500指數來到6,329.94點，漲58.23點，漲幅0.93%；那斯達克綜合指數則是21,05</ns2:encoded><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250805_us.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250805_us.mp3" length="2578608" type="audio/mpeg" /><pubDate>Tue, 05 Aug 2025 00:00:00 +0800</pubDate><ns1:duration>0:07:09</ns1:duration></item><item><title>幫幫忙每日投資快報 - 台股（20250804_tw）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 
 
