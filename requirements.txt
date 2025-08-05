@@ -14,6 +14,6 @@ pandas==2.2.2
 workalendar>=17.0.0
 holidays
 boto3
-vectorbt
+#vectorbt
 twstock
 numba==0.58.1
