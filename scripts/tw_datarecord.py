@@ -3,7 +3,7 @@ import os
 from time import sleep
 import pandas as pd
 import pytz
-import vectorbt as vbt
+#import vectorbt as vbt
 import twstock
 import yfinance as yf
 
