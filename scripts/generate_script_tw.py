@@ -21,8 +21,8 @@ def get_fallback_transcript(market_data: dict, today_display: str) -> str:
 大家好，我是幫幫忙，歡迎收聽《幫幫忙說台股》！今天是{today_display}，由於技術問題，無法獲取最新市場分析，以下為簡訊播報。
 
 1. **台股概況**：加權指數收盤 {market_data['taiex']['close']} 點，漲跌幅 {market_data['taiex']['change_percent']}%，成交量 {market_data['volume']} 億元。支撐位約 {market_data['moving_averages']['ma5']-200:.2f} 點，壓力位約 {market_data['moving_averages']['ma5']+200:.2f} 點。
-2. **0050 ETF**：收盤價約 185.00 元，支撐位 183.00 元，壓力位 188.00 元。
-3. **交易策略**：短線偏多，建議逢低布局，止損設在 182.00 元。
+2. **0050 ETF**：收盤價約 85.00 元，支撐位 83.00 元，壓力位 88.00 元。
+3. **交易策略**：短線偏多，建議逢低布局，止損設在 82.00 元。
 4. **三大法人**：外資買超 {market_data['institutions']['foreign']} 億元，投信賣超 {market_data['institutions']['investment']} 億元，自營商買超 {market_data['institutions']['dealer']} 億元。
 5. **期貨動向**：外資期貨淨多單約 2 萬口。
 6. **AI 新聞**：台積電持續推進 CPO 技術，預計 2026 年放量，利好 AI 供應鏈。
