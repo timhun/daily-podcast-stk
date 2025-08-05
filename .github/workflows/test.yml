@@ -21,7 +21,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Update data
-        run: python update.py
+        run: python tw_datarecord.py
 
       - name: Commit and push if changes
         run: |
