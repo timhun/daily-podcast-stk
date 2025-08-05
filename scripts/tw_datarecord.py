@@ -5,7 +5,7 @@ import pandas as pd
 import pytz
 import vectorbt as vbt
 import twstock
-import yfinance as yf  # 用於驗證股票代碼
+import yfinance as yf
 
 # 定義要處理的股票/ETF代碼
 target_codes = {
@@ -39,7 +39,7 @@ def get_data_since_last_record(stock_num, stock_name, base_path='./data/'):
     csv_path = f'{base_path}{stock_num}.csv'
     tz_taipei = pytz.timezone('Asia/Taipei')
     today = datetime.now(tz_taipei).replace(hour=0, minute=0, second=0, microsecond=0)
-    start_date = today - timedelta(days=59)  # 預設：過去59天
+    start_date = today - timedelta(days=59)
 
     # 驗證股票代碼
     try:
@@ -106,7 +106,7 @@ def get_data_since_last_record(stock_num, stock_name, base_path='./data/'):
         with open('log.txt', 'a', encoding='utf-8') as log:
             log.write(f"[{datetime.now()}] {stock_num} 更新 {len(new_data)} 筆資料\n")
 
-        sleep(2)  # 避免觸發rate limit
+        sleep(2)
         return new_data
 
     except Exception as e:
@@ -117,14 +117,11 @@ def get_data_since_last_record(stock_num, stock_name, base_path='./data/'):
 
 def main():
     """主程式：僅處理2330和0050"""
-    # 確保資料目錄存在
     os.makedirs('./data/', exist_ok=True)
 
-    # 初始化日誌檔案
     with open('log.txt', 'a', encoding='utf-8') as log:
         log.write(f"[{datetime.now()}] 開始執行股票資料下載（2330, 0050）\n")
 
-    # 僅處理指定的股票/ETF
     for stock_num, stock_name in target_codes.items():
         print(f"正在處理: {stock_num} - {stock_name}")
         new_data = get_data_since_last_record(stock_num, stock_name)
