@@ -16,3 +16,4 @@ holidays
 boto3
 vectorbt
 twstock
+numba==0.58.1
