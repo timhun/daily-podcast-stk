@@ -68,7 +68,7 @@ def get_data_since_last_record(stock_num, stock_name, base_path='./data/'):
                         last_record = last_record.tz_localize('Asia/Taipei', ambiguous='infer')
                     else:
                         last_record = last_record.tz_convert('Asia/Taipei')
-                    start_date = last_record + timedelta(minutes=5)
+                    start_date = last_record + timedelta(minutes=30)
         except Exception as e:
             print(f"[{stock_num}] CSV處理錯誤: {e}")
             with open('log.txt', 'a', encoding='utf-8') as log:
@@ -77,12 +77,12 @@ def get_data_since_last_record(stock_num, stock_name, base_path='./data/'):
     end_date = today + timedelta(hours=14)
 
     try:
-        # 使用 yfinance 下載5分鐘K線資料
+        # 使用 yfinance 下載30分鐘K線資料
         ticker = yf.Ticker(f"{stock_num}.TW")
         new_data = ticker.history(
             start=start_date,
             end=end_date,
-            interval='5m',
+            interval='30m',
             auto_adjust=True,
             prepost=False
         )
