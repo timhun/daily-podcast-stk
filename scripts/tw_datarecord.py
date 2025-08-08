@@ -3,9 +3,8 @@ import os
 from time import sleep
 import pandas as pd
 import pytz
-import vectorbt as vbt
-import twstock
 import yfinance as yf
+import twstock
 
 # 定義要處理的股票/ETF代碼
 target_codes = {
@@ -78,14 +77,15 @@ def get_data_since_last_record(stock_num, stock_name, base_path='./data/'):
     end_date = today + timedelta(hours=14)
 
     try:
-        yf_data = vbt.YFData.download(
-            f"{stock_num}.TW",
-            start=start_date.strftime('%Y-%m-%d %H:%M:%S%z'),
-            end=end_date.strftime('%Y-%m-%d %H:%M:%S%z'),
+        # 使用 yfinance 下載5分鐘K線資料
+        ticker = yf.Ticker(f"{stock_num}.TW")
+        new_data = ticker.history(
+            start=start_date,
+            end=end_date,
             interval='5m',
-            missing_index='drop'
+            auto_adjust=True,
+            prepost=False
         )
-        new_data = yf_data.get()
 
         if new_data.empty:
             print(f"[{stock_num}] 無新資料下載: {stock_name}")
@@ -93,20 +93,25 @@ def get_data_since_last_record(stock_num, stock_name, base_path='./data/'):
                 log.write(f"[{datetime.now()}] {stock_num} 無新資料\n")
             return pd.DataFrame()
 
+        # 標準化欄位名稱，與 vectorbt 格式一致
+        new_data = new_data.reset_index()
+        new_data = new_data[['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume']]
+        new_data['Datetime'] = new_data['Datetime'].dt.tz_convert('Asia/Taipei')
+
         # 避免重複資料
         if os.path.exists(csv_path):
             existing_data = pd.read_csv(csv_path)
-            new_data = new_data[~new_data.index.isin(existing_data['Datetime'])]
+            new_data = new_data[~new_data['Datetime'].isin(existing_data['Datetime'])]
             if not new_data.empty:
-                new_data.to_csv(csv_path, mode='a', header=False, encoding='utf-8')
+                new_data.to_csv(csv_path, mode='a', header=False, index=False, encoding='utf-8')
         else:
-            new_data.to_csv(csv_path, encoding='utf-8')
+            new_data.to_csv(csv_path, index=False, encoding='utf-8')
 
         print(f"[{stock_num}] 資料已更新，共 {len(new_data)} 筆: {stock_name}")
         with open('log.txt', 'a', encoding='utf-8') as log:
             log.write(f"[{datetime.now()}] {stock_num} 更新 {len(new_data)} 筆資料\n")
 
-        sleep(2)
+        sleep(2)  # 避免觸發速率限制
         return new_data
 
     except Exception as e:
