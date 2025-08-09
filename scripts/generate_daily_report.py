@@ -1,180 +1,158 @@
 #!/usr/bin/env python3
 # scripts/generate_daily_report.py
-import os, datetime, json
-import yfinance as yf
+import datetime
 import pandas as pd
-import numpy as np
-import requests
-from math import isnan
+import yfinance as yf
+from notion_client import Client
 
-TODAY = datetime.datetime.utcnow().date()
-START = TODAY - datetime.timedelta(days=730)  # 約 2 年
-TICKERS = {"QQQ": "QQQ", "0050": "0050.TW"}
+# ===== 設定 =====
+TICKERS = {
+    "QQQ": "QQQ",
+    "0050": "0050.TW"
+}
 
-NOTION_TOKEN = os.getenv("NOTION_TOKEN")
-NOTION_PARENT_PAGE_ID = os.getenv("NOTION_PARENT_PAGE_ID")
-NOTION_VERSION = "2022-06-28"
+START = datetime.date.today() - datetime.timedelta(days=730)  # 近兩年
+TODAY = datetime.date.today()
 REPORT_FILE = "daily_report.md"
 
+NOTION_TOKEN = "你的_NOTION_TOKEN"
+NOTION_DATABASE_ID = "你的_DATABASE_ID"
+notion = Client(auth=NOTION_TOKEN)
+
+# ===== 下載股價資料 =====
 def fetch_df(ticker):
-    df = yf.download(ticker, start=START.strftime("%Y-%m-%d"), end=(TODAY + datetime.timedelta(days=1)).strftime("%Y-%m-%d"))
+    df = yf.download(
+        ticker,
+        start=START.strftime("%Y-%m-%d"),
+        end=(TODAY + datetime.timedelta(days=1)).strftime("%Y-%m-%d"),
+        progress=False
+    )
     df = df.dropna()
     return df
 
-def backtest_ma(df, short, long):
-    df = df.copy()
-    df['ma_s'] = df['Close'].rolling(window=short).mean()
-    df['ma_l'] = df['Close'].rolling(window=long).mean()
-    df['signal'] = ((df['ma_s'] > df['ma_l']) & (df['ma_s'].shift(1) <= df['ma_l'].shift(1))).astype(int)
-    returns = []
-    equity = [1.0]
-    for i in range(len(df)-1):
-        if df['signal'].iat[i] == 1:
-            r = (df['Close'].iat[i+1] - df['Close'].iat[i]) / df['Close'].iat[i]
-            returns.append(r)
-            equity.append(equity[-1] * (1 + r))
-    return calc_stats(returns, equity)
+# ===== 回測策略：移動平均 =====
+def backtest_ma(df, short_window, long_window):
+    if len(df) < long_window + 2:
+        return None
+    df["MA_S"] = df["Close"].rolling(window=short_window).mean()
+    df["MA_L"] = df["Close"].rolling(window=long_window).mean()
+    df["Signal"] = 0
+    df.loc[df["MA_S"] > df["MA_L"], "Signal"] = 1
+    df["Position"] = df["Signal"].diff()
+    trades = df[df["Position"] != 0]
+    if trades.empty:
+        return None
+    returns = (df["Close"].pct_change() * df["Signal"].shift(1)).dropna()
+    win_rate = (returns > 0).sum() / len(returns)
+    return {"type": "MA", "params": (short_window, long_window), "win_rate": win_rate}
 
-def backtest_mean_reversion(df, lookback=5, k=1.0):
-    df = df.copy()
-    df['m'] = df['Close'].rolling(window=lookback).mean()
-    df['s'] = df['Close'].rolling(window=lookback).std()
-    df['signal'] = ((df['Close'] < df['m'] - k*df['s'])).astype(int)
-    returns = []
-    equity = [1.0]
-    for i in range(len(df)-1):
-        if df['signal'].iat[i] == 1:
-            r = (df['Close'].iat[i+1] - df['Close'].iat[i]) / df['Close'].iat[i]
-            returns.append(r)
-            equity.append(equity[-1] * (1 + r))
-    return calc_stats(returns, equity)
+# ===== 回測策略：均值回歸 =====
+def backtest_mean_reversion(df, lookback=5, k=2):
+    if len(df) < lookback + 1:
+        return None
+    m = df["Close"].rolling(window=lookback).mean()
+    sdev = df["Close"].rolling(window=lookback).std()
+    signal = df["Close"] < (m - k * sdev)
+    returns = (df["Close"].pct_change().shift(-1) * signal).dropna()
+    if returns.empty:
+        return None
+    win_rate = (returns > 0).sum() / len(returns)
+    return {"type": "MR", "params": (lookback, f"k={k}"), "win_rate": win_rate}
 
-def calc_stats(returns, equity):
-    total = len(returns)
-    wins = sum(1 for r in returns if r > 0)
-    winrate = (wins/total*100) if total>0 else 0.0
-    avg = np.mean(returns) if total>0 else 0.0
-    cum = np.array(equity)
-    peak = np.maximum.accumulate(cum)
-    dd = np.max((peak - cum) / peak) if len(cum)>0 else 0.0
-    return {"trades": total, "wins": wins, "winrate": round(winrate,2), "avg": round(avg*100,4), "mdd": round(dd*100,4), "equity": equity}
-
+# ===== 找出最佳策略 =====
 def pick_best_strategy(df):
-    # 測試幾組 MA 參數
-    ma_candidates = []
-    for s in [3,5,8]:
-        for l in [10,20,30]:
-            if s < l:
-                ma_candidates.append((s,l))
-    best = {"type": None, "params": None, "stats": None}
-    # test MA
-    for s,l in ma_candidates:
+    strategies = []
+    for s, l in [(5, 20), (10, 50), (20, 100)]:
         res = backtest_ma(df, s, l)
-        if best["stats"] is None or res["winrate"] > best["stats"]["winrate"]:
-            best.update({"type":"MA","params":(s,l),"stats":res})
-    # test mean reversion (k values)
-    for k in [0.8, 1.0, 1.2, 1.5]:
+        if res:
+            strategies.append(res)
+    for k in [1, 1.5, 2]:
         res = backtest_mean_reversion(df, lookback=5, k=k)
-        if res["winrate"] > best["stats"]["winrate"]:
-            best.update({"type":"MR","params":("lookback=5","k="+str(k)),"stats":res})
-    return best
+        if res:
+            strategies.append(res)
+    if not strategies:
+        return None
+    return max(strategies, key=lambda x: x["win_rate"])
 
+# ===== 當日訊號判斷 =====
 def today_signal(df, strategy):
-    # 基於最後一天資料判斷今日是否有信號 (以最後一列為最新)
-    if strategy["type"] == "MA":
-        s,l = strategy["params"]
-        ma_s = df['Close'].rolling(window=s).mean()
-        ma_l = df['Close'].rolling(window=l).mean()
-        if len(df) < l: return "資料不足"
-        last = len(df)-1
-        cond = (ma_s.iat[last] > ma_l.iat[last]) and (ma_s.iat[last-1] <= ma_l.iat[last-1])
-        return "買入" if cond else "無信號"
-    else:
-        # mean reversion
-        lookback = 5
-        k = float(strategy["params"][1].split("=")[1])
-        m = df['Close'].rolling(window=lookback).mean()
-        s = df['Close'].rolling(window=lookback).std()
-        last = len(df)-1
-        if pd.isna(m.iat[last]) or pd.isna(s.iat[last]): return "資料不足"
-        cond = df['Close'].iat[last] < m.iat[last] - k * s.iat[last]
-        return "買入" if cond else "無信號"
+    try:
+        if strategy["type"] == "MA":
+            s, l = strategy["params"]
+            if len(df) < l + 2:
+                return "資料不足"
+            ma_s = df['Close'].rolling(window=s).mean()
+            ma_l = df['Close'].rolling(window=l).mean()
+            last = len(df) - 1
+            cond = (ma_s.iloc[last] > ma_l.iloc[last]) and (ma_s.iloc[last-1] <= ma_l.iloc[last-1])
+            return "買入" if cond else "無信號"
 
+        elif strategy["type"] == "MR":
+            lookback = 5
+            k = float(strategy["params"][1].split("=")[1])
+            if len(df) < lookback + 1:
+                return "資料不足"
+            m = df['Close'].rolling(window=lookback).mean()
+            sdev = df['Close'].rolling(window=lookback).std()
+            last = len(df) - 1
+            if pd.isna(m.iloc[last]) or pd.isna(sdev.iloc[last]):
+                return "資料不足"
+            cond = df['Close'].iloc[last] < m.iloc[last] - k * sdev.iloc[last]
+            return "買入" if cond else "無信號"
+
+        else:
+            return "策略類型錯誤"
+    except Exception as e:
+        return f"計算錯誤: {e}"
+
+# ===== 產生 Markdown =====
 def make_markdown(results):
-    md = []
-    md.append(f"# 每日策略報告 — {TODAY.isoformat()}\n")
-    for ticker, info in results.items():
-        md.append(f"## {ticker}\n")
+    md = [f"# 每日策略報告 ({TODAY.isoformat()})\n"]
+    for name, info in results.items():
+        md.append(f"## {name}\n")
+        if not info["best"]:
+            md.append(f"- **狀態**：{info['signal']}\n")
+            continue
         md.append(f"- **選擇的策略類型**：{info['best']['type']}\n")
-        md.append(f"- **參數**：{info['best']['params']}\n")
-        st = info['best']['stats']
-        md.append(f"- **近 2 年模擬交易（僅含有交易日）**：交易次數 {st['trades']} 次，勝率 {st['winrate']}%，平均單筆報酬 {st['avg']}%，最大回撤 {st['mdd']}%\n")
-        md.append(f"- **今日判斷**：{info['signal']}\n")
-        md.append("\n---\n")
-    md.append("\n> 以上為自動化回測與簡單訊號判定，僅供參考。\n")
+        md.append(f"- **策略參數**：{info['best']['params']}\n")
+        md.append(f"- **歷史勝率**：{info['best']['win_rate']:.2%}\n")
+        md.append(f"- **當日訊號**：{info['signal']}\n")
+        md.append("")
     return "\n".join(md)
 
-def create_notion_page(title, markdown_content):
-    if not NOTION_TOKEN or not NOTION_PARENT_PAGE_ID:
-        print("Notion token or parent page id not set; skip Notion upload.")
-        return None
-    url = "https://api.notion.com/v1/pages"
-    headers = {
-        "Authorization": f"Bearer {NOTION_TOKEN}",
-        "Notion-Version": NOTION_VERSION,
-        "Content-Type": "application/json"
-    }
-    payload = {
-        "parent": { "page_id": NOTION_PARENT_PAGE_ID },
-        "properties": {
-            "title": [
-                {
-                    "type": "text",
-                    "text": {"content": title}
-                }
-            ]
+# ===== 寫入 Notion =====
+def create_notion_page(title, content):
+    notion.pages.create(
+        parent={"database_id": NOTION_DATABASE_ID},
+        properties={
+            "Name": {"title": [{"text": {"content": title}}]}
         },
-        "children": [
-            {
-                "object": "block",
-                "type": "code",
-                "code": {
-                    "rich_text": [
-                        {"type": "text", "text": {"content": markdown_content}}
-                    ],
-                    "language": "markdown"
-                }
-            }
+        children=[
+            {"object": "block", "type": "paragraph", "paragraph": {"text": [{"type": "text", "text": {"content": content}}]}}
         ]
-    }
-    r = requests.post(url, headers=headers, data=json.dumps(payload))
-    if r.status_code in (200,201):
-        print("Notion page created.")
-        return r.json()
-    else:
-        print("Notion API error:", r.status_code, r.text)
-        return None
+    )
 
+# ===== 主程式 =====
 def main():
     results = {}
     for name, ticker in TICKERS.items():
         try:
             df = fetch_df(ticker)
             if df.shape[0] < 30:
-                print(f"{ticker} 資料不足")
                 results[name] = {"best": None, "signal": "資料不足"}
                 continue
             best = pick_best_strategy(df)
+            if not best:
+                results[name] = {"best": None, "signal": "策略計算錯誤"}
+                continue
             sig = today_signal(df, best)
             results[name] = {"best": best, "signal": sig}
         except Exception as e:
-            print("Error for", ticker, e)
-            results[name] = {"best": None, "signal": "錯誤"}
+            results[name] = {"best": None, "signal": f"錯誤: {e}"}
 
     md = make_markdown(results)
     with open(REPORT_FILE, "w", encoding="utf-8") as f:
         f.write(md)
-    # Create Notion page
     title = f"每日策略報告 {TODAY.isoformat()}"
     create_notion_page(title, md)
     print("Report generated:", REPORT_FILE)
