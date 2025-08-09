@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # scripts/generate_daily_report.py
+import os
 import datetime
 import pandas as pd
 import yfinance as yf
@@ -15,9 +16,25 @@ START = datetime.date.today() - datetime.timedelta(days=730)  # 近兩年
 TODAY = datetime.date.today()
 REPORT_FILE = "daily_report.md"
 
-NOTION_TOKEN = "你的_NOTION_TOKEN"
-NOTION_DATABASE_ID = "你的_DATABASE_ID"
-notion = Client(auth=NOTION_TOKEN)
+# 從環境變數讀取 Notion 認證資訊
+NOTION_TOKEN = os.getenv("NOTION_TOKEN")
+NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
+
+# 簡單檢查
+if not NOTION_TOKEN:
+    print("Error: NOTION_TOKEN 未設定或為空")
+    exit(1)
+if not NOTION_DATABASE_ID:
+    print("Error: NOTION_DATABASE_ID 未設定或為空")
+    exit(1)
+
+# 建立 Notion client
+try:
+    notion = Client(auth=NOTION_TOKEN)
+    print("Notion Client 初始化成功")
+except Exception as e:
+    print(f"Notion Client 初始化失敗: {e}")
+    exit(1)
 
 # ===== 下載股價資料 =====
 def fetch_df(ticker):
@@ -122,15 +139,19 @@ def make_markdown(results):
 
 # ===== 寫入 Notion =====
 def create_notion_page(title, content):
-    notion.pages.create(
-        parent={"database_id": NOTION_DATABASE_ID},
-        properties={
-            "Name": {"title": [{"text": {"content": title}}]}
-        },
-        children=[
-            {"object": "block", "type": "paragraph", "paragraph": {"text": [{"type": "text", "text": {"content": content}}]}}
-        ]
-    )
+    try:
+        notion.pages.create(
+            parent={"database_id": NOTION_DATABASE_ID},
+            properties={
+                "Name": {"title": [{"text": {"content": title}}]}
+            },
+            children=[
+                {"object": "block", "type": "paragraph", "paragraph": {"text": [{"type": "text", "text": {"content": content}}]}}
+            ]
+        )
+        print("Notion 頁面建立成功")
+    except Exception as e:
+        print(f"建立 Notion 頁面失敗: {e}")
 
 # ===== 主程式 =====
 def main():
