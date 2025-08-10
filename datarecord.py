@@ -3,6 +3,7 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 import os
+import argparse
 
 def fetch_and_update_data(tickers, data_dir='data'):
     os.makedirs(data_dir, exist_ok=True)
@@ -36,3 +37,15 @@ def fetch_and_update_data(tickers, data_dir='data'):
                 print(f'為 {ticker} 創建新 CSV')
         except Exception as e:
             print(f'抓取 {ticker} 資料失敗：{e}')
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Fetch and update market data")
+    parser.add_argument('--tickers', type=str, help="Comma-separated list of tickers")
+    args = parser.parse_args()
+    
+    from config import US_TICKERS, TW_TICKERS
+    if args.tickers:
+        tickers = args.tickers.split(',')
+    else:
+        tickers = US_TICKERS + TW_TICKERS
+    fetch_and_update_data(tickers)
