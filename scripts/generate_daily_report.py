@@ -7,16 +7,13 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 
-# === 環境變數 ===
 NOTION_API_KEY = os.getenv("NOTION_API_KEY")
 NOTION_DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
 
-# === 回測參數 ===
 TICKERS = ["QQQ", "0050.TW"]
 START = datetime.datetime.now() - datetime.timedelta(days=365*2)
 TODAY = datetime.datetime.now()
 
-# === 簡單策略：5 日均線上穿 20 日均線買入，下穿賣出 ===
 def backtest_strategy(df):
     df["MA5"] = df["Close"].rolling(5).mean()
     df["MA20"] = df["Close"].rolling(20).mean()
@@ -26,26 +23,26 @@ def backtest_strategy(df):
     df["Return"] = df["Close"].pct_change()
     df["Strategy_Return"] = df["Signal"].shift(1) * df["Return"]
 
-    total_trades = (df["Signal"].diff() != 0).sum()
-    win_trades = (df["Strategy_Return"] > 0).sum()
-    win_rate = win_trades / total_trades if total_trades > 0 else 0
+    # 計算交易次數與勝率（只算信號變化時）
+    trade_points = df[df["Signal"].diff() != 0]
+    total_trades = len(trade_points)
+    win_trades = (trade_points["Strategy_Return"] > 0).sum()
+    win_rate = (win_trades / total_trades) * 100 if total_trades > 0 else 0
 
     pnl_per_trade = df["Strategy_Return"].mean() * 100
-    max_drawdown = ((df["Close"] / df["Close"].cummax() - 1).min()) * 100
+    max_drawdown = float(((df["Close"] / df["Close"].cummax() - 1).min()) * 100)
 
     last_signal = "BUY" if df["Signal"].iloc[-1] == 1 else "SELL"
-
     suggestion = "加倉" if last_signal == "BUY" else "減倉"
 
     return {
-        "win_rate": round(win_rate * 100, 2),
-        "pnl_per_trade": round(pnl_per_trade, 2),
+        "win_rate": round(float(win_rate), 2),
+        "pnl_per_trade": round(float(pnl_per_trade), 2),
         "max_drawdown": round(max_drawdown, 2),
         "signal": last_signal,
         "suggestion": suggestion
     }
 
-# === 寫入 Notion ===
 def write_to_notion(date, ticker, signal, winrate, pnl, drawdown, suggestion):
     url = "https://api.notion.com/v1/pages"
     headers = {
@@ -72,7 +69,6 @@ def write_to_notion(date, ticker, signal, winrate, pnl, drawdown, suggestion):
     else:
         print(f"✅ Notion 寫入成功: {ticker}")
 
-# === 主程式 ===
 def main():
     today_str = TODAY.strftime("%Y-%m-%d")
     for ticker in TICKERS:
