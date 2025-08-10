@@ -2,9 +2,8 @@ name: Generate US Market Podcast Script
 
 on:
   schedule:
-    # 每天早上6點（UTC+8 = UTC 22:00 前一天）
-    - cron: '0 21 * * *'
-  workflow_dispatch:  # 支援手動觸發
+    - cron: '0 22 * * *'  # 6:00 AM CST (UTC+8) = 10:00 PM UTC previous day
+  workflow_dispatch:
 
 jobs:
   generate-us-podcast:
@@ -14,39 +13,39 @@ jobs:
       XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
 
     steps:
-      # 檢出程式碼
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 設置 Python
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      # 安裝依賴
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+        continue-on-error: true
 
-      # 更新美股資料
       - name: Fetch and update US market data
         run: |
           python datarecord.py --tickers "^IXIC,^GSPC,QQQ,SPY,BTC-USD"
+          ls -l data/  # 除錯：列出資料檔案
+        continue-on-error: true
 
-      # 生成美股逐字稿
       - name: Generate US podcast script
         run: |
           python generate_script.py --us
+          ls -l docs/podcast/20250811_us/  # 除錯：確認檔案生成
+        continue-on-error: true
 
-      # 提交生成的檔案
       - name: Commit and push changes
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
           git add data/ docs/podcast/
-          git commit -m "Update US market data and podcast script for $(date +%Y%m%d)"
+          git status
+          git commit -m "Update US market data and podcast script for $(date +%Y%m%d)" || true
           git push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
