@@ -1,6 +1,16 @@
 # grok_api.py
-from openai import OpenAI
 import os
+import requests
+import json
+import logging
+import re
+from time import sleep
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
+
+GROK_API_URL = os.getenv("GROK_API_URL", "https://api.x.ai/v1/chat/completions")
+GROK_API_KEY = os.getenv("GROK_API_KEY")
+
 
 def optimize_script_with_grok(initial_script, api_key, model="grok-4"):
     client = OpenAI(
