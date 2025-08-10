@@ -1,144 +1,52 @@
+import yfinance as yf
+import pandas as pd
 from datetime import datetime, timedelta
 import os
-from time import sleep
-import pandas as pd
-import pytz
-import yfinance as yf
-import twstock
 
-# 定義要處理的股票/ETF代碼
-target_codes = {
-    '2330': '台積電',
-    '0050': '元大台灣50',
-    'QQQ'： 'QQQ',
-    'SPY': 'SPY',
-    '^TWII': '加權指數'，
-    '^IXIC': 'Nasdaq',
-    '^GSPC': 'S&P 500'
-}
+# 定義股票/指數代碼和輸出資料夾
+tickers = ['^TWII', '0050.TW', 'QQQ']
+data_dir = 'data'
+os.makedirs(data_dir, exist_ok=True)  # 確保 data 資料夾存在
 
-def clean_csv(csv_path):
-    """清理CSV檔案，確保欄位數量一致"""
-    expected_columns = ['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume']
-    try:
-        with open(csv_path, 'r', encoding='utf-8') as file:
-            lines = file.readlines()
-        if not lines:
-            return
+# 定義抓取三個月資料的時間範圍
+end_date = datetime.today()
+start_date = end_date - timedelta(days=90)  # 三個月前
 
-        with open(csv_path, 'w', encoding='utf-8') as file:
-            header = lines[0].strip()
-            if header.split(',') == expected_columns:
-                file.write(header + '\n')
-                for line in lines[1:]:
-                    if len(line.split(',')) == len(expected_columns):
-                        file.write(line)
-    except Exception as e:
-        print(f"[{csv_path}] 清理CSV檔案時發生錯誤: {e}")
-        with open('log.txt', 'a', encoding='utf-8') as log:
-            log.write(f"[{datetime.now()}] 清理CSV檔案 {csv_path} 錯誤: {e}\n")
-
-def get_data_since_last_record(stock_num, stock_name, base_path='./data/'):
-    """下載並追加自上次記錄以來的股票/ETF資料"""
-    csv_path = f'{base_path}{stock_num}.csv'
-    tz_taipei = pytz.timezone('Asia/Taipei')
-    today = datetime.now(tz_taipei).replace(hour=0, minute=0, second=0, microsecond=0)
-    start_date = today - timedelta(days=59)
-
-    # 驗證股票代碼
-    try:
-        ticker = yf.Ticker(f"{stock_num}.TW")
-        if not ticker.history(period='1d').empty:
-            print(f"[{stock_num}] 有效股票代碼: {stock_name}")
+# 處理每個 ticker
+for ticker in tickers:
+    # 定義 CSV 檔案路徑
+    csv_file = os.path.join(data_dir, f'{ticker.replace("^", "")}.csv')
+    
+    # 嘗試讀取現有 CSV 檔案
+    existing_data = None
+    if os.path.exists(csv_file):
+        existing_data = pd.read_csv(csv_file, parse_dates=['Date'])
+        existing_data['Date'] = pd.to_datetime(existing_data['Date'])
+    
+    # 抓取最新歷史資料
+    stock = yf.Ticker(ticker)
+    new_data = stock.history(start=start_date, end=end_date)
+    
+    # 重置索引並確保 Date 欄位格式
+    new_data = new_data.reset_index()
+    new_data['Date'] = pd.to_datetime(new_data['Date'].dt.date)
+    
+    # 如果有現有資料，檢查是否有新資料
+    if existing_data is not None:
+        # 找出新資料中不在現有資料中的日期
+        new_dates = new_data[~new_data['Date'].isin(existing_data['Date'])]
+        if not new_dates.empty:
+            # 合併新舊資料並排序
+            combined_data = pd.concat([existing_data, new_dates], ignore_index=True)
+            combined_data = combined_data.sort_values('Date').reset_index(drop=True)
+            # 保存更新後的資料
+            combined_data.to_csv(csv_file, index=False)
+            print(f'已更新 {ticker} 的資料，新增 {len(new_dates)} 筆記錄')
         else:
-            print(f"[{stock_num}] 無效或已下市股票代碼: {stock_name}")
-            with open('log.txt', 'a', encoding='utf-8') as log:
-                log.write(f"[{datetime.now()}] {stock_num} 無效或已下市\n")
-            return pd.DataFrame()
-    except Exception as e:
-        print(f"[{stock_num}] 股票代碼驗證錯誤: {e}")
-        with open('log.txt', 'a', encoding='utf-8') as log:
-            log.write(f"[{datetime.now()}] {stock_num} 驗證錯誤: {e}\n")
-        return pd.DataFrame()
+            print(f'{ticker} 無新資料，跳過更新')
+    else:
+        # 如果沒有現有 CSV，直接保存新資料
+        new_data.to_csv(csv_file, index=False)
+        print(f'已為 {ticker} 創建新 CSV 檔案')
 
-    # 檢查現有資料
-    if os.path.exists(csv_path):
-        try:
-            clean_csv(csv_path)
-            data = pd.read_csv(csv_path, header=0)
-            if not data.empty and 'Datetime' in data.columns:
-                last_record = pd.to_datetime(data['Datetime'].iloc[-1], errors='coerce')
-                if pd.notna(last_record):
-                    if last_record.tzinfo is None:
-                        last_record = last_record.tz_localize('Asia/Taipei', ambiguous='infer')
-                    else:
-                        last_record = last_record.tz_convert('Asia/Taipei')
-                    start_date = last_record + timedelta(minutes=30)
-        except Exception as e:
-            print(f"[{stock_num}] CSV處理錯誤: {e}")
-            with open('log.txt', 'a', encoding='utf-8') as log:
-                log.write(f"[{datetime.now()}] {stock_num} CSV處理錯誤: {e}\n")
-
-    end_date = today + timedelta(hours=14)
-
-    try:
-        # 使用 yfinance 下載30分鐘K線資料
-        ticker = yf.Ticker(f"{stock_num}.TW")
-        new_data = ticker.history(
-            start=start_date,
-            end=end_date,
-            interval='30m',
-            auto_adjust=True,
-            prepost=False
-        )
-
-        if new_data.empty:
-            print(f"[{stock_num}] 無新資料下載: {stock_name}")
-            with open('log.txt', 'a', encoding='utf-8') as log:
-                log.write(f"[{datetime.now()}] {stock_num} 無新資料\n")
-            return pd.DataFrame()
-
-        # 標準化欄位名稱，與 vectorbt 格式一致
-        new_data = new_data.reset_index()
-        new_data = new_data[['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume']]
-        new_data['Datetime'] = new_data['Datetime'].dt.tz_convert('Asia/Taipei')
-
-        # 避免重複資料
-        if os.path.exists(csv_path):
-            existing_data = pd.read_csv(csv_path)
-            new_data = new_data[~new_data['Datetime'].isin(existing_data['Datetime'])]
-            if not new_data.empty:
-                new_data.to_csv(csv_path, mode='a', header=False, index=False, encoding='utf-8')
-        else:
-            new_data.to_csv(csv_path, index=False, encoding='utf-8')
-
-        print(f"[{stock_num}] 資料已更新，共 {len(new_data)} 筆: {stock_name}")
-        with open('log.txt', 'a', encoding='utf-8') as log:
-            log.write(f"[{datetime.now()}] {stock_num} 更新 {len(new_data)} 筆資料\n")
-
-        sleep(2)  # 避免觸發速率限制
-        return new_data
-
-    except Exception as e:
-        print(f"[{stock_num}] 下載錯誤: {e}")
-        with open('log.txt', 'a', encoding='utf-8') as log:
-            log.write(f"[{datetime.now()}] {stock_num} 下載錯誤: {e}\n")
-        return pd.DataFrame()
-
-def main():
-    """主程式：僅處理2330和0050"""
-    os.makedirs('./data/', exist_ok=True)
-
-    with open('log.txt', 'a', encoding='utf-8') as log:
-        log.write(f"[{datetime.now()}] 開始執行股票資料下載（2330, 0050）\n")
-
-    for stock_num, stock_name in target_codes.items():
-        print(f"正在處理: {stock_num} - {stock_name}")
-        new_data = get_data_since_last_record(stock_num, stock_name)
-        if new_data.empty:
-            print(f"[{stock_num}] 無新資料或下載失敗: {stock_name}")
-        else:
-            print(f"[{stock_num}] 資料已更新，共 {len(new_data)} 筆: {stock_name}")
-
-if __name__ == "__main__":
-    main()
+print('資料抓取與更新完成！')
