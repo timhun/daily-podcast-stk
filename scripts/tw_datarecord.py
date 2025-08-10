@@ -9,7 +9,9 @@ import twstock
 # 定義要處理的股票/ETF代碼
 target_codes = {
     '2330': '台積電',
-    '0050': '元大台灣50'
+    '0050': '元大台灣50',
+    'QQQ'： 'QQQ',
+    'SPY': 'SPY'
 }
 
 def clean_csv(csv_path):
