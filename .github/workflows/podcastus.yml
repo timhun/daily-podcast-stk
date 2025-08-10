@@ -3,7 +3,7 @@ name: Generate US Market Podcast Script
 on:
   schedule:
     # 每天早上6點（UTC+8 = UTC 22:00 前一天）
-    - cron: '0 22 * * *'
+    - cron: '0 21 * * *'
   workflow_dispatch:  # 支援手動觸發
 
 jobs:
