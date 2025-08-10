@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import os
 
 # 定義股票/指數代碼和輸出資料夾
-tickers = ['^TWII', '0050.TW', 'QQQ']
+tickers = ['^TWII', '0050.TW', 'QQQ','2330.TW','SPY','^IXIC','^GSPC']
 data_dir = 'data'
 os.makedirs(data_dir, exist_ok=True)  # 確保 data 資料夾存在
 
