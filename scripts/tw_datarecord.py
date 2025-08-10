@@ -11,7 +11,10 @@ target_codes = {
     '2330': '台積電',
     '0050': '元大台灣50',
     'QQQ'： 'QQQ',
-    'SPY': 'SPY'
+    'SPY': 'SPY',
+    '^TWII': '加權指數'，
+    '^IXIC': 'Nasdaq',
+    '^GSPC': 'S&P 500'
 }
 
 def clean_csv(csv_path):
