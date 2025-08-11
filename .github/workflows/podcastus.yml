@@ -2,7 +2,7 @@ name: Generate US Market Podcast Script
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 6:00 AM CST (UTC+8) = 10:00 PM UTC previous day
+  #  - cron: '0 22 * * *'  # 6:00 AM CST (UTC+8) = 10:00 PM UTC previous day
   workflow_dispatch:
 
 jobs:
