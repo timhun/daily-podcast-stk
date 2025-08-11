@@ -29,14 +29,14 @@ jobs:
 
       - name: Fetch and update US market data
         run: |
-          python datarecord.py --tickers "^IXIC,^GSPC,QQQ,SPY,BTC-USD"
-          ls -l data/  # 除錯：列出資料檔案
+          python datarecord.py --tickers "^IXIC,^GSPC,QQQ,SPY,BTC-USD,GC=F"
+          ls -l data/
         continue-on-error: true
 
       - name: Generate US podcast script
         run: |
           python generate_script.py --us
-          ls -l docs/podcast/20250811_us/  # 除錯：確認檔案生成
+          ls -l docs/podcast/20250811_us/ || echo "US podcast directory not found"
         continue-on-error: true
 
       - name: Commit and push changes
