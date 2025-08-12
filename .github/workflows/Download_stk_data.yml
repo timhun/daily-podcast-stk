@@ -20,18 +20,18 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas vectorbt twstock yfinance pytz numba==0.58.1 lxml
+          pip install pandas yfinance pytz
         continue-on-error: false
 
       - name: Update data
-        run: python scripts/datarecord.py
+        run: python datarecord.py
         continue-on-error: false
 
       - name: Commit and push if changes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.email "tim.oneway@gmail.com"
+          git config --global user.email "tim.onewayk@gmail.com"
           git config --global user.name "BBM"
           git add -A
           git commit -m "Automated data update $(date +'%Y-%m-%d')" -a || echo "No changes to commit"
