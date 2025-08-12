@@ -1,62 +1,244 @@
-# datarecord.py
-import yfinance as yf
-import pandas as pd
 from datetime import datetime, timedelta
 import os
-import argparse
 from time import sleep
+import pandas as pd
+import pytz
+import urllib.request
+import re
+import yfinance as yf
+import argparse
 
-def fetch_and_update_data(tickers, data_dir='data', max_retries=3):
-    os.makedirs(data_dir, exist_ok=True)
-    end_date = datetime.today()
-    start_date = end_date - timedelta(days=90)
+# 定義要處理的市場指數及個股（可擴充）
+target_symbols = [
+    {'name': 'S&P 500', 'yahoo_symbol': '^GSPC', 'google_code': '.INX:INDEXSP'},
+    {'name': 'Dow Jones', 'yahoo_symbol': '^DJI', 'google_code': '.DJI:INDEXDJX'},
+    {'name': 'Nasdaq', 'yahoo_symbol': '^IXIC', 'google_code': '.IXIC:INDEXNASDAQ'},
+    {'name': 'TAIEX', 'yahoo_symbol': '^TWII', 'google_code': 'IX0001:TPE'},
+    {'name': '台積電', 'yahoo_symbol': '2330.TW', 'google_code': '2330:TPE'},
+    {'name': '元大台灣50', 'yahoo_symbol': '0050.TW', 'google_code': '0050:TPE'},
+    # 可擴充示例：添加美股或台股
+    # {'name': 'Apple', 'yahoo_symbol': 'AAPL', 'google_code': 'AAPL:NASDAQ'},
+    # {'name': 'Microsoft', 'yahoo_symbol': 'MSFT', 'google_code': 'MSFT:NASDAQ'},
+    # {'name': '台達電', 'yahoo_symbol': '2308.TW', 'google_code': '2308:TPE'},
+]
 
-    for ticker in tickers:
-        csv_file = os.path.join(data_dir, f'{ticker.replace("^", "")}.csv')
-        existing_data = None
-        if os.path.exists(csv_file):
-            existing_data = pd.read_csv(csv_file, parse_dates=['Date'])
-            existing_data['Date'] = pd.to_datetime(existing_data['Date'])
-            latest_date = existing_data['Date'].max().strftime('%Y-%m-%d')
-            print(f'{ticker} 現有資料最新日期：{latest_date}')
-        
-        for attempt in range(max_retries):
-            try:
-                stock = yf.Ticker(ticker)
-                new_data = stock.history(start=start_date, end=end_date)
-                new_data = new_data.reset_index()
-                new_data['Date'] = pd.to_datetime(new_data['Date'].dt.date)
-                
-                if existing_data is not None:
-                    new_dates = new_data[~new_data['Date'].isin(existing_data['Date'])]
-                    if not new_dates.empty:
-                        combined_data = pd.concat([existing_data, new_dates], ignore_index=True)
-                        combined_data = combined_data.sort_values('Date').reset_index(drop=True)
-                        combined_data.to_csv(csv_file, index=False)
-                        print(f'更新 {ticker} 資料，新增 {len(new_dates)} 筆')
+def validate_stock_code(yahoo_symbol):
+    """驗證股票/指數代碼是否有效"""
+    try:
+        ticker = yf.Ticker(yahoo_symbol)
+        history = ticker.history(period='1d')
+        return not history.empty
+    except Exception as e:
+        print(f"[{yahoo_symbol}] 股票/指數代碼驗證錯誤: {e}")
+        with open('log.txt', 'a', encoding='utf-8') as log:
+            log.write(f"[{datetime.now()}] {yahoo_symbol} 驗證錯誤: {e}\n")
+        return False
+
+def clean_csv(csv_path):
+    """清理CSV檔案，確保欄位數量一致"""
+    expected_columns = ['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume']
+    try:
+        with open(csv_path, 'r', encoding='utf-8') as file:
+            lines = file.readlines()
+        if not lines:
+            return
+
+        with open(csv_path, 'w', encoding='utf-8') as file:
+            header = lines[0].strip()
+            if header.split(',') == expected_columns:
+                file.write(header + '\n')
+                for line in lines[1:]:
+                    if len(line.split(',')) == len(expected_columns):
+                        file.write(line)
+    except Exception as e:
+        print(f"[{csv_path}] 清理CSV檔案時發生錯誤: {e}")
+        with open('log.txt', 'a', encoding='utf-8') as log:
+            log.write(f"[{datetime.now()}] 清理CSV檔案 {csv_path} 錯誤: {e}\n")
+
+def get_google_finance_data(google_code, stock_name):
+    """從 Google Finance 抓取當日即時股價"""
+    url = f"https://www.google.com/finance/quote/{google_code}"
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+
+    try:
+        req = urllib.request.Request(url, headers=headers)
+        with urllib.request.urlopen(req) as response:
+            html = response.read().decode('utf-8')
+    except Exception as e:
+        print(f"[{google_code}] Google Finance 頁面下載錯誤: {e}")
+        with open('log.txt', 'a', encoding='utf-8') as log:
+            log.write(f"[{datetime.now()}] {google_code} Google Finance 頁面下載錯誤: {e}\n")
+        return None
+
+    # 提取當前價格
+    current_price = re.search(r'<div class="YMlKec fxKbKc">([\d,]+\.?\d*)</div>', html)
+    if not current_price:
+        print(f"[{google_code}] 無法提取當前價格: {stock_name}")
+        with open('log.txt', 'a', encoding='utf-8') as log:
+            log.write(f"[{datetime.now()}] {google_code} 無法提取當前價格\n")
+        return None
+
+    tz_taipei = pytz.timezone('Asia/Taipei')
+    current_time = datetime.now(tz_taipei)
+    
+    # 以 Yahoo Finance 格式構造資料
+    data_dict = {
+        'Datetime': current_time.strftime('%Y-%m-%d %H:%M:%S%z'),
+        'Open': 'NA',
+        'High': 'NA',
+        'Low': 'NA',
+        'Close': current_price.group(1).replace(',', ''),
+        'Volume': 'NA'
+    }
+    return pd.DataFrame([data_dict])
+
+def get_yahoo_finance_data(yahoo_symbol, stock_name, data_dir='data', max_retries=3):
+    """從 Yahoo Finance 抓取90天歷史1小時K線資料"""
+    csv_filename = yahoo_symbol.replace('^', '').replace('.', '_') + '.csv'
+    csv_path = os.path.join(data_dir, csv_filename)
+    tz_taipei = pytz.timezone('Asia/Taipei')
+    today = datetime.now(tz_taipei).replace(hour=0, minute=0, second=0, microsecond=0)
+    start_date = today - timedelta(days=90)
+
+    # 驗證股票代碼
+    if not validate_stock_code(yahoo_symbol):
+        print(f"[{yahoo_symbol}] 無效或已下市股票代碼: {stock_name}")
+        with open('log.txt', 'a', encoding='utf-8') as log:
+            log.write(f"[{datetime.now()}] {yahoo_symbol} 無效或已下市\n")
+        return pd.DataFrame()
+
+    # 檢查現有資料
+    if os.path.exists(csv_path):
+        try:
+            clean_csv(csv_path)
+            existing_data = pd.read_csv(csv_path, header=0, parse_dates=['Datetime'])
+            if not existing_data.empty and 'Datetime' in existing_data.columns:
+                last_record = pd.to_datetime(existing_data['Datetime'].iloc[-1], errors='coerce')
+                if pd.notna(last_record):
+                    if last_record.tzinfo is None:
+                        last_record = last_record.tz_localize('Asia/Taipei', ambiguous='infer')
                     else:
-                        print(f'{ticker} 無新資料，跳過更新')
-                else:
-                    new_data.to_csv(csv_file, index=False)
-                    print(f'為 {ticker} 創建新 CSV')
-                break
-            except Exception as e:
-                print(f'抓取 {ticker} 資料失敗（嘗試 {attempt + 1}/{max_retries}）：{e}')
-                if attempt < max_retries - 1:
-                    sleep(2 ** attempt)
-                continue
+                        last_record = last_record.tz_convert('Asia/Taipei')
+                    start_date = last_record + timedelta(hours=1)  # 匹配1小時K線
+        except Exception as e:
+            print(f"[{yahoo_symbol}] CSV處理錯誤: {e}")
+            with open('log.txt', 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] {yahoo_symbol} CSV處理錯誤: {e}\n")
+
+    end_date = today + timedelta(hours=14)
+
+    for attempt in range(max_retries):
+        try:
+            ticker = yf.Ticker(yahoo_symbol)
+            new_data = ticker.history(
+                start=start_date,
+                end=end_date,
+                interval='1h',
+                auto_adjust=True,
+                prepost=False
+            )
+
+            if new_data.empty:
+                print(f"[{yahoo_symbol}] 無新歷史資料下載: {stock_name}")
+                with open('log.txt', 'a', encoding='utf-8') as log:
+                    log.write(f"[{datetime.now()}] {yahoo_symbol} 無新歷史資料\n")
+                return pd.DataFrame()
+
+            new_data = new_data.reset_index()
+            new_data = new_data[['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume']]
+            new_data['Datetime'] = new_data['Datetime'].dt.tz_convert('Asia/Taipei')
+
+            return new_data
+
+        except Exception as e:
+            print(f"[{yahoo_symbol}] Yahoo Finance 抓取失敗（嘗試 {attempt + 1}/{max_retries}）：{e}")
+            with open('log.txt', 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] {yahoo_symbol} Yahoo Finance 抓取失敗（嘗試 {attempt + 1}/{max_retries}）：{e}\n")
+            if attempt < max_retries - 1:
+                sleep(2 ** attempt)
+            continue
         else:
-            print(f'{ticker} 抓取失敗，跳過')
-    print('資料抓取與更新完成！')
+            print(f"[{yahoo_symbol}] Yahoo Finance 抓取失敗，跳過")
+            with open('log.txt', 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] {yahoo_symbol} Yahoo Finance 抓取失敗，跳過\n")
+            return pd.DataFrame()
+
+def fetch_and_update_data(symbols, data_dir='data', max_retries=3):
+    """抓取並更新市場指數及個股資料"""
+    os.makedirs(data_dir, exist_ok=True)
+
+    with open('log.txt', 'a', encoding='utf-8') as log:
+        log.write(f"[{datetime.now()}] 開始執行資料抓取\n")
+
+    for symbol in symbols:
+        yahoo_symbol = symbol['yahoo_symbol']
+        google_code = symbol['google_code']
+        stock_name = symbol['name']
+        print(f"正在處理: {yahoo_symbol} - {stock_name}")
+
+        csv_filename = yahoo_symbol.replace('^', '').replace('.', '_') + '.csv'
+        csv_path = os.path.join(data_dir, csv_filename)
+
+        # 抓取 Yahoo Finance 歷史資料
+        yahoo_data = get_yahoo_finance_data(yahoo_symbol, stock_name, data_dir, max_retries)
+        
+        # 抓取 Google Finance 即時資料
+        google_data = get_google_finance_data(google_code, stock_name)
+
+        # 合併資料
+        if not yahoo_data.empty and google_data is not None:
+            combined_data = pd.concat([yahoo_data, google_data], ignore_index=True)
+        elif not yahoo_data.empty:
+            combined_data = yahoo_data
+        elif google_data is not None:
+            combined_data = google_data
+        else:
+            print(f"[{yahoo_symbol}] 無任何資料可整合: {stock_name}")
+            with open('log.txt', 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] {yahoo_symbol} 無任何資料可整合\n")
+            continue
+
+        # 移除重複的 Datetime
+        combined_data = combined_data.sort_values('Datetime').drop_duplicates(subset=['Datetime'], keep='last')
+
+        # 清理舊資料（僅保留90天）
+        if os.path.exists(csv_path):
+            try:
+                existing_data = pd.read_csv(csv_path, parse_dates=['Datetime'])
+                combined_data = pd.concat([existing_data, combined_data], ignore_index=True)
+                combined_data['Datetime'] = pd.to_datetime(combined_data['Datetime'])
+                tz_taipei = pytz.timezone('Asia/Taipei')
+                cutoff = datetime.now(tz_taipei) - timedelta(days=90)
+                combined_data = combined_data[combined_data['Datetime'] >= cutoff]
+                combined_data = combined_data.sort_values('Datetime').drop_duplicates(subset=['Datetime'], keep='last')
+            except Exception as e:
+                print(f"[{yahoo_symbol}] 合併現有資料錯誤: {e}")
+                with open('log.txt', 'a', encoding='utf-8') as log:
+                    log.write(f"[{datetime.now()}] {yahoo_symbol} 合併現有資料錯誤: {e}\n")
+
+        # 儲存到 CSV
+        if not combined_data.empty:
+            combined_data.to_csv(csv_path, index=False, encoding='utf-8')
+            print(f"[{yahoo_symbol}] 資料已更新，共 {len(combined_data)} 筆: {stock_name}")
+            with open('log.txt', 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] {yahoo_symbol} 更新 {len(combined_data)} 筆資料\n")
+        else:
+            print(f"[{yahoo_symbol}] 無新資料儲存: {stock_name}")
+            with open('log.txt', 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] {yahoo_symbol} 無新資料儲存\n")
+
+        sleep(2)  # 避免觸發速率限制
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fetch and update market data")
-    parser.add_argument('--tickers', type=str, help="Comma-separated list of tickers")
+    parser.add_argument('--tickers', type=str, help="Comma-separated list of Yahoo tickers (e.g., ^GSPC,^DJI,2330.TW)")
     args = parser.parse_args()
-    
-    from config import US_TICKERS, TW_TICKERS
+
     if args.tickers:
         tickers = args.tickers.split(',')
+        # 為命令列輸入的 ticker 生成 symbols 格式
+        symbols = [{'name': ticker, 'yahoo_symbol': ticker, 'google_code': ticker.replace('.TW', ':TPE').replace('^', '.').replace('GSPC', 'INX:INDEXSP').replace('DJI', 'DJI:INDEXDJX').replace('IXIC', 'IXIC:INDEXNASDAQ').replace('TWII', 'IX0001:TPE')} for ticker in tickers]
     else:
-        tickers = US_TICKERS + TW_TICKERS
-    fetch_and_update_data(tickers)
+        symbols = target_symbols
+
+    fetch_and_update_data(symbols)
