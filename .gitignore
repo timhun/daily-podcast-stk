@@ -1,3 +1,10 @@
 __pycache__/
 *.pyc
 audio/temp.mp3
+
+# Local data and logs
+log.txt
+data/*.csv
+
+# Generated podcast assets
+docs/podcast/*/audio.mp3
