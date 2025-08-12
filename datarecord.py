@@ -18,7 +18,6 @@ target_symbols = [
     {'name': '元大台灣50', 'yahoo_symbol': '0050.TW', 'google_code': '0050:TPE'},
     # 可擴充示例：添加美股或台股
     # {'name': 'Apple', 'yahoo_symbol': 'AAPL', 'google_code': 'AAPL:NASDAQ'},
-    # {'name': 'Microsoft', 'yahoo_symbol': 'MSFT', 'google_code': 'MSFT:NASDAQ'},
     # {'name': '台達電', 'yahoo_symbol': '2308.TW', 'google_code': '2308:TPE'},
 ]
 
@@ -38,22 +37,38 @@ def clean_csv(csv_path):
     """清理CSV檔案，確保欄位數量一致"""
     expected_columns = ['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume']
     try:
+        # 檢查檔案是否為空
+        if os.path.getsize(csv_path) == 0:
+            print(f"[{csv_path}] 檔案為空，初始化新檔案")
+            pd.DataFrame(columns=expected_columns).to_csv(csv_path, index=False, encoding='utf-8')
+            return
+
         with open(csv_path, 'r', encoding='utf-8') as file:
             lines = file.readlines()
         if not lines:
+            print(f"[{csv_path}] 檔案無內容，初始化新檔案")
+            pd.DataFrame(columns=expected_columns).to_csv(csv_path, index=False, encoding='utf-8')
             return
 
+        # 檢查欄位
+        header = lines[0].strip().split(',')
+        if header != expected_columns:
+            print(f"[{csv_path}] 欄位不符，初始化新檔案")
+            pd.DataFrame(columns=expected_columns).to_csv(csv_path, index=False, encoding='utf-8')
+            return
+
+        # 清理無效行
         with open(csv_path, 'w', encoding='utf-8') as file:
-            header = lines[0].strip()
-            if header.split(',') == expected_columns:
-                file.write(header + '\n')
-                for line in lines[1:]:
-                    if len(line.split(',')) == len(expected_columns):
-                        file.write(line)
+            file.write(','.join(expected_columns) + '\n')
+            for line in lines[1:]:
+                if len(line.split(',')) == len(expected_columns):
+                    file.write(line)
     except Exception as e:
         print(f"[{csv_path}] 清理CSV檔案時發生錯誤: {e}")
         with open('log.txt', 'a', encoding='utf-8') as log:
             log.write(f"[{datetime.now()}] 清理CSV檔案 {csv_path} 錯誤: {e}\n")
+        # 初始化新檔案以避免後續錯誤
+        pd.DataFrame(columns=expected_columns).to_csv(csv_path, index=False, encoding='utf-8')
 
 def get_google_finance_data(google_code, stock_name):
     """從 Google Finance 抓取當日即時股價"""
@@ -83,11 +98,11 @@ def get_google_finance_data(google_code, stock_name):
     
     # 以 Yahoo Finance 格式構造資料
     data_dict = {
-        'Datetime': current_time.strftime('%Y-%m-%d %H:%M:%S%z'),
+        'Datetime': current_time,  # 直接使用 Timestamp 物件
         'Open': 'NA',
         'High': 'NA',
         'Low': 'NA',
-        'Close': current_price.group(1).replace(',', ''),
+        'Close': float(current_price.group(1).replace(',', '')),
         'Volume': 'NA'
     }
     return pd.DataFrame([data_dict])
@@ -124,6 +139,8 @@ def get_yahoo_finance_data(yahoo_symbol, stock_name, data_dir='data', max_retrie
             print(f"[{yahoo_symbol}] CSV處理錯誤: {e}")
             with open('log.txt', 'a', encoding='utf-8') as log:
                 log.write(f"[{datetime.now()}] {yahoo_symbol} CSV處理錯誤: {e}\n")
+            # 初始化新檔案
+            pd.DataFrame(columns=['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume']).to_csv(csv_path, index=False, encoding='utf-8')
 
     end_date = today + timedelta(hours=14)
 
@@ -198,23 +215,29 @@ def fetch_and_update_data(symbols, data_dir='data', max_retries=3):
                 log.write(f"[{datetime.now()}] {yahoo_symbol} 無任何資料可整合\n")
             continue
 
-        # 移除重複的 Datetime
-        combined_data = combined_data.sort_values('Datetime').drop_duplicates(subset=['Datetime'], keep='last')
+        # 確保 Datetime 欄位為 Timestamp
+        combined_data['Datetime'] = pd.to_datetime(combined_data['Datetime'], errors='coerce')
+        combined_data = combined_data.dropna(subset=['Datetime'])  # 移除無效 Datetime
 
         # 清理舊資料（僅保留90天）
         if os.path.exists(csv_path):
             try:
                 existing_data = pd.read_csv(csv_path, parse_dates=['Datetime'])
+                existing_data['Datetime'] = pd.to_datetime(existing_data['Datetime'], errors='coerce')
+                existing_data = existing_data.dropna(subset=['Datetime'])
                 combined_data = pd.concat([existing_data, combined_data], ignore_index=True)
-                combined_data['Datetime'] = pd.to_datetime(combined_data['Datetime'])
                 tz_taipei = pytz.timezone('Asia/Taipei')
                 cutoff = datetime.now(tz_taipei) - timedelta(days=90)
                 combined_data = combined_data[combined_data['Datetime'] >= cutoff]
-                combined_data = combined_data.sort_values('Datetime').drop_duplicates(subset=['Datetime'], keep='last')
             except Exception as e:
                 print(f"[{yahoo_symbol}] 合併現有資料錯誤: {e}")
                 with open('log.txt', 'a', encoding='utf-8') as log:
                     log.write(f"[{datetime.now()}] {yahoo_symbol} 合併現有資料錯誤: {e}\n")
+                # 初始化新檔案
+                combined_data = combined_data[combined_data['Datetime'] >= cutoff]
+
+        # 移除重複的 Datetime
+        combined_data = combined_data.sort_values('Datetime').drop_duplicates(subset=['Datetime'], keep='last')
 
         # 儲存到 CSV
         if not combined_data.empty:
@@ -225,9 +248,11 @@ def fetch_and_update_data(symbols, data_dir='data', max_retries=3):
         else:
             print(f"[{yahoo_symbol}] 無新資料儲存: {stock_name}")
             with open('log.txt', 'a', encoding='utf-8') as log:
-                log.write(f"[{datetime.now()}] {yahoo_symbol} 無新資料儲存\n")
+                log.write(f"[{datetime.now()]] {yahoo_symbol} 無新資料儲存\n")
 
         sleep(2)  # 避免觸發速率限制
+
+    print('資料抓取與更新完成！')
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Fetch and update market data")
