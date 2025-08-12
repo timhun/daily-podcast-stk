@@ -232,4 +232,38 @@ def fetch_and_update_data(symbols, data_dir='data', max_retries=3):
             except Exception as e:
                 print(f"[{yahoo_symbol}] 合併現有資料錯誤: {e}")
                 with open('log.txt', 'a', encoding='utf-8') as log:
-                    log.write(f"[{datetime.now()}] {yahoo_symbol} 合
+                    log.write(f"[{datetime.now()}] {yahoo_symbol} 合併現有資料錯誤: {e}\n")
+                # 初始化新檔案
+                combined_data = combined_data[combined_data['Datetime'] >= cutoff]
+
+        # 移除重複的 Datetime
+        combined_data = combined_data.sort_values('Datetime').drop_duplicates(subset=['Datetime'], keep='last')
+
+        # 儲存到 CSV
+        if not combined_data.empty:
+            combined_data.to_csv(csv_path, index=False, encoding='utf-8')
+            print(f"[{yahoo_symbol}] 資料已更新，共 {len(combined_data)} 筆: {stock_name}")
+            with open('log.txt', 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] {yahoo_symbol} 更新 {len(combined_data)} 筆資料\n")
+        else:
+            print(f"[{yahoo_symbol}] 無新資料儲存: {stock_name}")
+            with open('log.txt', 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] {yahoo_symbol} 無新資料儲存\n")
+
+        sleep(2)  # 避免觸發速率限制
+
+    print('資料抓取與更新完成！')
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Fetch and update market data")
+    parser.add_argument('--tickers', type=str, help="Comma-separated list of Yahoo tickers (e.g., ^GSPC,^DJI,2330.TW)")
+    args = parser.parse_args()
+
+    if args.tickers:
+        tickers = args.tickers.split(',')
+        # 為命令列輸入的 ticker 生成 symbols 格式
+        symbols = [{'name': ticker, 'yahoo_symbol': ticker, 'google_code': ticker.replace('.TW', ':TPE').replace('^', '.').replace('GSPC', 'INX:INDEXSP').replace('DJI', 'DJI:INDEXDJX').replace('IXIC', 'IXIC:INDEXNASDAQ').replace('TWII', 'IX0001:TPE')} for ticker in tickers]
+    else:
+        symbols = target_symbols
+
+    fetch_and_update_data(symbols)
