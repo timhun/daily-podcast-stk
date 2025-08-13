@@ -82,11 +82,11 @@ def generate_podcast_summary(tickers, market_names, session, output_dir, output_
             "我是幫幫忙，感謝收聽《幫幫忙說台股》，明天再見！"
         )
 
-    api_key = os.getenv("XAI_API_KEY")
+    api_key = os.getenv("GROK_API_KEY") or os.getenv("XAI_API_KEY")
     if api_key:
         optimized_script = optimize_script_with_grok(initial_script, api_key)
     else:
-        print("未找到 XAI_API_KEY，使用初始逐字稿")
+        print("未找到 GROK_API_KEY/XAI_API_KEY，使用初始逐字稿")
         optimized_script = initial_script
 
     try:

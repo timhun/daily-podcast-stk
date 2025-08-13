@@ -51,7 +51,7 @@ def fetch_institutional_investors(output_file="data/institutional_investors.json
             logger.error(f"無法解析 TWSE API 回應為 JSON: {response.text}")
             raise ValueError(f"❌ 無法解析 TWSE API 回應: {e}")
 
-        if not 
+        if not data:
             logger.warning(f"TWSE API 回傳空數據，可能是休市日（{target_date}）")
             return None
 
