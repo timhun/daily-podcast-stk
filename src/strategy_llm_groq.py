@@ -3,7 +3,7 @@
 import os
 import json
 import datetime
-from groq import GroqClient  # 假設你用 Groq SDK
+from groq import client  # 假設你用 Groq SDK
 
 def generate_strategy_llm(df_json: dict, history_file="strategy_history.json") -> dict:
     """
