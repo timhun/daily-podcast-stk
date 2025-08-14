@@ -1,94 +1,75 @@
-import os, json, datetime
-from src.data_fetch import fetch_ohlcv, add_indicators
-from src.strategy_generator import make_weekly_report, generate_strategy_file
-from src.backtest import run_backtest
-from src.daily_sim import run_daily_sim
+#!/usr/bin/env python3
+# run_pipeline.py
 
-SYMBOL = "0050.TW"
-OUT_DIR = "reports"
-STRAT_OUT = "strategy_candidate.py"
-HISTORY_FILE = "strategy_history.json"
+import os
+import importlib.util
+import sys
+import traceback
+from datetime import datetime
 
-os.makedirs(OUT_DIR, exist_ok=True)
+# ===== Slack 通知功能 =====
+import requests
 
-def _load_history():
-    if os.path.exists(HISTORY_FILE):
-        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
+SLACK_BOT_TOKEN = os.getenv("SLACK_BOT_TOKEN")
+SLACK_CHANNEL = os.getenv("SLACK_CHANNEL")
 
-def _save_history(hist):
-    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(hist, f, indent=2, ensure_ascii=False)
-
-def weekly_pipeline():
-    print("=== Weekly Pipeline ===")
-    df = fetch_ohlcv(SYMBOL, years=3)
-    df = add_indicators(df)
-    weekly = make_weekly_report(df)
-    with open(os.path.join(OUT_DIR,"weekly_insight.json"), "w", encoding="utf-8") as f:
-        json.dump(weekly, f, indent=2, ensure_ascii=False)
-
-    # 1) 先用 rule-based 生成一版
-    generate_strategy_file(weekly, out_path=STRAT_OUT)
-
-    # 2) 可選：Groq LLM 再生成覆蓋
-    use_llm = os.getenv("USE_LLM", "0") == "1" and os.getenv("GROQ_API_KEY")
-    if use_llm:
-        try:
-            from src.strategy_llm_groq import generate_strategy_with_groq
-            weekly_json = json.dumps(weekly, ensure_ascii=False)
-            history_json = json.dumps(_load_history(), ensure_ascii=False)
-            code = generate_strategy_with_groq(weekly_json, history_json)
-            # 覆蓋策略檔
-            with open(STRAT_OUT, "w", encoding="utf-8") as f:
-                f.write(code)
-            print("Groq LLM 已生成並覆蓋策略。")
-        except Exception as e:
-            print("Groq 生成失敗，保留 rule-based 策略。", e)
-
-    # 3) 回測
-    metrics = run_backtest(df, strategy_path=STRAT_OUT, cash=1_000_000)
-    with open(os.path.join(OUT_DIR,"backtest_report.json"), "w", encoding="utf-8") as f:
-        json.dump(metrics, f, indent=2, ensure_ascii=False)
-
-    # 4) 更新記憶庫
-    hist = _load_history()
-    hist.append({
-        "date": datetime.date.today().isoformat(),
-        "strategy_file": STRAT_OUT,
-        "metrics": metrics
-    })
-    _save_history(hist)
-
-    return metrics
-
-def daily_pipeline():
-    print("=== Daily Simulation ===")
-    res = run_daily_sim(SYMBOL, strategy_path=STRAT_OUT, cash=1_000_000)
-    with open(os.path.join(OUT_DIR,"last_daily_signal.json"), "w", encoding="utf-8") as f:
-        json.dump(res, f, indent=2, ensure_ascii=False)
-
-    # 另外輸出簡短文字檔，方便 workflow 讀取
+def send_slack_message(message):
+    """發送 Slack 訊息"""
+    if not SLACK_BOT_TOKEN or not SLACK_CHANNEL:
+        print("[警告] Slack 通知未啟用，請設定 SLACK_BOT_TOKEN 與 SLACK_CHANNEL")
+        return
+    url = "https://slack.com/api/chat.postMessage"
+    headers = {"Authorization": f"Bearer {SLACK_BOT_TOKEN}"}
+    data = {"channel": SLACK_CHANNEL, "text": message}
     try:
-        sig = res.get("signal", {}).get("signal", "hold")
-        price = res.get("price", 0.0)
-        size = res.get("size", 0)
-        with open(os.path.join(OUT_DIR,"daily_signal.txt"), "w", encoding="utf-8") as f:
-            f.write(str(sig))
-        with open(os.path.join(OUT_DIR,"daily_price.txt"), "w", encoding="utf-8") as f:
-            f.write(f"{price:.2f}")
-        with open(os.path.join(OUT_DIR,"daily_size.txt"), "w", encoding="utf-8") as f:
-            f.write(str(size))
+        r = requests.post(url, headers=headers, data=data)
+        if r.status_code != 200 or not r.json().get("ok"):
+            print(f"[錯誤] Slack 發送失敗: {r.text}")
     except Exception as e:
-        print("寫 daily 簡報檔失敗：", e)
-    return res
+        print(f"[錯誤] Slack 發送失敗: {e}")
 
+# ===== Step 1: 使用 Groq LLM 生成策略 =====
+def generate_strategy():
+    print("[1/3] 生成交易策略...")
+    result = os.system(f"{sys.executable} src/strategy_llm_groq.py")
+    if result != 0:
+        raise RuntimeError("Groq 策略生成失敗")
+    print("[完成] 策略已生成到 strategy_candidate.py")
+
+# ===== Step 2: 載入策略模組 =====
+def load_strategy():
+    print("[2/3] 載入策略模組...")
+    strategy_path = os.path.abspath("strategy_candidate.py")
+    spec = importlib.util.spec_from_file_location("strategy_candidate", strategy_path)
+    strategy_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(strategy_module)
+    print("[完成] 策略載入成功")
+    return strategy_module
+
+# ===== Step 3: 執行策略 =====
+def run_strategy(strategy_module):
+    print("[3/3] 執行策略回測...")
+    if hasattr(strategy_module, "run"):
+        result = strategy_module.run()
+        print("[完成] 策略回測完成")
+        return result
+    else:
+        raise AttributeError("策略檔案缺少 run() 函式")
+
+# ===== 主流程 =====
 if __name__ == "__main__":
-    weekday = datetime.date.today().weekday()
-    if weekday == 5:      # Sat -> Weekly
-        weekly_pipeline()
-    elif weekday < 5:     # Mon-Fri -> Daily
-        daily_pipeline()
-    else:                 # Sun -> no op
-        print("Sunday: no task")
+    try:
+        start_time = datetime.now()
+        generate_strategy()
+        strategy = load_strategy()
+        result = run_strategy(strategy)
+
+        msg = f"✅ 交易策略流程完成\n生成時間: {start_time}\n結果摘要: {result}"
+        print(msg)
+        send_slack_message(msg)
+
+    except Exception as e:
+        error_msg = f"❌ 交易策略流程失敗\n錯誤: {e}\n{traceback.format_exc()}"
+        print(error_msg)
+        send_slack_message(error_msg)
+        sys.exit(1)
