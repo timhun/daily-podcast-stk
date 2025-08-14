@@ -3,7 +3,7 @@
 import os
 import json
 import datetime
-from groq import client as groq_client  # Adjust import and naming to avoid conflicts
+from groq import Groq
 
 def generate_strategy_llm(df_json: dict, history_file="strategy_history.json") -> dict:
     """
@@ -17,21 +17,25 @@ def generate_strategy_llm(df_json: dict, history_file="strategy_history.json") -
     if not api_key:
         raise ValueError("GROQ_API_KEY environment variable not set")
 
-    groq = groq_client.Client(api_key=api_key)
+    groq = Groq(api_key=api_key)
 
     model = os.environ.get("GROQ_MODEL", "llama-3.1-70b-versatile")
 
     prompt = f"根據下列數據生成交易策略 JSON:\n{json.dumps(df_json)}"
-    resp = groq.run(model=model, prompt=prompt)
+    
+    # Use the correct method call to send request to model
+    resp = groq.chat.completions.create(
+        model=model,
+        messages=[{"role": "user", "content": prompt}]
+    )
 
-    # If resp is not str, convert accordingly (depending on SDK)
-    if not isinstance(resp, str):
-        resp = resp.decode("utf-8") if hasattr(resp, "decode") else str(resp)
+    # Extract the content from the response
+    resp_content = resp.choices[0].message.content
 
     try:
-        strategy = json.loads(resp)
+        strategy = json.loads(resp_content)
     except json.JSONDecodeError as e:
-        print(f"[ERROR] JSON decode failed: {e}. Response was: {resp}")
+        print(f"[ERROR] JSON decode failed: {e}. Response was: {resp_content}")
         strategy = {"signal": "hold", "size_pct": 0.0, "note": "LLM parse error"}
 
     # 更新策略歷史
