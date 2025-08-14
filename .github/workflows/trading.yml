@@ -1,4 +1,4 @@
-name: Auto Trading Loop with Memory
+name: Auto Trading Loop
 
 on:
   schedule:
@@ -9,26 +9,27 @@ jobs:
   run-trading:
     runs-on: ubuntu-latest
     env:
+      # === LLM/Groq ===
       USE_LLM: "1"
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: "llama-3.1-70b-versatile"
 
+      # === Email ===
       EMAIL_USER: ${{ secrets.EMAIL_USER }}
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       EMAIL_TO: "Tim.oneway@gmail.com"
 
+      # === Slack ===
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
 
-      REPORT_DIR: "reports"
-      HISTORY_FILE: "strategy_history.json"
+      REPORT_DIR: reports
+      HISTORY_FILE: strategy_history.json
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
@@ -36,40 +37,32 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-          pip install jq
 
-      - name: Run trading pipeline with memory
-        id: run_pipeline
-        run: |
-          python run_pipeline.py --history_file $HISTORY_FILE --out_dir $REPORT_DIR
+      - name: Run trading pipeline
+        run: python run_pipeline.py
 
       - name: Upload reports as artifact
         uses: actions/upload-artifact@v4
         with:
           name: reports-${{ github.run_id }}
-          path: ${{ env.REPORT_DIR }}/
+          path: reports/
 
-      - name: Prepare summary for Slack/Email
-        id: prep_summary
+      - name: Prepare Slack message
         run: |
-          set -e
-          REPORT_DIR=${{ env.REPORT_DIR }}
-          SIG=$(cat $REPORT_DIR/daily_signal.txt 2>/dev/null || echo "N/A")
-          PRICE=$(cat $REPORT_DIR/daily_price.txt 2>/dev/null || echo "N/A")
-          SIZE=$(cat $REPORT_DIR/daily_size.txt 2>/dev/null || echo "N/A")
-          if [ -f $REPORT_DIR/backtest_report.json ]; then
-            OOS_SHARPE=$(jq -r '.sharpe_ratio // "N/A"' $REPORT_DIR/backtest_report.json)
-            OOS_MDD=$(jq -r '.max_drawdown // "N/A"' $REPORT_DIR/backtest_report.json)
-          else
-            OOS_SHARPE="N/A"
-            OOS_MDD="N/A"
-          fi
-          HISTORY_SUMMARY=$(jq -r '[.history[] | "\(.date): Sharpe \(.sharpe_ratio) | MDD \(.max_drawdown)"] | join("\n")' $HISTORY_FILE 2>/dev/null || echo "No history")
-          SUMMARY="*Auto Trading Loop 完成* :white_check_mark:\nRepo: ${{ github.repository }}\nRun: ${{ github.run_id }}\n\n*Signal*: $SIG\n*Price*: $PRICE\n*Size*: $SIZE\n*OOS Sharpe*: $OOS_SHARPE\n*OOS Max Drawdown*: $OOS_MDD\n\n*策略歷史記錄*:\n$HISTORY_SUMMARY"
-          echo "$SUMMARY" > $REPORT_DIR/summary.txt
-          echo "summary<<EOF" >> $GITHUB_OUTPUT
-          cat $REPORT_DIR/summary.txt >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          SIG=$(cat reports/daily_signal.txt 2>/dev/null || echo "N/A")
+          PRICE=$(cat reports/daily_price.txt 2>/dev/null || echo "N/A")
+          SIZE=$(cat reports/daily_size.txt 2>/dev/null || echo "N/A")
+          OOS_SHARPE=$(jq -r '.metrics.sharpe_ratio // "N/A"' reports/weekly_insight.json 2>/dev/null || echo "N/A")
+          OOS_MDD=$(jq -r '.metrics.max_drawdown // "N/A"' reports/weekly_insight.json 2>/dev/null || echo "N/A")
+          echo "{ \"channel\": \"${SLACK_CHANNEL}\", \"text\": \"*Auto Trading Loop 完成* :white_check_mark:\nRepo: $GITHUB_REPOSITORY\nRun: $GITHUB_RUN_NUMBER\n\n*Signal*: ${SIG}\n*Price*: ${PRICE}\n*Size*: ${SIZE}\n*OOS Sharpe*: ${OOS_SHARPE}\n*OOS Max Drawdown*: ${OOS_MDD}\" }" > slack_payload.json
+
+      - name: Send Slack Notification
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload-file-path-parsed: true
+          payload: slack_payload.json
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
       - name: Send daily email
         if: env.EMAIL_USER != '' && env.EMAIL_PASS != ''
@@ -79,32 +72,22 @@ jobs:
           server_port: 465
           username: ${{ env.EMAIL_USER }}
           password: ${{ env.EMAIL_PASS }}
-          subject: "每日交易模擬報告 - ${{ github.repository }} - Run #${{ github.run_number }}"
+          subject: "每日交易模擬報告 - ${{ github.repository }} - ${{ github.run_number }}"
           to: ${{ env.EMAIL_TO }}
           from: ${{ env.EMAIL_USER }}
-          body_file: ${{ env.REPORT_DIR }}/summary.txt
+          body: |
+            Signal: $(cat reports/daily_signal.txt 2>/dev/null || echo "N/A")
+            Price: $(cat reports/daily_price.txt 2>/dev/null || echo "N/A")
+            Size: $(cat reports/daily_size.txt 2>/dev/null || echo "N/A")
           attachments: |
-            ${{ env.REPORT_DIR }}/backtest_report.json
-            ${{ env.REPORT_DIR }}/strategy_data.json
-            ${{ env.HISTORY_FILE }}
-        continue-on-error: true
+            reports/last_daily_signal.json
+            reports/weekly_insight.json
+            reports/backtest_report.json
 
-      - name: Slack Notification
-        if: env.SLACK_BOT_TOKEN != ''
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          payload: |
-            {
-              "channel": "${{ env.SLACK_CHANNEL }}",
-              "text": "${{ steps.prep_summary.outputs.summary }}"
-            }
-        env:
-          SLACK_BOT_TOKEN: ${{ env.SLACK_BOT_TOKEN }}
-
-      - name: Commit results back to repo
+      - name: Commit results
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ${{ env.REPORT_DIR }}/*.json ${{ env.REPORT_DIR }}/*.txt ${{ env.HISTORY_FILE }} || true
-          git commit -m "Auto update with memory: ${{ github.run_id }} $(date -u +"%Y-%m-%dT%H:%M:%SZ")" || echo "No changes to commit"
+          git add reports/*.json reports/*.txt strategy_history.json || true
+          git commit -m "Auto update: ${{ github.run_id }} $(date -u +"%Y-%m-%dT%H:%M:%SZ")" || echo "No changes to commit"
           git push
