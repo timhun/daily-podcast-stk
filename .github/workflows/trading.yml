@@ -1,33 +1,23 @@
-name: Auto Trading Loop
+name: Auto Trading Loop with LLM + Notifications
 
 on:
   schedule:
-    - cron: "0 1 * * *"   # UTC 01:00 -> Taipei 09:00
+    - cron: "0 1 * * *" # 每日台灣時間早上 9:00 (UTC 01:00)
   workflow_dispatch:
 
 jobs:
   run-trading:
     runs-on: ubuntu-latest
     env:
-      # === LLM/Groq ===
-      USE_LLM: "1"                        # 設成 "0" 可關閉 LLM
+      USE_LLM: "1"
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-      GROQ_MODEL: "llama-3.1-70b-versatile"
-
-      # === Email ===
-      EMAIL_USER: ${{ secrets.EMAIL_USER }}       # 你的 Gmail 帳號
-      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}       # Gmail App Password
-      EMAIL_TO:   "Tim.oneway@gmail.com"
-
-      # === Slack ===
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,75 +29,68 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      # Step 1: Groq LLM 自動生成策略
+      - name: Generate strategy with Groq LLM
+        if: env.USE_LLM == '1'
+        run: python src/strategy_llm_groq.py
+
+      # Step 2: 執行交易流程
       - name: Run trading pipeline
-        id: runpy
         run: python run_pipeline.py
 
-      - name: Upload reports as artifact
+      # Step 3: 儲存報告到 Artifact
+      - name: Upload trading report
         uses: actions/upload-artifact@v4
         with:
-          name: reports-${{ github.run_id }}
-          path: reports/
+          name: trading-report
+          path: output/  # 你的報告資料夾
 
-      - name: Prepare email body
-        id: emailprep
-        run: |
-          SIG=$(cat reports/daily_signal.txt 2>/dev/null || echo "N/A")
-          PRICE=$(cat reports/daily_price.txt 2>/dev/null || echo "N/A")
-          SIZE=$(cat reports/daily_size.txt 2>/dev/null || echo "N/A")
-          if [ -f reports/backtest_report.json ]; then
-            OOS_SHARPE=$(jq -r '.oos.sharpe // .sharpe_ratio // "N/A"' reports/backtest_report.json 2>/dev/null || echo "N/A")
-            OOS_MDD=$(jq -r '.oos.mdd // .max_drawdown // "N/A"' reports/backtest_report.json 2>/dev/null || echo "N/A")
-          else
-            OOS_SHARPE="N/A"
-            OOS_MDD="N/A"
-          fi
-          echo "Signal: ${SIG}\nPrice: ${PRICE}\nSize: ${SIZE}\nOOS Sharpe: ${OOS_SHARPE}\nOOS MDD: ${OOS_MDD}" > email_body.txt
-
-      - name: Send daily email
-        if: env.EMAIL_USER != '' && env.EMAIL_PASS != ''
+      # Step 4: 發送 Email
+      - name: Send email with report
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
-          username: ${{ env.EMAIL_USER }}
-          password: ${{ env.EMAIL_PASS }}
-          subject: "每日交易模擬報告 - ${{ github.repository }} - ${{ github.run_number }}"
-          to: ${{ env.EMAIL_TO }}
-          from: ${{ env.EMAIL_USER }}
+          username: ${{ secrets.EMAIL_USER }}
+          password: ${{ secrets.EMAIL_PASS }}
+          subject: "每日交易策略報告 - $(date +'%Y-%m-%d')"
+          to: "Tim.oneway@gmail.com"
+          from: "Auto Trading Bot"
           body: |
-            ${{ steps.emailprep.outputs.body || '' }}
-          # 上一行 body 需要顯示變數，我們改用下面的 file 方式更穩定
-          html_body: ""
-          attachments: |
-            reports/last_daily_signal.json
-            reports/weekly_insight.json
-            reports/backtest_report.json
-        continue-on-error: true
+            您好，  
+            附件為今日交易策略報告。  
+            檔案已同時儲存至 GitHub Artifact 與 Repo。  
+          attachments: output/report_summary.txt
 
-      - name: Send daily email (via file body fallback)
-        if: env.EMAIL_USER != '' && env.EMAIL_PASS != ''
-        run: |
-          # 用 file body（action-send-mail 支援），避免多行字串轉義問題
-          echo "使用 file body 發送郵件"
-        continue-on-error: true
-
-      - name: Slack Notification
-        if: env.SLACK_BOT_TOKEN != ''
-        uses: slackapi/slack-github-action@v1.26.0
+      # Step 5: Slack 通知
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v1.27.0
         with:
           payload: |
             {
-              "channel": "${{ env.SLACK_CHANNEL }}",
-              "text": "*Auto Trading Loop 完成* :white_check_mark:\nRepo: ${{ github.repository }}\nRun: ${{ github.run_id }}\n- Signal: $(cat reports/daily_signal.txt 2>/dev/null || echo "N/A")\n- Price: $(cat reports/daily_price.txt 2>/dev/null || echo "N/A")\n- Size: $(cat reports/daily_size.txt 2>/dev/null || echo "N/A")"
+              "channel": "${{ secrets.SLACK_CHANNEL }}",
+              "text": "📈 每日交易策略已完成！報告已寄送至 Email 並儲存為 Artifact。",
+              "attachments": [
+                {
+                  "text": "檢視 Artifact 報告",
+                  "actions": [
+                    {
+                      "type": "button",
+                      "text": "前往 GitHub Artifact",
+                      "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
+                }
+              ]
             }
         env:
-          SLACK_BOT_TOKEN: ${{ env.SLACK_BOT_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-      - name: Commit results back to repo
+      # Step 6: Commit 更新結果
+      - name: Commit results
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add reports/*.json reports/*.txt strategy_candidate.py strategy_history.json || true
-          git commit -m "Auto update: ${{ github.run_id }} $(date -u +"%Y-%m-%dT%H:%M:%SZ")" || echo "No changes to commit"
+          git config --local user.email "actions@github.com"
+          git config --local user.name "GitHub Actions"
+          git add .
+          git commit -m "Auto update results $(date '+%Y-%m-%d %H:%M:%S')" || echo "No changes to commit"
           git push
