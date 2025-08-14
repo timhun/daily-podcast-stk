@@ -1,4 +1,4 @@
-name: Auto Trading Loop
+name: Auto Trading Loop with Memory
 
 on:
   schedule:
@@ -9,21 +9,19 @@ jobs:
   run-trading:
     runs-on: ubuntu-latest
     env:
-      # === LLM/Groq ===
       USE_LLM: "1"
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: "llama-3.1-70b-versatile"
 
-      # === Email ===
       EMAIL_USER: ${{ secrets.EMAIL_USER }}
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-      EMAIL_TO:   "Tim.oneway@gmail.com"
+      EMAIL_TO: "Tim.oneway@gmail.com"
 
-      # === Slack ===
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
 
       REPORT_DIR: "reports"
+      HISTORY_FILE: "strategy_history.json"
 
     steps:
       - name: Checkout repository
@@ -38,11 +36,12 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
+          pip install jq
 
-      - name: Run trading pipeline
+      - name: Run trading pipeline with memory
         id: run_pipeline
         run: |
-          python run_pipeline.py
+          python run_pipeline.py --history_file $HISTORY_FILE --out_dir $REPORT_DIR
 
       - name: Upload reports as artifact
         uses: actions/upload-artifact@v4
@@ -65,7 +64,8 @@ jobs:
             OOS_SHARPE="N/A"
             OOS_MDD="N/A"
           fi
-          SUMMARY="*Auto Trading Loop 完成* :white_check_mark:\nRepo: ${{ github.repository }}\nRun: ${{ github.run_id }}\n\n*Signal*: $SIG\n*Price*: $PRICE\n*Size*: $SIZE\n*OOS Sharpe*: $OOS_SHARPE\n*OOS Max Drawdown*: $OOS_MDD"
+          HISTORY_SUMMARY=$(jq -r '[.history[] | "\(.date): Sharpe \(.sharpe_ratio) | MDD \(.max_drawdown)"] | join("\n")' $HISTORY_FILE 2>/dev/null || echo "No history")
+          SUMMARY="*Auto Trading Loop 完成* :white_check_mark:\nRepo: ${{ github.repository }}\nRun: ${{ github.run_id }}\n\n*Signal*: $SIG\n*Price*: $PRICE\n*Size*: $SIZE\n*OOS Sharpe*: $OOS_SHARPE\n*OOS Max Drawdown*: $OOS_MDD\n\n*策略歷史記錄*:\n$HISTORY_SUMMARY"
           echo "$SUMMARY" > $REPORT_DIR/summary.txt
           echo "summary<<EOF" >> $GITHUB_OUTPUT
           cat $REPORT_DIR/summary.txt >> $GITHUB_OUTPUT
@@ -86,6 +86,7 @@ jobs:
           attachments: |
             ${{ env.REPORT_DIR }}/backtest_report.json
             ${{ env.REPORT_DIR }}/strategy_data.json
+            ${{ env.HISTORY_FILE }}
         continue-on-error: true
 
       - name: Slack Notification
@@ -104,6 +105,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add ${{ env.REPORT_DIR }}/*.json ${{ env.REPORT_DIR }}/*.txt strategy_history.json || true
-          git commit -m "Auto update: ${{ github.run_id }} $(date -u +"%Y-%m-%dT%H:%M:%SZ")" || echo "No changes to commit"
+          git add ${{ env.REPORT_DIR }}/*.json ${{ env.REPORT_DIR }}/*.txt ${{ env.HISTORY_FILE }} || true
+          git commit -m "Auto update with memory: ${{ github.run_id }} $(date -u +"%Y-%m-%dT%H:%M:%SZ")" || echo "No changes to commit"
           git push
