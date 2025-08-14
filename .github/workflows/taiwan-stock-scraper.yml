@@ -2,7 +2,7 @@
 name: Taiwan Stock Data Scraper
 
 on:
-  schedule:
+  #schedule:
     #- cron: '30 7 * * 1-5'  # 每週一到週五 15:30 (台北時間，UTC+8)
   workflow_dispatch:
 
