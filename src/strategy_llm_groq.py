@@ -10,7 +10,7 @@ def generate_strategy_llm(df_json: dict, history_file="strategy_history.json") -
     使用 Groq LLM 生成策略 JSON
     df_json: 最新 OHLCV + 技術指標資料
     history_file: 保存歷史策略績效
-    return: 策略 JSON
+    return: 策略 JSON，保證有 'regime' 欄位
     """
     # Create client instance
     api_key = os.environ.get("GROQ_API_KEY")
@@ -18,18 +18,15 @@ def generate_strategy_llm(df_json: dict, history_file="strategy_history.json") -
         raise ValueError("GROQ_API_KEY environment variable not set")
 
     groq = Groq(api_key=api_key)
-
     model = os.environ.get("GROQ_MODEL", "llama-3.1-70b-versatile")
 
-    prompt = f"根據下列數據生成交易策略 JSON:\n{json.dumps(df_json)}"
+    prompt = f"根據下列數據生成交易策略 JSON，必須包含 regime (trend/range):\n{json.dumps(df_json)}"
     
-    # Use the correct method call to send request to model
     resp = groq.chat.completions.create(
         model=model,
         messages=[{"role": "user", "content": prompt}]
     )
 
-    # Extract the content from the response
     resp_content = resp.choices[0].message.content
 
     try:
@@ -37,6 +34,16 @@ def generate_strategy_llm(df_json: dict, history_file="strategy_history.json") -
     except json.JSONDecodeError as e:
         print(f"[ERROR] JSON decode failed: {e}. Response was: {resp_content}")
         strategy = {"signal": "hold", "size_pct": 0.0, "note": "LLM parse error"}
+
+    # 確保 regime 欄位存在
+    if "regime" not in strategy:
+        strategy["regime"] = "trend"  # 預設 trend
+
+    # 整理 Slack/Email 顯示格式
+    summary = f"Signal: {strategy.get('signal', 'hold')}\n" \
+              f"Size: {strategy.get('size_pct', 0.0)}\n" \
+              f"Regime: {strategy.get('regime')}"
+    strategy["summary"] = summary
 
     # 更新策略歷史
     today = datetime.date.today().isoformat()
