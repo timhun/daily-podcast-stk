@@ -2,7 +2,8 @@ name: Auto Trading Loop
 
 on:
   schedule:
-    - cron: "0 1 * * *"   # UTC 01:00 -> Taipei 09:00
+    - cron: "0 1 * * 6"   # 週六 09:00 台北時間 - 每週策略更新
+    - cron: "0 1 * * 1-5" # 週一至週五 09:00 台北時間 - 模擬交易
   workflow_dispatch:
 
 jobs:
@@ -16,13 +17,15 @@ jobs:
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       EMAIL_TO: "Tim.oneway@gmail.com"
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }} # C 開頭的 Channel ID
       REPORT_DIR: reports
       HISTORY_FILE: strategy_history.json
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -42,11 +45,31 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run weekly or daily pipeline
+      - name: Run trading pipeline
         id: run_pipeline
         run: |
           set -e
           python run_pipeline.py
+
+      - name: Extract report data for Slack
+        id: extract_data
+        run: |
+          SIGNAL=$(jq -r '.signal' reports/daily_sim.json)
+          PRICE=$(jq -r '.price' reports/daily_sim.json)
+          SIZE=$(jq -r '.size_pct' reports/daily_sim.json)
+          SHARPE=$(jq -r '.metrics.sharpe // "N/A"' reports/backtest_report.json)
+          MDD=$(jq -r '.metrics.mdd // "N/A"' reports/backtest_report.json)
+          LATEST_HISTORY=$(jq -r '.[-5:][] | "\(.date): signal \(.strategy.signal), sharpe \(.sharpe), mdd \(.mdd)"' strategy_history.json | paste -sd '\n' -)
+          {
+            echo "SIGNAL=$SIGNAL"
+            echo "PRICE=$PRICE"
+            echo "SIZE=$SIZE"
+            echo "SHARPE=$SHARPE"
+            echo "MDD=$MDD"
+            echo "LATEST_HISTORY<<EOF"
+            echo "$LATEST_HISTORY"
+            echo "EOF"
+          } >> $GITHUB_ENV
 
       - name: Upload reports as artifact
         uses: actions/upload-artifact@v4
@@ -54,24 +77,26 @@ jobs:
           name: reports-${{ github.run_id }}
           path: ${{ env.REPORT_DIR }}
 
-      - name: Slack Notification
+      - name: Send Slack Notification
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ env.SLACK_CHANNEL }}
           slack-message: |
-            *Auto Trading Loop 完成* :white_check_mark:
-            Repo: ${{ github.repository }}
-            Run ID: ${{ github.run_id }}
+            *Auto Trading Loop 完成 ✅*
+            *Repo:* ${{ github.repository }}
+            *Run ID:* ${{ github.run_id }}
 
-            報告摘要：
-            Signal: $(cat reports/daily_sim.json | jq -r '.signal')
-            Price: $(cat reports/daily_sim.json | jq -r '.price')
-            Size: $(cat reports/daily_sim.json | jq -r '.size_pct')
-            Sharpe: $(cat reports/backtest_report.json | jq -r '.metrics.sharpe // "N/A"')
-            Max Drawdown: $(cat reports/backtest_report.json | jq -r '.metrics.mdd // "N/A"')
+            *報告摘要:*
+            • Signal: ${{ env.SIGNAL }}
+            • Price: ${{ env.PRICE }}
+            • Size: ${{ env.SIZE }}
+            • Sharpe: ${{ env.SHARPE }}
+            • Max Drawdown: ${{ env.MDD }}
 
-            策略歷史最新：
-            $(tail -n 5 strategy_history.json | jq -r '.[] | "\(.date): signal \(.strategy.signal), sharpe \(.sharpe), mdd \(.mdd)"')
+            *策略歷史最新:*
+            ```
+            ${{ env.LATEST_HISTORY }}
+            ```
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
@@ -87,22 +112,18 @@ jobs:
           to: ${{ env.EMAIL_TO }}
           from: ${{ env.EMAIL_USER }}
           body: |
-            Auto Trading Loop 已完成執行。報告摘要：
-            Signal: $(cat reports/daily_sim.json | jq -r '.signal')
-            Price: $(cat reports/daily_sim.json | jq -r '.price')
-            Size: $(cat reports/daily_sim.json | jq -r '.size_pct')
-            Sharpe: $(cat reports/backtest_report.json | jq -r '.metrics.sharpe // "N/A"')
-            Max Drawdown: $(cat reports/backtest_report.json | jq -r '.metrics.mdd // "N/A"')
+            Auto Trading Loop 已完成執行。請查看附件報告以獲取詳情。
           attachments: |
             reports/backtest_report.json
             reports/daily_sim.json
             strategy_history.json
         continue-on-error: true
 
-      - name: Commit strategy history & reports
+      - name: Commit results back to repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
           git add reports/*.json strategy_history.json || true
           git commit -m "Auto update: ${{ github.run_id }} $(date -u +"%Y-%m-%dT%H:%M:%SZ")" || echo "No changes to commit"
           git push
