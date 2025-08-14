@@ -1,54 +1,71 @@
+#!/usr/bin/env python3
+# src/backtest_json.py
 import pandas as pd
+import numpy as np
+import datetime
 
-def run_backtest_json(df, strategy_data, cash=1_000_000):
+def run_backtest_json(df_json_list, strategy_data, cash=1_000_000, commission=0.001):
     """
-    回測，直接使用 JSON 格式策略
+    JSON list 支援 Backtest
+    df_json_list: list of dict，每筆 dict 需包含 close, open, high, low, volume
+    strategy_data: dict, LLM 生成策略
     """
-    df = df.sort_index()
-    oos_months = 6
-    split_point = df.index[-1] - pd.DateOffset(months=oos_months)
-    df_train = df[df.index <= split_point]
-    df_test = df[df.index > split_point]
+    df = pd.DataFrame(df_json_list)
+    df = df.sort_values("date") if "date" in df.columns else df
 
-    # 簡單績效計算（示意）
-    portfolio_train = cash * (1 + df_train["ret"].mean())
-    portfolio_test  = portfolio_train * (1 + df_test["ret"].mean())
-    total_return = (portfolio_test - cash) / cash
-    annual_return = total_return / (len(df)/252)
+    portfolio = cash
+    positions = 0
+
+    for idx, row in df.iterrows():
+        signal = strategy_data.get("signal", "hold")
+        size_pct = strategy_data.get("size_pct", 0)
+        price = row["close"]
+
+        if signal == "buy":
+            positions = portfolio * size_pct / price
+            portfolio -= positions * price * (1 + commission)
+        elif signal == "sell":
+            portfolio += positions * price * (1 - commission)
+            positions = 0
+        # hold 不動
+
+    total_return = (portfolio + positions * df["close"].iloc[-1] - cash) / cash
     max_drawdown = (df["close"].cummax() - df["close"]).max() / df["close"].cummax().max()
-    sharpe_ratio = (annual_return - 0.02) / (df["close"].pct_change().std() * (252 ** 0.5))
+    sharpe_ratio = (df["close"].pct_change().mean() / df["close"].pct_change().std()) * np.sqrt(252) if df["close"].pct_change().std() != 0 else 0
 
-    metrics = {
-        "in_sample_final_value": portfolio_train,
-        "out_sample_final_value": portfolio_test,
+    return {
+        "final_value": portfolio + positions * df["close"].iloc[-1],
         "total_return": total_return,
-        "annual_return": annual_return,
         "max_drawdown": max_drawdown,
         "sharpe_ratio": sharpe_ratio
     }
-    return metrics
 
-def run_daily_sim_json(df, strategy_data, cash=1_000_000):
+def run_daily_sim_json(df_json_list, strategy_data, cash=1_000_000, commission=0.001):
     """
-    每日模擬交易
+    JSON list 支援每日模擬交易
     """
+    df = pd.DataFrame(df_json_list)
+    df = df.sort_values("date") if "date" in df.columns else df
+
     last_close = df["close"].iloc[-1]
-    # signal: 依 MA/RSI 或 BB 判斷（示意）
-    signal = "hold"
-    size_pct = strategy_data["params"].get("size_pct", 0.5)
-    price = last_close
+    signal = strategy_data.get("signal", "hold")
+    size_pct = strategy_data.get("size_pct", 0)
 
-    if strategy_data["regime"] == "trend":
-        ma_f = df["close"].rolling(strategy_data["params"]["fast"]).mean().iloc[-1]
-        ma_s = df["close"].rolling(strategy_data["params"]["slow"]).mean().iloc[-1]
-        signal = "buy" if ma_f > ma_s else "sell"
+    if signal == "buy":
+        position = cash * size_pct / last_close
+        cash -= position * last_close * (1 + commission)
+    elif signal == "sell":
+        cash += size_pct * last_close * (1 - commission)
+        position = 0
     else:
-        n = strategy_data["params"]["n"]
-        mid = df["close"].rolling(n).mean().iloc[-1]
-        std = df["close"].rolling(n).std().iloc[-1]
-        up = mid + strategy_data["params"]["k"]*std
-        dn = mid - strategy_data["params"]["k"]*std
-        last = df["close"].iloc[-1]
-        signal = "buy" if last < dn else ("sell" if last > up else "hold")
+        position = 0
 
-    return {"signal": signal, "size_pct": size_pct, "price": price}
+    return {
+        "date": df["date"].iloc[-1] if "date" in df.columns else datetime.date.today().isoformat(),
+        "signal": signal,
+        "size_pct": size_pct,
+        "price": last_close,
+        "cash": cash,
+        "position": position,
+        "portfolio_value": cash + position * last_close
+    }
