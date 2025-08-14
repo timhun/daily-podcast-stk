@@ -16,8 +16,8 @@ jobs:
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       EMAIL_TO: "Tim.oneway@gmail.com"
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      # 確認這裡是 Slack Channel 的 ID，格式類似 C09AGLZ7JMA
-      SLACK_CHANNEL: "D09AGLZ7JMA"
+      # 請確保這是 Slack Channel 的 ID，格式為 C 開頭，例如：C09AGLZ7JMA
+      SLACK_CHANNEL: "C09AGLZ7JMA"
       REPORT_DIR: reports
       HISTORY_FILE: strategy_history.json
 
