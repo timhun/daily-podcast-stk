@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write  # for committing back results
+  contents: write  # allow committing reports back (optional)
 
 jobs:
   weekly:
@@ -16,19 +16,24 @@ jobs:
         uses: actions/checkout@v4
         with:
           persist-credentials: true
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+
       - name: Install deps
         run: pip install -r requirements.txt
+
       - name: Run weekly pipeline
         run: python run_pipeline.py
-      - name: Upload reports artifact
+
+      - name: Upload weekly reports artifact
         uses: actions/upload-artifact@v4
         with:
           name: weekly-reports
           path: reports/
+
       - name: Commit reports back to repo
         if: always()
         run: |
