@@ -1,4 +1,3 @@
-#trading.yml
 name: Auto Trading Loop
 
 on:
@@ -17,6 +16,7 @@ jobs:
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       EMAIL_TO: "Tim.oneway@gmail.com"
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      # 確認這裡是 Slack Channel 的 ID，格式類似 C09AGLZ7JMA
       SLACK_CHANNEL: "D09AGLZ7JMA"
       REPORT_DIR: reports
       HISTORY_FILE: strategy_history.json
@@ -32,6 +32,14 @@ jobs:
         with:
           python-version: "3.11"
 
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
       - name: Install dependencies
         run: |
           pip install --upgrade pip
@@ -40,6 +48,7 @@ jobs:
       - name: Run trading pipeline
         id: run_pipeline
         run: |
+          set -e
           python run_pipeline.py
 
       - name: Upload reports as artifact
@@ -51,25 +60,38 @@ jobs:
       - name: Prepare Slack message
         id: slack_msg
         run: |
-          SIGNAL=$(jq -r '.strategy.signal // "N/A"' reports/backtest_report.json 2>/dev/null)
-          SIZE=$(jq -r '.strategy.size_pct // "N/A"' reports/backtest_report.json 2>/dev/null)
-          OOS_SHARPE=$(jq -r '.metrics.sharpe // "N/A"' reports/backtest_report.json 2>/dev/null)
-          OOS_MDD=$(jq -r '.metrics.mdd // "N/A"' reports/backtest_report.json 2>/dev/null)
-          STRATEGY_HISTORY=$(jq -c '.' strategy_history.json 2>/dev/null || echo "[]")
+          if [ -f reports/backtest_report.json ]; then
+            SIGNAL=$(jq -r '.strategy.signal // "N/A"' reports/backtest_report.json)
+            SIZE=$(jq -r '.strategy.size_pct // "N/A"' reports/backtest_report.json)
+            OOS_SHARPE=$(jq -r '.metrics.sharpe // "N/A"' reports/backtest_report.json)
+            OOS_MDD=$(jq -r '.metrics.mdd // "N/A"' reports/backtest_report.json)
+          else
+            SIGNAL="N/A"
+            SIZE="N/A"
+            OOS_SHARPE="N/A"
+            OOS_MDD="N/A"
+          fi
+
+          if [ -f strategy_history.json ]; then
+            STRATEGY_HISTORY=$(jq -c '.' strategy_history.json)
+          else
+            STRATEGY_HISTORY="[]"
+          fi
+
           MSG=$(cat <<EOF
-          *Auto Trading Loop 完成* :white_check_mark:
-          Repo: ${{ github.repository }}
-          Run: ${{ github.run_number }}
+*Auto Trading Loop 完成* :white_check_mark:
+Repo: ${{ github.repository }}
+Run: ${{ github.run_number }}
 
-          *Signal*: $SIGNAL
-          *Size*: $SIZE
-          *OOS Sharpe*: $OOS_SHARPE
-          *OOS MDD*: $OOS_MDD
+*Signal*: $SIGNAL
+*Size*: $SIZE
+*OOS Sharpe*: $OOS_SHARPE
+*OOS MDD*: $OOS_MDD
 
-          *策略歷史記錄*:
-          $STRATEGY_HISTORY
-          EOF
-          )
+*策略歷史記錄*:
+$STRATEGY_HISTORY
+EOF
+)
           echo "SLACK_MESSAGE<<EOF" >> $GITHUB_ENV
           echo "$MSG" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
@@ -77,16 +99,13 @@ jobs:
       - name: Send Slack Notification
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          payload: |
-            {
-              "channel": "${{ env.SLACK_CHANNEL }}",
-              "text": "${{ env.SLACK_MESSAGE }}"
-            }
+          channel-id: ${{ env.SLACK_CHANNEL }}
+          text: "${{ env.SLACK_MESSAGE }}"
         env:
-          SLACK_BOT_TOKEN: ${{ env.SLACK_BOT_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
       - name: Send daily email
-        if: env.EMAIL_USER != '' && env.EMAIL_PASS != ''
+        if: ${{ env.EMAIL_USER != '' && env.EMAIL_PASS != '' }}
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -108,6 +127,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
           git add reports/*.json strategy_history.json || true
           git commit -m "Auto update: ${{ github.run_id }} $(date -u +"%Y-%m-%dT%H:%M:%SZ")" || echo "No changes to commit"
           git push
