@@ -1,27 +1,29 @@
 # src/daily_sim.py
 import pandas as pd
-from datetime import datetime
+import numpy as np
 
-def run_daily_sim(symbol, strategy_path=None, strategy_data=None, cash=1_000_000):
+def run_daily_sim(symbol, strategy_data, cash=1_000_000):
     """
-    strategy_data: JSON dict from LLM
+    模擬每日交易，回傳 signal/price/size
     """
-    # 模擬抓取當日價格（這裡用假資料，可改成實際 API）
-    today_price = 100  # 假設價格
-    df = pd.DataFrame({"close":[today_price]})
+    # 模擬今日價格變動
+    price = np.random.uniform(95, 105)  # 隨機示意
+    signal = "hold"
+    size = 0
 
-    # 使用 strategy_data 計算 signal
-    signal_info = strategy_data.get("generate_signal", lambda df: {"signal":"hold"})(df)
-    signal = signal_info.get("signal", "hold")
-    size_pct = signal_info.get("size_pct", 0.5)
-    position_size = cash * size_pct if signal == "buy" else 0
+    if strategy_data["regime"] == "trend":
+        if np.random.rand() > 0.5:
+            signal = "buy"
+            size = strategy_data["params"]["size_pct"]
+        else:
+            signal = "sell"
+            size = strategy_data["params"]["size_pct"]
+    else:
+        if np.random.rand() > 0.5:
+            signal = "buy"
+            size = strategy_data["params"]["size_pct"]
+        else:
+            signal = "sell"
+            size = strategy_data["params"]["size_pct"]
 
-    return {
-        "date": datetime.now().strftime("%Y-%m-%d"),
-        "symbol": symbol,
-        "signal": signal,
-        "price": today_price,
-        "size": position_size,
-        "strategy_name": strategy_data.get("name", "LLM Strategy"),
-        "summary": strategy_data.get("summary", "")
-    }
+    return {"signal": signal, "price": round(price,2), "size": size}
