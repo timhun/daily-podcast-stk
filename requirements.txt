@@ -19,3 +19,4 @@ twstock
 numba==0.58.1
 lxml
 openai
+backtrader
