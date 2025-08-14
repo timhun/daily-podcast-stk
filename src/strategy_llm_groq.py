@@ -1,32 +1,41 @@
 #!/usr/bin/env python3
 # src/strategy_llm_groq.py
-import os, json
-from datetime import date
+import os
+import json
+import datetime
+from groq import GroqClient  # 假設你用 Groq SDK
 
-def generate_strategy(df, history=None):
+def generate_strategy_llm(df_json: dict, history_file="strategy_history.json") -> dict:
     """
-    使用 LLM/Groq 生成策略 JSON
-    history: dict, 歷史策略績效
+    使用 Groq LLM 生成策略 JSON
+    df_json: 最新 OHLCV + 技術指標資料
+    history_file: 保存歷史策略績效
+    return: 策略 JSON
     """
-    # --- 簡單例子：Trend 或 Range
-    vol20 = float(df["ret"].rolling(20).std().iloc[-1])
-    vol60 = float(df["ret"].rolling(60).std().iloc[-1])
-    trend = float((df["ma20"].iloc[-1] - df["ma60"].iloc[-1]) / df["ma60"].iloc[-1])
-    regime = "trend" if (trend > 0 and vol20 <= vol60) else "range"
+    client = GroqClient(api_key=os.environ.get("GROQ_API_KEY"))
+    model = os.environ.get("GROQ_MODEL", "llama-3.1-70b-versatile")
 
-    strategy_data = {
-        "asof": str(df.index[-1]),
-        "regime": regime,
-        "params": {},
-        "description": "",
-        "history": history or {}
-    }
+    prompt = f"根據下列數據生成交易策略 JSON:\n{json.dumps(df_json)}"
+    resp = client.run(model=model, prompt=prompt)
+    
+    try:
+        strategy = json.loads(resp)
+    except Exception:
+        strategy = {"signal": "hold", "size_pct": 0.0, "note": "LLM parse error"}
 
-    if regime == "trend":
-        strategy_data["params"] = {"fast":20, "slow":60, "rsi_n":14, "rsi_lo":35, "rsi_hi":75, "size_pct":0.6, "stop_loss":0.08}
-        strategy_data["description"] = "Trend strategy: MA(20/60) + RSI filter"
-    else:
-        strategy_data["params"] = {"n":20, "k":2.0, "rsi_n":14, "rsi_lo":30, "rsi_hi":70, "size_pct":0.5, "stop_loss":0.07}
-        strategy_data["description"] = "Range strategy: BBands + RSI"
+    # 更新策略歷史
+    today = datetime.date.today().isoformat()
+    history = []
+    if os.path.exists(history_file):
+        with open(history_file, "r", encoding="utf-8") as f:
+            history = json.load(f)
+    history.append({
+        "date": today,
+        "strategy": strategy,
+        "sharpe": strategy.get("sharpe", None),
+        "mdd": strategy.get("mdd", None)
+    })
+    with open(history_file, "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
 
-    return strategy_data
+    return strategy
