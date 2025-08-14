@@ -16,8 +16,8 @@ jobs:
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       EMAIL_TO: "Tim.oneway@gmail.com"
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      # 請確保這是 Slack Channel 的 ID，格式為 C 開頭，例如：C09AGLZ7JMA
-      SLACK_CHANNEL: "C09AGLZ7JMA"
+      # 確認這裡是 Slack Channel 的 ID，格式為 C 開頭，例如：C09AGLZ7JMA
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
       REPORT_DIR: reports
       HISTORY_FILE: strategy_history.json
 
@@ -57,50 +57,11 @@ jobs:
           name: reports-${{ github.run_id }}
           path: ${{ env.REPORT_DIR }}
 
-      - name: Prepare Slack message
-        id: slack_msg
-        run: |
-          if [ -f reports/backtest_report.json ]; then
-            SIGNAL=$(jq -r '.strategy.signal // "N/A"' reports/backtest_report.json)
-            SIZE=$(jq -r '.strategy.size_pct // "N/A"' reports/backtest_report.json)
-            OOS_SHARPE=$(jq -r '.metrics.sharpe // "N/A"' reports/backtest_report.json)
-            OOS_MDD=$(jq -r '.metrics.mdd // "N/A"' reports/backtest_report.json)
-          else
-            SIGNAL="N/A"
-            SIZE="N/A"
-            OOS_SHARPE="N/A"
-            OOS_MDD="N/A"
-          fi
-
-          if [ -f strategy_history.json ]; then
-            STRATEGY_HISTORY=$(jq -c '.' strategy_history.json)
-          else
-            STRATEGY_HISTORY="[]"
-          fi
-
-          MSG=$(cat <<EOF
-*Auto Trading Loop 完成* :white_check_mark:
-Repo: ${{ github.repository }}
-Run: ${{ github.run_number }}
-
-*Signal*: $SIGNAL
-*Size*: $SIZE
-*OOS Sharpe*: $OOS_SHARPE
-*OOS MDD*: $OOS_MDD
-
-*策略歷史記錄*:
-$STRATEGY_HISTORY
-EOF
-)
-          echo "SLACK_MESSAGE<<EOF" >> $GITHUB_ENV
-          echo "$MSG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
       - name: Send Slack Notification
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ env.SLACK_CHANNEL }}
-          text: "${{ env.SLACK_MESSAGE }}"
+          text: "Auto Trading Loop 已完成執行。請於報告中查看詳情。"
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
@@ -116,7 +77,7 @@ EOF
           to: ${{ env.EMAIL_TO }}
           from: ${{ env.EMAIL_USER }}
           body: |
-            ${{ env.SLACK_MESSAGE }}
+            Auto Trading Loop 已完成執行。請查看附件報告以獲取詳情。
           attachments: |
             reports/backtest_report.json
             reports/daily_sim.json
