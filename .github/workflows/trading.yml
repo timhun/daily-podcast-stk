@@ -54,12 +54,13 @@ jobs:
       - name: Extract report data for Slack
         id: extract_data
         run: |
-          SIGNAL=$(jq -r '.signal' reports/daily_sim.json)
-          PRICE=$(jq -r '.price' reports/daily_sim.json)
-          SIZE=$(jq -r '.size_pct' reports/daily_sim.json)
-          SHARPE=$(jq -r '.metrics.sharpe // "N/A"' reports/backtest_report.json)
-          MDD=$(jq -r '.metrics.mdd // "N/A"' reports/backtest_report.json)
-          LATEST_HISTORY=$(jq -r '.[-5:][] | "\(.date): signal \(.strategy.signal), sharpe \(.sharpe), mdd \(.mdd)"' strategy_history.json | paste -sd '\n' -)
+          SIGNAL=$(jq -r '.signal // "N/A"' reports/daily_sim.json 2>/dev/null || echo "N/A")
+          PRICE=$(jq -r '.price // "N/A"' reports/daily_sim.json 2>/dev/null || echo "N/A")
+          SIZE=$(jq -r '.size_pct // "N/A"' reports/daily_sim.json 2>/dev/null || echo "N/A")
+          SHARPE=$( [ -f reports/backtest_report.json ] && jq -r '.metrics.sharpe // "N/A"' reports/backtest_report.json || echo "N/A" )
+          MDD=$( [ -f reports/backtest_report.json ] && jq -r '.metrics.mdd // "N/A"' reports/backtest_report.json || echo "N/A" )
+          LATEST_HISTORY=$( [ -f strategy_history.json ] && jq -r '.[-5:][] | "\(.date): signal \(.strategy.signal), sharpe \(.sharpe), mdd \(.mdd)"' strategy_history.json | paste -sd '\n' - || echo "無歷史紀錄" )
+
           {
             echo "SIGNAL=$SIGNAL"
             echo "PRICE=$PRICE"
