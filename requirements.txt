@@ -21,3 +21,6 @@ lxml
 openai
 backtrader
 python-dateutil
+groq
+slack_sdk
+jinja2
