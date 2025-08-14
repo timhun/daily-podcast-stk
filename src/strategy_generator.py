@@ -82,3 +82,11 @@ class StrategyCandidate:
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(textwrap.dedent(code).lstrip())
     return out_path
+
+# 新增 wrapper，使 run_pipeline.py 可以直接呼叫 generate_strategy(df)
+def generate_strategy(df: pd.DataFrame):
+    weekly = make_weekly_report(df)
+    out_path = "strategy_candidate.py"
+    generate_strategy_file(weekly, out_path=out_path)
+    with open(out_path, "r", encoding="utf-8") as f:
+        return f.read()
