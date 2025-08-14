@@ -1,0 +1,26 @@
+name: Daily Simulation (0050)
+
+on:
+  schedule:
+    - cron: '0 7 * * *'   # daily at 07:00 UTC -> Taipei 15:00
+  workflow_dispatch:
+
+jobs:
+  daily-sim:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install deps
+        run: pip install -r requirements.txt
+      - name: Run daily job
+        run: python run_pipeline.py daily
+      - name: Upload reports artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-reports
+          path: reports/
