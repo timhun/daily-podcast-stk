@@ -66,10 +66,10 @@ jobs:
           *OOS Sharpe*: $OOS_SHARPE
           *OOS MDD*: $OOS_MDD
 
-*策略歷史記錄*:
-$STRATEGY_HISTORY
-EOF
-)
+          *策略歷史記錄*:
+          $STRATEGY_HISTORY
+          EOF
+          )
           echo "SLACK_MESSAGE<<EOF" >> $GITHUB_ENV
           echo "$MSG" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
