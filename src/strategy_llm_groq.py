@@ -1,68 +1,76 @@
 #!/usr/bin/env python3
 # src/strategy_llm_groq.py
-import os
-import json
-import datetime
-from groq import Groq
+import pandas as pd
+import numpy as np
+from datetime import datetime
 
-OUTPUT_FILE = "strategy_generated.json"
-
-def generate_strategy_with_groq():
-    client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-    
-    prompt = """
-你是一位專業的量化交易策略顧問，請根據目前的市場情況，輸出一個新的短期交易策略。
-要求：
-1. 使用 Python + pandas + ta 庫撰寫
-2. 僅輸出策略邏輯（函式）
-3. 適用台股（0050.TW）與美股（QQQ）
-4. 同時輸出 200 字以內的策略摘要
-輸出格式：
-策略名稱、策略摘要、策略程式碼
-"""
-
-    response = client.chat.completions.create(
-        model="llama3-70b-8192",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.7,
-        max_tokens=1500
-    )
-
-    content = response.choices[0].message["content"].strip()
-
-    # 簡單解析 LLM 輸出
-    strategy_name = "Groq_LLM_Strategy_" + datetime.datetime.now().strftime("%Y%m%d")
-    strategy_summary = ""
-    strategy_code = ""
-
-    if "策略摘要" in content:
-        parts = content.split("策略摘要")
-        if len(parts) > 1:
-            summary_part = parts[1].strip()
-            if "策略程式碼" in summary_part:
-                strategy_summary, code_part = summary_part.split("策略程式碼", 1)
-                strategy_code = code_part.strip()
-            else:
-                strategy_summary = summary_part
-    else:
-        strategy_summary = "LLM 自動生成的交易策略"
-        strategy_code = content
-
-    # 標準化 JSON 輸出
-    output_data = {
-        "name": strategy_name,
-        "generated_at": datetime.datetime.now().isoformat(),
-        "summary": strategy_summary.strip(),
-        "code": strategy_code.strip()
+def make_weekly_report(df: pd.DataFrame):
+    """生成週報，提供 regime hint"""
+    vol20 = float(df["ret"].rolling(20).std().iloc[-1])
+    vol60 = float(df["ret"].rolling(60).std().iloc[-1])
+    trend = float((df["ma20"].iloc[-1] - df["ma60"].iloc[-1]) / df["ma60"].iloc[-1])
+    regime = "trend" if (trend > 0 and vol20 <= vol60) else "range"
+    return {
+        "asof": str(df.index[-1]),
+        "stats": {"vol20": vol20, "vol60": vol60, "trend_ma20_ma60": trend},
+        "regime_hint": regime
     }
 
-    # 儲存 JSON
-    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-        json.dump(output_data, f, ensure_ascii=False, indent=2)
+def generate_strategy_json(weekly_report: dict):
+    """生成標準化 strategy_data JSON"""
+    regime = weekly_report.get("regime_hint", "trend")
+    strategy = {"name": "", "summary": "", "params": {}, "generate_signal": None}
 
-    print(f"[INFO] 策略已生成並儲存至 {OUTPUT_FILE}")
-    return output_data
+    if regime == "trend":
+        strategy["name"] = "Trend Strategy"
+        strategy["summary"] = "使用 MA(20/60) 交叉 + RSI 濾網的趨勢追蹤策略"
+        strategy["params"] = dict(fast=20, slow=60, rsi_n=14, rsi_lo=35, rsi_hi=75,
+                                  size_pct=0.6, stop_loss=0.08)
 
+        def trend_signal(df: pd.DataFrame):
+            px = df['close']
+            ma_f = px.rolling(strategy["params"]['fast']).mean()
+            ma_s = px.rolling(strategy["params"]['slow']).mean()
+            delta = px.diff()
+            up = delta.clip(lower=0).ewm(alpha=1/strategy["params"]['rsi_n'], adjust=False).mean()
+            dn = -delta.clip(upper=0).ewm(alpha=1/strategy["params"]['rsi_n'], adjust=False).mean()
+            rs = up / dn.replace(0, np.nan)
+            rsi = 100 - (100/(1+rs))
+            cross_up = (ma_f.iloc[-2] <= ma_s.iloc[-2]) and (ma_f.iloc[-1] > ma_s.iloc[-1])
+            cross_dn = (ma_f.iloc[-2] >= ma_s.iloc[-2]) and (ma_f.iloc[-1] < ma_s.iloc[-1])
+            if cross_up and rsi.iloc[-1] > 50:
+                return {"signal":"buy", "size_pct": strategy["params"]['size_pct']}
+            if cross_dn or rsi.iloc[-1] > strategy["params"]['rsi_hi']:
+                return {"signal":"sell", "size_pct": strategy["params"]['size_pct']}
+            return {"signal":"hold"}
 
-if __name__ == "__main__":
-    generate_strategy_with_groq()
+        strategy["generate_signal"] = trend_signal
+
+    else:
+        strategy["name"] = "Range Strategy"
+        strategy["summary"] = "使用 BBands + RSI 的盤整區間策略"
+        strategy["params"] = dict(n=20, k=2.0, rsi_n=14, rsi_lo=30, rsi_hi=70,
+                                  size_pct=0.5, stop_loss=0.07)
+
+        def range_signal(df: pd.DataFrame):
+            px = df['close']
+            mid = px.rolling(strategy["params"]['n']).mean()
+            std = px.rolling(strategy["params"]['n']).std()
+            up  = mid + strategy["params"]['k']*std
+            dn  = mid - strategy["params"]['k']*std
+            delta = px.diff()
+            up_rsi = delta.clip(lower=0).ewm(alpha=1/strategy["params"]['rsi_n'], adjust=False).mean()
+            dn_rsi = -delta.clip(upper=0).ewm(alpha=1/strategy["params"]['rsi_n'], adjust=False).mean()
+            rs = up_rsi / dn_rsi.replace(0, np.nan)
+            rsi = 100 - (100/(1+rs))
+            touch_dn = px.iloc[-1] < dn.iloc[-1]
+            touch_up = px.iloc[-1] > up.iloc[-1]
+            if touch_dn and rsi.iloc[-1] < strategy["params"]['rsi_lo']:
+                return {"signal":"buy", "size_pct": strategy["params"]['size_pct']}
+            if touch_up and rsi.iloc[-1] > strategy["params"]['rsi_hi']:
+                return {"signal":"sell", "size_pct": strategy["params"]['size_pct']}
+            return {"signal":"hold"}
+
+        strategy["generate_signal"] = range_signal
+
+    return strategy
