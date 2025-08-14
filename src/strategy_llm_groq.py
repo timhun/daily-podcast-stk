@@ -3,7 +3,7 @@
 import os
 import json
 import datetime
-from groq import client  # 假設你用 Groq SDK
+from groq import client as groq_client  # Adjust import and naming to avoid conflicts
 
 def generate_strategy_llm(df_json: dict, history_file="strategy_history.json") -> dict:
     """
@@ -12,15 +12,26 @@ def generate_strategy_llm(df_json: dict, history_file="strategy_history.json") -
     history_file: 保存歷史策略績效
     return: 策略 JSON
     """
-    client = GroqClient(api_key=os.environ.get("GROQ_API_KEY"))
+    # Create client instance
+    api_key = os.environ.get("GROQ_API_KEY")
+    if not api_key:
+        raise ValueError("GROQ_API_KEY environment variable not set")
+
+    groq = groq_client.Client(api_key=api_key)
+
     model = os.environ.get("GROQ_MODEL", "llama-3.1-70b-versatile")
 
     prompt = f"根據下列數據生成交易策略 JSON:\n{json.dumps(df_json)}"
-    resp = client.run(model=model, prompt=prompt)
-    
+    resp = groq.run(model=model, prompt=prompt)
+
+    # If resp is not str, convert accordingly (depending on SDK)
+    if not isinstance(resp, str):
+        resp = resp.decode("utf-8") if hasattr(resp, "decode") else str(resp)
+
     try:
         strategy = json.loads(resp)
-    except Exception:
+    except json.JSONDecodeError as e:
+        print(f"[ERROR] JSON decode failed: {e}. Response was: {resp}")
         strategy = {"signal": "hold", "size_pct": 0.0, "note": "LLM parse error"}
 
     # 更新策略歷史
@@ -28,13 +39,19 @@ def generate_strategy_llm(df_json: dict, history_file="strategy_history.json") -
     history = []
     if os.path.exists(history_file):
         with open(history_file, "r", encoding="utf-8") as f:
-            history = json.load(f)
+            try:
+                history = json.load(f)
+            except json.JSONDecodeError:
+                print("[WARNING] History file corrupted or empty, resetting history.")
+                history = []
+
     history.append({
         "date": today,
         "strategy": strategy,
-        "sharpe": strategy.get("sharpe", None),
-        "mdd": strategy.get("mdd", None)
+        "sharpe": strategy.get("sharpe"),
+        "mdd": strategy.get("mdd")
     })
+
     with open(history_file, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
