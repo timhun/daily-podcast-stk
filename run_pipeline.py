@@ -1,7 +1,7 @@
 import os
 import datetime
 from src.data_fetch import fetch_ohlcv
-from src.strategy_gen import generate_strategy
+from src.strategy_generator import generate_strategy
 from src.backtest import run_backtest
 from src.daily_sim import run_daily_sim
 
