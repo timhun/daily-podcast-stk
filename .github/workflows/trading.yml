@@ -12,20 +12,19 @@ jobs:
       USE_LLM: "1"
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: "llama-3.1-70b-versatile"
-
       EMAIL_USER: ${{ secrets.EMAIL_USER }}
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       EMAIL_TO: "Tim.oneway@gmail.com"
-
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-
+      SLACK_CHANNEL: "D09AGLZ7JMA"
       REPORT_DIR: reports
       HISTORY_FILE: strategy_history.json
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -39,18 +38,49 @@ jobs:
 
       - name: Run trading pipeline
         id: run_pipeline
-        run: python run_pipeline.py
+        run: |
+          python run_pipeline.py
 
       - name: Upload reports as artifact
         uses: actions/upload-artifact@v4
         with:
           name: reports-${{ github.run_id }}
-          path: reports/
+          path: ${{ env.REPORT_DIR }}
+
+      - name: Prepare Slack message
+        id: slack_msg
+        run: |
+          SIGNAL=$(jq -r '.strategy.signal // "N/A"' reports/backtest_report.json 2>/dev/null)
+          SIZE=$(jq -r '.strategy.size_pct // "N/A"' reports/backtest_report.json 2>/dev/null)
+          OOS_SHARPE=$(jq -r '.metrics.sharpe // "N/A"' reports/backtest_report.json 2>/dev/null)
+          OOS_MDD=$(jq -r '.metrics.mdd // "N/A"' reports/backtest_report.json 2>/dev/null)
+          STRATEGY_HISTORY=$(jq -c '.' strategy_history.json 2>/dev/null || echo "[]")
+          MSG=$(cat <<EOF
+*Auto Trading Loop 完成* :white_check_mark:
+Repo: ${{ github.repository }}
+Run: ${{ github.run_number }}
+
+*Signal*: $SIGNAL
+*Size*: $SIZE
+*OOS Sharpe*: $OOS_SHARPE
+*OOS MDD*: $OOS_MDD
+
+*策略歷史記錄*:
+$STRATEGY_HISTORY
+EOF
+)
+          echo "SLACK_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$MSG" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Send Slack Notification
         uses: slackapi/slack-github-action@v1.26.0
         with:
-          payload: '{"channel":"'"${{ env.SLACK_CHANNEL }}"'","text":"*Auto Trading Loop 完成* :white_check_mark:\nRepo: ${{ github.repository }}\nRun: ${{ github.run_number }}\n- Signal: $(jq -r .strategy.signal reports/backtest_report.json 2>/dev/null || echo N/A)\n- Size: $(jq -r .strategy.size_pct reports/backtest_report.json 2>/dev/null || echo N/A)\n- OOS Sharpe: $(jq -r .metrics.sharpe reports/backtest_report.json 2>/dev/null || echo N/A)\n- OOS MDD: $(jq -r .metrics.mdd reports/backtest_report.json 2>/dev/null || echo N/A)"}'
+          payload: |
+            {
+              "channel": "${{ env.SLACK_CHANNEL }}",
+              "text": "${{ env.SLACK_MESSAGE }}"
+            }
         env:
           SLACK_BOT_TOKEN: ${{ env.SLACK_BOT_TOKEN }}
 
@@ -65,10 +95,12 @@ jobs:
           subject: "每日交易模擬報告 - ${{ github.repository }} - ${{ github.run_number }}"
           to: ${{ env.EMAIL_TO }}
           from: ${{ env.EMAIL_USER }}
-          body: "請參考附件報告"
+          body: |
+            ${{ env.SLACK_MESSAGE }}
           attachments: |
             reports/backtest_report.json
             reports/daily_sim.json
+            strategy_history.json
         continue-on-error: true
 
       - name: Commit results back to repo
