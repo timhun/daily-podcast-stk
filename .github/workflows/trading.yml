@@ -1,3 +1,4 @@
+#trading.yml
 name: Auto Trading Loop
 
 on:
@@ -56,14 +57,14 @@ jobs:
           OOS_MDD=$(jq -r '.metrics.mdd // "N/A"' reports/backtest_report.json 2>/dev/null)
           STRATEGY_HISTORY=$(jq -c '.' strategy_history.json 2>/dev/null || echo "[]")
           MSG=$(cat <<EOF
-*Auto Trading Loop 完成* :white_check_mark:
-Repo: ${{ github.repository }}
-Run: ${{ github.run_number }}
+          *Auto Trading Loop 完成* :white_check_mark:
+          Repo: ${{ github.repository }}
+          Run: ${{ github.run_number }}
 
-*Signal*: $SIGNAL
-*Size*: $SIZE
-*OOS Sharpe*: $OOS_SHARPE
-*OOS MDD*: $OOS_MDD
+          *Signal*: $SIGNAL
+          *Size*: $SIZE
+          *OOS Sharpe*: $OOS_SHARPE
+          *OOS MDD*: $OOS_MDD
 
 *策略歷史記錄*:
 $STRATEGY_HISTORY
