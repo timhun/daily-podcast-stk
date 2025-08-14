@@ -24,3 +24,5 @@ python-dateutil
 groq
 slack_sdk
 jinja2
+jq
+dawidd6-action-send-mail
