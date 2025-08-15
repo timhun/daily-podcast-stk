@@ -1,30 +1,27 @@
 #!/usr/bin/env python3
+# run_pipeline.py
 
 import os
-import json
 import datetime as dt
+from dateutil import tz
 from pathlib import Path
 import pandas as pd
-import numpy as np
 import yfinance as yf
-from dateutil import tz
 
-# ====== Settings ======
-SYMBOL = os.environ.get("SYMBOL", "0050.TW")
-REPORT_DIR = os.environ.get("REPORT_DIR", "reports")
-HISTORY_FILE = os.environ.get("HISTORY_FILE", "strategy_history.json")
-USE_LLM = os.environ.get("USE_LLM", "1") == "1"
-TARGET_RETURN = float(os.environ.get("TARGET_RETURN", "0.02"))
+# ====== 基本設定 ======
 TAI_TZ = tz.gettz("Asia/Taipei")
-Path(REPORT_DIR).mkdir(parents=True, exist_ok=True)
+MODE = os.environ.get("MODE", "daily")
+SYMBOL = os.environ.get("SYMBOL", "0050.TW")
 
-# ====== Data Fetch ======
+# ====== 工具函式 ======
 def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
+    """把 yfinance 可能回傳的 MultiIndex 攤平成單層欄位"""
     if isinstance(df.columns, pd.MultiIndex):
-        cols = ["_".join([str(x) for x in col]).strip().lower() for col in df.columns.values]
+        cols = ["_".join([str(x) for x in col]).strip().lower() for x in df.columns.values]
         df.columns = cols
     else:
         df.columns = [str(c).strip().lower().replace(" ", "_") for c in df.columns]
+
     want = {"open": None, "high": None, "low": None, "close": None, "volume": None}
     for c in df.columns:
         for w in want.keys():
@@ -38,179 +35,59 @@ def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
                     want[w] = c
     missing = [k for k, v in want.items() if v is None]
     if missing:
-        raise RuntimeError(f"Missing required columns: {missing}. Current columns: {list(df.columns)}")
-    return df.rename(columns={want["open"]:"open", want["high"]:"high",
-                              want["low"]:"low", want["close"]:"close", want["volume"]:"volume"})
+        raise RuntimeError(f"找不到必要欄位: {missing}. 現有欄位: {list(df.columns)}")
 
-def fetch_ohlcv(symbol: str, start=None, end=None, interval="1d") -> pd.DataFrame:
-    df = yf.download(symbol, start=start, end=end, interval=interval,
-                     auto_adjust=True, progress=False, threads=True)
+    df2 = df.rename(columns={want["open"]:"open", want["high"]:"high",
+                             want["low"]:"low", want["close"]:"close", want["volume"]:"volume"})
+    return df2
+
+def fetch_ohlcv(symbol: str, years: int = 3, interval="1d", fallback=False) -> pd.DataFrame:
+    """下載 OHLCV"""
+    print(f"[DEBUG] Fetching {interval} data for {symbol}...")
+    end = dt.datetime.now(dt.timezone.utc)
+    start = end - dt.timedelta(days=365*years + 60)
+
+    df = yf.download(symbol, start=start.date(), end=end.date()+dt.timedelta(days=1),
+                     interval=interval, auto_adjust=True, progress=False, threads=True)
     if df is None or df.empty:
-        print(f"[ERROR] yfinance download failed or no data for {symbol} interval={interval}")
-        return pd.DataFrame()
+        raise RuntimeError("yfinance 下載失敗或無資料")
+    print(f"[DEBUG] Raw data rows: {len(df)}")
+
     df = _ensure_cols_flat(df)
     if df.index.tz is None:
         df.index = df.index.tz_localize(dt.timezone.utc)
     df.index = df.index.tz_convert(TAI_TZ)
-    print(f"[DEBUG] fetch_ohlcv {symbol} interval={interval} returned {len(df)} rows")
+
+    if fallback and interval.endswith("m"):
+        today = pd.Timestamp.now(TAI_TZ).normalize()
+        if today not in df.index.normalize():
+            print("[DEBUG] No data for today, filling with last row...")
+            last_row = df.iloc[-1:]
+            last_row.index = [pd.Timestamp.now(TAI_TZ)]
+            df = pd.concat([df, last_row])
+
     return df[["open", "high", "low", "close", "volume"]].dropna()
 
-def save_csv(df: pd.DataFrame, filename: str) -> str:
-    path = os.path.join(REPORT_DIR, filename)
-    df.to_csv(path)
-    print(f"[INFO] Saved {filename} ({len(df)} rows)")
-    return path
+def fetch_hourly_csv(symbol: str, output_file: str = "hourly.csv") -> pd.DataFrame:
+    """抓取最近一週小時線資料並存 CSV"""
+    df = fetch_ohlcv(symbol, years=0, interval="60m", fallback=True)
+    cutoff = df.index.max() - dt.timedelta(days=7)
+    df = df[df.index >= cutoff]
 
-def load_or_update_csv(symbol: str, filename: str, interval="1d", last_days=None) -> pd.DataFrame:
-    path = os.path.join(REPORT_DIR, filename)
-    now = dt.datetime.now(dt.timezone.utc)
-    if os.path.exists(path):
-        df = pd.read_csv(path, index_col=0, parse_dates=True)
-        try:
-            df.index = df.index.tz_localize(TAI_TZ, ambiguous='NaT', nonexistent='shift_forward')
-        except Exception as e:
-            print(f"[WARN] tz_localize error: {e}")
-        last_date = df.index.max()
-        df_new = fetch_ohlcv(symbol, start=(last_date + dt.timedelta(minutes=1)).date(),
-                             end=now.date()+dt.timedelta(days=1), interval=interval)
-        if not df_new.empty:
-            df = pd.concat([df, df_new])
-            df = df[~df.index.duplicated(keep='last')]
-            print(f"[DEBUG] Updated {filename} with new data ({len(df_new)} new rows)")
-        else:
-            print(f"[DEBUG] No new data to update for {filename}")
-        if last_days and interval.endswith("m"):
-            cutoff = df.index.max() - dt.timedelta(days=last_days)
-            df = df[df.index >= cutoff]
-        save_csv(df, filename)
-    else:
-        start = now - dt.timedelta(days=365 if interval=="1d" else 30)
-        df = fetch_ohlcv(symbol, start=start.date(), end=now.date()+dt.timedelta(days=1), interval=interval)
-        if last_days and interval.endswith("m"):
-            cutoff = df.index.max() - dt.timedelta(days=last_days)
-            df = df[df.index >= cutoff]
-        if not df.empty:
-            save_csv(df, filename)
-            print(f"[DEBUG] Created {filename} CSV ({len(df)} rows)")
-        else:
-            print(f"[WARN] Could not create {filename}: no data downloaded")
+    Path(output_file).parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(output_file)
+    print(f"[INFO] Hourly data saved to {output_file} ({len(df)} rows)")
     return df
 
-# ====== Technical Indicators ======
-def rsi(series, n=14):
-    delta = series.diff()
-    up = delta.clip(lower=0).ewm(alpha=1/n, adjust=False).mean()
-    dn = -delta.clip(upper=0).ewm(alpha=1/n, adjust=False).mean()
-    rs = up / dn.replace(0, np.nan)
-    return 100 - (100/(1+rs))
-
-def atr(df, n=14):
-    tr1 = df["high"] - df["low"]
-    tr2 = (df["high"] - df["close"].shift()).abs()
-    tr3 = (df["low"] - df["close"].shift()).abs()
-    tr = pd.concat([tr1, tr2, tr3], axis=1).max(axis=1)
-    return tr.rolling(n).mean()
-
-def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
-    out = df.copy()
-    px = out["close"]
-    out["ret"] = px.pct_change()
-    out["ma5"]  = px.rolling(5).mean()
-    out["ma20"] = px.rolling(20).mean()
-    out["ma60"] = px.rolling(60).mean()
-    out["rsi14"] = rsi(px, 14)
-    out["bb_mid"] = px.rolling(20).mean()
-    out["bb_std"] = px.rolling(20).std()
-    out["bb_up"]  = out["bb_mid"] + 2*out["bb_std"]
-    out["bb_dn"]  = out["bb_mid"] - 2*out["bb_std"]
-    out["atr14"]  = atr(out, 14)
-    return out.dropna()
-
-# ====== Dummy Strategy / Backtest ======
-def generate_strategy_llm(df_json, history_file=None, target_return=0.02):
-    last_close = list(df_json.values())[-1]["close"]
-    return {"signal": "buy" if last_close % 2 == 0 else "hold", "size_pct": 0.1}
-
-def run_backtest_json(df, strategy_data):
-    return {"sharpe": 1.0, "max_drawdown": 0.1}
-
-def run_daily_sim_json(df, strategy_data):
-    last_close = df["close"].iloc[-1] if not df.empty else None
-    return {"signal": strategy_data.get("signal", "hold"),
-            "size_pct": strategy_data.get("size_pct", 0),
-            "price": last_close,
-            "note": ""}
-
-# ====== Pipeline ======
-def weekly_pipeline():
-    print("=== Weekly Strategy Generation / Backtest (Daily K) ===")
-    df = load_or_update_csv(SYMBOL, "daily.csv", interval="1d", last_days=180)
-    df_json = df.fillna(0).to_dict(orient="index")
-    strategy_data = generate_strategy_llm(df_json, history_file=HISTORY_FILE, target_return=TARGET_RETURN)
-    metrics = run_backtest_json(df, strategy_data)
-    report = {"asof": str(df.index[-1]), "strategy": strategy_data, "metrics": metrics}
-    save_csv(pd.DataFrame([report]), "weekly_report.json")
-    print("[INFO] Weekly pipeline done:", report)
-    return report
-
-def daily_pipeline():
-    print("=== Daily Simulated Trading (Daily K) ===")
-    df = load_or_update_csv(SYMBOL, "daily.csv", interval="1d", last_days=180)
-    df_json = df.fillna(0).to_dict(orient="index")
-    strategy_data = generate_strategy_llm(df_json, history_file=HISTORY_FILE, target_return=TARGET_RETURN)
-    daily_res = run_daily_sim_json(df, strategy_data)
-    out = {"asof": str(df.index[-1]), "symbol": SYMBOL,
-           "signal": daily_res.get("signal"), "size_pct": daily_res.get("size_pct"),
-           "price": daily_res.get("price"), "note": daily_res.get("note"),
-           "strategy_used": strategy_data}
-    save_csv(pd.DataFrame([out]), "daily_sim.json")
-    print("[INFO] Daily pipeline done:", out)
-    return out
-
-def hourly_pipeline():
-    print("=== Hourly Short-term Sim (Hourly K, 7 days) ===")
-    df = load_or_update_csv(SYMBOL, "hourly.csv", interval="60m", last_days=7)
-    print(f"[DEBUG] hourly df shape: {df.shape}")
-    if df.empty:
-        print("[WARN] No hourly data available, hourly.csv NOT generated")
-        return {}
-    df_json = df.fillna(0).to_dict(orient="index")
-    strategy_data = generate_strategy_llm(df_json, history_file=HISTORY_FILE, target_return=TARGET_RETURN)
-    hourly_res = run_daily_sim_json(df, strategy_data)
-    out = {"asof": str(df.index[-1]), "symbol": SYMBOL,
-           "signal": hourly_res.get("signal"), "size_pct": hourly_res.get("size_pct"),
-           "price": hourly_res.get("price"), "note": hourly_res.get("note"),
-           "strategy_used": strategy_data, "mode": "hourly"}
-    save_csv(pd.DataFrame([out]), "hourly_sim.json")
-    # Ensure hourly.csv is (re)written
-    save_csv(df, "hourly.csv")
-    print("[INFO] Hourly pipeline done:", out)
-    return out
-
-# ====== Main ======
-def main():
-    mode = os.environ.get("MODE", "auto")
-    now_utc = dt.datetime.utcnow()
-    taipei_now = now_utc + dt.timedelta(hours=8)
-    weekday = taipei_now.weekday()
-    hour_local = taipei_now.hour
-    print(f"[DEBUG] now_utc={now_utc} taipei_now={taipei_now} mode={mode}")
-
-    if mode == "weekly":
-        weekly_pipeline()
-    elif mode == "daily":
-        daily_pipeline()
-    elif mode == "hourly":
-        hourly_pipeline()
-    else:
-        if weekday == 5:
-            weekly_pipeline()
-        elif 0 <= weekday <= 4:
-            hourly_pipeline()
-            if hour_local == 9:
-                daily_pipeline()
-        else:
-            hourly_pipeline()
-
+# ====== 主流程 ======
 if __name__ == "__main__":
-    main()
+    print(f"[INFO] Running pipeline in MODE={MODE}, SYMBOL={SYMBOL}")
+
+    if MODE == "hourly":
+        try:
+            fetch_hourly_csv(SYMBOL, "hourly.csv")
+        except Exception as e:
+            print(f"[ERROR] Hourly fetch failed: {e}")
+
+    elif MODE == "daily":
+        print("[TODO] Daily mode 邏輯可在這裡實作")
