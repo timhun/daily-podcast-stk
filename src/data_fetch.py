@@ -1,4 +1,3 @@
-# src/data_fetch.py
 import pandas as pd
 import numpy as np
 import datetime as dt
@@ -8,9 +7,6 @@ from dateutil import tz
 TAI_TZ = tz.gettz("Asia/Taipei")
 
 def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    把 yfinance 可能回傳的 MultiIndex 欄位攤平成單層字串
-    """
     if isinstance(df.columns, pd.MultiIndex):
         cols = ["_".join([str(x) for x in col]).strip().lower() for col in df.columns.values]
         df.columns = cols
@@ -29,6 +25,7 @@ def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
             for c in df.columns:
                 if w in c and want[w] is None:
                     want[w] = c
+
     missing = [k for k, v in want.items() if v is None]
     if missing:
         raise RuntimeError(f"找不到必要欄位: {missing}. 現有欄位: {list(df.columns)}")
@@ -37,23 +34,21 @@ def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
                              want["low"]:"low", want["close"]:"close", want["volume"]:"volume"})
     return df2
 
-def fetch_ohlcv(symbol: str, interval="1d", years: int = 1, fallback: bool = False) -> pd.DataFrame:
+def fetch_ohlcv(symbol: str, years: int = 1, interval="1d", fallback: bool=False) -> pd.DataFrame:
     """
-    下載 OHLCV
-    interval: '1d' 或 '1h'
-    fallback: 若今天資料缺，使用前一天收盤填充（只對 hourly 有效）
+    抓日線或小時線資料。小時線只抓最近一週。
+    fallback=True 時，若今天無小時資料則使用前一天最後一筆補上。
     """
-    now_utc = dt.datetime.now(dt.timezone.utc)
-
     if interval.endswith("h"):
-        # 小時線只抓最近 7 天
-        start = now_utc - dt.timedelta(days=7)
+        days = 7
+        df = yf.download(symbol, period=f"{days}d", interval=interval,
+                         auto_adjust=True, progress=False, threads=True)
     else:
-        # 日線抓最近 N 年
-        start = now_utc - dt.timedelta(days=365*years + 60)
+        end = dt.datetime.now(dt.timezone.utc)
+        start = end - dt.timedelta(days=365*years + 60)
+        df = yf.download(symbol, start=start.date(), end=end.date()+dt.timedelta(days=1),
+                         interval=interval, auto_adjust=True, progress=False, threads=True)
 
-    df = yf.download(symbol, start=start.date(), end=now_utc.date() + dt.timedelta(days=1),
-                     interval=interval, auto_adjust=True, progress=False, threads=True)
     if df is None or df.empty:
         raise RuntimeError("yfinance 下載失敗或無資料")
 
@@ -65,27 +60,16 @@ def fetch_ohlcv(symbol: str, interval="1d", years: int = 1, fallback: bool = Fal
 
     df = df[["open", "high", "low", "close", "volume"]].dropna()
 
-    # fallback: 用前一天收盤填補今天小時缺失
+    # fallback 機制
     if fallback and interval.endswith("h"):
-        today = dt.datetime.now(TAI_TZ).date()
-        if today not in df.index.date:
-            prev_day_close = df["close"].iloc[-1]
-            hours = pd.date_range(start=dt.datetime.combine(today, dt.time(9,0), tzinfo=TAI_TZ),
-                                  end=dt.datetime.combine(today, dt.time(15,0), tzinfo=TAI_TZ),
-                                  freq="1H")
-            fallback_df = pd.DataFrame({
-                "open": prev_day_close,
-                "high": prev_day_close,
-                "low": prev_day_close,
-                "close": prev_day_close,
-                "volume": 0
-            }, index=hours)
-            df = pd.concat([df, fallback_df])
-            df = df.sort_index()
-
+        today = dt.datetime.now(tz=TAI_TZ).date()
+        if not any(df.index.date == today):
+            last_row = df.iloc[-1].copy()
+            last_row.name = dt.datetime.combine(today, dt.time(15,0,0), tzinfo=TAI_TZ)
+            df = pd.concat([df, last_row.to_frame().T])
     return df
 
-# 技術指標
+# 指標
 def rsi(series, n=14):
     delta = series.diff()
     up = delta.clip(lower=0).ewm(alpha=1/n, adjust=False).mean()
@@ -114,3 +98,8 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
     out["bb_dn"]  = out["bb_mid"] - 2*out["bb_std"]
     out["atr14"]  = atr(out, 14)
     return out.dropna()
+
+def save_hourly_csv(symbol="0050.TW", output_file="hourly_data.csv", fallback=True):
+    df = fetch_ohlcv(symbol, interval="1h", fallback=fallback)
+    df.to_csv(output_file)
+    return df
