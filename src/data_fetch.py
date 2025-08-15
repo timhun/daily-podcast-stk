@@ -17,7 +17,6 @@ def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
     else:
         df.columns = [str(c).strip().lower().replace(" ", "_") for c in df.columns]
 
-    # 對應 open/high/low/close/volume
     colmap = {}
     want = {"open": None, "high": None, "low": None, "close": None, "volume": None}
     for c in df.columns:
@@ -25,13 +24,11 @@ def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
             if c.endswith("_" + w) or c == w or c.endswith("." + w) or ("_"+w+"_") in c or c.split("_")[-1] == w:
                 if want[w] is None:
                     want[w] = c
-    # 更鬆匹配
     for w in want:
         if want[w] is None:
             for c in df.columns:
                 if w in c and want[w] is None:
                     want[w] = c
-
     missing = [k for k, v in want.items() if v is None]
     if missing:
         raise RuntimeError(f"找不到必要欄位: {missing}. 現有欄位: {list(df.columns)}")
@@ -40,39 +37,53 @@ def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
                              want["low"]:"low", want["close"]:"close", want["volume"]:"volume"})
     return df2
 
-def fetch_ohlcv(symbol: str, years: int = 1, interval="1d", fallback=True) -> pd.DataFrame:
+def fetch_ohlcv(symbol: str, interval="1d", years: int = 1, fallback: bool = False) -> pd.DataFrame:
     """
-    下載 OHLCV，返回 timezone-aware DataFrame，index 為台北時區
-    interval 可選：1d / 60m / 30m / ...
-    fallback=True 時，若當天沒資料會抓最近一天
+    下載 OHLCV
+    interval: '1d' 或 '1h'
+    fallback: 若今天資料缺，使用前一天收盤填充（只對 hourly 有效）
     """
-    end = dt.datetime.now(dt.timezone.utc)
+    now_utc = dt.datetime.now(dt.timezone.utc)
 
-    # 小時/分鐘K只能抓最近 20 天
-    if interval.endswith("m"):
-        start = end - dt.timedelta(days=20)
+    if interval.endswith("h"):
+        # 小時線只抓最近 7 天
+        start = now_utc - dt.timedelta(days=7)
     else:
-        start = end - dt.timedelta(days=365*years + 60)
+        # 日線抓最近 N 年
+        start = now_utc - dt.timedelta(days=365*years + 60)
 
-    df = yf.download(symbol, start=start.date(), end=end.date()+dt.timedelta(days=1),
+    df = yf.download(symbol, start=start.date(), end=now_utc.date() + dt.timedelta(days=1),
                      interval=interval, auto_adjust=True, progress=False, threads=True)
-
-    # fallback 機制
-    if fallback and (df is None or df.empty) and interval.endswith("m"):
-        df = yf.download(symbol, period="5d", interval=interval,
-                         auto_adjust=True, progress=False, threads=True)
-
     if df is None or df.empty:
         raise RuntimeError("yfinance 下載失敗或無資料")
 
     df = _ensure_cols_flat(df)
 
-    # timezone-aware
     if df.index.tz is None:
         df.index = df.index.tz_localize(dt.timezone.utc)
     df.index = df.index.tz_convert(TAI_TZ)
 
-    return df[["open", "high", "low", "close", "volume"]].dropna()
+    df = df[["open", "high", "low", "close", "volume"]].dropna()
+
+    # fallback: 用前一天收盤填補今天小時缺失
+    if fallback and interval.endswith("h"):
+        today = dt.datetime.now(TAI_TZ).date()
+        if today not in df.index.date:
+            prev_day_close = df["close"].iloc[-1]
+            hours = pd.date_range(start=dt.datetime.combine(today, dt.time(9,0), tzinfo=TAI_TZ),
+                                  end=dt.datetime.combine(today, dt.time(15,0), tzinfo=TAI_TZ),
+                                  freq="1H")
+            fallback_df = pd.DataFrame({
+                "open": prev_day_close,
+                "high": prev_day_close,
+                "low": prev_day_close,
+                "close": prev_day_close,
+                "volume": 0
+            }, index=hours)
+            df = pd.concat([df, fallback_df])
+            df = df.sort_index()
+
+    return df
 
 # 技術指標
 def rsi(series, n=14):
