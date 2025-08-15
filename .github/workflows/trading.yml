@@ -2,33 +2,53 @@ name: Auto Trading Loop
 
 on:
   schedule:
-    - cron: "0 1 * * 6"   # 週六 09:00 台北時間 - 每週策略更新
-    - cron: "0 1 * * 1-5" # 週一至週五 09:00 台北時間 - 模擬交易
+    # === 每小時：週一到週五 台北時間 10:00~23:00 ===
+    # 台北 10:00~23:00 -> UTC 02:00~15:00，每小時一次
+    - cron: "0 2-15 * * 1-5"
+    # === 每日：台北時間 09:00（開盤前）===
+    - cron: "0 1 * * 1-5"
+    # === 每週：週六 台北時間 09:00（週末學習/回測）===
+    - cron: "0 1 * * 6"
   workflow_dispatch:
 
 jobs:
   run-trading:
     runs-on: ubuntu-latest
     env:
+      # ——— Pipeline 控制 ———
       USE_LLM: "1"
+      SYMBOL: "0050.TW"
+      REPORT_DIR: reports
+      HISTORY_FILE: strategy_history.json
+      TARGET_RETURN: "0.02"
+
+      # ——— LLM / Groq ———
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: "llama-3.1-70b-versatile"
+
+      # ——— Slack ———
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      # 建議使用 C 或 D 開頭的 Channel ID（公開/私訊），例如：C09AGLZ7JMA
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+
+      # ——— Email（Gmail 需 App Password）———
       EMAIL_USER: ${{ secrets.EMAIL_USER }}
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       EMAIL_TO: "Tim.oneway@gmail.com"
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-      REPORT_DIR: reports
-      HISTORY_FILE: strategy_history.json
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - uses: actions/cache@v3
+      - name: Cache pip
+        uses: actions/cache@v3
         with:
           path: ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
@@ -39,9 +59,42 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
+          # jq 用於抽取 JSON 欄位
+          sudo apt-get update -y
+          sudo apt-get install -y jq
 
-      - name: Run trading pipeline
-        run: python run_pipeline.py
+      # 決定這次 run 的模式（weekly / daily / hourly / auto）
+      - name: Decide MODE (auto)
+        id: decide
+        run: |
+          # 取得現在台北時間（取 UTC+8）
+          NOW_UTC=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          HOUR_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%H)
+          DOW_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%u)  # 1(一)~7(日)
+          echo "now_utc=$NOW_UTC hour_local=$HOUR_LOCAL dow_local=$DOW_LOCAL"
+
+          # GitHub 事件若是 schedule，在 cron 中我們已經把每日/每小時/每週分開
+          # 這裡用 DOW 判斷（週六=6，週一~週五=1..5）
+          if [ "$DOW_LOCAL" = "6" ]; then
+            MODE="weekly"
+          elif [ "$DOW_LOCAL" -ge 1 ] && [ "$DOW_LOCAL" -le 5 ]; then
+            # 每小時都跑 hourly；若當地時間剛好 09:00 的那一條 cron，run_pipeline 也會額外跑 daily
+            MODE="hourly"
+          else
+            MODE="hourly"
+          fi
+
+          echo "MODE=$MODE" | tee -a $GITHUB_ENV
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+
+      - name: Run pipeline (MODE=${{ steps.decide.outputs.mode }})
+        run: |
+          set -e
+          python - << 'PY'
+          import os
+          os.environ['MODE'] = os.environ.get('MODE', 'auto')  # 由上一步注入
+          import run_pipeline  # 直接執行 main()
+          PY
 
       - name: Upload reports as artifact
         uses: actions/upload-artifact@v4
@@ -49,7 +102,47 @@ jobs:
           name: reports-${{ github.run_id }}
           path: ${{ env.REPORT_DIR }}
 
+      - name: Extract summary for Slack/email (tolerant)
+        id: summary
+        shell: bash
+        run: |
+          set -e
+          # 允許缺檔：沒有就回 N/A，避免報錯
+          SIG=$(jq -r '.signal // "N/A"' reports/daily_sim.json 2>/dev/null || echo "N/A")
+          PRICE=$(jq -r '.price // "N/A"' reports/daily_sim.json 2>/dev/null || echo "N/A")
+          SIZE=$(jq -r '.size_pct // "N/A"' reports/daily_sim.json 2>/dev/null || echo "N/A")
+
+          OOS_SHARPE=$(jq -r '.metrics.sharpe // .metrics.sharpe_ratio // "N/A"' reports/backtest_report.json 2>/dev/null || echo "N/A")
+          OOS_MDD=$(jq -r '.metrics.mdd // .metrics.max_drawdown // "N/A"' reports/backtest_report.json 2>/dev/null || echo "N/A")
+
+          # 取策略記憶庫最近 5 筆
+          if [ -f strategy_history.json ]; then
+            LATEST_HISTORY=$(jq -r '.[-5:][] | "\(.date): signal \(.strategy.signal // "N/A"), sharpe \(.sharpe // "N/A"), mdd \(.mdd // "N/A")"' strategy_history.json | sed ':a;N;$!ba;s/\n/\\n/g')
+          else
+            LATEST_HISTORY="no history"
+          fi
+
+          # 也嘗試小時短線結果（若存在）
+          H_SIG=$(jq -r '.signal // "N/A"' reports/hourly_sim.json 2>/dev/null || echo "N/A")
+          H_PRICE=$(jq -r '.price // "N/A"' reports/hourly_sim.json 2>/dev/null || echo "N/A")
+          H_SIZE=$(jq -r '.size_pct // "N/A"' reports/hourly_sim.json 2>/dev/null || echo "N/A")
+
+          {
+            echo "SIG=$SIG"
+            echo "PRICE=$PRICE"
+            echo "SIZE=$SIZE"
+            echo "OOS_SHARPE=$OOS_SHARPE"
+            echo "OOS_MDD=$OOS_MDD"
+            echo "H_SIG=$H_SIG"
+            echo "H_PRICE=$H_PRICE"
+            echo "H_SIZE=$H_SIZE"
+            echo "LATEST_HISTORY<<EOF"
+            echo -e "$LATEST_HISTORY"
+            echo "EOF"
+          } >> $GITHUB_ENV
+
       - name: Send Slack Notification
+        if: ${{ env.SLACK_BOT_TOKEN != '' && env.SLACK_CHANNEL != '' }}
         uses: slackapi/slack-github-action@v1.26.0
         with:
           channel-id: ${{ env.SLACK_CHANNEL }}
@@ -57,18 +150,29 @@ jobs:
             *Auto Trading Loop 完成 ✅*
             *Repo:* ${{ github.repository }}
             *Run ID:* ${{ github.run_id }}
-            *報告摘要:*
-            • Signal: $(jq -r '.daily.signal' reports/daily_sim.json)
-            • Price: $(jq -r '.daily.price' reports/daily_sim.json)
-            • Size: $(jq -r '.daily.size_pct' reports/daily_sim.json)
-            • Sharpe: $(jq -r '.metrics.sharpe // "N/A"' reports/backtest_report.json)
-            • Max Drawdown: $(jq -r '.metrics.mdd // "N/A"' reports/backtest_report.json)
-            *小時策略摘要:*
-            $(cat reports/hourly_sim.json 2>/dev/null || echo "尚未生成")
+
+            *日K 模擬摘要:*
+            • Signal: ${{ env.SIG }}
+            • Price: ${{ env.PRICE }}
+            • Size: ${{ env.SIZE }}
+
+            *小時K 短線摘要:*
+            • Signal: ${{ env.H_SIG }}
+            • Price: ${{ env.H_PRICE }}
+            • Size: ${{ env.H_SIZE }}
+
+            *週期回測:*
+            • Sharpe: ${{ env.OOS_SHARPE }}
+            • Max Drawdown: ${{ env.OOS_MDD }}
+
+            *策略記憶庫（最近 5 筆）:*
+            ```
+            ${{ env.LATEST_HISTORY }}
+            ```
         env:
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
 
-      - name: Send daily email
+      - name: Send email (optional, Gmail needs App Password)
         if: ${{ env.EMAIL_USER != '' && env.EMAIL_PASS != '' }}
         uses: dawidd6/action-send-mail@v3
         with:
@@ -76,10 +180,17 @@ jobs:
           server_port: 465
           username: ${{ env.EMAIL_USER }}
           password: ${{ env.EMAIL_PASS }}
-          subject: "每日交易模擬報告 - ${{ github.repository }} - ${{ github.run_number }}"
+          subject: "Auto Trading Loop 報告 - ${{ github.repository }} - ${{ github.run_number }}"
           to: ${{ env.EMAIL_TO }}
           from: ${{ env.EMAIL_USER }}
-          body: "Auto Trading Loop 已完成執行，請查看附件報告以獲取詳情。"
+          body: |
+            Auto Trading Loop 已完成。
+            日K: Signal=${{ env.SIG }}, Price=${{ env.PRICE }}, Size=${{ env.SIZE }}
+            小時K: Signal=${{ env.H_SIG }}, Price=${{ env.H_PRICE }}, Size=${{ env.H_SIZE }}
+            週期回測: Sharpe=${{ env.OOS_SHARPE }}, MDD=${{ env.OOS_MDD }}
+
+            策略記憶庫（最近 5 筆）:
+            ${{ env.LATEST_HISTORY }}
           attachments: |
             reports/backtest_report.json
             reports/daily_sim.json
@@ -87,7 +198,7 @@ jobs:
             strategy_history.json
         continue-on-error: true
 
-      - name: Commit results
+      - name: Commit results back to repo
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
