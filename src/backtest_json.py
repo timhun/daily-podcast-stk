@@ -1,61 +1,58 @@
 # src/backtest_json.py
 import pandas as pd
 import json
-from datetime import datetime, timedelta
 
-def run_daily_sim_json(data_file, strategy, mode="daily"):
+def run_daily_sim_json(df, strategy_data, mode="daily"):
     """
-    回測策略（支援日線、週線、小時線）
-    Args:
-        data_file (str): JSON / CSV 檔案路徑
-        strategy (dict): 策略
-        mode (str): "daily"、"weekly"、"hourly"
-    Returns:
-        dict: 回測結果
+    根據策略回測
+    :param df: pd.DataFrame - 必須包含 OHLC 資料
+    :param strategy_data: dict - 策略條件
+    :param mode: "daily" 或 "hourly"
+    :return: dict - 回測結果
     """
-    if data_file.endswith(".csv"):
-        df = pd.read_csv(data_file)
+    if df is None or df.empty:
+        return {"error": "DataFrame is empty"}
+
+    if mode not in ["daily", "hourly"]:
+        raise ValueError("mode 必須是 daily 或 hourly")
+
+    # 將時間欄位標準化
+    if "Datetime" in df.columns:
+        df["datetime"] = pd.to_datetime(df["Datetime"])
+    elif "Date" in df.columns:
+        df["datetime"] = pd.to_datetime(df["Date"])
     else:
-        with open(data_file, "r") as f:
-            df = pd.DataFrame(json.load(f))
+        raise ValueError("DataFrame 缺少時間欄位")
 
-    # 轉時間格式
-    if "datetime" in df.columns:
-        df["datetime"] = pd.to_datetime(df["datetime"])
-    elif "date" in df.columns:
-        df["datetime"] = pd.to_datetime(df["date"])
+    df = df.sort_values("datetime").reset_index(drop=True)
 
-    # 模式過濾
-    if mode == "weekly":
-        df = df.resample("W", on="datetime").last()
-    elif mode == "hourly":
-        # 假設已經是小時資料
-        df = df.sort_values("datetime")
-
-    entry_price = strategy.get("entry_price")
-    exit_price = strategy.get("exit_price")
-
+    # 簡單的策略模擬範例（真實可改成你的邏輯）
+    capital = 1000000
+    position = 0
     trades = []
-    for _, row in df.iterrows():
-        price = row["close"]
-        if strategy["signal"] == "BUY" and price <= entry_price:
-            trades.append((price, "entry"))
-        elif strategy["signal"] == "SELL" and price >= entry_price:
-            trades.append((price, "entry"))
 
-    # 計算報酬
-    if strategy["signal"] == "BUY":
-        returns = (exit_price - entry_price) / entry_price
-    else:
-        returns = (entry_price - exit_price) / entry_price
+    for i in range(1, len(df)):
+        # 模擬條件（這裡簡化）
+        price_today = df.loc[i, "Close"]
+        price_yesterday = df.loc[i - 1, "Close"]
 
-    result = {
+        # 假設策略：價格突破昨日收盤 -> 買進
+        if price_today > price_yesterday and position == 0:
+            position = capital / price_today
+            capital = 0
+            trades.append({"action": "buy", "price": price_today, "time": df.loc[i, "datetime"]})
+
+        # 價格跌破昨日收盤 -> 賣出
+        elif price_today < price_yesterday and position > 0:
+            capital = position * price_today
+            position = 0
+            trades.append({"action": "sell", "price": price_today, "time": df.loc[i, "datetime"]})
+
+    final_value = capital + position * df.loc[len(df) - 1, "Close"]
+
+    return {
         "mode": mode,
-        "signal": strategy["signal"],
-        "entry_price": entry_price,
-        "exit_price": exit_price,
-        "returns": returns,
-        "sharpe": returns / 0.02 if returns != 0 else 0,  # 簡化版
-        "mdd": -0.05  # 假設
+        "final_value": final_value,
+        "trades": trades,
+        "profit_pct": (final_value - 1000000) / 1000000
     }
-    return result
