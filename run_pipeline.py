@@ -4,8 +4,9 @@ import os
 import json
 import datetime as dt
 from pathlib import Path
+import pandas as pd
 
-from src.data_fetch import fetch_ohlcv
+from src.data_fetch import fetch_ohlcv, fetch_hourly_csv
 from src.strategy_llm_groq import generate_strategy_llm
 from src.backtest_json import run_backtest_json, run_daily_sim_json
 
@@ -83,20 +84,18 @@ def daily_pipeline():
     return out
 
 def hourly_pipeline():
-    print("=== 每小時自我學習 + 短線模擬（小時K，90天）===")
-    # 取 90 天小時K（yfinance: 60m），當天若無資料 fallback 前一天
-    df = fetch_ohlcv(SYMBOL, years=1, interval="60m", fallback=True)
-
-    # 只保留近 90 天
-    try:
-        df = df.last("90D")
-    except Exception:
-        cutoff = df.index.max() - dt.timedelta(days=90)
-        df = df[df.index >= cutoff]
+    print("=== 每小時自我學習 + 短線模擬（小時K，最近 7 天）===")
+    # 嘗試讀 CSV，若不存在再抓取
+    hourly_csv = os.path.join(REPORT_DIR, "hourly.csv")
+    if os.path.exists(hourly_csv):
+        df = pd.read_csv(hourly_csv, index_col=0, parse_dates=True)
+        df.index = df.index.tz_localize('Asia/Taipei', ambiguous='NaT', nonexistent='shift_forward')
+        print(f"[INFO] Loaded hourly data from {hourly_csv}")
+    else:
+        df = fetch_hourly_csv(SYMBOL, output_file=hourly_csv)
 
     df_json = _to_df_json(df)
 
-    # 生成短線策略（帶記憶庫 + 目標報酬率 2%）
     try:
         strategy_data = generate_strategy_llm(
             df_json,
@@ -106,7 +105,6 @@ def hourly_pipeline():
     except TypeError:
         strategy_data = generate_strategy_llm(df_json, history_file=HISTORY_FILE)
 
-    # 用小時K 做「短線模擬」
     daily_res = run_daily_sim_json(df, strategy_data)
 
     out = {
