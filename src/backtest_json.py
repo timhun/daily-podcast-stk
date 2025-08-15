@@ -1,58 +1,66 @@
 # src/backtest_json.py
-import pandas as pd
+# src/backtest_json.py
 import json
+import pandas as pd
+from pathlib import Path
+from .backtest import run_backtest
 
-def run_daily_sim_json(df, strategy_data, mode="daily"):
-    """
-    根據策略回測
-    :param df: pd.DataFrame - 必須包含 OHLC 資料
-    :param strategy_data: dict - 策略條件
-    :param mode: "daily" 或 "hourly"
-    :return: dict - 回測結果
-    """
-    if df is None or df.empty:
-        return {"error": "DataFrame is empty"}
 
-    if mode not in ["daily", "hourly"]:
-        raise ValueError("mode 必須是 daily 或 hourly")
+def _load_strategy(strategy_file: str):
+    """讀取策略 JSON 檔"""
+    with open(strategy_file, "r", encoding="utf-8") as f:
+        return json.load(f)
 
-    # 將時間欄位標準化
-    if "Datetime" in df.columns:
-        df["datetime"] = pd.to_datetime(df["Datetime"])
-    elif "Date" in df.columns:
-        df["datetime"] = pd.to_datetime(df["Date"])
+
+def _load_data(data_file: str, freq: str):
+    """讀取資料 CSV，支援 daily / hourly"""
+    df = pd.read_csv(data_file)
+
+    if freq == "hourly":
+        if "datetime" not in df.columns:
+            raise ValueError("hourly 模式需要 datetime 欄位")
+        df["datetime"] = pd.to_datetime(df["datetime"])
+        df.set_index("datetime", inplace=True)
     else:
-        raise ValueError("DataFrame 缺少時間欄位")
+        if "date" not in df.columns:
+            raise ValueError("daily 模式需要 date 欄位")
+        df["date"] = pd.to_datetime(df["date"])
+        df.set_index("date", inplace=True)
 
-    df = df.sort_values("datetime").reset_index(drop=True)
+    return df
 
-    # 簡單的策略模擬範例（真實可改成你的邏輯）
-    capital = 1000000
-    position = 0
-    trades = []
 
-    for i in range(1, len(df)):
-        # 模擬條件（這裡簡化）
-        price_today = df.loc[i, "Close"]
-        price_yesterday = df.loc[i - 1, "Close"]
+def run_backtest_json(strategy_file: str, data_file: str, freq: str = "daily"):
+    """
+    回測策略 JSON，輸出回測結果 JSON 檔案
+    freq: 'daily' or 'hourly'
+    """
+    strategy = _load_strategy(strategy_file)
+    df = _load_data(data_file, freq)
 
-        # 假設策略：價格突破昨日收盤 -> 買進
-        if price_today > price_yesterday and position == 0:
-            position = capital / price_today
-            capital = 0
-            trades.append({"action": "buy", "price": price_today, "time": df.loc[i, "datetime"]})
+    report = run_backtest(df, strategy)
 
-        # 價格跌破昨日收盤 -> 賣出
-        elif price_today < price_yesterday and position > 0:
-            capital = position * price_today
-            position = 0
-            trades.append({"action": "sell", "price": price_today, "time": df.loc[i, "datetime"]})
+    Path("reports").mkdir(parents=True, exist_ok=True)
+    output_path = Path("reports/backtest_report.json")
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, ensure_ascii=False, indent=2)
 
-    final_value = capital + position * df.loc[len(df) - 1, "Close"]
+    return report
 
-    return {
-        "mode": mode,
-        "final_value": final_value,
-        "trades": trades,
-        "profit_pct": (final_value - 1000000) / 1000000
-    }
+
+def run_daily_sim_json(data_file: str, strategy_file: str, freq: str = "daily"):
+    """
+    模擬策略（不改歷史資料），輸出 JSON 檔案
+    freq: 'daily' or 'hourly'
+    """
+    strategy = _load_strategy(strategy_file)
+    df = _load_data(data_file, freq)
+
+    report = run_backtest(df, strategy, simulate_only=True)
+
+    Path("reports").mkdir(parents=True, exist_ok=True)
+    output_path = Path("reports/daily_sim.json")
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, ensure_ascii=False, indent=2)
+
+    return report
