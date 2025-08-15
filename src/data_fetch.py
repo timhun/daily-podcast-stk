@@ -40,7 +40,7 @@ def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
                              want["low"]:"low", want["close"]:"close", want["volume"]:"volume"})
     return df2
 
-def fetch_ohlcv(symbol: str, years: int = 3, interval="1d", fallback=True) -> pd.DataFrame:
+def fetch_ohlcv(symbol: str, years: int = 1, interval="1d", fallback=True) -> pd.DataFrame:
     """
     下載 OHLCV，返回 timezone-aware DataFrame，index 為台北時區
     interval 可選：1d / 60m / 30m / ...
