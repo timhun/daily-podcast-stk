@@ -1,19 +1,21 @@
+# src/data_fetch.py
 import pandas as pd
 import numpy as np
 import datetime as dt
 import yfinance as yf
 from dateutil import tz
+from pathlib import Path
 
 TAI_TZ = tz.gettz("Asia/Taipei")
 
 def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
+    """把 yfinance 可能回傳的 MultiIndex 攤平成單層欄位"""
     if isinstance(df.columns, pd.MultiIndex):
         cols = ["_".join([str(x) for x in col]).strip().lower() for col in df.columns.values]
         df.columns = cols
     else:
         df.columns = [str(c).strip().lower().replace(" ", "_") for c in df.columns]
 
-    colmap = {}
     want = {"open": None, "high": None, "low": None, "close": None, "volume": None}
     for c in df.columns:
         for w in want.keys():
@@ -25,7 +27,6 @@ def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
             for c in df.columns:
                 if w in c and want[w] is None:
                     want[w] = c
-
     missing = [k for k, v in want.items() if v is None]
     if missing:
         raise RuntimeError(f"找不到必要欄位: {missing}. 現有欄位: {list(df.columns)}")
@@ -34,42 +35,49 @@ def _ensure_cols_flat(df: pd.DataFrame) -> pd.DataFrame:
                              want["low"]:"low", want["close"]:"close", want["volume"]:"volume"})
     return df2
 
-def fetch_ohlcv(symbol: str, years: int = 1, interval="1d", fallback: bool=False) -> pd.DataFrame:
+def fetch_ohlcv(symbol: str, years: int = 3, interval="1d", fallback=False) -> pd.DataFrame:
     """
-    抓日線或小時線資料。小時線只抓最近一週。
-    fallback=True 時，若今天無小時資料則使用前一天最後一筆補上。
+    下載 OHLCV。
+    interval='1d' -> 最近 years 年
+    interval='60m' -> fallback=True 時用前一天資料補缺
     """
-    if interval.endswith("h"):
-        days = 7
-        df = yf.download(symbol, period=f"{days}d", interval=interval,
-                         auto_adjust=True, progress=False, threads=True)
-    else:
-        end = dt.datetime.now(dt.timezone.utc)
-        start = end - dt.timedelta(days=365*years + 60)
-        df = yf.download(symbol, start=start.date(), end=end.date()+dt.timedelta(days=1),
-                         interval=interval, auto_adjust=True, progress=False, threads=True)
+    end = dt.datetime.now(dt.timezone.utc)
+    start = end - dt.timedelta(days=365*years + 60)
 
+    df = yf.download(symbol, start=start.date(), end=end.date()+dt.timedelta(days=1),
+                     interval=interval, auto_adjust=True, progress=False, threads=True)
     if df is None or df.empty:
         raise RuntimeError("yfinance 下載失敗或無資料")
-
     df = _ensure_cols_flat(df)
-
     if df.index.tz is None:
         df.index = df.index.tz_localize(dt.timezone.utc)
     df.index = df.index.tz_convert(TAI_TZ)
 
-    df = df[["open", "high", "low", "close", "volume"]].dropna()
+    # fallback：若最後一個時間點是今天，但沒有資料，用前一天最後一筆填充
+    if fallback and interval.endswith("m"):
+        today = pd.Timestamp.now(TAI_TZ).normalize()
+        if today not in df.index.normalize():
+            last_row = df.iloc[-1:]
+            last_row.index = [pd.Timestamp.now(TAI_TZ)]
+            df = pd.concat([df, last_row])
 
-    # fallback 機制
-    if fallback and interval.endswith("h"):
-        today = dt.datetime.now(tz=TAI_TZ).date()
-        if not any(df.index.date == today):
-            last_row = df.iloc[-1].copy()
-            last_row.name = dt.datetime.combine(today, dt.time(15,0,0), tzinfo=TAI_TZ)
-            df = pd.concat([df, last_row.to_frame().T])
+    return df[["open", "high", "low", "close", "volume"]].dropna()
+
+def fetch_hourly_csv(symbol: str, output_file: str = "hourly.csv") -> pd.DataFrame:
+    """
+    抓取最近一週小時線資料並存 CSV
+    """
+    df = fetch_ohlcv(symbol, years=0, interval="60m", fallback=True)
+    cutoff = df.index.max() - dt.timedelta(days=7)
+    df = df[df.index >= cutoff]
+
+    # 存成 CSV
+    Path(output_file).parent.mkdir(parents=True, exist_ok=True)
+    df.to_csv(output_file)
+    print(f"[INFO] Hourly data saved to {output_file}")
     return df
 
-# 指標
+# ====== 技術指標 ======
 def rsi(series, n=14):
     delta = series.diff()
     up = delta.clip(lower=0).ewm(alpha=1/n, adjust=False).mean()
@@ -98,8 +106,3 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
     out["bb_dn"]  = out["bb_mid"] - 2*out["bb_std"]
     out["atr14"]  = atr(out, 14)
     return out.dropna()
-
-def save_hourly_csv(symbol="0050.TW", output_file="hourly_data.csv", fallback=True):
-    df = fetch_ohlcv(symbol, interval="1h", fallback=fallback)
-    df.to_csv(output_file)
-    return df
