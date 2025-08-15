@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-# full_pipeline_csv_hourly_rolling.py
+# full_pipeline_csv_hourly_debug.py
+
 import os
 import json
 import datetime as dt
@@ -51,43 +52,40 @@ def fetch_ohlcv(symbol: str, start=None, end=None, interval="1d") -> pd.DataFram
     if df.index.tz is None:
         df.index = df.index.tz_localize(dt.timezone.utc)
     df.index = df.index.tz_convert(TAI_TZ)
+    print(f"[DEBUG] fetch_ohlcv {symbol} interval={interval} returned {len(df)} rows")
     return df[["open", "high", "low", "close", "volume"]].dropna()
 
 def save_csv(df: pd.DataFrame, filename: str) -> str:
     path = os.path.join(REPORT_DIR, filename)
     df.to_csv(path)
-    print(f"[INFO] Saved {filename}")
+    print(f"[INFO] Saved {filename} ({len(df)} rows)")
     return path
 
 def load_or_update_csv(symbol: str, filename: str, interval="1d", last_days=None) -> pd.DataFrame:
-    """增量更新 CSV，如果 hourly.csv 則自動保留 last_days"""
     path = os.path.join(REPORT_DIR, filename)
     now = dt.datetime.now(dt.timezone.utc)
     if os.path.exists(path):
         df = pd.read_csv(path, index_col=0, parse_dates=True)
         df.index = df.index.tz_localize(TAI_TZ, ambiguous='NaT', nonexistent='shift_forward')
         last_date = df.index.max()
-        # 抓 last_date 後的新資料
         df_new = fetch_ohlcv(symbol, start=(last_date + dt.timedelta(minutes=1)).date(),
                              end=now.date()+dt.timedelta(days=1), interval=interval)
         if not df_new.empty:
             df = pd.concat([df, df_new])
             df = df[~df.index.duplicated(keep='last')]
-            # 如果是 hourly.csv，只保留最近 last_days
             if last_days and interval.endswith("m"):
                 cutoff = df.index.max() - dt.timedelta(days=last_days)
                 df = df[df.index >= cutoff]
             save_csv(df, filename)
-        print(f"[INFO] Loaded and updated {filename} CSV")
+        print(f"[DEBUG] Loaded and updated {filename} CSV ({len(df)} rows)")
     else:
-        # 初次抓資料
         start = now - dt.timedelta(days=365 if interval=="1d" else 30)
         df = fetch_ohlcv(symbol, start=start.date(), end=now.date()+dt.timedelta(days=1), interval=interval)
         if last_days and interval.endswith("m"):
             cutoff = df.index.max() - dt.timedelta(days=last_days)
             df = df[df.index >= cutoff]
         save_csv(df, filename)
-        print(f"[INFO] Created {filename} CSV")
+        print(f"[DEBUG] Created {filename} CSV ({len(df)} rows)")
     return df
 
 # ====== 技術指標 ======
@@ -164,6 +162,7 @@ def daily_pipeline():
 def hourly_pipeline():
     print("=== 每小時短線模擬（小時K，7天）===")
     df = load_or_update_csv(SYMBOL, "hourly.csv", interval="60m", last_days=7)
+    print(f"[DEBUG] hourly df shape: {df.shape}")
     df_json = df.fillna(0).to_dict(orient="index")
     strategy_data = generate_strategy_llm(df_json, history_file=HISTORY_FILE, target_return=TARGET_RETURN)
     hourly_res = run_daily_sim_json(df, strategy_data)
@@ -172,9 +171,12 @@ def hourly_pipeline():
            "price": hourly_res.get("price"), "note": hourly_res.get("note"),
            "strategy_used": strategy_data, "mode": "hourly"}
     save_csv(pd.DataFrame([out]), "hourly_sim.json")
+    # 強制存 hourly.csv 再次確保存在
+    save_csv(df, "hourly.csv")
     print("[INFO] Hourly pipeline done:", out)
     return out
 
+# ====== Main ======
 def main():
     mode = os.environ.get("MODE", "auto")
     now_utc = dt.datetime.utcnow()
