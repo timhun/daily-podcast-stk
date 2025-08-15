@@ -84,17 +84,19 @@ def daily_pipeline():
 
 def hourly_pipeline():
     print("=== 每小時自我學習 + 短線模擬（小時K，90天）===")
-    df = fetch_ohlcv(SYMBOL, years=1, interval="60m")
+    # 取 90 天小時K（yfinance: 60m），當天若無資料 fallback 前一天
+    df = fetch_ohlcv(SYMBOL, years=1, interval="60m", fallback=True)
+
+    # 只保留近 90 天
     try:
         df = df.last("90D")
     except Exception:
         cutoff = df.index.max() - dt.timedelta(days=90)
         df = df[df.index >= cutoff]
 
-    print("[DEBUG] Hourly df empty?", df.empty)
-    print("[DEBUG] df head:\n", df.head())
-
     df_json = _to_df_json(df)
+
+    # 生成短線策略（帶記憶庫 + 目標報酬率 2%）
     try:
         strategy_data = generate_strategy_llm(
             df_json,
@@ -104,10 +106,8 @@ def hourly_pipeline():
     except TypeError:
         strategy_data = generate_strategy_llm(df_json, history_file=HISTORY_FILE)
 
-    print("[DEBUG] Generated hourly strategy:", strategy_data)
-
+    # 用小時K 做「短線模擬」
     daily_res = run_daily_sim_json(df, strategy_data)
-    print("[DEBUG] Hourly sim result:", daily_res)
 
     out = {
         "asof": str(df.index[-1]) if len(df.index) else dt.datetime.utcnow().isoformat(),
@@ -120,6 +120,7 @@ def hourly_pipeline():
         "mode": "hourly",
     }
     _save(os.path.join(REPORT_DIR, "hourly_sim.json"), out)
+    print("每小時短線模擬完成：", out)
     return out
 
 def main():
