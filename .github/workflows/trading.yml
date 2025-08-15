@@ -2,12 +2,11 @@ name: Auto Trading Loop
 
 on:
   schedule:
-    # === 每小時：週一到週五 台北時間 10:00~23:00 ===
-    # 台北 10:00~23:00 -> UTC 02:00~15:00，每小時一次
+    # 每小時：週一至週五 台北時間 10:00~23:00
     - cron: "0 2-15 * * 1-5"
-    # === 每日：台北時間 09:00（開盤前）===
+    # 每日：台北時間 09:00（開盤前）
     - cron: "0 1 * * 1-5"
-    # === 每週：週六 台北時間 09:00（週末學習/回測）===
+    # 每週：週六 台北時間 09:00（週末策略生成/回測）
     - cron: "0 1 * * 6"
   workflow_dispatch:
 
@@ -15,23 +14,15 @@ jobs:
   run-trading:
     runs-on: ubuntu-latest
     env:
-      # ——— Pipeline 控制 ———
       USE_LLM: "1"
       SYMBOL: "0050.TW"
       REPORT_DIR: reports
       HISTORY_FILE: strategy_history.json
       TARGET_RETURN: "0.02"
-
-      # ——— LLM / Groq ———
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
       GROQ_MODEL: "llama-3.1-70b-versatile"
-
-      # ——— Slack ———
       SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      # 建議使用 C 或 D 開頭的 Channel ID（公開/私訊），例如：C09AGLZ7JMA
       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-
-      # ——— Email（Gmail 需 App Password）———
       EMAIL_USER: ${{ secrets.EMAIL_USER }}
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       EMAIL_TO: "Tim.oneway@gmail.com"
@@ -59,26 +50,20 @@ jobs:
         run: |
           pip install --upgrade pip
           pip install -r requirements.txt
-          # jq 用於抽取 JSON 欄位
           sudo apt-get update -y
           sudo apt-get install -y jq
 
-      # 決定這次 run 的模式（weekly / daily / hourly / auto）
       - name: Decide MODE (auto)
         id: decide
         run: |
-          # 取得現在台北時間（取 UTC+8）
           NOW_UTC=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           HOUR_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%H)
-          DOW_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%u)  # 1(一)~7(日)
+          DOW_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%u)
           echo "now_utc=$NOW_UTC hour_local=$HOUR_LOCAL dow_local=$DOW_LOCAL"
 
-          # GitHub 事件若是 schedule，在 cron 中我們已經把每日/每小時/每週分開
-          # 這裡用 DOW 判斷（週六=6，週一~週五=1..5）
           if [ "$DOW_LOCAL" = "6" ]; then
             MODE="weekly"
           elif [ "$DOW_LOCAL" -ge 1 ] && [ "$DOW_LOCAL" -le 5 ]; then
-            # 每小時都跑 hourly；若當地時間剛好 09:00 的那一條 cron，run_pipeline 也會額外跑 daily
             MODE="hourly"
           else
             MODE="hourly"
@@ -92,8 +77,8 @@ jobs:
           set -e
           python - << 'PY'
           import os
-          os.environ['MODE'] = os.environ.get('MODE', 'auto')  # 由上一步注入
-          import run_pipeline  # 直接執行 main()
+          os.environ['MODE'] = os.environ.get('MODE', 'auto')
+          import run_pipeline
           PY
 
       - name: Upload reports as artifact
@@ -107,22 +92,18 @@ jobs:
         shell: bash
         run: |
           set -e
-          # 允許缺檔：沒有就回 N/A，避免報錯
           SIG=$(jq -r '.signal // "N/A"' reports/daily_sim.json 2>/dev/null || echo "N/A")
           PRICE=$(jq -r '.price // "N/A"' reports/daily_sim.json 2>/dev/null || echo "N/A")
           SIZE=$(jq -r '.size_pct // "N/A"' reports/daily_sim.json 2>/dev/null || echo "N/A")
-
           OOS_SHARPE=$(jq -r '.metrics.sharpe // .metrics.sharpe_ratio // "N/A"' reports/backtest_report.json 2>/dev/null || echo "N/A")
           OOS_MDD=$(jq -r '.metrics.mdd // .metrics.max_drawdown // "N/A"' reports/backtest_report.json 2>/dev/null || echo "N/A")
 
-          # 取策略記憶庫最近 5 筆
           if [ -f strategy_history.json ]; then
             LATEST_HISTORY=$(jq -r '.[-5:][] | "\(.date): signal \(.strategy.signal // "N/A"), sharpe \(.sharpe // "N/A"), mdd \(.mdd // "N/A")"' strategy_history.json | sed ':a;N;$!ba;s/\n/\\n/g')
           else
             LATEST_HISTORY="no history"
           fi
 
-          # 也嘗試小時短線結果（若存在）
           H_SIG=$(jq -r '.signal // "N/A"' reports/hourly_sim.json 2>/dev/null || echo "N/A")
           H_PRICE=$(jq -r '.price // "N/A"' reports/hourly_sim.json 2>/dev/null || echo "N/A")
           H_SIZE=$(jq -r '.size_pct // "N/A"' reports/hourly_sim.json 2>/dev/null || echo "N/A")
