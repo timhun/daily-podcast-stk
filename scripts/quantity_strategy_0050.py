@@ -115,7 +115,7 @@ class QuantityStrategy(bt.Strategy):
 def run_backtest():
     data_file = 'data/daily_0050.csv'
     try:
-        daily_df = pd.read_csv(data_file, parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float})
+        daily_df = pd.read_csv(data_file, parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float, 'Symbol': str})
         if daily_df.empty:
             logger.error(f"{data_file} 中無數據，跳過回測")
             return
