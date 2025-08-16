@@ -1,3 +1,4 @@
+#quantity_strategy_0050.py
 import backtrader as bt
 import pandas as pd
 import json
@@ -119,9 +120,10 @@ def run_backtest():
         if daily_df.empty:
             logger.error(f"{data_file} 中無數據，跳過回測")
             return
-        # 移除 Symbol 欄位，僅傳遞數值數據給 backtrader
+        # 明確移除 Symbol 欄位，僅傳遞數值數據
         daily_df_numeric = daily_df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']].copy()
-        daily_df_numeric.set_index(daily_df['Date'], inplace=True)
+        daily_df_numeric.index = pd.to_datetime(daily_df['Date'])  # 確保索引為日期
+        daily_df_numeric.index.name = 'Date'
 
         cerebro = bt.Cerebro()
         cerebro.addstrategy(QuantityStrategy)
