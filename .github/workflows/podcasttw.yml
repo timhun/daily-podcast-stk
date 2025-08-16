@@ -1,5 +1,4 @@
 name: Auto Trading 開發版
-
 on:
   schedule:
     # 每小時：週一至週五 台北時間 10:00~23:00
@@ -56,7 +55,8 @@ jobs:
 
       - name: Fetch market data
         run: |
-          python scripts/fetch_market_data.py
+          cd scripts
+          python fetch_market_data.py
 
       - name: Check CSV files
         run: |
@@ -95,8 +95,8 @@ jobs:
 
       - name: Run pipeline (MODE=${{ steps.decide.outputs.mode }})
         run: |
-          set -e
-          python scripts/run_pipeline.py
+          cd scripts
+          python run_pipeline.py
 
       - name: Upload reports and data as artifact
         uses: actions/upload-artifact@v4
