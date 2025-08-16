@@ -7,7 +7,6 @@ from datetime import datetime
 import logging
 import traceback
 
-
 # 設定日誌
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -26,6 +25,7 @@ class QuantityStrategy(bt.Strategy):
         self.order = None
         self.entry_price = 0
         self.trades = []
+        self.daily_signals = []  # 添加這個來儲存每日訊號
 
     def next(self):
         try:
@@ -35,201 +35,217 @@ class QuantityStrategy(bt.Strategy):
                 
             volume_rate = self.data.volume[0] / self.volume_ma[0] if self.volume_ma[0] > 0 else 0
             current_price = float(self.data.close[0])
-            
-            # ... rest of logic
+            signal = "無訊號"
+
+            if self.order:
+                return
+
+            if not self.position:
+                # 確保有前一日數據
+                if len(self.data) > 1 and volume_rate > self.params.volume_multiplier and self.data.close[0] > self.data.close[-1]:
+                    size = min(
+                        self.broker.getcash() / current_price * self.params.risk_per_trade / self.params.stop_loss,
+                        self.broker.getcash() / current_price
+                    )
+                    if size > 0:
+                        self.order = self.buy(size=int(size))
+                        self.entry_price = current_price
+                        signal = "買入"
+                        logger.info(f"{self.data.datetime.date(0)} 買入: 價格={current_price:.2f}, 量增率={volume_rate:.2f}")
+            else:
+                if len(self.data) > 1:  # 確保有前一日數據
+                    if volume_rate < 1 and self.data.close[0] < self.data.close[-1]:
+                        self.order = self.sell(size=self.position.size)
+                        signal = "賣出 (量縮價跌)"
+                    elif self.data.close[0] >= self.entry_price * (1 + self.params.stop_profit):
+                        self.order = self.sell(size=self.position.size)
+                        signal = "賣出 (停利)"
+                    elif self.data.close[0] <= self.entry_price * (1 - self.params.stop_loss):
+                        self.order = self.sell(size=self.position.size)
+                        signal = "賣出 (停損)"
+
+            # 儲存每日訊號
+            current_date = self.data.datetime.date(0)
+            if len(self.daily_signals) == 0 or self.daily_signals[-1]['date'] != str(current_date):
+                daily_sim = {
+                    "date": str(current_date),
+                    "signal": signal,
+                    "price": round(current_price, 2),
+                    "volume_rate": round(volume_rate, 2),
+                    "size_pct": round(self.params.risk_per_trade, 3)
+                }
+                self.daily_signals.append(daily_sim)
+                
         except Exception as e:
             logger.error(f"策略執行錯誤: {e}")
             logger.error(traceback.format_exc())
-        signal = "無訊號"
 
-        if self.order:
-            return
-
-        if not self.position:
-            if volume_rate > self.params.volume_multiplier and self.data.close[0] > self.data.close[-1]:
-                size = min(
-                    self.broker.getcash() / current_price * self.params.risk_per_trade / self.params.stop_loss,
-                    self.broker.getcash() / current_price
-                )
-                self.order = self.buy(size=int(size))
-                self.entry_price = current_price
-                signal = "買入"
-                logger.info(f"{self.data.datetime.date(0)} 買入: 價格={current_price:.2f}, 量增率={volume_rate:.2f}")
-        else:
-            if volume_rate < 1 and self.data.close[0] < self.data.close[-1]:
-                self.order = self.sell(size=self.position.size)
-                signal = "賣出 (量縮價跌)"
-            elif self.data.close[0] >= self.entry_price * (1 + self.params.stop_profit):
-                self.order = self.sell(size=self.position.size)
-                signal = "賣出 (停利)"
-            elif self.data.close[0] <= self.entry_price * (1 - self.params.stop_loss):
-                self.order = self.sell(size=self.position.size)
-                signal = "賣出 (停損)"
-
-        # 儲存每日模擬訊號
-        if self.data.datetime.date(0) == self.data.datetime.date(-1):
-            daily_sim = {
-                "date": str(self.data.datetime.date(0)),
-                "signal": signal,
-                "price": round(current_price, 2),
-                "volume_rate": round(volume_rate, 2),
-                "size_pct": round(self.params.risk_per_trade, 3)
-            }
-            os.makedirs("data", exist_ok=True)
-            with open("data/daily_sim.json", "w", encoding="utf-8") as f:
-                json.dump(daily_sim, f, ensure_ascii=False, indent=2)
-            logger.info("已保存 daily_sim.json")
+    def notify_order(self, order):
+        if order.status in [order.Completed]:
+            if order.isbuy():
+                logger.info(f"買入成交: 價格={order.executed.price:.2f}, 數量={order.executed.size}")
+            else:
+                logger.info(f"賣出成交: 價格={order.executed.price:.2f}, 數量={order.executed.size}")
+            self.order = None
+        elif order.status in [order.Canceled, order.Margin, order.Rejected]:
+            logger.warning(f"訂單失敗: {order.status}")
+            self.order = None
 
     def notify_trade(self, trade):
         if trade.isclosed:
-            self.trades.append(trade.pnl > 0)
+            self.trades.append({
+                'pnl': trade.pnl,
+                'is_win': trade.pnl > 0,
+                'commission': trade.commission
+            })
+            logger.info(f"交易結束: PnL={trade.pnl:.2f}")
 
     def stop(self):
-    try:
-        # 儲存最新的daily_sim
-        if self.daily_signals:
-            os.makedirs("data", exist_ok=True)
-            with open("data/daily_sim.json", "w", encoding="utf-8") as f:
-                json.dump(self.daily_signals[-1], f, ensure_ascii=False, indent=2)
-            logger.info("已保存 daily_sim.json")
-
-        # 計算績效指標
-        final_value = self.broker.getvalue()
-        initial_cash = 1000000
-        pnl = final_value - initial_cash
-        
-        # 安全取得分析器結果
         try:
-            returns_analysis = self.analyzers.returns.get_analysis()
-            # 檢查可用的鍵值
-            logger.info(f"Returns analyzer keys: {list(returns_analysis.keys())}")
+            # 儲存最新的daily_sim
+            if self.daily_signals:
+                os.makedirs("data", exist_ok=True)
+                with open("data/daily_sim.json", "w", encoding="utf-8") as f:
+                    json.dump(self.daily_signals[-1], f, ensure_ascii=False, indent=2)
+                logger.info("已保存 daily_sim.json")
+
+            # 計算績效指標
+            final_value = self.broker.getvalue()
+            initial_cash = 1000000
+            pnl = final_value - initial_cash
             
-            # 嘗試不同的鍵值來獲取年化報酬率
-            if 'rnorm100' in returns_analysis:
-                cagr = returns_analysis['rnorm100']
-            elif 'ravg' in returns_analysis:
-                cagr = returns_analysis['ravg'] * 252 * 100  # 年化
-            elif 'rtot' in returns_analysis:
-                # 計算年化報酬率
-                days = len(self.data)
-                if days > 0:
-                    cagr = (((1 + returns_analysis['rtot']) ** (252 / days)) - 1) * 100
+            # 安全取得分析器結果
+            try:
+                returns_analysis = self.analyzers.returns.get_analysis()
+                # 檢查可用的鍵值
+                logger.info(f"Returns analyzer keys: {list(returns_analysis.keys())}")
+                
+                # 嘗試不同的鍵值來獲取年化報酬率
+                if 'rnorm100' in returns_analysis:
+                    cagr = returns_analysis['rnorm100']
+                elif 'ravg' in returns_analysis:
+                    cagr = returns_analysis['ravg'] * 252 * 100  # 年化
+                elif 'rtot' in returns_analysis:
+                    # 計算年化報酬率
+                    days = len(self.data)
+                    if days > 0:
+                        cagr = (((1 + returns_analysis['rtot']) ** (252 / days)) - 1) * 100
+                    else:
+                        cagr = 0
                 else:
-                    cagr = 0
-            else:
+                    # 手動計算年化報酬率
+                    days = len(self.data)
+                    if days > 0:
+                        cagr = (((final_value / initial_cash) ** (252 / days)) - 1) * 100
+                    else:
+                        cagr = 0
+            except Exception as e:
+                logger.warning(f"無法從 returns analyzer 獲取數據: {e}")
                 # 手動計算年化報酬率
                 days = len(self.data)
                 if days > 0:
                     cagr = (((final_value / initial_cash) ** (252 / days)) - 1) * 100
                 else:
                     cagr = 0
-        except Exception as e:
-            logger.warning(f"無法從 returns analyzer 獲取數據: {e}")
-            # 手動計算年化報酬率
-            days = len(self.data)
-            if days > 0:
-                cagr = (((final_value / initial_cash) ** (252 / days)) - 1) * 100
-            else:
-                cagr = 0
-        
-        try:
-            sharpe_analysis = self.analyzers.sharpe_ratio.get_analysis()
-            sharpe = sharpe_analysis.get('sharperatio', None)
-            if sharpe is None:
-                # 嘗試其他可能的鍵值
-                for key in ['sharperatio', 'sharpe', 'ratio']:
-                    if key in sharpe_analysis:
-                        sharpe = sharpe_analysis[key]
-                        break
-        except Exception as e:
-            logger.warning(f"無法從 sharpe analyzer 獲取數據: {e}")
-            sharpe = None
             
-        try:
-            drawdown_analysis = self.analyzers.drawdown.get_analysis()
-            max_drawdown = drawdown_analysis.get('max', {}).get('drawdown', 0)
-            if max_drawdown == 0:
-                # 嘗試其他可能的結構
-                if 'drawdown' in drawdown_analysis:
-                    max_drawdown = drawdown_analysis['drawdown']
-                elif 'maxdrawdown' in drawdown_analysis:
-                    max_drawdown = drawdown_analysis['maxdrawdown']
-        except Exception as e:
-            logger.warning(f"無法從 drawdown analyzer 獲取數據: {e}")
-            max_drawdown = 0
-        
-        # 計算勝率
-        win_rate = 0
-        if self.trades:
-            wins = sum(1 for t in self.trades if t['is_win'])
-            win_rate = wins / len(self.trades)
-        
-        report = {
-            "metrics": {
-                "initial_cash": initial_cash,
-                "final_value": round(final_value, 2),
-                "pnl": round(pnl, 2),
-                "cagr": round(cagr, 2),
-                "max_drawdown": round(abs(max_drawdown), 2),
-                "sharpe_ratio": round(sharpe, 3) if sharpe is not None else None,
-                "win_rate": round(win_rate, 3),
-                "total_trades": len(self.trades)
-            }
-        }
-        
-        with open("data/backtest_report.json", "w", encoding="utf-8") as f:
-            json.dump(report, f, ensure_ascii=False, indent=2)
-        logger.info(f"回測完成 - 最終價值: {final_value:.2f}, 總收益: {pnl:.2f}, 年化報酬率: {cagr:.2f}%")
-
-        # 更新策略歷史
-        history_entry = {
-            "date": str(datetime.now().date()),
-            "strategy": {
-                "signal": self.daily_signals[-1]['signal'] if self.daily_signals else "無訊號",
-                "win_rate": round(win_rate, 3)
-            },
-            "sharpe": round(sharpe, 3) if sharpe is not None else None,
-            "mdd": round(abs(max_drawdown), 2)
-        }
-        
-        history_file = "data/strategy_history.json"
-        history = []
-        if os.path.exists(history_file):
             try:
-                with open(history_file, "r", encoding="utf-8") as f:
-                    history = json.load(f)
-            except:
-                history = []
-        
-        history.append(history_entry)
-        # 保留最近5筆記錄
-        history = history[-5:]
-        
-        with open(history_file, "w", encoding="utf-8") as f:
-            json.dump(history, f, ensure_ascii=False, indent=2)
-        logger.info("已保存 strategy_history.json")
-        
-    except Exception as e:
-        logger.error(f"策略結束時發生錯誤: {e}")
-        logger.error(traceback.format_exc())
-        
-        # 創建基本報告以避免後續錯誤
-        basic_report = {
-            "metrics": {
-                "initial_cash": 1000000,
-                "final_value": self.broker.getvalue(),
-                "pnl": self.broker.getvalue() - 1000000,
-                "cagr": 0,
-                "max_drawdown": 0,
-                "sharpe_ratio": None,
-                "win_rate": 0,
-                "total_trades": len(self.trades),
-                "error": str(e)
+                sharpe_analysis = self.analyzers.sharpe_ratio.get_analysis()
+                sharpe = sharpe_analysis.get('sharperatio', None)
+                if sharpe is None:
+                    # 嘗試其他可能的鍵值
+                    for key in ['sharperatio', 'sharpe', 'ratio']:
+                        if key in sharpe_analysis:
+                            sharpe = sharpe_analysis[key]
+                            break
+            except Exception as e:
+                logger.warning(f"無法從 sharpe analyzer 獲取數據: {e}")
+                sharpe = None
+                
+            try:
+                drawdown_analysis = self.analyzers.drawdown.get_analysis()
+                max_drawdown = drawdown_analysis.get('max', {}).get('drawdown', 0)
+                if max_drawdown == 0:
+                    # 嘗試其他可能的結構
+                    if 'drawdown' in drawdown_analysis:
+                        max_drawdown = drawdown_analysis['drawdown']
+                    elif 'maxdrawdown' in drawdown_analysis:
+                        max_drawdown = drawdown_analysis['maxdrawdown']
+            except Exception as e:
+                logger.warning(f"無法從 drawdown analyzer 獲取數據: {e}")
+                max_drawdown = 0
+            
+            # 計算勝率
+            win_rate = 0
+            if self.trades:
+                wins = sum(1 for t in self.trades if t['is_win'])
+                win_rate = wins / len(self.trades)
+            
+            report = {
+                "metrics": {
+                    "initial_cash": initial_cash,
+                    "final_value": round(final_value, 2),
+                    "pnl": round(pnl, 2),
+                    "cagr": round(cagr, 2),
+                    "max_drawdown": round(abs(max_drawdown), 2),
+                    "sharpe_ratio": round(sharpe, 3) if sharpe is not None else None,
+                    "win_rate": round(win_rate, 3),
+                    "total_trades": len(self.trades)
+                }
             }
-        }
-        os.makedirs("data", exist_ok=True)
-        with open("data/backtest_report.json", "w", encoding="utf-8") as f:
-            json.dump(basic_report, f, ensure_ascii=False, indent=2)
+            
+            with open("data/backtest_report.json", "w", encoding="utf-8") as f:
+                json.dump(report, f, ensure_ascii=False, indent=2)
+            logger.info(f"回測完成 - 最終價值: {final_value:.2f}, 總收益: {pnl:.2f}, 年化報酬率: {cagr:.2f}%")
+
+            # 更新策略歷史
+            history_entry = {
+                "date": str(datetime.now().date()),
+                "strategy": {
+                    "signal": self.daily_signals[-1]['signal'] if self.daily_signals else "無訊號",
+                    "win_rate": round(win_rate, 3)
+                },
+                "sharpe": round(sharpe, 3) if sharpe is not None else None,
+                "mdd": round(abs(max_drawdown), 2)
+            }
+            
+            history_file = "data/strategy_history.json"
+            history = []
+            if os.path.exists(history_file):
+                try:
+                    with open(history_file, "r", encoding="utf-8") as f:
+                        history = json.load(f)
+                except:
+                    history = []
+            
+            history.append(history_entry)
+            # 保留最近5筆記錄
+            history = history[-5:]
+            
+            with open(history_file, "w", encoding="utf-8") as f:
+                json.dump(history, f, ensure_ascii=False, indent=2)
+            logger.info("已保存 strategy_history.json")
+            
+        except Exception as e:
+            logger.error(f"策略結束時發生錯誤: {e}")
+            logger.error(traceback.format_exc())
+            
+            # 創建基本報告以避免後續錯誤
+            basic_report = {
+                "metrics": {
+                    "initial_cash": 1000000,
+                    "final_value": self.broker.getvalue(),
+                    "pnl": self.broker.getvalue() - 1000000,
+                    "cagr": 0,
+                    "max_drawdown": 0,
+                    "sharpe_ratio": None,
+                    "win_rate": 0,
+                    "total_trades": len(self.trades),
+                    "error": str(e)
+                }
+            }
+            os.makedirs("data", exist_ok=True)
+            with open("data/backtest_report.json", "w", encoding="utf-8") as f:
+                json.dump(basic_report, f, ensure_ascii=False, indent=2)
 
 
 def run_backtest():
