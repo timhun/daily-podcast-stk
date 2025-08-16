@@ -4,6 +4,8 @@ import sys
 import json
 import pandas as pd
 from datetime import datetime
+import traceback
+
 # 添加 scripts 目錄到 sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from fetch_market_data import fetch_market_data
@@ -19,7 +21,7 @@ def format_number(value, decimal_places=2):
     if isinstance(value, (int, float)) and not pd.isna(value):
         return f"{value:.{decimal_places}f}"
     return 'N/A'
-    
+
 def generate_podcast_script():
     # 檢查必要檔案是否存在
     required_files = ['data/daily_0050.csv', 'data/hourly_0050.csv']
@@ -28,33 +30,41 @@ def generate_podcast_script():
             logger.error(f"缺少 {file}，無法生成播客腳本")
             return
 
-    # 讀取市場數據 - 移除 dtype 規範以避免轉換錯誤
+    # 讀取市場數據
     try:
         daily_df = pd.read_csv('data/daily_0050.csv')
         hourly_0050_df = pd.read_csv('data/hourly_0050.csv')
+
+        # 轉換日期欄位，處理缺失情況
+        if 'Date' not in daily_df.columns:
+            logger.warning("daily_df 中缺少 Date 欄位，從索引生成")
+            daily_df['Date'] = pd.to_datetime(daily_df.index)
+        else:
+            daily_df['Date'] = pd.to_datetime(daily_df['Date'])
         
-        # 轉換日期欄位
-        daily_df['Date'] = pd.to_datetime(daily_df['Date'])
-        hourly_0050_df['Date'] = pd.to_datetime(hourly_0050_df['Date'])
-        
+        if 'Date' not in hourly_0050_df.columns:
+            logger.warning("hourly_0050_df 中缺少 Date 欄位，從索引生成")
+            hourly_0050_df['Date'] = pd.to_datetime(hourly_0050_df.index)
+        else:
+            hourly_0050_df['Date'] = pd.to_datetime(hourly_0050_df['Date'])
+
         # 確保數值欄位為正確型態
-        numeric_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        numeric_columns = ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
         for col in numeric_columns:
             if col in daily_df.columns:
                 daily_df[col] = pd.to_numeric(daily_df[col], errors='coerce')
             if col in hourly_0050_df.columns:
                 hourly_0050_df[col] = pd.to_numeric(hourly_0050_df[col], errors='coerce')
-        
+
         # 確保數據不為空
         if daily_df.empty or hourly_0050_df.empty:
             logger.error("市場數據為空，無法生成播客腳本")
             return
-            
+
     except Exception as e:
         logger.error(f"讀取市場數據失敗: {e}")
         logger.error(traceback.format_exc())
         return
-
 
     # 提取最新數據
     try:
@@ -78,7 +88,7 @@ def generate_podcast_script():
 
     # 假設外資期貨數據
     futures_net = "淨空 34,207 口，較前日減少 172 口（假設數據）"
-    
+
     # 讀取量價策略輸出
     try:
         if os.path.exists('data/daily_sim.json'):
@@ -103,18 +113,19 @@ def generate_podcast_script():
     except:
         history = "無歷史記錄"
         logger.warning("無法讀取 strategy_history.json")
-    
-        market_data = f"""
-        - 0050.TW: 收盤 {format_number(ts_0050.get('Close'))} 元，漲跌 {format_number(ts_0050_pct)}%，成交量 {format_number(ts_0050.get('Volume'), 0)} 股
-        - 0050.TW 小時線: 最新價格 {format_number(ts_0050_hourly.get('Close'))} 元，成交量 {format_number(ts_0050_hourly.get('Volume'), 0)} 股
-        - 外資期貨未平倉水位: {futures_net}
-        """
-    
+
+    # 格式化市場數據
+    market_data = f"""
+    - 0050.TW: 收盤 {format_number(ts_0050.get('Close'))} 元，漲跌 {format_number(ts_0050_pct)}%，成交量 {format_number(ts_0050.get('Volume'), 0)} 股
+    - 0050.TW 小時線: 最新價格 {format_number(ts_0050_hourly.get('Close'))} 元，成交量 {format_number(ts_0050_hourly.get('Volume'), 0)} 股
+    - 外資期貨未平倉水位: {futures_net}
+    """
+
     # 讀取 prompt 並生成播報
     try:
         with open('prompt/tw.txt', 'r', encoding='utf-8') as f:
             prompt = f.read()
-        
+
         prompt = prompt.format(
             current_date=datetime.now().strftime('%Y-%m-%d'),
             market_data=market_data,
@@ -126,7 +137,7 @@ def generate_podcast_script():
             OOS_MDD=backtest['metrics']['max_drawdown'],
             LATEST_HISTORY=history
         )
-        
+
         # 儲存播報
         os.makedirs('data', exist_ok=True)
         with open('data/podcast_script.txt', 'w', encoding='utf-8') as f:
@@ -138,13 +149,13 @@ def generate_podcast_script():
 def main():
     mode = os.environ.get('MODE', 'hourly')
     logger.info(f"以 {mode} 模式運行")
-    
+
     # 抓取市場數據
     fetch_market_data()
-    
+
     # 運行回測
     run_backtest()
-    
+
     # 生成播報腳本
     generate_podcast_script()
 
