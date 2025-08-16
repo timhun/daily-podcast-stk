@@ -65,7 +65,7 @@ class QuantityStrategy(bt.Strategy):
             os.makedirs("data", exist_ok=True)
             with open("data/daily_sim.json", "w", encoding="utf-8") as f:
                 json.dump(daily_sim, f, ensure_ascii=False, indent=2)
-            logger.info("Saved daily_sim.json")
+            logger.info("已保存 daily_sim.json")
 
     def notify_trade(self, trade):
         if trade.isclosed:
@@ -93,7 +93,7 @@ class QuantityStrategy(bt.Strategy):
         }
         with open("data/backtest_report.json", "w", encoding="utf-8") as f:
             json.dump(report, f, ensure_ascii=False, indent=2)
-        logger.info("Saved backtest_report.json")
+        logger.info("已保存 backtest_report.json")
 
         # 更新策略歷史
         history_entry = {
@@ -110,19 +110,19 @@ class QuantityStrategy(bt.Strategy):
         history.append(history_entry)
         with open(history_file, "w", encoding="utf-8") as f:
             json.dump(history[-5:], f, ensure_ascii=False, indent=2)
-        logger.info("Saved strategy_history.json")
+        logger.info("已保存 strategy_history.json")
 
 def run_backtest():
-    # 檢查 daily.csv 是否存在
-    if not os.path.exists('data/daily.csv'):
-        logger.error("data/daily.csv not found, skipping backtest")
-        return
-
+    # 優先使用 daily_0050.csv，若不存在則使用 daily.csv
+    data_file = 'data/daily_0050.csv' if os.path.exists('data/daily_0050.csv') else 'data/daily.csv'
     try:
-        daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'])
-        df_0050 = daily_df[daily_df['Symbol'] == '0050.TW'].copy()
+        daily_df = pd.read_csv(data_file, parse_dates=['Date'])
+        if data_file == 'data/daily.csv':
+            df_0050 = daily_df[daily_df['Symbol'] == '0050.TW'].copy()
+        else:
+            df_0050 = daily_df.copy()
         if df_0050.empty:
-            logger.error("No data for 0050.TW in daily.csv, skipping backtest")
+            logger.error(f"0050.TW 在 {data_file} 中無數據，跳過回測")
             return
         df_0050.set_index('Date', inplace=True)
 
@@ -135,11 +135,11 @@ def run_backtest():
         cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')
         cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
         
-        logger.info("Starting backtest...")
+        logger.info("開始回測...")
         cerebro.run()
-        logger.info("Backtest completed, reports saved to data/")
+        logger.info("回測完成，報告已保存至 data/")
     except Exception as e:
-        logger.error(f"Backtest failed: {e}")
+        logger.error(f"回測失敗: {e}")
 
 if __name__ == '__main__':
     run_backtest()
