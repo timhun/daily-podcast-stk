@@ -26,7 +26,7 @@ class QuantityStrategy(bt.Strategy):
 
     def next(self):
         volume_rate = self.data.volume[0] / self.volume_ma[0] if self.volume_ma[0] > 0 else 0
-        current_price = self.data.close[0]
+        current_price = float(self.data.close[0])  # 確保轉為浮點數
         signal = "無訊號"
 
         if self.order:
@@ -113,23 +113,18 @@ class QuantityStrategy(bt.Strategy):
         logger.info("已保存 strategy_history.json")
 
 def run_backtest():
-    # 優先使用 daily_0050.csv，若不存在則使用 daily.csv
-    data_file = 'data/daily_0050.csv' if os.path.exists('data/daily_0050.csv') else 'data/daily.csv'
+    data_file = 'data/daily_0050.csv'
     try:
-        daily_df = pd.read_csv(data_file, parse_dates=['Date'])
-        if data_file == 'data/daily.csv':
-            df_0050 = daily_df[daily_df['Symbol'] == '0050.TW'].copy()
-        else:
-            df_0050 = daily_df.copy()
-        if df_0050.empty:
-            logger.error(f"0050.TW 在 {data_file} 中無數據，跳過回測")
+        daily_df = pd.read_csv(data_file, parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float})
+        if daily_df.empty:
+            logger.error(f"{data_file} 中無數據，跳過回測")
             return
-        df_0050.set_index('Date', inplace=True)
-        df_0050 = df_0050[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']].copy()
+        daily_df.set_index('Date', inplace=True)
+        daily_df = daily_df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']].copy()
 
         cerebro = bt.Cerebro()
         cerebro.addstrategy(QuantityStrategy)
-        data = bt.feeds.PandasData(dataname=df_0050)
+        data = bt.feeds.PandasData(dataname=daily_df)
         cerebro.adddata(data)
         cerebro.broker.setcash(1000000)
         cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe_ratio')
