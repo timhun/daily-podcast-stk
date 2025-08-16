@@ -1,4 +1,4 @@
-name: Auto-Trading-Loop
+name: Podcast-Workflow
 
 on:
   schedule:
@@ -12,14 +12,21 @@ on:
         default: 'auto'
         type: choice
         options:
-          - hourly
           - daily
-          - weekly
           - auto
           - manual
+      podcast_mode:
+        description: '播客模式 (tw/us/auto)'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - tw
+          - us
+          - auto
 
 jobs:
-  run-pipeline:
+  generate-podcast:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -35,16 +42,29 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas yfinance backtrader requests pytz edge-tts b2sdk feedgen mutagen
 
+      - name: Set environment variables
+        run: |
+          # 根據觸發時間動態設置 PODCAST_MODE
+          HOUR=$(date -u +%H)
+          if [ "$HOUR" = "22" ]; then
+            echo "PODCAST_MODE=us" >> $GITHUB_ENV
+          elif [ "$HOUR" = "08" ]; then
+            echo "PODCAST_MODE=tw" >> $GITHUB_ENV
+          else
+            echo "PODCAST_MODE=${{ github.event.inputs.podcast_mode || 'auto' }}" >> $GITHUB_ENV
+          fi
+          echo "MODE=${{ github.event.inputs.mode || 'auto' }}" >> $GITHUB_ENV
+          echo "MANUAL_TRIGGER=${{ github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'manual' && '1' || '0' }}" >> $GITHUB_ENV
+          echo "USE_LLM=1" >> $GITHUB_ENV
+          echo "REPORT_DIR=data" >> $GITHUB_ENV
+          echo "DATA_DIR=data" >> $GITHUB_ENV
+          echo "TARGET_RETURN=0.02" >> $GITHUB_ENV
+        env:
+          GITHUB_ENV: ${{ github.env }}
+
       - name: Run pipeline
         run: python scripts/run_pipeline.py
         env:
-          MODE: ${{ github.event.inputs.mode || 'auto' }}
-          MANUAL_TRIGGER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'manual' && '1' || '0' }}
-          USE_LLM: 1
-          REPORT_DIR: data
-          DATA_DIR: data
-          HISTORY_FILE: data/strategy_history.json
-          TARGET_RETURN: 0.02
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           GROQ_MODEL: llama-3.1-70b-versatile
           SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
@@ -56,12 +76,23 @@ jobs:
           B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
 
-      - name: Check CSV files
+      - name: Check podcast files
         run: |
-          ls -l data/
-          for file in data/*.csv; do
-            if [ -f "$file" ]; then
-              echo "$file exists, last modified: $(stat -c %y "$file")"
+          date_str=$(date +%Y%m%d)
+          for mode in tw us; do
+            for subfile in docs/podcast/${date_str}_${mode}/script.txt docs/podcast/${date_str}_${mode}/audio.mp3 docs/podcast/${date_str}_${mode}/archive_audio_url.txt; do
+              if [ -f "$subfile" ]; then
+                echo "$subfile exists, last modified: $(stat -c %y "$subfile")"
+              else
+                echo "Warning: $subfile does not exist"
+              fi
+            done
+          done
+          for rss in docs/rss/podcast_tw.xml docs/rss/podcast_us.xml; do
+            if [ -f "$rss" ]; then
+              echo "$rss exists, last modified: $(stat -c %y "$rss")"
+            else
+              echo "Warning: $rss does not exist"
             fi
           done
 
@@ -69,7 +100,6 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add data/*.json data/*.csv
           date_str=$(date +%Y%m%d)
           for mode in tw us; do
             if [ -f "docs/podcast/${date_str}_${mode}/script.txt" ]; then
@@ -88,16 +118,14 @@ jobs:
           if [ -f "docs/rss/podcast_us.xml" ]; then
             git add docs/rss/podcast_us.xml
           fi
-          git commit -m "Update generated files [skip ci]" || echo "No changes to commit"
+          git commit -m "Update podcast files [skip ci]" || echo "No changes to commit"
           git push
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: reports-${{ github.run_id }}
+          name: podcast-reports-${{ github.run_id }}
           path: |
-            data/*.json
-            data/*.csv
             docs/podcast/*/*_tw/script.txt
             docs/podcast/*/*_tw/audio.mp3
             docs/podcast/*/*_tw/archive_audio_url.txt
