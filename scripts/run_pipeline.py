@@ -53,9 +53,9 @@ def generate_podcast_script():
             for df in [daily_df, hourly_0050_df]:
                 if col in df.columns:
                     df[col] = pd.to_numeric(df[col], errors='coerce')
-                elif f"{col} '0050.TW'" in df.columns:  # 處理可能的後綴
+                elif f"{col} '0050.TW'" in df.columns:
                     df[col] = pd.to_numeric(df[f"{col} '0050.TW'"], errors='coerce')
-                elif f"{col} '0050.TW'" in df.columns.values:  # 更靈活的匹配
+                elif f"{col} '0050.TW'" in df.columns.values:
                     df[col] = pd.to_numeric(df[df.columns[df.columns.str.contains(col)][0]], errors='coerce')
 
         # 確保數據不為空
@@ -73,7 +73,6 @@ def generate_podcast_script():
         if len(daily_df) >= 2:
             ts_0050 = daily_df.iloc[-1]
             ts_0050_prev = daily_df.iloc[-2]
-            # 確保使用 Series 索引
             ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close'] * 100) if not pd.isna(ts_0050_prev['Close']) else 'N/A'
         else:
             ts_0050 = daily_df.iloc[-1] if len(daily_df) > 0 else pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
@@ -97,7 +96,6 @@ def generate_podcast_script():
         if os.path.exists('data/daily_sim.json'):
             with open('data/daily_sim.json', 'r', encoding='utf-8') as f:
                 daily_sim = json.load(f)
-            # 確保使用最新訊號
             daily_sim = daily_sim[-1] if isinstance(daily_sim, list) else daily_sim
         else:
             daily_sim = {'signal': '無訊號', 'price': 'N/A', 'volume_rate': 'N/A', 'size_pct': 'N/A'}
@@ -153,8 +151,26 @@ def generate_podcast_script():
         logger.error(traceback.format_exc())
 
 def main():
-    mode = os.environ.get('MODE', 'hourly')
+    mode = os.environ.get('MODE', 'auto')
     logger.info(f"以 {mode} 模式運行")
+    
+    if mode not in ['hourly', 'daily', 'weekly', 'auto']:
+        logger.error(f"無效的 MODE: {mode}, 使用預設 auto")
+        mode = 'auto'
+
+    # 根據模式調整數據範圍
+    if mode == 'hourly':
+        os.environ['INTERVAL'] = '1h'
+        os.environ['DAYS'] = '7'
+    elif mode == 'daily':
+        os.environ['INTERVAL'] = '1d'
+        os.environ['DAYS'] = '90'
+    elif mode == 'weekly':
+        os.environ['INTERVAL'] = '1wk'
+        os.environ['DAYS'] = '365'
+    else:  # auto
+        os.environ['INTERVAL'] = '1h'  # 預設小時線
+        os.environ['DAYS'] = '7'
 
     # 抓取市場數據
     fetch_market_data()
