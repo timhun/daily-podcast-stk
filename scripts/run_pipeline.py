@@ -14,6 +14,12 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+def format_number(value, decimal_places=2):
+    """安全的數字格式化函數"""
+    if isinstance(value, (int, float)) and not pd.isna(value):
+        return f"{value:.{decimal_places}f}"
+    return 'N/A'
+    
 def generate_podcast_script():
     # 檢查必要檔案是否存在
     required_files = ['data/daily_0050.csv', 'data/hourly_0050.csv']  # 更新為實際生成的檔案
