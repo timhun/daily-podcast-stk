@@ -1,4 +1,3 @@
-#run_pipeline.py
 import os
 import sys
 import json
@@ -48,13 +47,16 @@ def generate_podcast_script():
         else:
             hourly_0050_df['Date'] = pd.to_datetime(hourly_0050_df['Date'])
 
-        # 確保數值欄位為正確型態
+        # 確保數值欄位為正確型態，處理可能的 '0050.TW' 後綴
         numeric_columns = ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
         for col in numeric_columns:
-            if col in daily_df.columns:
-                daily_df[col] = pd.to_numeric(daily_df[col], errors='coerce')
-            if col in hourly_0050_df.columns:
-                hourly_0050_df[col] = pd.to_numeric(hourly_0050_df[col], errors='coerce')
+            for df in [daily_df, hourly_0050_df]:
+                if col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors='coerce')
+                elif f"{col} '0050.TW'" in df.columns:  # 處理可能的後綴
+                    df[col] = pd.to_numeric(df[f"{col} '0050.TW'"], errors='coerce')
+                elif f"{col} '0050.TW'" in df.columns.values:  # 更靈活的匹配
+                    df[col] = pd.to_numeric(df[df.columns[df.columns.str.contains(col)][0]], errors='coerce')
 
         # 確保數據不為空
         if daily_df.empty or hourly_0050_df.empty:
@@ -71,20 +73,21 @@ def generate_podcast_script():
         if len(daily_df) >= 2:
             ts_0050 = daily_df.iloc[-1]
             ts_0050_prev = daily_df.iloc[-2]
-            ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close']) * 100
+            # 確保使用 Series 索引
+            ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close'] * 100) if not pd.isna(ts_0050_prev['Close']) else 'N/A'
         else:
-            ts_0050 = daily_df.iloc[-1] if len(daily_df) > 0 else {'Close': 'N/A', 'Volume': 'N/A'}
+            ts_0050 = daily_df.iloc[-1] if len(daily_df) > 0 else pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
             ts_0050_pct = 'N/A'
     except Exception as e:
         logger.warning(f"無法提取 0050.TW 數據: {e}")
-        ts_0050 = {'Close': 'N/A', 'Volume': 'N/A'}
+        ts_0050 = pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
         ts_0050_pct = 'N/A'
 
     try:
         ts_0050_hourly = hourly_0050_df.iloc[-1]
-    except:
-        ts_0050_hourly = {'Close': 'N/A', 'Volume': 'N/A'}
-        logger.warning("無法提取 0050.TW 小時線數據")
+    except Exception as e:
+        logger.warning(f"無法提取 0050.TW 小時線數據: {e}")
+        ts_0050_hourly = pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
 
     # 假設外資期貨數據
     futures_net = "淨空 34,207 口，較前日減少 172 口（假設數據）"
@@ -94,6 +97,8 @@ def generate_podcast_script():
         if os.path.exists('data/daily_sim.json'):
             with open('data/daily_sim.json', 'r', encoding='utf-8') as f:
                 daily_sim = json.load(f)
+            # 確保使用最新訊號
+            daily_sim = daily_sim[-1] if isinstance(daily_sim, list) else daily_sim
         else:
             daily_sim = {'signal': '無訊號', 'price': 'N/A', 'volume_rate': 'N/A', 'size_pct': 'N/A'}
     except Exception as e:
@@ -103,16 +108,16 @@ def generate_podcast_script():
     try:
         with open('data/backtest_report.json', 'r', encoding='utf-8') as f:
             backtest = json.load(f)
-    except:
+    except Exception as e:
+        logger.warning(f"無法讀取 backtest_report.json: {e}")
         backtest = {'metrics': {'sharpe_ratio': 'N/A', 'max_drawdown': 'N/A'}}
-        logger.warning("無法讀取 backtest_report.json")
 
     try:
         with open('data/strategy_history.json', 'r', encoding='utf-8') as f:
-            history = '\n'.join([f"{h['date']}: signal {h['strategy']['signal']}, sharpe {h['sharpe']}, mdd {h['mdd']}" for h in json.load(f)])
-    except:
+            history = '\n'.join([f"{h['date']}: signal {h['strategy'].get('signal', 'N/A')}, sharpe {h.get('sharpe', 'N/A')}, mdd {h.get('mdd', 'N/A')}" for h in json.load(f)])
+    except Exception as e:
+        logger.warning(f"無法讀取 strategy_history.json: {e}")
         history = "無歷史記錄"
-        logger.warning("無法讀取 strategy_history.json")
 
     # 格式化市場數據
     market_data = f"""
@@ -129,12 +134,12 @@ def generate_podcast_script():
         prompt = prompt.format(
             current_date=datetime.now().strftime('%Y-%m-%d'),
             market_data=market_data,
-            SIG=daily_sim['signal'],
-            PRICE=daily_sim['price'],
-            VOLUME_RATE=daily_sim['volume_rate'],
-            SIZE=daily_sim['size_pct'],
-            OOS_SHARPE=backtest['metrics']['sharpe_ratio'],
-            OOS_MDD=backtest['metrics']['max_drawdown'],
+            SIG=daily_sim.get('signal', 'N/A'),
+            PRICE=daily_sim.get('price', 'N/A'),
+            VOLUME_RATE=daily_sim.get('volume_rate', 'N/A'),
+            SIZE=daily_sim.get('size_pct', 'N/A'),
+            OOS_SHARPE=backtest['metrics'].get('sharpe_ratio', 'N/A'),
+            OOS_MDD=backtest['metrics'].get('max_drawdown', 'N/A'),
             LATEST_HISTORY=history
         )
 
@@ -145,6 +150,7 @@ def generate_podcast_script():
         logger.info("播客腳本已保存至 data/podcast_script.txt")
     except Exception as e:
         logger.error(f"生成播客腳本失敗: {e}")
+        logger.error(traceback.format_exc())
 
 def main():
     mode = os.environ.get('MODE', 'hourly')
