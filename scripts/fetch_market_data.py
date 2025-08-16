@@ -10,25 +10,27 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 def clean_data_directory():
-    """Remove irrelevant files from data/ directory, keeping expected outputs."""
+    """移除 data/ 目錄中的無關檔案，保留預期輸出"""
     expected_files = {
-        'daily.csv', 'hourly_0050.csv', 'hourly_TWII.csv', 'hourly_2330.csv',
+        'daily.csv', 'daily_0050.csv', 'daily_TWII.csv', 'daily_2330.csv',
+        'hourly_0050.csv', 'hourly_TWII.csv', 'hourly_2330.csv',
         'daily_sim.json', 'backtest_report.json', 'strategy_history.json', 'podcast_script.txt'
     }
     data_dir = 'data'
     os.makedirs(data_dir, exist_ok=True)
-    logger.info("Checking data directory for cleanup...")
+    logger.info("檢查 data 目錄以進行清理...")
     for file in glob.glob(f"{data_dir}/*"):
         if os.path.basename(file) not in expected_files:
             try:
                 os.remove(file)
-                logger.info(f"Removed irrelevant file: {file}")
+                logger.info(f"已移除無關檔案: {file}")
             except Exception as e:
-                logger.warning(f"Failed to remove {file}: {e}")
-    logger.info("Data directory cleanup completed")
+                logger.warning(f"無法移除 {file}: {e}")
+    logger.info("data 目錄清理完成")
 
-def fetch_market_data():
-    # 清理 data/ 目錄
+def fetch_market_data(split_daily=True):
+    """抓取市場數據，split_daily=True 時生成單獨的日線檔案"""
+    # 清理 data 目錄
     clean_data_directory()
 
     # 定義標的
@@ -37,57 +39,63 @@ def fetch_market_data():
     start_date_daily = end_date - timedelta(days=90)  # 過去3個月
     start_date_hourly = end_date - timedelta(days=7)   # 過去7天
 
-    logger.info("Starting daily data fetch for all symbols")
+    logger.info("開始抓取所有標的日線數據")
     # 抓取日線數據
     daily_data = []
     for symbol in symbols:
-        logger.info(f"Fetching daily data for {symbol}")
+        logger.info(f"抓取 {symbol} 的日線數據")
         try:
             df = yf.download(symbol, start=start_date_daily, end=end_date, interval='1d', auto_adjust=False, progress=False)
             if not df.empty:
                 df['Symbol'] = symbol
                 # 檢查是否有 'Adj Close'，若無則用 'Close' 填充
                 if 'Adj Close' not in df.columns:
-                    logger.warning(f"No 'Adj Close' column for {symbol}, using 'Close'")
+                    logger.warning(f"{symbol} 無 'Adj Close' 欄位，使用 'Close'")
                     df['Adj Close'] = df['Close']
-                daily_data.append(df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']])
-                logger.info(f"Successfully fetched {len(df)} daily rows for {symbol}")
+                df = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']]
+                daily_data.append(df)
+                logger.info(f"成功抓取 {symbol} 的 {len(df)} 筆日線數據")
+                # 保存單獨檔案
+                if split_daily:
+                    filename = f"daily_{symbol.replace('^', '').replace('.TW', '')}.csv"
+                    df.to_csv(f'data/{filename}', index=True, encoding='utf-8')
+                    logger.info(f"{filename} 已保存，形狀: {df.shape}")
             else:
-                logger.warning(f"No daily data returned for {symbol}")
+                logger.warning(f"{symbol} 未返回日線數據")
         except Exception as e:
-            logger.error(f"Error fetching daily data for {symbol}: {e}")
+            logger.error(f"抓取 {symbol} 日線數據失敗: {e}")
     
     if daily_data:
         daily_df = pd.concat(daily_data)
         daily_df.to_csv('data/daily.csv', index=True, encoding='utf-8')
-        logger.info(f"daily.csv saved with shape: {daily_df.shape}")
+        logger.info(f"daily.csv 已保存，形狀: {daily_df.shape}")
     else:
-        logger.error("No daily data to save for any symbol")
+        logger.error("無任何標的日線數據可保存")
 
-    logger.info("Starting hourly data fetch for all symbols")
+    logger.info("開始抓取所有標的小時線數據")
     # 抓取小時線數據並儲存到個別檔案
     for symbol in symbols:
-        logger.info(f"Fetching hourly data for {symbol}")
+        logger.info(f"抓取 {symbol} 的小時線數據")
         try:
             df = yf.download(symbol, start=start_date_hourly, end=end_date, interval='1h', auto_adjust=False, progress=False)
             if not df.empty:
                 df['Symbol'] = symbol
                 # 檢查是否有 'Adj Close'，若無則用 'Close' 填充
                 if 'Adj Close' not in df.columns:
-                    logger.warning(f"No 'Adj Close' column for {symbol}, using 'Close'")
+                    logger.warning(f"{symbol} 無 'Adj Close' 欄位，使用 'Close'")
                     df['Adj Close'] = df['Close']
                 # 保存到個別檔案
                 filename = f"hourly_{symbol.replace('^', '').replace('.TW', '')}.csv"
                 df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].to_csv(
                     f'data/{filename}', index=True, encoding='utf-8'
                 )
-                logger.info(f"{filename} saved with shape: {df.shape}")
+                logger.info(f"{filename} 已保存，形狀: {df.shape}")
             else:
-                logger.warning(f"No hourly data returned for {symbol}")
+                logger.warning(f"{symbol} 未返回小時線數據")
         except Exception as e:
-            logger.error(f"Error fetching hourly data for {symbol}: {e}")
+            logger.error(f"抓取 {symbol} 小時線數據失敗: {e}")
     
-    logger.info("Market data fetch completed")
+    logger.info("市場數據抓取完成")
 
 if __name__ == '__main__':
-    fetch_market_data()
+    fetch_market_data(split_daily=True)
