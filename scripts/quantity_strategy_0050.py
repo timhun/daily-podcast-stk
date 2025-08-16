@@ -1,9 +1,13 @@
-import yfinance as yf
 import backtrader as bt
 import pandas as pd
 import json
 import os
-from datetime import datetime, timedelta
+from datetime import datetime
+import logging
+
+# 設定日誌
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 class QuantityStrategy(bt.Strategy):
     params = (
@@ -37,7 +41,7 @@ class QuantityStrategy(bt.Strategy):
                 self.order = self.buy(size=int(size))
                 self.entry_price = current_price
                 signal = "買入"
-                print(f"{self.data.datetime.date(0)} 買入: 價格={current_price:.2f}, 量增率={volume_rate:.2f}")
+                logger.info(f"{self.data.datetime.date(0)} 買入: 價格={current_price:.2f}, 量增率={volume_rate:.2f}")
         else:
             if volume_rate < 1 and self.data.close[0] < self.data.close[-1]:
                 self.order = self.sell(size=self.position.size)
@@ -61,6 +65,7 @@ class QuantityStrategy(bt.Strategy):
             os.makedirs("data", exist_ok=True)
             with open("data/daily_sim.json", "w", encoding="utf-8") as f:
                 json.dump(daily_sim, f, ensure_ascii=False, indent=2)
+            logger.info("Saved daily_sim.json")
 
     def notify_trade(self, trade):
         if trade.isclosed:
@@ -88,6 +93,7 @@ class QuantityStrategy(bt.Strategy):
         }
         with open("data/backtest_report.json", "w", encoding="utf-8") as f:
             json.dump(report, f, ensure_ascii=False, indent=2)
+        logger.info("Saved backtest_report.json")
 
         # 更新策略歷史
         history_entry = {
@@ -104,25 +110,36 @@ class QuantityStrategy(bt.Strategy):
         history.append(history_entry)
         with open(history_file, "w", encoding="utf-8") as f:
             json.dump(history[-5:], f, ensure_ascii=False, indent=2)
+        logger.info("Saved strategy_history.json")
 
 def run_backtest():
-    # 從 data/daily.csv 讀取數據
-    daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'])
-    df_0050 = daily_df[daily_df['Symbol'] == '0050.TW'].copy()
-    df_0050.set_index('Date', inplace=True)
+    # 檢查 daily.csv 是否存在
+    if not os.path.exists('data/daily.csv'):
+        logger.error("data/daily.csv not found, skipping backtest")
+        return
 
-    cerebro = bt.Cerebro()
-    cerebro.addstrategy(QuantityStrategy)
-    data = bt.feeds.PandasData(dataname=df_0050)
-    cerebro.adddata(data)
-    cerebro.broker.setcash(1000000)
-    cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe_ratio')
-    cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')
-    cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
-    
-    print("開始回測...")
-    cerebro.run()
-    print("回測完成，報告已儲存至 data/")
+    try:
+        daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'])
+        df_0050 = daily_df[daily_df['Symbol'] == '0050.TW'].copy()
+        if df_0050.empty:
+            logger.error("No data for 0050.TW in daily.csv, skipping backtest")
+            return
+        df_0050.set_index('Date', inplace=True)
+
+        cerebro = bt.Cerebro()
+        cerebro.addstrategy(QuantityStrategy)
+        data = bt.feeds.PandasData(dataname=df_0050)
+        cerebro.adddata(data)
+        cerebro.broker.setcash(1000000)
+        cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe_ratio')
+        cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')
+        cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
+        
+        logger.info("Starting backtest...")
+        cerebro.run()
+        logger.info("Backtest completed, reports saved to data/")
+    except Exception as e:
+        logger.error(f"Backtest failed: {e}")
 
 if __name__ == '__main__':
     run_backtest()
