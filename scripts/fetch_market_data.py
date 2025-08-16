@@ -55,19 +55,24 @@ def fetch_market_data():
                 df_daily['Adj Close'] = df_daily['Close']
             df_daily = df_daily[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
             df_daily.reset_index(inplace=True)  # 將日期從索引轉為欄位
+            if 'Date' not in df_daily.columns:  # 確保 Date 欄位存在
+                df_daily['Date'] = df_daily.index
+                df_daily['Date'] = pd.to_datetime(df_daily['Date'])
             df_daily.rename(columns={'index': 'Date'}, inplace=True)  # 確保日期欄位名為 'Date'
-            logger.info(f"成功抓取 {symbol} 的 {len(df_daily)} 筆日線數據")
+            logger.info(f"成功抓取 {symbol} 的 {len(df_daily)} 筆日線數據，欄位: {df_daily.columns.tolist()}")
             # 保存單獨檔案
-            df_daily.to_csv(os.path.join('data', 'daily_0050.csv'), index=False, encoding='utf-8')
-            logger.info(f"已生成/覆蓋檔案: daily_0050.csv, 形狀: {df_daily.shape}")
+            daily_0050_path = os.path.join('data', 'daily_0050.csv')
+            df_daily.to_csv(daily_0050_path, index=False, encoding='utf-8')
+            logger.info(f"已生成/覆蓋檔案: {daily_0050_path}, 形狀: {df_daily.shape}")
             # 保存合併檔案
-            df_daily.to_csv(os.path.join('data', 'daily.csv'), index=False, encoding='utf-8')
-            logger.info(f"已生成/覆蓋檔案: daily.csv, 形狀: {df_daily.shape}")
+            daily_path = os.path.join('data', 'daily.csv')
+            df_daily.to_csv(daily_path, index=False, encoding='utf-8')
+            logger.info(f"已生成/覆蓋檔案: {daily_path}, 形狀: {df_daily.shape}")
             time.sleep(0.1)  # 確保時間戳更新
         else:
-            logger.warning(f"{symbol} 未返回日線數據")
+            logger.warning(f"{symbol} 未返回日線數據，可能是非交易日或數據不可用")
     except Exception as e:
-        logger.error(f"抓取 {symbol} 日線數據失敗: {e}")
+        logger.error(f"抓取 {symbol} 日線數據失敗: {str(e)}")
 
     logger.info("開始抓取 0050.TW 小時線數據")
     try:
@@ -79,23 +84,27 @@ def fetch_market_data():
                 df_hourly['Adj Close'] = df_hourly['Close']
             df_hourly = df_hourly[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
             df_hourly.reset_index(inplace=True)  # 將日期從索引轉為欄位
+            if 'Date' not in df_hourly.columns:  # 確保 Date 欄位存在
+                df_hourly['Date'] = df_hourly.index
+                df_hourly['Date'] = pd.to_datetime(df_hourly['Date'])
             df_hourly.rename(columns={'index': 'Date'}, inplace=True)  # 確保日期欄位名為 'Date'
-            df_hourly.to_csv(os.path.join('data', 'hourly_0050.csv'), index=False, encoding='utf-8')
-            logger.info(f"已生成/覆蓋檔案: hourly_0050.csv, 形狀: {df_hourly.shape}")
+            hourly_0050_path = os.path.join('data', 'hourly_0050.csv')
+            df_hourly.to_csv(hourly_0050_path, index=False, encoding='utf-8')
+            logger.info(f"已生成/覆蓋檔案: {hourly_0050_path}, 形狀: {df_hourly.shape}")
             time.sleep(0.1)  # 確保時間戳更新
         else:
-            logger.warning(f"{symbol} 未返回小時線數據")
+            logger.warning(f"{symbol} 未返回小時線數據，可能是非交易日或數據不可用")
     except Exception as e:
-        logger.error(f"抓取 {symbol} 小時線數據失敗: {e}")
+        logger.error(f"抓取 {symbol} 小時線數據失敗: {str(e)}")
     
     logger.info("市場數據抓取完成")
     # 驗證生成的檔案
-    for filename in ['data/daily_0050.csv', 'data/daily.csv', 'data/hourly_0050.csv']:
+    for filename in [daily_0050_path, daily_path, hourly_0050_path]:
         if os.path.exists(filename):
             file_size = os.path.getsize(filename)
             logger.info(f"檔案 {filename} 大小: {file_size} bytes")
         else:
             logger.warning(f"檔案 {filename} 未生成")
-            
+
 if __name__ == '__main__':
     fetch_market_data()
