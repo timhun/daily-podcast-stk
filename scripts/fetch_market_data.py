@@ -2,6 +2,11 @@ import yfinance as yf
 import pandas as pd
 from datetime import datetime, timedelta
 import os
+import logging
+
+# 設定日誌
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 def fetch_market_data():
     # 定義標的
@@ -12,50 +17,59 @@ def fetch_market_data():
 
     # 創建儲存目錄
     os.makedirs('data', exist_ok=True)
+    logger.info("Created data directory if not exists")
 
     # 抓取日線數據
     daily_data = []
     for symbol in symbols:
+        logger.info(f"Fetching daily data for {symbol}")
         try:
-            df = yf.download(symbol, start=start_date_daily, end=end_date, interval='1d')
+            df = yf.download(symbol, start=start_date_daily, end=end_date, interval='1d', progress=False)
             if not df.empty:
                 df['Symbol'] = symbol
                 # 檢查是否有 'Adj Close'，若無則用 'Close' 填充
                 if 'Adj Close' not in df.columns:
+                    logger.warning(f"No 'Adj Close' column for {symbol}, using 'Close'")
                     df['Adj Close'] = df['Close']
                 daily_data.append(df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']])
+                logger.info(f"Successfully fetched {len(df)} daily rows for {symbol}")
             else:
-                print(f"No data returned for {symbol} (daily)")
+                logger.warning(f"No daily data returned for {symbol}")
         except Exception as e:
-            print(f"Error fetching daily data for {symbol}: {e}")
+            logger.error(f"Error fetching daily data for {symbol}: {e}")
+    
     if daily_data:
         daily_df = pd.concat(daily_data)
         daily_df.to_csv('data/daily.csv', index=True, encoding='utf-8')
-        print(f"daily.csv saved with shape: {daily_df.shape}")
+        logger.info(f"daily.csv saved with shape: {daily_df.shape}")
     else:
-        print("No daily data to save")
+        logger.error("No daily data to save for any symbol")
 
     # 抓取小時線數據
     hourly_data = []
     for symbol in symbols:
+        logger.info(f"Fetching hourly data for {symbol}")
         try:
-            df = yf.download(symbol, start=start_date_hourly, end=end_date, interval='1h')
+            df = yf.download(symbol, start=start_date_hourly, end=end_date, interval='1h', progress=False)
             if not df.empty:
                 df['Symbol'] = symbol
                 # 檢查是否有 'Adj Close'，若無則用 'Close' 填充
                 if 'Adj Close' not in df.columns:
+                    logger.warning(f"No 'Adj Close' column for {symbol}, using 'Close'")
                     df['Adj Close'] = df['Close']
                 hourly_data.append(df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']])
+                logger.info(f"Successfully fetched {len(df)} hourly rows for {symbol}")
             else:
-                print(f"No data returned for {symbol} (hourly)")
+                logger.warning(f"No hourly data returned for {symbol}")
         except Exception as e:
-            print(f"Error fetching hourly data for {symbol}: {e}")
+            logger.error(f"Error fetching hourly data for {symbol}: {e}")
+    
     if hourly_data:
         hourly_df = pd.concat(hourly_data)
         hourly_df.to_csv('data/hourly.csv', index=True, encoding='utf-8')
-        print(f"hourly.csv saved with shape: {hourly_df.shape}")
+        logger.info(f"hourly.csv saved with shape: {hourly_df.shape}")
     else:
-        print("No hourly data to save")
+        logger.error("No hourly data to save for any symbol")
 
 if __name__ == '__main__':
     fetch_market_data()
