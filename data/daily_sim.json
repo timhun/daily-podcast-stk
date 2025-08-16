@@ -71,7 +71,7 @@
   },
   {
     "date": "2025-06-09",
-    "signal": "無訊號",
+    "signal": "買入",
     "price": 45.92,
     "volume_rate": 1.31,
     "size_pct": 0.02
@@ -120,7 +120,7 @@
   },
   {
     "date": "2025-06-18",
-    "signal": "無訊號",
+    "signal": "買入",
     "price": 47.57,
     "volume_rate": 5.0,
     "size_pct": 0.02
@@ -134,7 +134,7 @@
   },
   {
     "date": "2025-06-20",
-    "signal": "賣出 (量縮價跌)",
+    "signal": "無訊號",
     "price": 47.03,
     "volume_rate": 0.82,
     "size_pct": 0.02
@@ -253,28 +253,28 @@
   },
   {
     "date": "2025-07-15",
-    "signal": "無訊號",
+    "signal": "買入",
     "price": 50.0,
     "volume_rate": 1.28,
     "size_pct": 0.02
   },
   {
     "date": "2025-07-16",
-    "signal": "無訊號",
+    "signal": "買入",
     "price": 50.4,
     "volume_rate": 1.42,
     "size_pct": 0.02
   },
   {
     "date": "2025-07-17",
-    "signal": "無訊號",
+    "signal": "買入",
     "price": 50.7,
     "volume_rate": 1.25,
     "size_pct": 0.02
   },
   {
     "date": "2025-07-18",
-    "signal": "無訊號",
+    "signal": "買入",
     "price": 51.45,
     "volume_rate": 1.28,
     "size_pct": 0.02
@@ -400,7 +400,7 @@
   },
   {
     "date": "2025-08-13",
-    "signal": "賣出 (停利)",
+    "signal": "無訊號",
     "price": 53.35,
     "volume_rate": 0.97,
     "size_pct": 0.02
