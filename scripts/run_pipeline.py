@@ -23,8 +23,8 @@ def generate_podcast_script():
 
     # 讀取市場數據
     try:
-        daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float})
-        hourly_0050_df = pd.read_csv('data/hourly_0050.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float})
+        daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float, 'Symbol': str})
+        hourly_0050_df = pd.read_csv('data/hourly_0050.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float, 'Symbol': str})
     except Exception as e:
         logger.error(f"讀取市場數據失敗: {e}")
         return
