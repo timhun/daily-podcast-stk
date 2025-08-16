@@ -52,7 +52,7 @@ def fetch_market_data(split_daily=True):
                 if 'Adj Close' not in df.columns:
                     logger.warning(f"{symbol} 無 'Adj Close' 欄位，使用 'Close'")
                     df['Adj Close'] = df['Close']
-                df = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']]
+                df = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
                 daily_data.append(df)
                 logger.info(f"成功抓取 {symbol} 的 {len(df)} 筆日線數據")
                 # 保存單獨檔案
@@ -84,11 +84,10 @@ def fetch_market_data(split_daily=True):
                 if 'Adj Close' not in df.columns:
                     logger.warning(f"{symbol} 無 'Adj Close' 欄位，使用 'Close'")
                     df['Adj Close'] = df['Close']
+                df = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
                 # 保存到個別檔案
                 filename = f"hourly_{symbol.replace('^', '').replace('.TW', '')}.csv"
-                df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].to_csv(
-                    f'data/{filename}', index=True, encoding='utf-8'
-                )
+                df.to_csv(f'data/{filename}', index=True, encoding='utf-8')
                 logger.info(f"{filename} 已保存，形狀: {df.shape}")
             else:
                 logger.warning(f"{symbol} 未返回小時線數據")
