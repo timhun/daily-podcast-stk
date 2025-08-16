@@ -1,0 +1,11 @@
+[
+  {
+    "date": "2025-08-16",
+    "strategy": {
+      "signal": "無訊號",
+      "win_rate": 0.5
+    },
+    "sharpe": null,
+    "mdd": 2.04
+  }
+]

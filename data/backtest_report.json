@@ -1,0 +1,12 @@
+{
+  "metrics": {
+    "initial_cash": 1000000,
+    "final_value": 996052.05,
+    "pnl": -3947.95,
+    "cagr": 0,
+    "max_drawdown": 2.04,
+    "sharpe_ratio": null,
+    "win_rate": 0.5,
+    "total_trades": 2
+  }
+}
