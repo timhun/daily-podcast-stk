@@ -126,29 +126,108 @@ class QuantityStrategy(bt.Strategy):
 def run_backtest():
     data_file = 'data/daily_0050.csv'
     try:
-        daily_df = pd.read_csv(data_file, parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float, 'Symbol': str})
+        # 檢查檔案是否存在
+        if not os.path.exists(data_file):
+            logger.error(f"找不到數據檔案: {data_file}")
+            return
+            
+        # 讀取數據
+        daily_df = pd.read_csv(data_file)
+        
+        # 檢查必要欄位
+        required_columns = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume']
+        missing_columns = [col for col in required_columns if col not in daily_df.columns]
+        if missing_columns:
+            logger.error(f"缺少必要欄位: {missing_columns}")
+            return
+        
         if daily_df.empty:
             logger.error(f"{data_file} 中無數據，跳過回測")
             return
-        # 明確移除 Symbol 欄位，僅傳遞數值數據
-        daily_df_numeric = daily_df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']].copy()
-        daily_df_numeric.index = pd.to_datetime(daily_df['Date'])  # 確保索引為日期
-        daily_df_numeric.index.name = 'Date'
-
+            
+        # 數據預處理 - 重要：移除 Symbol 欄位並確保數值型態
+        daily_df['Date'] = pd.to_datetime(daily_df['Date'])
+        daily_df = daily_df.sort_values('Date').reset_index(drop=True)
+        
+        # 只保留數值欄位，移除 Symbol 欄位
+        numeric_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        for col in numeric_columns:
+            daily_df[col] = pd.to_numeric(daily_df[col], errors='coerce')
+        
+        # 移除有缺失值的行
+        daily_df = daily_df.dropna(subset=numeric_columns)
+        
+        if daily_df.empty:
+            logger.error("清理後無有效數據")
+            return
+        
+        # 確保有 Adj Close 欄位
+        if 'Adj Close' not in daily_df.columns:
+            daily_df['Adj Close'] = daily_df['Close']
+        else:
+            daily_df['Adj Close'] = pd.to_numeric(daily_df['Adj Close'], errors='coerce')
+            daily_df['Adj Close'] = daily_df['Adj Close'].fillna(daily_df['Close'])
+        
+        # 準備 backtrader 數據 - 只包含數值欄位
+        daily_df_bt = daily_df[['Date', 'Open', 'High', 'Low', 'Close', 'Volume']].copy()
+        daily_df_bt = daily_df_bt.set_index('Date')
+        
+        # 檢查數據完整性
+        if len(daily_df_bt) < 10:
+            logger.warning(f"數據量過少（{len(daily_df_bt)}筆），回測結果可能不準確")
+        
+        logger.info(f"準備回測數據: {len(daily_df_bt)} 筆，時間範圍: {daily_df_bt.index[0]} 到 {daily_df_bt.index[-1]}")
+        
+        # 設定 cerebro
         cerebro = bt.Cerebro()
         cerebro.addstrategy(QuantityStrategy)
-        data = bt.feeds.PandasData(dataname=daily_df_numeric)
+        
+        # 添加數據 - 使用正確的欄位映射
+        data = bt.feeds.PandasData(
+            dataname=daily_df_bt,
+            datetime=None,  # 使用索引作為時間
+            open='Open', high='High', low='Low', close='Close', volume='Volume',
+            openinterest=None  # 不使用 openinterest
+        )
         cerebro.adddata(data)
+        
+        # 設定初始資金和手續費
         cerebro.broker.setcash(1000000)
-        cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe_ratio')
+        cerebro.broker.setcommission(commission=0.001)  # 0.1% 手續費
+        
+        # 添加分析器
+        cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe_ratio', riskfreerate=0.01)
         cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')
         cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
         
         logger.info("開始回測...")
-        cerebro.run()
+        
+        # 執行回測
+        results = cerebro.run()
+        
         logger.info("回測完成，報告已保存至 data/")
+        
     except Exception as e:
         logger.error(f"回測失敗: {e}")
+        logger.error(traceback.format_exc())
+        
+        # 創建錯誤報告
+        error_report = {
+            "metrics": {
+                "initial_cash": 1000000,
+                "final_value": 1000000,
+                "pnl": 0,
+                "cagr": 0,
+                "max_drawdown": 0,
+                "sharpe_ratio": None,
+                "win_rate": 0,
+                "total_trades": 0,
+                "error": str(e)
+            }
+        }
+        os.makedirs("data", exist_ok=True)
+        with open("data/backtest_report.json", "w", encoding="utf-8") as f:
+            json.dump(error_report, f, ensure_ascii=False, indent=2)
 
 if __name__ == '__main__':
     run_backtest()
