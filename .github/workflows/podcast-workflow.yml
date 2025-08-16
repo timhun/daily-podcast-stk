@@ -2,12 +2,12 @@ name: Podcast-Workflow
 
 on:
   schedule:
-    - cron: '0 22 * * 0-4'  # 每天 UTC 22:00 (台灣次日 06:00) 處理美股
-    - cron: '0 8 * * 1-5'   # 工作日 UTC 08:00 (台灣 16:00) 處理台股
+    - cron: '0 22 * * 0-4'  # 台灣時間 06:00 (UTC 22:00 前一天)
+    - cron: '0 8 * * 1-5'   # 工作日台灣時間 16:00 (UTC 08:00)
   workflow_dispatch:
     inputs:
       mode:
-        description: '運行模式 (hourly/daily/weekly/auto/manual)'
+        description: '運行模式 (daily/auto/manual)'
         required: true
         default: 'auto'
         type: choice
@@ -44,7 +44,6 @@ jobs:
 
       - name: Set environment variables
         run: |
-          # 根據觸發時間動態設置 PODCAST_MODE
           HOUR=$(date -u +%H)
           if [ "$HOUR" = "22" ]; then
             echo "PODCAST_MODE=us" >> $GITHUB_ENV
@@ -83,7 +82,6 @@ jobs:
           RSS_TW_PATH: docs/rss/podcast_tw.xml
           RSS_OUTPUT_PATH: docs/rss/podcast.xml
 
-    
       - name: Check podcast files
         run: |
           date_str=$(date +%Y%m%d)
@@ -96,7 +94,7 @@ jobs:
               fi
             done
           done
-          for rss in docs/rss/podcast_tw.xml docs/rss/podcast_us.xml; do
+          for rss in docs/rss/podcast_tw.xml docs/rss/podcast_us.xml docs/rss/podcast.xml; do
             if [ -f "$rss" ]; then
               echo "$rss exists, last modified: $(stat -c %y "$rss")"
             else
@@ -126,6 +124,9 @@ jobs:
           if [ -f "docs/rss/podcast_us.xml" ]; then
             git add docs/rss/podcast_us.xml
           fi
+          if [ -f "docs/rss/podcast.xml" ]; then
+            git add docs/rss/podcast.xml
+          fi
           git commit -m "Update podcast files [skip ci]" || echo "No changes to commit"
           git push
 
@@ -142,6 +143,7 @@ jobs:
             docs/podcast/*/*_us/archive_audio_url.txt
             docs/rss/podcast_tw.xml
             docs/rss/podcast_us.xml
+            docs/rss/podcast.xml
           if-no-files-found: warn
           compression-level: 6
           overwrite: false
