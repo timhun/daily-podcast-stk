@@ -119,12 +119,13 @@ def run_backtest():
         if daily_df.empty:
             logger.error(f"{data_file} 中無數據，跳過回測")
             return
-        daily_df.set_index('Date', inplace=True)
-        daily_df = daily_df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']].copy()
+        # 移除 Symbol 欄位，僅傳遞數值數據給 backtrader
+        daily_df_numeric = daily_df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']].copy()
+        daily_df_numeric.set_index(daily_df['Date'], inplace=True)
 
         cerebro = bt.Cerebro()
         cerebro.addstrategy(QuantityStrategy)
-        data = bt.feeds.PandasData(dataname=daily_df)
+        data = bt.feeds.PandasData(dataname=daily_df_numeric)
         cerebro.adddata(data)
         cerebro.broker.setcash(1000000)
         cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe_ratio')
