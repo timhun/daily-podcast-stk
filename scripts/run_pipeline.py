@@ -4,71 +4,127 @@ import pandas as pd
 from datetime import datetime
 from scripts.fetch_market_data import fetch_market_data
 from scripts.quantity_strategy_0050 import run_backtest
+import logging
+
+# 設定日誌
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 def generate_podcast_script():
+    # 檢查必要檔案是否存在
+    required_files = ['data/daily.csv', 'data/hourly_0050.csv', 'data/hourly_TWII.csv', 'data/hourly_2330.csv']
+    for file in required_files:
+        if not os.path.exists(file):
+            logger.error(f"Missing {file}, cannot generate podcast script")
+            return
+
     # 讀取市場數據
-    daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'])
-    hourly_df = pd.read_csv('data/hourly.csv', parse_dates=['Date'])
-    
+    try:
+        daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'])
+        hourly_0050_df = pd.read_csv('data/hourly_0050.csv', parse_dates=['Date'])
+        # hourly_twii_df = pd.read_csv('data/hourly_TWII.csv', parse_dates=['Date'])  # 未使用
+        # hourly_2330_df = pd.read_csv('data/hourly_2330.csv', parse_dates=['Date'])  # 未使用
+    except Exception as e:
+        logger.error(f"Error reading market data: {e}")
+        return
+
     # 提取最新數據
-    twii = daily_df[daily_df['Symbol'] == '^TWII'].iloc[-1]
-    twii_prev = daily_df[daily_df['Symbol'] == '^TWII'].iloc[-2]
-    twii_change = twii['Close'] - twii_prev['Close']
-    twii_pct = (twii_change / twii_prev['Close']) * 100
-    
-    ts_0050 = daily_df[daily_df['Symbol'] == '0050.TW'].iloc[-1]
-    ts_0050_prev = daily_df[daily_df['Symbol'] == '0050.TW'].iloc[-2]
-    ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close']) * 100
-    
-    ts_2330 = daily_df[daily_df['Symbol'] == '2330.TW'].iloc[-1]
-    ts_2330_prev = daily_df[daily_df['Symbol'] == '2330.TW'].iloc[-2]
-    ts_2330_pct = ((ts_2330['Close'] - ts_2330_prev['Close']) / ts_2330_prev['Close']) * 100
-    
-    ts_0050_hourly = hourly_df[hourly_df['Symbol'] == '0050.TW'].iloc[-1]
-    
+    try:
+        twii = daily_df[daily_df['Symbol'] == '^TWII'].iloc[-1]
+        twii_prev = daily_df[daily_df['Symbol'] == '^TWII'].iloc[-2]
+        twii_change = twii['Close'] - twii_prev['Close']
+        twii_pct = (twii_change / twii_prev['Close']) * 100
+    except:
+        twii = {'Close': 'N/A', 'Volume': 'N/A'}
+        twii_change = 'N/A'
+        twii_pct = 'N/A'
+        logger.warning("Failed to extract ^TWII data")
+
+    try:
+        ts_0050 = daily_df[daily_df['Symbol'] == '0050.TW'].iloc[-1]
+        ts_0050_prev = daily_df[daily_df['Symbol'] == '0050.TW'].iloc[-2]
+        ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close']) * 100
+    except:
+        ts_0050 = {'Close': 'N/A', 'Volume': 'N/A'}
+        ts_0050_pct = 'N/A'
+        logger.warning("Failed to extract 0050.TW data")
+
+    try:
+        ts_2330 = daily_df[daily_df['Symbol'] == '2330.TW'].iloc[-1]
+        ts_2330_prev = daily_df[daily_df['Symbol'] == '2330.TW'].iloc[-2]
+        ts_2330_pct = ((ts_2330['Close'] - ts_2330_prev['Close']) / ts_2330_prev['Close']) * 100
+    except:
+        ts_2330 = {'Close': 'N/A', 'Volume': 'N/A'}
+        ts_2330_pct = 'N/A'
+        logger.warning("Failed to extract 2330.TW data")
+
+    try:
+        ts_0050_hourly = hourly_0050_df.iloc[-1]
+    except:
+        ts_0050_hourly = {'Close': 'N/A', 'Volume': 'N/A'}
+        logger.warning("Failed to extract 0050.TW hourly data")
+
     # 假設外資期貨數據
     futures_net = "淨空 34,207 口，較前日減少 172 口（假設數據）"
     
     # 讀取量價策略輸出
-    with open('data/daily_sim.json', 'r', encoding='utf-8') as f:
-        daily_sim = json.load(f)
-    with open('data/backtest_report.json', 'r', encoding='utf-8') as f:
-        backtest = json.load(f)
-    with open('data/strategy_history.json', 'r', encoding='utf-8') as f:
-        history = '\n'.join([f"{h['date']}: signal {h['strategy']['signal']}, sharpe {h['sharpe']}, mdd {h['mdd']}" for h in json.load(f)])
+    try:
+        with open('data/daily_sim.json', 'r', encoding='utf-8') as f:
+            daily_sim = json.load(f)
+    except:
+        daily_sim = {'signal': 'N/A', 'price': 'N/A', 'volume_rate': 'N/A', 'size_pct': 'N/A'}
+        logger.warning("Failed to read daily_sim.json")
+
+    try:
+        with open('data/backtest_report.json', 'r', encoding='utf-8') as f:
+            backtest = json.load(f)
+    except:
+        backtest = {'metrics': {'sharpe_ratio': 'N/A', 'max_drawdown': 'N/A'}}
+        logger.warning("Failed to read backtest_report.json")
+
+    try:
+        with open('data/strategy_history.json', 'r', encoding='utf-8') as f:
+            history = '\n'.join([f"{h['date']}: signal {h['strategy']['signal']}, sharpe {h['sharpe']}, mdd {h['mdd']}" for h in json.load(f)])
+    except:
+        history = "no history"
+        logger.warning("Failed to read strategy_history.json")
     
     market_data = f"""
-    - TAIEX (^TWII): 收盤 {twii['Close']:.2f} 點，漲跌 {twii_change:.2f} 點 ({twii_pct:.2f}%)，成交量 {twii['Volume']:,} 股
-    - 0050.TW: 收盤 {ts_0050['Close']:.2f} 元，漲跌 {ts_0050_pct:.2f}%，成交量 {ts_0050['Volume']:,} 股
-    - 2330.TW: 收盤 {ts_2330['Close']:.2f} 元，漲跌 {ts_2330_pct:.2f}%，成交量 {ts_2330['Volume']:,} 股
-    - 0050.TW 小時線: 最新價格 {ts_0050_hourly['Close']:.2f} 元，成交量 {ts_0050_hourly['Volume']:,} 股
+    - TAIEX (^TWII): 收盤 {twii['Close'] if isinstance(twii['Close'], (int, float)) else 'N/A'} 點，漲跌 {twii_change if isinstance(twii_change, (int, float)) else 'N/A'} 點 ({twii_pct if isinstance(twii_pct, (int, float)) else 'N/A'}%)，成交量 {twii['Volume'] if isinstance(twii['Volume'], (int, float)) else 'N/A'} 股
+    - 0050.TW: 收盤 {ts_0050['Close'] if isinstance(ts_0050['Close'], (int, float)) else 'N/A'} 元，漲跌 {ts_0050_pct if isinstance(ts_0050_pct, (int, float)) else 'N/A'}%，成交量 {ts_0050['Volume'] if isinstance(ts_0050['Volume'], (int, float)) else 'N/A'} 股
+    - 2330.TW: 收盤 {ts_2330['Close'] if isinstance(ts_2330['Close'], (int, float)) else 'N/A'} 元，漲跌 {ts_2330_pct if isinstance(ts_2330_pct, (int, float)) else 'N/A'}%，成交量 {ts_2330['Volume'] if isinstance(ts_2330['Volume'], (int, float)) else 'N/A'} 股
+    - 0050.TW 小時線: 最新價格 {ts_0050_hourly['Close'] if isinstance(ts_0050_hourly['Close'], (int, float)) else 'N/A'} 元，成交量 {ts_0050_hourly['Volume'] if isinstance(ts_0050_hourly['Volume'], (int, float)) else 'N/A'} 股
     - 外資期貨未平倉水位: {futures_net}
     """
     
     # 讀取 prompt 並生成播報
-    with open('prompt/tw.txt', 'r', encoding='utf-8') as f:
-        prompt = f.read()
-    
-    prompt = prompt.format(
-        current_date=datetime.now().strftime('%Y-%m-%d'),
-        market_data=market_data,
-        SIG=daily_sim['signal'],
-        PRICE=daily_sim['price'],
-        VOLUME_RATE=daily_sim['volume_rate'],
-        SIZE=daily_sim['size_pct'],
-        OOS_SHARPE=backtest['metrics']['sharpe_ratio'],
-        OOS_MDD=backtest['metrics']['max_drawdown'],
-        LATEST_HISTORY=history
-    )
-    
-    # 儲存播報
-    os.makedirs('data', exist_ok=True)
-    with open('data/podcast_script.txt', 'w', encoding='utf-8') as f:
-        f.write(prompt)
+    try:
+        with open('prompt/tw.txt', 'r', encoding='utf-8') as f:
+            prompt = f.read()
+        
+        prompt = prompt.format(
+            current_date=datetime.now().strftime('%Y-%m-%d'),
+            market_data=market_data,
+            SIG=daily_sim['signal'],
+            PRICE=daily_sim['price'],
+            VOLUME_RATE=daily_sim['volume_rate'],
+            SIZE=daily_sim['size_pct'],
+            OOS_SHARPE=backtest['metrics']['sharpe_ratio'],
+            OOS_MDD=backtest['metrics']['max_drawdown'],
+            LATEST_HISTORY=history
+        )
+        
+        # 儲存播報
+        os.makedirs('data', exist_ok=True)
+        with open('data/podcast_script.txt', 'w', encoding='utf-8') as f:
+            f.write(prompt)
+        logger.info("Podcast script saved to data/podcast_script.txt")
+    except Exception as e:
+        logger.error(f"Error generating podcast script: {e}")
 
 def main():
     mode = os.environ.get('MODE', 'hourly')
-    print(f"運行模式: {mode}")
+    logger.info(f"Running in mode: {mode}")
     
     # 抓取市場數據
     fetch_market_data()
@@ -78,7 +134,6 @@ def main():
     
     # 生成播報腳本
     generate_podcast_script()
-    print("播報腳本已儲存至 data/podcast_script.txt")
 
 if __name__ == '__main__':
     main()
