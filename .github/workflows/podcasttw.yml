@@ -1,71 +1,63 @@
-name: Auto Trading 開發版
+name: Auto-Trading-Loop
 
 on:
   schedule:
-    - cron: "0 1-15 * * 1-5"  # 台北時間 09:00~23:00
-  workflow_dispatch:
+    - cron: '0 0 * * *'  # 每天 UTC 0點觸發
+  workflow_dispatch:  # 手動觸發
 
 jobs:
-  run-trading:
+  run-pipeline:
     runs-on: ubuntu-latest
-    env:
-      USE_LLM: "1"
-      SYMBOL: "0050.TW"
-      REPORT_DIR: data
-      DATA_DIR: data
-      HISTORY_FILE: data/strategy_history.json
-      TARGET_RETURN: "0.02"
-      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-      GROQ_MODEL: "llama-3.1-70b-versatile"
-      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-      EMAIL_USER: ${{ secrets.EMAIL_USER }}
-      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-      EMAIL_TO: "Tim.oneway@gmail.com"
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-
-      - name: Cache pip
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
+          python-version: '3.11'
 
       - name: Install dependencies
         run: |
-          pip install --upgrade pip
-          pip install -r requirements.txt
-          sudo apt-get update -y
-          sudo apt-get install -y jq
+          python -m pip install --upgrade pip
+          pip install pandas yfinance backtrader requests
 
       - name: Run pipeline
-        run: |
-          python scripts/run_pipeline.py
+        run: python scripts/run_pipeline.py
+        env:
+          MODE: hourly
+          USE_LLM: 1
+          SYMBOL: 0050.TW
+          REPORT_DIR: data
+          DATA_DIR: data
+          HISTORY_FILE: data/strategy_history.json
+          TARGET_RETURN: 0.02
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          GROQ_MODEL: llama-3.1-70b-versatile
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+          EMAIL_USER: ${{ secrets.EMAIL_USER }}
+          EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+          EMAIL_TO: Tim.oneway@gmail.com
 
       - name: Check CSV files
         run: |
-          echo "Listing data directory contents:"
-          ls -l data/ || echo "Data directory not found"
-          for file in daily.csv daily_0050.csv hourly_0050.csv; do
-            if [ -f data/$file ]; then
-              echo "$file exists, last modified: $(stat -c '%y' data/$file)"
-            else
-              echo "$file not found"
+          ls -l data/
+          for file in data/*.csv; do
+            if [ -f "$file" ]; then
+              echo "$file exists, last modified: $(stat -c %y "$file")"
             fi
           done
 
-      - name: Upload reports and data as artifact
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add data/*.json data/*.csv data/podcast_script.txt
+          git commit -m "Update generated files [skip ci]" || echo "No changes to commit"
+          git push
+
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: reports-${{ github.run_id }}
@@ -73,55 +65,7 @@ jobs:
             data/*.json
             data/*.csv
             data/podcast_script.txt
-
-      - name: Extract summary for Slack/email
-        id: summary
-        shell: bash
-        run: |
-          set -e
-          SIG=$(jq -r '.signal // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
-          PRICE=$(jq -r '.price // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
-          VOLUME_RATE=$(jq -r '.volume_rate // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
-          SIZE=$(jq -r '.size_pct // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
-          OOS_SHARPE=$(jq -r '.metrics.sharpe_ratio // "N/A"' data/backtest_report.json 2>/dev/null || echo "N/A")
-          OOS_MDD=$(jq -r '.metrics.max_drawdown // "N/A"' data/backtest_report.json 2>/dev/null || echo "N/A")
-
-          if [ -f data/strategy_history.json ]; then
-            LATEST_HISTORY=$(jq -r '.[-5:][] | "\(.date): signal \(.strategy.signal // "N/A"), sharpe \(.sharpe // "N/A"), mdd \(.mdd // "N/A")"' data/strategy_history.json | sed ':a;N;$!ba;s/\n/\\n/g')
-          else
-            LATEST_HISTORY="no history"
-          fi
-
-          {
-            echo "SIG=$SIG"
-            echo "PRICE=$PRICE"
-            echo "VOLUME_RATE=$VOLUME_RATE"
-            echo "SIZE=$SIZE"
-            echo "OOS_SHARPE=$OOS_SHARPE"
-            echo "OOS_MDD=$OOS_MDD"
-            echo "LATEST_HISTORY<<EOF"
-            echo -e "$LATEST_HISTORY"
-            echo "EOF"
-          } >> $GITHUB_ENV
-
-      - name: Send Slack Notification
-        if: ${{ env.SLACK_BOT_TOKEN != '' && env.SLACK_CHANNEL != '' }}
-        uses: slackapi/slack-github-action@v1.26.0
-        with:
-          channel-id: ${{ env.SLACK_CHANNEL }}
-          slack-message: |
-            *Auto Trading Loop 完成 ✅*
-            *Repo:* ${{ github.repository }}
-            *Run ID:* ${{ github.run_id }}
-
-            *日K 模擬摘要 (0050.TW):*
-            • Signal: ${{ env.SIG }}
-            • Price: ${{ env.PRICE }}
-            • Volume Rate: ${{ env.VOLUME_RATE }}
-            • Size: ${{ env.SIZE }}
-
-            *週期回測:*
-            • Sharpe: ${{ env.OOS_SHARPE }}
-            • Max Drawdown: ${{ env.OOS_MDD }}
-
-            *策略記憶庫（最近 5 筆）:*
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: false
