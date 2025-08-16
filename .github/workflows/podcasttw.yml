@@ -1,135 +1,209 @@
-import os
-import json
-import pandas as pd
-from datetime import datetime
-from scripts.fetch_market_data import fetch_market_data
-from scripts.quantity_strategy_0050 import run_backtest
-import logging
+name: Auto Trading Loop
 
-# 設定日誌
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+on:
+  schedule:
+    # 每小時：週一至週五 台北時間 10:00~23:00
+    - cron: "0 2-15 * * 1-5"
+    # 每日：台北時間 09:00（開盤前）
+    - cron: "0 1 * * 1-5"
+    # 每週：週六 台北時間 09:00（週末策略生成/回測）
+    - cron: "0 1 * * 6"
+  workflow_dispatch:
 
-def generate_podcast_script():
-    # 檢查 CSV 是否存在
-    if not os.path.exists('data/daily.csv') or not os.path.exists('data/hourly.csv'):
-        logger.error("Missing data/daily.csv or data/hourly.csv, cannot generate podcast script")
-        return
+jobs:
+  run-trading:
+    runs-on: ubuntu-latest
+    env:
+      USE_LLM: "1"
+      SYMBOL: "0050.TW"
+      REPORT_DIR: data
+      DATA_DIR: data
+      HISTORY_FILE: data/strategy_history.json
+      TARGET_RETURN: "0.02"
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: "llama-3.1-70b-versatile"
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+      EMAIL_TO: "Tim.oneway@gmail.com"
 
-    # 讀取市場數據
-    try:
-        daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'])
-        hourly_df = pd.read_csv('data/hourly.csv', parse_dates=['Date'])
-    except Exception as e:
-        logger.error(f"Error reading market data: {e}")
-        return
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
-    # 提取最新數據
-    try:
-        twii = daily_df[daily_df['Symbol'] == '^TWII'].iloc[-1]
-        twii_prev = daily_df[daily_df['Symbol'] == '^TWII'].iloc[-2]
-        twii_change = twii['Close'] - twii_prev['Close']
-        twii_pct = (twii_change / twii_prev['Close']) * 100
-    except:
-        twii = {'Close': 'N/A', 'Volume': 'N/A'}
-        twii_change = 'N/A'
-        twii_pct = 'N/A'
-        logger.warning("Failed to extract ^TWII data")
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
 
-    try:
-        ts_0050 = daily_df[daily_df['Symbol'] == '0050.TW'].iloc[-1]
-        ts_0050_prev = daily_df[daily_df['Symbol'] == '0050.TW'].iloc[-2]
-        ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close']) * 100
-    except:
-        ts_0050 = {'Close': 'N/A', 'Volume': 'N/A'}
-        ts_0050_pct = 'N/A'
-        logger.warning("Failed to extract 0050.TW data")
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
-    try:
-        ts_2330 = daily_df[daily_df['Symbol'] == '2330.TW'].iloc[-1]
-        ts_2330_prev = daily_df[daily_df['Symbol'] == '2330.TW'].iloc[-2]
-        ts_2330_pct = ((ts_2330['Close'] - ts_2330_prev['Close']) / ts_2330_prev['Close']) * 100
-    except:
-        ts_2330 = {'Close': 'N/A', 'Volume': 'N/A'}
-        ts_2330_pct = 'N/A'
-        logger.warning("Failed to extract 2330.TW data")
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          sudo apt-get update -y
+          sudo apt-get install -y jq
 
-    try:
-        ts_0050_hourly = hourly_df[hourly_df['Symbol'] == '0050.TW'].iloc[-1]
-    except:
-        ts_0050_hourly = {'Close': 'N/A', 'Volume': 'N/A'}
-        logger.warning("Failed to extract 0050.TW hourly data")
+      - name: Fetch market data
+        run: |
+          python scripts/fetch_market_data.py
 
-    # 假設外資期貨數據
-    futures_net = "淨空 34,207 口，較前日減少 172 口（假設數據）"
-    
-    # 讀取量價策略輸出
-    try:
-        with open('data/daily_sim.json', 'r', encoding='utf-8') as f:
-            daily_sim = json.load(f)
-    except:
-        daily_sim = {'signal': 'N/A', 'price': 'N/A', 'volume_rate': 'N/A', 'size_pct': 'N/A'}
-        logger.warning("Failed to read daily_sim.json")
+      - name: Check CSV files
+        run: |
+          ls -l data/ || echo "Data directory not found"
+          if [ -f data/daily.csv ]; then
+            echo "daily.csv exists"
+          else
+            echo "daily.csv not found"
+          fi
+          if [ -f data/hourly.csv ]; then
+            echo "hourly.csv exists"
+          else
+            echo "hourly.csv not found"
+          fi
 
-    try:
-        with open('data/backtest_report.json', 'r', encoding='utf-8') as f:
-            backtest = json.load(f)
-    except:
-        backtest = {'metrics': {'sharpe_ratio': 'N/A', 'max_drawdown': 'N/A'}}
-        logger.warning("Failed to read backtest_report.json")
+      - name: Decide MODE (auto/manual)
+        id: decide
+        run: |
+          NOW_UTC=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          HOUR_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%H)
+          DOW_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%u)
+          echo "now_utc=$NOW_UTC hour_local=$HOUR_LOCAL dow_local=$DOW_LOCAL"
 
-    try:
-        with open('data/strategy_history.json', 'r', encoding='utf-8') as f:
-            history = '\n'.join([f"{h['date']}: signal {h['strategy']['signal']}, sharpe {h['sharpe']}, mdd {h['mdd']}" for h in json.load(f)])
-    except:
-        history = "no history"
-        logger.warning("Failed to read strategy_history.json")
-    
-    market_data = f"""
-    - TAIEX (^TWII): 收盤 {twii['Close'] if isinstance(twii['Close'], (int, float)) else 'N/A'} 點，漲跌 {twii_change if isinstance(twii_change, (int, float)) else 'N/A'} 點 ({twii_pct if isinstance(twii_pct, (int, float)) else 'N/A'}%)，成交量 {twii['Volume'] if isinstance(twii['Volume'], (int, float)) else 'N/A'} 股
-    - 0050.TW: 收盤 {ts_0050['Close'] if isinstance(ts_0050['Close'], (int, float)) else 'N/A'} 元，漲跌 {ts_0050_pct if isinstance(ts_0050_pct, (int, float)) else 'N/A'}%，成交量 {ts_0050['Volume'] if isinstance(ts_0050['Volume'], (int, float)) else 'N/A'} 股
-    - 2330.TW: 收盤 {ts_2330['Close'] if isinstance(ts_2330['Close'], (int, float)) else 'N/A'} 元，漲跌 {ts_2330_pct if isinstance(ts_2330_pct, (int, float)) else 'N/A'}%，成交量 {ts_2330['Volume'] if isinstance(ts_2330['Volume'], (int, float)) else 'N/A'} 股
-    - 0050.TW 小時線: 最新價格 {ts_0050_hourly['Close'] if isinstance(ts_0050_hourly['Close'], (int, float)) else 'N/A'} 元，成交量 {ts_0050_hourly['Volume'] if isinstance(ts_0050_hourly['Volume'], (int, float)) else 'N/A'} 股
-    - 外資期貨未平倉水位: {futures_net}
-    """
-    
-    # 讀取 prompt 並生成播報
-    try:
-        with open('prompt/tw.txt', 'r', encoding='utf-8') as f:
-            prompt = f.read()
-        
-        prompt = prompt.format(
-            current_date=datetime.now().strftime('%Y-%m-%d'),
-            market_data=market_data,
-            SIG=daily_sim['signal'],
-            PRICE=daily_sim['price'],
-            VOLUME_RATE=daily_sim['volume_rate'],
-            SIZE=daily_sim['size_pct'],
-            OOS_SHARPE=backtest['metrics']['sharpe_ratio'],
-            OOS_MDD=backtest['metrics']['max_drawdown'],
-            LATEST_HISTORY=history
-        )
-        
-        # 儲存播報
-        os.makedirs('data', exist_ok=True)
-        with open('data/podcast_script.txt', 'w', encoding='utf-8') as f:
-            f.write(prompt)
-        logger.info("Podcast script saved to data/podcast_script.txt")
-    except Exception as e:
-        logger.error(f"Error generating podcast script: {e}")
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            MODE="hourly"
+          else
+            if [ "$DOW_LOCAL" = "6" ]; then
+              MODE="weekly"
+            elif [ "$DOW_LOCAL" -ge 1 ] && [ "$DOW_LOCAL" -le 5 ]; then
+              MODE="hourly"
+            else
+              MODE="hourly"
+            fi
+          fi
 
-def main():
-    mode = os.environ.get('MODE', 'hourly')
-    logger.info(f"Running in mode: {mode}")
-    
-    # 抓取市場數據
-    fetch_market_data()
-    
-    # 運行回測
-    run_backtest()
-    
-    # 生成播報腳本
-    generate_podcast_script()
+          echo "MODE=$MODE" | tee -a $GITHUB_ENV
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
 
-if __name__ == '__main__':
-    main()
+      - name: Run pipeline (MODE=${{ steps.decide.outputs.mode }})
+        run: |
+          set -e
+          python scripts/run_pipeline.py
+
+      - name: Upload reports and data as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ github.run_id }}
+          path: |
+            data/*.json
+            data/*.csv
+            data/podcast_script.txt
+
+      - name: Extract summary for Slack/email (tolerant)
+        id: summary
+        shell: bash
+        run: |
+          set -e
+          SIG=$(jq -r '.signal // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
+          PRICE=$(jq -r '.price // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
+          VOLUME_RATE=$(jq -r '.volume_rate // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
+          SIZE=$(jq -r '.size_pct // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
+          OOS_SHARPE=$(jq -r '.metrics.sharpe_ratio // "N/A"' data/backtest_report.json 2>/dev/null || echo "N/A")
+          OOS_MDD=$(jq -r '.metrics.max_drawdown // "N/A"' data/backtest_report.json 2>/dev/null || echo "N/A")
+
+          if [ -f data/strategy_history.json ]; then
+            LATEST_HISTORY=$(jq -r '.[-5:][] | "\(.date): signal \(.strategy.signal // "N/A"), sharpe \(.sharpe // "N/A"), mdd \(.mdd // "N/A")"' data/strategy_history.json | sed ':a;N;$!ba;s/\n/\\n/g')
+          else
+            LATEST_HISTORY="no history"
+          fi
+
+          # Skip hourly_sim.json since it's not generated
+          H_SIG="N/A"
+          H_PRICE="N/A"
+          H_SIZE="N/A"
+
+          {
+            echo "SIG=$SIG"
+            echo "PRICE=$PRICE"
+            echo "VOLUME_RATE=$VOLUME_RATE"
+            echo "SIZE=$SIZE"
+            echo "OOS_SHARPE=$OOS_SHARPE"
+            echo "OOS_MDD=$OOS_MDD"
+            echo "H_SIG=$H_SIG"
+            echo "H_PRICE=$H_PRICE"
+            echo "H_SIZE=$H_SIZE"
+            echo "LATEST_HISTORY<<EOF"
+            echo -e "$LATEST_HISTORY"
+            echo "EOF"
+          } >> $GITHUB_ENV
+
+      - name: Send Slack Notification
+        if: ${{ env.SLACK_BOT_TOKEN != '' && env.SLACK_CHANNEL != '' }}
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ env.SLACK_CHANNEL }}
+          slack-message: |
+            *Auto Trading Loop 完成 ✅*
+            *Repo:* ${{ github.repository }}
+            *Run ID:* ${{ github.run_id }}
+
+            *日K 模擬摘要 (0050.TW):*
+            • Signal: ${{ env.SIG }}
+            • Price: ${{ env.PRICE }}
+            • Volume Rate: ${{ env.VOLUME_RATE }}
+            • Size: ${{ env.SIZE }}
+
+            *週期回測:*
+            • Sharpe: ${{ env.OOS_SHARPE }}
+            • Max Drawdown: ${{ env.OOS_MDD }}
+
+            *策略記憶庫（最近 5 筆）:*
+            ```
+            ${{ env.LATEST_HISTORY }}
+            ```
+
+      - name: Send email (optional, Gmail needs App Password)
+        if: ${{ env.EMAIL_USER != '' && env.EMAIL_PASS != '' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ env.EMAIL_USER }}
+          password: ${{ env.EMAIL_PASS }}
+          subject: "Auto Trading Loop 報告 - ${{ github.repository }} - ${{ github.run_number }}"
+          to: ${{ env.EMAIL_TO }}
+          from: ${{ env.EMAIL_USER }}
+          body: |
+            Auto Trading Loop 已完成。
+            日K: Signal=`\({{ env.SIG }}, Price=\)`{{ env.PRICE }}, Volume Rate=`\({{ env.VOLUME_RATE }}, Size=\)`{{ env.SIZE }}
+            週期回測: Sharpe=`\({{ env.OOS_SHARPE }}, MDD=\)`{{ env.OOS_MDD }}
+
+            策略記憶庫（最近 5 筆）:
+            ${{ env.LATEST_HISTORY }}
+          attachments: |
+            data/backtest_report.json
+            data/daily_sim.json
+            data/strategy_history.json
+            data/daily.csv
+            data/hourly.csv
+            data/podcast_script.txt
+        continue-on-error: true
+
+      - name: Commit results back to repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
+          git add data/*.json data/*.csv data/podcast_script.txt || true
+          git commit -m "Auto update: ${{ github.run_id }} $(date -u +"%Y-%m-%dT%H:%M:%SZ")" || echo "No changes to commit"
+          git push
