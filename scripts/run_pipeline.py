@@ -170,6 +170,19 @@ def synthesize_audio():
     else:
         logger.warning(f"⚠️ 找不到逐字稿 {script_path}，跳過語音合成")
 
+def upload_to_b2():
+    # 導入 upload_to_b2 模組
+    from upload_to_b2 import upload_to_b2 as upload_to_b2_func
+    date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+    base_dir = f"docs/podcast/{date_str}_tw"
+    audio_path = os.path.join(base_dir, "audio.mp3")
+    script_path = os.path.join(base_dir, "script.txt")
+    if os.path.exists(audio_path) and os.path.exists(script_path):
+        os.environ['PODCAST_MODE'] = 'tw'
+        upload_to_b2_func()
+    else:
+        logger.warning(f"⚠️ 找不到 {audio_path} 或 {script_path}，跳過 B2 上傳")
+
 def main():
     # 獲取當前時間 (CST)
     current_time = datetime.now().astimezone(timezone('Asia/Taipei'))
@@ -215,10 +228,11 @@ def main():
     # 運行回測
     run_backtest()
 
-    # 僅在 daily 模式生成播客腳本並合成語音
+    # 僅在 daily 模式生成播客腳本並合成語音及上傳至 B2
     if mode == 'daily':
         generate_podcast_script()
         synthesize_audio()
+        upload_to_b2()
 
 if __name__ == '__main__':
     main()
