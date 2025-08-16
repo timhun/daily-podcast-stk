@@ -24,9 +24,13 @@ def format_number(value, decimal_places=2):
         return f"{value:.{decimal_places}f}"
     return 'N/A'
 
-def generate_podcast_script(date_str=None):
+def generate_podcast_script(date_str=None, mode='tw'):
+    # 根據模式設定符號和提示檔案
+    symbol = '0050.TW' if mode == 'tw' else 'QQQ'
+    prompt_file = 'prompt/tw.txt' if mode == 'tw' else 'prompt/us.txt'
+
     # 檢查必要檔案是否存在
-    required_files = ['data/daily_0050.csv', 'data/hourly_0050.csv']
+    required_files = [f'data/daily_{symbol}.csv', f'data/hourly_{symbol}.csv']
     for file in required_files:
         if not os.path.exists(file):
             logger.error(f"缺少 {file}，無法生成播客腳本")
@@ -34,102 +38,99 @@ def generate_podcast_script(date_str=None):
 
     # 讀取市場數據
     try:
-        daily_df = pd.read_csv('data/daily_0050.csv')
-        hourly_0050_df = pd.read_csv('data/hourly_0050.csv')
+        daily_df = pd.read_csv(f'data/daily_{symbol}.csv')
+        hourly_df = pd.read_csv(f'data/hourly_{symbol}.csv')
 
         # 轉換日期欄位，處理缺失情況
         if 'Date' not in daily_df.columns:
-            logger.warning("daily_df 中缺少 Date 欄位，從索引生成")
+            logger.warning(f"{symbol} daily_df 中缺少 Date 欄位，從索引生成")
             daily_df['Date'] = pd.to_datetime(daily_df.index)
         else:
             daily_df['Date'] = pd.to_datetime(daily_df['Date'])
         
-        if 'Date' not in hourly_0050_df.columns:
-            logger.warning("hourly_0050_df 中缺少 Date 欄位，從索引生成")
-            hourly_0050_df['Date'] = pd.to_datetime(hourly_0050_df.index)
+        if 'Date' not in hourly_df.columns:
+            logger.warning(f"{symbol} hourly_df 中缺少 Date 欄位，從索引生成")
+            hourly_df['Date'] = pd.to_datetime(hourly_df.index)
         else:
-            hourly_0050_df['Date'] = pd.to_datetime(hourly_0050_df['Date'])
+            hourly_df['Date'] = pd.to_datetime(hourly_df['Date'])
 
-        # 確保數值欄位為正確型態，處理可能的 '0050.TW' 後綴
+        # 確保數值欄位為正確型態
         numeric_columns = ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']
         for col in numeric_columns:
-            for df in [daily_df, hourly_0050_df]:
+            for df in [daily_df, hourly_df]:
                 if col in df.columns:
                     df[col] = pd.to_numeric(df[col], errors='coerce')
-                elif f"{col} '0050.TW'" in df.columns:
-                    df[col] = pd.to_numeric(df[f"{col} '0050.TW'"], errors='coerce')
-                elif f"{col} '0050.TW'" in df.columns.values:
-                    df[col] = pd.to_numeric(df[df.columns[df.columns.str.contains(col)][0]], errors='coerce')
 
         # 確保數據不為空
-        if daily_df.empty or hourly_0050_df.empty:
-            logger.error("市場數據為空，無法生成播客腳本")
+        if daily_df.empty or hourly_df.empty:
+            logger.error(f"{symbol} 市場數據為空，無法生成播客腳本")
             return
 
     except Exception as e:
-        logger.error(f"讀取市場數據失敗: {e}")
+        logger.error(f"讀取 {symbol} 市場數據失敗: {e}")
         logger.error(traceback.format_exc())
         return
 
     # 提取最新數據
     try:
         if len(daily_df) >= 2:
-            ts_0050 = daily_df.iloc[-1]
-            ts_0050_prev = daily_df.iloc[-2]
-            ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close'] * 100) if not pd.isna(ts_0050_prev['Close']) else 'N/A'
+            ts = daily_df.iloc[-1]
+            ts_prev = daily_df.iloc[-2]
+            ts_pct = ((ts['Close'] - ts_prev['Close']) / ts_prev['Close'] * 100) if not pd.isna(ts_prev['Close']) else 'N/A'
         else:
-            ts_0050 = daily_df.iloc[-1] if len(daily_df) > 0 else pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
-            ts_0050_pct = 'N/A'
+            ts = daily_df.iloc[-1] if len(daily_df) > 0 else pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
+            ts_pct = 'N/A'
     except Exception as e:
-        logger.warning(f"無法提取 0050.TW 數據: {e}")
-        ts_0050 = pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
-        ts_0050_pct = 'N/A'
+        logger.warning(f"無法提取 {symbol} 數據: {e}")
+        ts = pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
+        ts_pct = 'N/A'
 
     try:
-        ts_0050_hourly = hourly_0050_df.iloc[-1]
+        ts_hourly = hourly_df.iloc[-1]
     except Exception as e:
-        logger.warning(f"無法提取 0050.TW 小時線數據: {e}")
-        ts_0050_hourly = pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
+        logger.warning(f"無法提取 {symbol} 小時線數據: {e}")
+        ts_hourly = pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
 
-    # 假設外資期貨數據
-    futures_net = "淨空 34,207 口，較前日減少 172 口（假設數據）"
+    # 假設外資期貨數據（美股使用不同的假設數據）
+    futures_net = "淨多 12,345 口，較前日增加 500 口（假設數據）" if mode == 'us' else "淨空 34,207 口，較前日減少 172 口（假設數據）"
 
     # 讀取量價策略輸出
+    sim_file = f'data/daily_sim_{symbol}.json'
     try:
-        if os.path.exists('data/daily_sim.json'):
-            with open('data/daily_sim.json', 'r', encoding='utf-8') as f:
+        if os.path.exists(sim_file):
+            with open(sim_file, 'r', encoding='utf-8') as f:
                 daily_sim = json.load(f)
             daily_sim = daily_sim[-1] if isinstance(daily_sim, list) else daily_sim
         else:
             daily_sim = {'signal': '無訊號', 'price': 'N/A', 'volume_rate': 'N/A', 'size_pct': 'N/A'}
     except Exception as e:
-        logger.warning(f"無法讀取 daily_sim.json: {e}")
+        logger.warning(f"無法讀取 {sim_file}: {e}")
         daily_sim = {'signal': '無訊號', 'price': 'N/A', 'volume_rate': 'N/A', 'size_pct': 'N/A'}
 
     try:
-        with open('data/backtest_report.json', 'r', encoding='utf-8') as f:
+        with open(f'data/backtest_report_{symbol}.json', 'r', encoding='utf-8') as f:
             backtest = json.load(f)
     except Exception as e:
-        logger.warning(f"無法讀取 backtest_report.json: {e}")
+        logger.warning(f"無法讀取 backtest_report_{symbol}.json: {e}")
         backtest = {'metrics': {'sharpe_ratio': 'N/A', 'max_drawdown': 'N/A'}}
 
     try:
-        with open('data/strategy_history.json', 'r', encoding='utf-8') as f:
+        with open(f'data/strategy_history_{symbol}.json', 'r', encoding='utf-8') as f:
             history = '\n'.join([f"{h['date']}: signal {h['strategy'].get('signal', 'N/A')}, sharpe {h.get('sharpe', 'N/A')}, mdd {h.get('mdd', 'N/A')}" for h in json.load(f)])
     except Exception as e:
-        logger.warning(f"無法讀取 strategy_history.json: {e}")
+        logger.warning(f"無法讀取 strategy_history_{symbol}.json: {e}")
         history = "無歷史記錄"
 
     # 格式化市場數據
     market_data = f"""
-    - 0050.TW: 收盤 {format_number(ts_0050.get('Close'))} 元，漲跌 {format_number(ts_0050_pct)}%，成交量 {format_number(ts_0050.get('Volume'), 0)} 股
-    - 0050.TW 小時線: 最新價格 {format_number(ts_0050_hourly.get('Close'))} 元，成交量 {format_number(ts_0050_hourly.get('Volume'), 0)} 股
+    - {symbol}: 收盤 {format_number(ts.get('Close'))} 元，漲跌 {format_number(ts_pct)}%，成交量 {format_number(ts.get('Volume'), 0)} 股
+    - {symbol} 小時線: 最新價格 {format_number(ts_hourly.get('Close'))} 元，成交量 {format_number(ts_hourly.get('Volume'), 0)} 股
     - 外資期貨未平倉水位: {futures_net}
     """
 
     # 讀取 prompt 並生成播報
     try:
-        with open('prompt/tw.txt', 'r', encoding='utf-8') as f:
+        with open(prompt_file, 'r', encoding='utf-8') as f:
             prompt = f.read()
 
         prompt = prompt.format(
@@ -144,9 +145,9 @@ def generate_podcast_script(date_str=None):
             LATEST_HISTORY=history
         )
 
-        # 根據日期生成目錄和檔案
+        # 根據日期和模式生成目錄和檔案
         date_str = date_str or datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
-        output_dir = f"docs/podcast/{date_str}_tw"
+        output_dir = f"docs/podcast/{date_str}_{mode}"
         os.makedirs(output_dir, exist_ok=True)
         output_file = os.path.join(output_dir, "script.txt")
 
@@ -155,46 +156,46 @@ def generate_podcast_script(date_str=None):
             f.write(prompt)
         logger.info(f"播客腳本已保存至 {output_file}")
     except Exception as e:
-        logger.error(f"生成播客腳本失敗: {e}")
+        logger.error(f"生成 {mode} 播客腳本失敗: {e}")
         logger.error(traceback.format_exc())
 
-def synthesize_audio():
+def synthesize_audio(date_str=None, mode='tw'):
     # 導入 synthesize_audio 模組
     from synthesize_audio import synthesize as synthesize_audio_func
-    date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
-    base_dir = f"docs/podcast/{date_str}_tw"
+    date_str = date_str or datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+    base_dir = f"docs/podcast/{date_str}_{mode}"
     script_path = os.path.join(base_dir, "script.txt")
     if os.path.exists(script_path):
-        os.environ['PODCAST_MODE'] = 'tw'
+        os.environ['PODCAST_MODE'] = mode
         asyncio.run(synthesize_audio_func())
     else:
-        logger.warning(f"⚠️ 找不到逐字稿 {script_path}，跳過語音合成")
+        logger.warning(f"⚠️ 找不到 {mode} 逐字稿 {script_path}，跳過語音合成")
 
-def upload_to_b2():
+def upload_to_b2(date_str=None, mode='tw'):
     # 導入 upload_to_b2 模組
     import upload_to_b2
-    date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
-    base_dir = f"docs/podcast/{date_str}_tw"
+    date_str = date_str or datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+    base_dir = f"docs/podcast/{date_str}_{mode}"
     audio_path = os.path.join(base_dir, "audio.mp3")
     script_path = os.path.join(base_dir, "script.txt")
     if os.path.exists(audio_path) and os.path.exists(script_path):
-        os.environ['PODCAST_MODE'] = 'tw'
+        os.environ['PODCAST_MODE'] = mode
         upload_to_b2.upload_to_b2()
     else:
-        logger.warning(f"⚠️ 找不到 {audio_path} 或 {script_path}，跳過 B2 上傳")
+        logger.warning(f"⚠️ 找不到 {mode} {audio_path} 或 {script_path}，跳過 B2 上傳")
 
-def generate_rss():
+def generate_rss(date_str=None, mode='tw'):
     # 導入 generate_rss 模組
     import generate_rss
-    date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
-    base_dir = f"docs/podcast/{date_str}_tw"
+    date_str = date_str or datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+    base_dir = f"docs/podcast/{date_str}_{mode}"
     audio_path = os.path.join(base_dir, "audio.mp3")
     archive_url_file = os.path.join(base_dir, "archive_audio_url.txt")
     if os.path.exists(audio_path) and os.path.exists(archive_url_file):
-        os.environ['PODCAST_MODE'] = 'tw'
+        os.environ['PODCAST_MODE'] = mode
         generate_rss.generate_rss()
     else:
-        logger.warning(f"⚠️ 找不到 {audio_path} 或 {archive_url_file}，跳過 RSS 生成")
+        logger.warning(f"⚠️ 找不到 {mode} {audio_path} 或 {archive_url_file}，跳過 RSS 生成")
 
 def main():
     # 獲取當前時間 (CST)
@@ -209,20 +210,41 @@ def main():
 
     # 根據模式和時間觸發任務
     if mode == 'auto':
-        # 每天 16:00 CST 生成文字稿，其餘時間每小時回測
-        if current_time.hour == 16 and 0 <= current_time.minute < 5:
+        # 每天 06:00 CST 生成美股文字稿，16:00 CST 生成台股文字稿，其餘時間每小時回測
+        if current_time.hour == 6 and 0 <= current_time.minute < 5:
             mode = 'daily'
             os.environ['INTERVAL'] = '1d'
             os.environ['DAYS'] = '90'
+            generate_podcast_script(mode='us')
+            synthesize_audio(mode='us')
+            upload_to_b2(mode='us')
+            generate_rss(mode='us')
+        elif current_time.hour == 16 and 0 <= current_time.minute < 5:
+            mode = 'daily'
+            os.environ['INTERVAL'] = '1d'
+            os.environ['DAYS'] = '90'
+            generate_podcast_script(mode='tw')
+            synthesize_audio(mode='tw')
+            upload_to_b2(mode='tw')
+            generate_rss(mode='tw')
         else:
             mode = 'hourly'
             os.environ['INTERVAL'] = '1h'
             os.environ['DAYS'] = '7'
     elif is_manual:
-        # 手動觸發時強制生成當日文字稿
+        # 手動觸發時強制生成當日台股和美股文字稿
         mode = 'daily'
         os.environ['INTERVAL'] = '1d'
         os.environ['DAYS'] = '90'
+        date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+        generate_podcast_script(date_str, mode='tw')
+        synthesize_audio(date_str, mode='tw')
+        upload_to_b2(date_str, mode='tw')
+        generate_rss(date_str, mode='tw')
+        generate_podcast_script(date_str, mode='us')
+        synthesize_audio(date_str, mode='us')
+        upload_to_b2(date_str, mode='us')
+        generate_rss(date_str, mode='us')
 
     # 根據模式調整數據範圍
     if mode == 'hourly':
@@ -235,18 +257,11 @@ def main():
         os.environ['INTERVAL'] = '1wk'
         os.environ['DAYS'] = '365'
 
-    # 抓取市場數據
+    # 抓取市場數據（根據模式動態設定符號）
     fetch_market_data()
 
-    # 運行回測
+    # 運行回測（根據符號調整）
     run_backtest()
-
-    # 僅在 daily 模式生成播客腳本並合成語音、上傳至 B2 並生成 RSS
-    if mode == 'daily':
-        generate_podcast_script()
-        synthesize_audio()
-        upload_to_b2()
-        generate_rss()
 
 if __name__ == '__main__':
     main()
