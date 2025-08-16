@@ -61,16 +61,13 @@ jobs:
       - name: Check CSV files
         run: |
           ls -l data/ || echo "Data directory not found"
-          if [ -f data/daily.csv ]; then
-            echo "daily.csv exists"
-          else
-            echo "daily.csv not found"
-          fi
-          if [ -f data/hourly.csv ]; then
-            echo "hourly.csv exists"
-          else
-            echo "hourly.csv not found"
-          fi
+          for file in daily.csv hourly_0050.csv hourly_TWII.csv hourly_2330.csv; do
+            if [ -f data/$file ]; then
+              echo "$file exists"
+            else
+              echo "$file not found"
+            fi
+          done
 
       - name: Decide MODE (auto/manual)
         id: decide
@@ -106,7 +103,8 @@ jobs:
           name: reports-${{ github.run_id }}
           path: |
             data/*.json
-            data/*.csv
+            data/daily.csv
+            data/hourly_*.csv
             data/podcast_script.txt
 
       - name: Extract summary for Slack/email (tolerant)
@@ -127,7 +125,7 @@ jobs:
             LATEST_HISTORY="no history"
           fi
 
-          # Skip hourly_sim.json since it's not generated
+          # No hourly_sim.json
           H_SIG="N/A"
           H_PRICE="N/A"
           H_SIZE="N/A"
@@ -195,7 +193,9 @@ jobs:
             data/daily_sim.json
             data/strategy_history.json
             data/daily.csv
-            data/hourly.csv
+            data/hourly_0050.csv
+            data/hourly_TWII.csv
+            data/hourly_2330.csv
             data/podcast_script.txt
         continue-on-error: true
 
