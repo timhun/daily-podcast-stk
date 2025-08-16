@@ -89,6 +89,13 @@ def fetch_market_data():
         logger.error(f"抓取 {symbol} 小時線數據失敗: {e}")
     
     logger.info("市場數據抓取完成")
-
+    # 驗證生成的檔案
+    for filename in ['data/daily_0050.csv', 'data/daily.csv', 'data/hourly_0050.csv']:
+        if os.path.exists(filename):
+            file_size = os.path.getsize(filename)
+            logger.info(f"檔案 {filename} 大小: {file_size} bytes")
+        else:
+            logger.warning(f"檔案 {filename} 未生成")
+            
 if __name__ == '__main__':
     fetch_market_data()
