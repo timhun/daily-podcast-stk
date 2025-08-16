@@ -60,8 +60,9 @@ jobs:
 
       - name: Check CSV files
         run: |
+          echo "Listing data directory contents:"
           ls -l data/ || echo "Data directory not found"
-          for file in daily.csv hourly_0050.csv hourly_TWII.csv hourly_2330.csv; do
+          for file in daily.csv daily_TWII.csv daily_0050.csv daily_2330.csv hourly_0050.csv hourly_TWII.csv hourly_2330.csv; do
             if [ -f data/$file ]; then
               echo "$file exists"
             else
@@ -103,8 +104,7 @@ jobs:
           name: reports-${{ github.run_id }}
           path: |
             data/*.json
-            data/daily.csv
-            data/hourly_*.csv
+            data/*.csv
             data/podcast_script.txt
 
       - name: Extract summary for Slack/email (tolerant)
@@ -166,44 +166,3 @@ jobs:
             • Max Drawdown: ${{ env.OOS_MDD }}
 
             *策略記憶庫（最近 5 筆）:*
-            ```
-            ${{ env.LATEST_HISTORY }}
-            ```
-
-      - name: Send email (optional, Gmail needs App Password)
-        if: ${{ env.EMAIL_USER != '' && env.EMAIL_PASS != '' }}
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 465
-          username: ${{ env.EMAIL_USER }}
-          password: ${{ env.EMAIL_PASS }}
-          subject: "Auto Trading Loop 報告 - ${{ github.repository }} - ${{ github.run_number }}"
-          to: ${{ env.EMAIL_TO }}
-          from: ${{ env.EMAIL_USER }}
-          body: |
-            Auto Trading Loop 已完成。
-            日K: Signal=`\({{ env.SIG }}, Price=\)`{{ env.PRICE }}, Volume Rate=`\({{ env.VOLUME_RATE }}, Size=\)`{{ env.SIZE }}
-            週期回測: Sharpe=`\({{ env.OOS_SHARPE }}, MDD=\)`{{ env.OOS_MDD }}
-
-            策略記憶庫（最近 5 筆）:
-            ${{ env.LATEST_HISTORY }}
-          attachments: |
-            data/backtest_report.json
-            data/daily_sim.json
-            data/strategy_history.json
-            data/daily.csv
-            data/hourly_0050.csv
-            data/hourly_TWII.csv
-            data/hourly_2330.csv
-            data/podcast_script.txt
-        continue-on-error: true
-
-      - name: Commit results back to repo
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git pull --rebase
-          git add data/*.json data/*.csv data/podcast_script.txt || true
-          git commit -m "Auto update: ${{ github.run_id }} $(date -u +"%Y-%m-%dT%H:%M:%SZ")" || echo "No changes to commit"
-          git push
