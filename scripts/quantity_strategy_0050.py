@@ -26,8 +26,18 @@ class QuantityStrategy(bt.Strategy):
         self.trades = []
 
     def next(self):
-        volume_rate = self.data.volume[0] / self.volume_ma[0] if self.volume_ma[0] > 0 else 0
-        current_price = float(self.data.close[0])  # 確保轉為浮點數
+        try:
+            # 檢查數據有效性
+            if len(self.data) < self.params.volume_ma_period:
+                return
+                
+            volume_rate = self.data.volume[0] / self.volume_ma[0] if self.volume_ma[0] > 0 else 0
+            current_price = float(self.data.close[0])
+            
+            # ... rest of logic
+        except Exception as e:
+            logger.error(f"策略執行錯誤: {e}")
+            logger.error(traceback.format_exc())
         signal = "無訊號"
 
         if self.order:
