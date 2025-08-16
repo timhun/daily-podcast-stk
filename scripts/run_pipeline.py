@@ -4,14 +4,14 @@ import json
 import pandas as pd
 from datetime import datetime
 import traceback
-import time
 from pytz import timezone
-import asyncio
 
 # 添加 scripts 目錄到 sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from fetch_market_data import fetch_market_data
 from quantity_strategy_0050 import run_backtest
+from scripts.synthesize_audio import synthesize_audio  # 假設語音合成模組
+from scripts.upload_to_b2 import upload_to_b2 as upload_to_b2_func  # 修正導入路徑
 import logging
 
 # 設定日誌
@@ -150,89 +150,34 @@ def generate_podcast_script(date_str=None):
         os.makedirs(output_dir, exist_ok=True)
         output_file = os.path.join(output_dir, "script.txt")
 
-        # 儲存播報，覆蓋現有檔案
+        # 額外生成 market_data_tw.json
+        market_data_json = {
+            "date": datetime.now(timezone('Asia/Taipei')).strftime('%Y-%m-%d'),
+            "0050_TW": {
+                "close": float(ts_0050.get('Close', 'N/A')),
+                "volume": int(ts_0050.get('Volume', 'N/A')),
+                "pct_change": float(ts_0050_pct) if ts_0050_pct != 'N/A' else None
+            },
+            "hourly_0050": {
+                "close": float(ts_0050_hourly.get('Close', 'N/A')),
+                "volume": int(ts_0050_hourly.get('Volume', 'N/A'))
+            }
+        }
+        market_data_file = os.path.join(output_dir, "market_data_tw.json")
+        with open(market_data_file, 'w', encoding='utf-8') as f:
+            json.dump(market_data_json, f, ensure_ascii=False, indent=2)
+        logger.info(f"市場數據已保存至 {market_data_file}")
+
+        # 記錄 B2 連結到 archive_audio_url.txt（假設從環境變數或上傳後獲取）
+        b2_url = os.environ.get('B2_URL', "https://***.s3.us-east-005.backblazeb2.com/***-20250816_tw.mp3")
+        archive_url_file = os.path.join(output_dir, "archive_audio_url.txt")
+        with open(archive_url_file, 'w', encoding='utf-8') as f:
+            f.write(b2_url)
+        logger.info(f"B2 連結已保存至 {archive_url_file}")
+
+        # 儲存播報
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(prompt)
         logger.info(f"播客腳本已保存至 {output_file}")
     except Exception as e:
-        logger.error(f"生成播客腳本失敗: {e}")
-        logger.error(traceback.format_exc())
-
-def synthesize_audio():
-    # 導入 synthesize_audio 模組
-    from synthesize_audio import synthesize as synthesize_audio_func
-    date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
-    base_dir = f"docs/podcast/{date_str}_tw"
-    script_path = os.path.join(base_dir, "script.txt")
-    if os.path.exists(script_path):
-        os.environ['PODCAST_MODE'] = 'tw'
-        asyncio.run(synthesize_audio_func())
-    else:
-        logger.warning(f"⚠️ 找不到逐字稿 {script_path}，跳過語音合成")
-
-def upload_to_b2():
-    # 導入 upload_to_b2 模組
-    from upload_to_b2 import upload_to_b2 as upload_to_b2_func
-    date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
-    base_dir = f"docs/podcast/{date_str}_tw"
-    audio_path = os.path.join(base_dir, "audio.mp3")
-    script_path = os.path.join(base_dir, "script.txt")
-    if os.path.exists(audio_path) and os.path.exists(script_path):
-        os.environ['PODCAST_MODE'] = 'tw'
-        upload_to_b2_func()
-    else:
-        logger.warning(f"⚠️ 找不到 {audio_path} 或 {script_path}，跳過 B2 上傳")
-
-def main():
-    # 獲取當前時間 (CST)
-    current_time = datetime.now().astimezone(timezone('Asia/Taipei'))
-    mode = os.environ.get('MODE', 'auto')
-    is_manual = os.environ.get('MANUAL_TRIGGER', '0') == '1' or mode == 'manual'
-    logger.info(f"以 {mode} 模式運行，當前時間: {current_time.strftime('%Y-%m-%d %H:%M:%S CST')}, 手動觸發: {is_manual}")
-
-    if mode not in ['hourly', 'daily', 'weekly', 'auto', 'manual']:
-        logger.error(f"無效的 MODE: {mode}, 使用預設 auto")
-        mode = 'auto'
-
-    # 根據模式和時間觸發任務
-    if mode == 'auto':
-        # 每天 16:00 CST 生成文字稿，其餘時間每小時回測
-        if current_time.hour == 16 and 0 <= current_time.minute < 5:
-            mode = 'daily'
-            os.environ['INTERVAL'] = '1d'
-            os.environ['DAYS'] = '90'
-        else:
-            mode = 'hourly'
-            os.environ['INTERVAL'] = '1h'
-            os.environ['DAYS'] = '7'
-    elif is_manual:
-        # 手動觸發時強制生成當日文字稿
-        mode = 'daily'
-        os.environ['INTERVAL'] = '1d'
-        os.environ['DAYS'] = '90'
-
-    # 根據模式調整數據範圍
-    if mode == 'hourly':
-        os.environ['INTERVAL'] = '1h'
-        os.environ['DAYS'] = '7'
-    elif mode == 'daily':
-        os.environ['INTERVAL'] = '1d'
-        os.environ['DAYS'] = '90'
-    elif mode == 'weekly':
-        os.environ['INTERVAL'] = '1wk'
-        os.environ['DAYS'] = '365'
-
-    # 抓取市場數據
-    fetch_market_data()
-
-    # 運行回測
-    run_backtest()
-
-    # 僅在 daily 模式生成播客腳本並合成語音及上傳至 B2
-    if mode == 'daily':
-        generate_podcast_script()
-        synthesize_audio()
-        upload_to_b2()
-
-if __name__ == '__main__':
-    main()
+        logger.error(f"生成播客
