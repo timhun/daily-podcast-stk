@@ -14,9 +14,9 @@ logger = logging.getLogger(__name__)
 class QuantityStrategy(bt.Strategy):
     params = (
         ('volume_ma_period', 5),  # 成交量均線週期
-        ('volume_multiplier', 1.5),  # 量增閾值
-        ('stop_profit', 0.015),  # 停利 1.5%
-        ('stop_loss', 0.025),  # 停損 2.5%
+        ('volume_multiplier', 1.2),  # 調整為 1.2
+        ('stop_profit', 0.02),  # 調整為 2%
+        ('stop_loss', 0.02),  # 調整為 2%
         ('risk_per_trade', 0.02),  # 單筆風險 < 2%
     )
 
