@@ -1,0 +1,408 @@
+[
+  {
+    "date": "2025-05-23",
+    "signal": "無訊號",
+    "price": 509.24,
+    "volume_rate": 1.04,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-05-27",
+    "signal": "無訊號",
+    "price": 521.22,
+    "volume_rate": 0.86,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-05-28",
+    "signal": "無訊號",
+    "price": 518.91,
+    "volume_rate": 0.84,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-05-29",
+    "signal": "無訊號",
+    "price": 519.93,
+    "volume_rate": 1.1,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-05-30",
+    "signal": "無訊號",
+    "price": 519.11,
+    "volume_rate": 1.22,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-02",
+    "signal": "無訊號",
+    "price": 523.21,
+    "volume_rate": 0.85,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-03",
+    "signal": "無訊號",
+    "price": 527.3,
+    "volume_rate": 0.84,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-04",
+    "signal": "無訊號",
+    "price": 528.77,
+    "volume_rate": 0.81,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-05",
+    "signal": "無訊號",
+    "price": 524.79,
+    "volume_rate": 1.18,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-06",
+    "signal": "無訊號",
+    "price": 529.92,
+    "volume_rate": 0.91,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-09",
+    "signal": "無訊號",
+    "price": 530.7,
+    "volume_rate": 0.76,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-10",
+    "signal": "無訊號",
+    "price": 534.21,
+    "volume_rate": 0.93,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-11",
+    "signal": "無訊號",
+    "price": 532.41,
+    "volume_rate": 1.16,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-12",
+    "signal": "無訊號",
+    "price": 533.66,
+    "volume_rate": 0.83,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-13",
+    "signal": "無訊號",
+    "price": 526.96,
+    "volume_rate": 1.28,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-16",
+    "signal": "無訊號",
+    "price": 534.29,
+    "volume_rate": 0.85,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-17",
+    "signal": "無訊號",
+    "price": 529.08,
+    "volume_rate": 0.94,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-18",
+    "signal": "無訊號",
+    "price": 528.99,
+    "volume_rate": 1.03,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-20",
+    "signal": "無訊號",
+    "price": 526.83,
+    "volume_rate": 1.28,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-23",
+    "signal": "無訊號",
+    "price": 531.65,
+    "volume_rate": 1.07,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-24",
+    "signal": "無訊號",
+    "price": 539.78,
+    "volume_rate": 0.93,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-25",
+    "signal": "無訊號",
+    "price": 541.16,
+    "volume_rate": 0.91,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-26",
+    "signal": "無訊號",
+    "price": 546.22,
+    "volume_rate": 0.89,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-27",
+    "signal": "無訊號",
+    "price": 548.09,
+    "volume_rate": 1.19,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-06-30",
+    "signal": "無訊號",
+    "price": 551.64,
+    "volume_rate": 0.96,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-01",
+    "signal": "無訊號",
+    "price": 546.99,
+    "volume_rate": 1.13,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-02",
+    "signal": "無訊號",
+    "price": 550.8,
+    "volume_rate": 0.76,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-03",
+    "signal": "無訊號",
+    "price": 556.22,
+    "volume_rate": 0.59,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-07",
+    "signal": "無訊號",
+    "price": 552.03,
+    "volume_rate": 1.08,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-08",
+    "signal": "無訊號",
+    "price": 552.34,
+    "volume_rate": 0.9,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-09",
+    "signal": "無訊號",
+    "price": 556.25,
+    "volume_rate": 1.15,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-10",
+    "signal": "無訊號",
+    "price": 555.45,
+    "volume_rate": 0.93,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-11",
+    "signal": "無訊號",
+    "price": 554.2,
+    "volume_rate": 1.0,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-14",
+    "signal": "無訊號",
+    "price": 556.21,
+    "volume_rate": 0.96,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-15",
+    "signal": "無訊號",
+    "price": 556.72,
+    "volume_rate": 1.1,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-16",
+    "signal": "買入",
+    "price": 557.29,
+    "volume_rate": 1.27,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-17",
+    "signal": "無訊號",
+    "price": 561.8,
+    "volume_rate": 0.95,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-18",
+    "signal": "無訊號",
+    "price": 561.26,
+    "volume_rate": 1.13,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-21",
+    "signal": "無訊號",
+    "price": 564.17,
+    "volume_rate": 0.88,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-22",
+    "signal": "無訊號",
+    "price": 561.25,
+    "volume_rate": 0.96,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-23",
+    "signal": "無訊號",
+    "price": 563.81,
+    "volume_rate": 0.94,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-24",
+    "signal": "無訊號",
+    "price": 565.01,
+    "volume_rate": 0.98,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-25",
+    "signal": "無訊號",
+    "price": 566.37,
+    "volume_rate": 0.78,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-28",
+    "signal": "無訊號",
+    "price": 568.14,
+    "volume_rate": 0.84,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-29",
+    "signal": "無訊號",
+    "price": 567.26,
+    "volume_rate": 1.2,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-30",
+    "signal": "無訊號",
+    "price": 568.02,
+    "volume_rate": 1.12,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-07-31",
+    "signal": "無訊號",
+    "price": 565.01,
+    "volume_rate": 1.5,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-01",
+    "signal": "無訊號",
+    "price": 553.88,
+    "volume_rate": 1.36,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-04",
+    "signal": "無訊號",
+    "price": 564.1,
+    "volume_rate": 0.88,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-05",
+    "signal": "無訊號",
+    "price": 560.27,
+    "volume_rate": 0.89,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-06",
+    "signal": "無訊號",
+    "price": 567.32,
+    "volume_rate": 0.77,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-07",
+    "signal": "無訊號",
+    "price": 569.24,
+    "volume_rate": 0.88,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-08",
+    "signal": "無訊號",
+    "price": 574.55,
+    "volume_rate": 0.81,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-11",
+    "signal": "無訊號",
+    "price": 572.85,
+    "volume_rate": 0.81,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-12",
+    "signal": "無訊號",
+    "price": 580.05,
+    "volume_rate": 1.07,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-13",
+    "signal": "無訊號",
+    "price": 580.34,
+    "volume_rate": 1.05,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-14",
+    "signal": "無訊號",
+    "price": 579.89,
+    "volume_rate": 1.15,
+    "size_pct": 0.02
+  },
+  {
+    "date": "2025-08-15",
+    "signal": "無訊號",
+    "price": 577.34,
+    "volume_rate": 1.17,
+    "size_pct": 0.02
+  }
+]
