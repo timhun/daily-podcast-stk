@@ -1,145 +1,147 @@
-import backtrader as bt
-import pandas as pd
-import json
 import os
+import json
+import pandas as pd
 from datetime import datetime
+from scripts.fetch_market_data import fetch_market_data
+from scripts.quantity_strategy_0050 import run_backtest
 import logging
 
 # 設定日誌
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-class QuantityStrategy(bt.Strategy):
-    params = (
-        ('volume_ma_period', 5),  # 成交量均線週期
-        ('volume_multiplier', 1.5),  # 量增閾值
-        ('stop_profit', 0.015),  # 停利 1.5%
-        ('stop_loss', 0.025),  # 停損 2.5%
-        ('risk_per_trade', 0.02),  # 單筆風險 < 2%
-    )
-
-    def __init__(self):
-        self.volume_ma = bt.indicators.SMA(self.data.volume, period=self.params.volume_ma_period)
-        self.order = None
-        self.entry_price = 0
-        self.trades = []
-
-    def next(self):
-        volume_rate = self.data.volume[0] / self.volume_ma[0] if self.volume_ma[0] > 0 else 0
-        current_price = self.data.close[0]
-        signal = "無訊號"
-
-        if self.order:
+def generate_podcast_script():
+    # 檢查必要檔案是否存在
+    required_files = ['data/daily.csv', 'data/hourly_0050.csv', 'data/hourly_TWII.csv', 'data/hourly_2330.csv']
+    for file in required_files:
+        if not os.path.exists(file):
+            logger.error(f"缺少 {file}，無法生成播客腳本")
             return
 
-        if not self.position:
-            if volume_rate > self.params.volume_multiplier and self.data.close[0] > self.data.close[-1]:
-                size = min(
-                    self.broker.getcash() / current_price * self.params.risk_per_trade / self.params.stop_loss,
-                    self.broker.getcash() / current_price
-                )
-                self.order = self.buy(size=int(size))
-                self.entry_price = current_price
-                signal = "買入"
-                logger.info(f"{self.data.datetime.date(0)} 買入: 價格={current_price:.2f}, 量增率={volume_rate:.2f}")
-        else:
-            if volume_rate < 1 and self.data.close[0] < self.data.close[-1]:
-                self.order = self.sell(size=self.position.size)
-                signal = "賣出 (量縮價跌)"
-            elif self.data.close[0] >= self.entry_price * (1 + self.params.stop_profit):
-                self.order = self.sell(size=self.position.size)
-                signal = "賣出 (停利)"
-            elif self.data.close[0] <= self.entry_price * (1 - self.params.stop_loss):
-                self.order = self.sell(size=self.position.size)
-                signal = "賣出 (停損)"
-
-        # 儲存每日模擬訊號
-        if self.data.datetime.date(0) == self.data.datetime.date(-1):
-            daily_sim = {
-                "date": str(self.data.datetime.date(0)),
-                "signal": signal,
-                "price": round(current_price, 2),
-                "volume_rate": round(volume_rate, 2),
-                "size_pct": round(self.params.risk_per_trade, 3)
-            }
-            os.makedirs("data", exist_ok=True)
-            with open("data/daily_sim.json", "w", encoding="utf-8") as f:
-                json.dump(daily_sim, f, ensure_ascii=False, indent=2)
-            logger.info("已保存 daily_sim.json")
-
-    def notify_trade(self, trade):
-        if trade.isclosed:
-            self.trades.append(trade.pnl > 0)
-
-    def stop(self):
-        win_rate = sum(1 for t in self.trades if t) / len(self.trades) if self.trades else 0
-        final_value = self.broker.getvalue()
-        pnl = final_value - 1000000
-        sharpe = self.analyzers.sharpe_ratio.get_analysis().get('sharperatio', 'N/A')
-        cagr = self.analyzers.returns.get_analysis()['rnorm100']
-        drawdown = self.analyzers.drawdown.get_analysis()['max']['drawdown']
-        
-        report = {
-            "metrics": {
-                "initial_cash": 1000000,
-                "final_value": round(final_value, 2),
-                "pnl": round(pnl, 2),
-                "cagr": round(cagr, 2),
-                "max_drawdown": round(drawdown, 2),
-                "sharpe_ratio": sharpe if sharpe != 'N/A' else None,
-                "win_rate": round(win_rate, 3),
-                "total_trades": len(self.trades)
-            }
-        }
-        with open("data/backtest_report.json", "w", encoding="utf-8") as f:
-            json.dump(report, f, ensure_ascii=False, indent=2)
-        logger.info("已保存 backtest_report.json")
-
-        # 更新策略歷史
-        history_entry = {
-            "date": str(datetime.now().date()),
-            "strategy": {"signal": report["metrics"]["win_rate"]},
-            "sharpe": sharpe,
-            "mdd": round(drawdown, 2)
-        }
-        history_file = "data/strategy_history.json"
-        history = []
-        if os.path.exists(history_file):
-            with open(history_file, "r", encoding="utf-8") as f:
-                history = json.load(f)
-        history.append(history_entry)
-        with open(history_file, "w", encoding="utf-8") as f:
-            json.dump(history[-5:], f, ensure_ascii=False, indent=2)
-        logger.info("已保存 strategy_history.json")
-
-def run_backtest():
-    # 優先使用 daily_0050.csv，若不存在則使用 daily.csv
-    data_file = 'data/daily_0050.csv' if os.path.exists('data/daily_0050.csv') else 'data/daily.csv'
+    # 讀取市場數據
     try:
-        daily_df = pd.read_csv(data_file, parse_dates=['Date'])
-        if data_file == 'data/daily.csv':
-            df_0050 = daily_df[daily_df['Symbol'] == '0050.TW'].copy()
-        else:
-            df_0050 = daily_df.copy()
-        if df_0050.empty:
-            logger.error(f"0050.TW 在 {data_file} 中無數據，跳過回測")
-            return
-        df_0050.set_index('Date', inplace=True)
-
-        cerebro = bt.Cerebro()
-        cerebro.addstrategy(QuantityStrategy)
-        data = bt.feeds.PandasData(dataname=df_0050)
-        cerebro.adddata(data)
-        cerebro.broker.setcash(1000000)
-        cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe_ratio')
-        cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')
-        cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
-        
-        logger.info("開始回測...")
-        cerebro.run()
-        logger.info("回測完成，報告已保存至 data/")
+        daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'])
+        hourly_0050_df = pd.read_csv('data/hourly_0050.csv', parse_dates=['Date'])
     except Exception as e:
-        logger.error(f"回測失敗: {e}")
+        logger.error(f"讀取市場數據失敗: {e}")
+        return
+
+    # 提取最新數據
+    try:
+        twii = daily_df[daily_df['Symbol'] == '^TWII'].iloc[-1]
+        twii_prev = daily_df[daily_df['Symbol'] == '^TWII'].iloc[-2]
+        twii_change = twii['Close'] - twii_prev['Close']
+        twii_pct = (twii_change / twii_prev['Close']) * 100
+    except:
+        twii = {'Close': 'N/A', 'Volume': 'N/A'}
+        twii_change = 'N/A'
+        twii_pct = 'N/A'
+        logger.warning("無法提取 ^TWII 數據")
+
+    try:
+        # 優先使用 daily_0050.csv
+        if os.path.exists('data/daily_0050.csv'):
+            ts_0050_df = pd.read_csv('data/daily_0050.csv', parse_dates=['Date'])
+        else:
+            ts_0050_df = daily_df[daily_df['Symbol'] == '0050.TW'].copy()
+        ts_0050 = ts_0050_df.iloc[-1]
+        ts_0050_prev = ts_0050_df.iloc[-2]
+        ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close']) * 100
+    except:
+        ts_0050 = {'Close': 'N/A', 'Volume': 'N/A'}
+        ts_0050_pct = 'N/A'
+        logger.warning("無法提取 0050.TW 數據")
+
+    try:
+        # 優先使用 daily_2330.csv
+        if os.path.exists('data/daily_2330.csv'):
+            ts_2330_df = pd.read_csv('data/daily_2330.csv', parse_dates=['Date'])
+        else:
+            ts_2330_df = daily_df[daily_df['Symbol'] == '2330.TW'].copy()
+        ts_2330 = ts_2330_df.iloc[-1]
+        ts_2330_prev = ts_2330_df.iloc[-2]
+        ts_2330_pct = ((ts_2330['Close'] - ts_2330_prev['Close']) / ts_2330_prev['Close']) * 100
+    except:
+        ts_2330 = {'Close': 'N/A', 'Volume': 'N/A'}
+        ts_2330_pct = 'N/A'
+        logger.warning("無法提取 2330.TW 數據")
+
+    try:
+        ts_0050_hourly = hourly_0050_df.iloc[-1]
+    except:
+        ts_0050_hourly = {'Close': 'N/A', 'Volume': 'N/A'}
+        logger.warning("無法提取 0050.TW 小時線數據")
+
+    # 假設外資期貨數據
+    futures_net = "淨空 34,207 口，較前日減少 172 口（假設數據）"
+    
+    # 讀取量價策略輸出
+    try:
+        with open('data/daily_sim.json', 'r', encoding='utf-8') as f:
+            daily_sim = json.load(f)
+    except:
+        daily_sim = {'signal': 'N/A', 'price': 'N/A', 'volume_rate': 'N/A', 'size_pct': 'N/A'}
+        logger.warning("無法讀取 daily_sim.json")
+
+    try:
+        with open('data/backtest_report.json', 'r', encoding='utf-8') as f:
+            backtest = json.load(f)
+    except:
+        backtest = {'metrics': {'sharpe_ratio': 'N/A', 'max_drawdown': 'N/A'}}
+        logger.warning("無法讀取 backtest_report.json")
+
+    try:
+        with open('data/strategy_history.json', 'r', encoding='utf-8') as f:
+            history = '\n'.join([f"{h['date']}: signal {h['strategy']['signal']}, sharpe {h['sharpe']}, mdd {h['mdd']}" for h in json.load(f)])
+    except:
+        history = "無歷史記錄"
+        logger.warning("無法讀取 strategy_history.json")
+    
+    market_data = f"""
+    - TAIEX (^TWII): 收盤 {twii['Close'] if isinstance(twii['Close'], (int, float)) else 'N/A'} 點，漲跌 {twii_change if isinstance(twii_change, (int, float)) else 'N/A'} 點 ({twii_pct if isinstance(twii_pct, (int, float)) else 'N/A'}%)，成交量 {twii['Volume'] if isinstance(twii['Volume'], (int, float)) else 'N/A'} 股
+    - 0050.TW: 收盤 {ts_0050['Close'] if isinstance(ts_0050['Close'], (int, float)) else 'N/A'} 元，漲跌 {ts_0050_pct if isinstance(ts_0050_pct, (int, float)) else 'N/A'}%，成交量 {ts_0050['Volume'] if isinstance(ts_0050['Volume'], (int, float)) else 'N/A'} 股
+    - 2330.TW: 收盤 {ts_2330['Close'] if isinstance(ts_2330['Close'], (int, float)) else 'N/A'} 元，漲跌 {ts_2330_pct if isinstance(ts_2330_pct, (int, float)) else 'N/A'}%，成交量 {ts_2330['Volume'] if isinstance(ts_2330['Volume'], (int, float)) else 'N/A'} 股
+    - 0050.TW 小時線: 最新價格 {ts_0050_hourly['Close'] if isinstance(ts_0050_hourly['Close'], (int, float)) else 'N/A'} 元，成交量 {ts_0050_hourly['Volume'] if isinstance(ts_0050_hourly['Close'], (int, float)) else 'N/A'} 股
+    - 外資期貨未平倉水位: {futures_net}
+    """
+    
+    # 讀取 prompt 並生成播報
+    try:
+        with open('prompt/tw.txt', 'r', encoding='utf-8') as f:
+            prompt = f.read()
+        
+        prompt = prompt.format(
+            current_date=datetime.now().strftime('%Y-%m-%d'),
+            market_data=market_data,
+            SIG=daily_sim['signal'],
+            PRICE=daily_sim['price'],
+            VOLUME_RATE=daily_sim['volume_rate'],
+            SIZE=daily_sim['size_pct'],
+            OOS_SHARPE=backtest['metrics']['sharpe_ratio'],
+            OOS_MDD=backtest['metrics']['max_drawdown'],
+            LATEST_HISTORY=history
+        )
+        
+        # 儲存播報
+        os.makedirs('data', exist_ok=True)
+        with open('data/podcast_script.txt', 'w', encoding='utf-8') as f:
+            f.write(prompt)
+        logger.info("播客腳本已保存至 data/podcast_script.txt")
+    except Exception as e:
+        logger.error(f"生成播客腳本失敗: {e}")
+
+def main():
+    mode = os.environ.get('MODE', 'hourly')
+    logger.info(f"以 {mode} 模式運行")
+    
+    # 抓取市場數據
+    fetch_market_data(split_daily=True)
+    
+    # 運行回測
+    run_backtest()
+    
+    # 生成播報腳本
+    generate_podcast_script()
 
 if __name__ == '__main__':
-    run_backtest()
+    main()
