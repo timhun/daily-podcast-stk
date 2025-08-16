@@ -125,6 +125,7 @@ def run_backtest():
             logger.error(f"0050.TW 在 {data_file} 中無數據，跳過回測")
             return
         df_0050.set_index('Date', inplace=True)
+        df_0050 = df_0050[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']].copy()
 
         cerebro = bt.Cerebro()
         cerebro.addstrategy(QuantityStrategy)
