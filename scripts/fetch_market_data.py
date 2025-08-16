@@ -55,13 +55,13 @@ def fetch_market_data():
                 df_daily['Adj Close'] = df_daily['Close']
             df_daily = df_daily[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
             df_daily.reset_index(inplace=True)  # 將日期從索引轉為欄位
-            df_daily.rename(columns={'Date': 'Date'}, inplace=True)  # 確保日期欄位名為 'Date'
+            df_daily.rename(columns={'index': 'Date'}, inplace=True)  # 確保日期欄位名為 'Date'
             logger.info(f"成功抓取 {symbol} 的 {len(df_daily)} 筆日線數據")
             # 保存單獨檔案
-            df_daily.to_csv('data/daily_0050.csv', index=False, encoding='utf-8', mode='w')
+            df_daily.to_csv(os.path.join('data', 'daily_0050.csv'), index=False, encoding='utf-8')
             logger.info(f"已生成/覆蓋檔案: daily_0050.csv, 形狀: {df_daily.shape}")
             # 保存合併檔案
-            df_daily.to_csv('data/daily.csv', index=False, encoding='utf-8', mode='w')
+            df_daily.to_csv(os.path.join('data', 'daily.csv'), index=False, encoding='utf-8')
             logger.info(f"已生成/覆蓋檔案: daily.csv, 形狀: {df_daily.shape}")
             time.sleep(0.1)  # 確保時間戳更新
         else:
@@ -79,8 +79,8 @@ def fetch_market_data():
                 df_hourly['Adj Close'] = df_hourly['Close']
             df_hourly = df_hourly[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
             df_hourly.reset_index(inplace=True)  # 將日期從索引轉為欄位
-            df_hourly.rename(columns={'Date': 'Date'}, inplace=True)  # 確保日期欄位名為 'Date'
-            df_hourly.to_csv('data/hourly_0050.csv', index=False, encoding='utf-8', mode='w')
+            df_hourly.rename(columns={'index': 'Date'}, inplace=True)  # 確保日期欄位名為 'Date'
+            df_hourly.to_csv(os.path.join('data', 'hourly_0050.csv'), index=False, encoding='utf-8')
             logger.info(f"已生成/覆蓋檔案: hourly_0050.csv, 形狀: {df_hourly.shape}")
             time.sleep(0.1)  # 確保時間戳更新
         else:
