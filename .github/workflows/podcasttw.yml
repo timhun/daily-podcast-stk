@@ -2,8 +2,19 @@ name: Auto-Trading-Loop
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天 UTC 0點觸發
-  workflow_dispatch:  # 手動觸發
+    - cron: '0 22 * * 1-5'  # 工作日 UTC 22:00 (台灣 06:00)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: '運行模式 (hourly/daily/weekly/auto)'
+        required: true
+        default: 'hourly'
+        type: choice
+        options:
+          - hourly
+          - daily
+          - weekly
+          - auto
 
 jobs:
   run-pipeline:
@@ -25,7 +36,7 @@ jobs:
       - name: Run pipeline
         run: python scripts/run_pipeline.py
         env:
-          MODE: hourly
+          MODE: ${{ github.event.inputs.mode || 'hourly' }}
           USE_LLM: 1
           SYMBOL: 0050.TW
           REPORT_DIR: data
