@@ -109,10 +109,12 @@ class QuantityStrategy(bt.Strategy):
         try:
             # 儲存所有 daily_signals
             if self.daily_signals:
+                mode = os.getenv('PODCAST_MODE', 'tw')
+                symbol = '0050.TW' if mode == 'tw' else 'QQQ'
                 os.makedirs("data", exist_ok=True)
-                with open("data/daily_sim.json", "w", encoding="utf-8") as f:
+                with open(f"data/daily_sim_{symbol}.json", "w", encoding="utf-8") as f:
                     json.dump(self.daily_signals, f, ensure_ascii=False, indent=2)
-                logger.info("已保存 daily_sim.json")
+                logger.info(f"已保存 {symbol} daily_sim.json")
 
             # 計算績效指標
             final_value = self.broker.getvalue()
@@ -164,7 +166,9 @@ class QuantityStrategy(bt.Strategy):
                 }
             }
 
-            with open("data/backtest_report.json", "w", encoding="utf-8") as f:
+            mode = os.getenv('PODCAST_MODE', 'tw')
+            symbol = '0050.TW' if mode == 'tw' else 'QQQ'
+            with open(f"data/backtest_report_{symbol}.json", "w", encoding="utf-8") as f:
                 json.dump(report, f, ensure_ascii=False, indent=2)
             logger.info(f"回測完成 - 最終價值: {final_value:.2f}, 總收益: {pnl:.2f}, 年化報酬率: {cagr:.2f}%, 勝率: {win_rate:.2f}")
 
@@ -179,7 +183,7 @@ class QuantityStrategy(bt.Strategy):
                 "mdd": round(abs(max_drawdown), 2)
             }
 
-            history_file = "data/strategy_history.json"
+            history_file = f"data/strategy_history_{symbol}.json"
             history = []
             if os.path.exists(history_file):
                 try:
@@ -193,13 +197,15 @@ class QuantityStrategy(bt.Strategy):
 
             with open(history_file, "w", encoding="utf-8") as f:
                 json.dump(history, f, ensure_ascii=False, indent=2)
-            logger.info("已保存 strategy_history.json")
+            logger.info(f"已保存 {symbol} strategy_history.json")
 
         except Exception as e:
             logger.error(f"策略結束時發生錯誤: {e}")
             logger.error(traceback.format_exc())
 
             # 創建基本報告以避免後續錯誤
+            mode = os.getenv('PODCAST_MODE', 'tw')
+            symbol = '0050.TW' if mode == 'tw' else 'QQQ'
             basic_report = {
                 "metrics": {
                     "initial_cash": 1000000,
@@ -214,11 +220,13 @@ class QuantityStrategy(bt.Strategy):
                 }
             }
             os.makedirs("data", exist_ok=True)
-            with open("data/backtest_report.json", "w", encoding="utf-8") as f:
+            with open(f"data/backtest_report_{symbol}.json", "w", encoding="utf-8") as f:
                 json.dump(basic_report, f, ensure_ascii=False, indent=2)
 
 def run_backtest():
-    data_file = 'data/daily_0050.csv'
+    mode = os.getenv('PODCAST_MODE', 'tw')
+    symbol = '0050.TW' if mode == 'tw' else 'QQQ'
+    data_file = f'data/daily_{symbol}.csv'
     try:
         # 檢查檔案是否存在
         if not os.path.exists(data_file):
@@ -273,7 +281,7 @@ def run_backtest():
         if len(daily_df_bt) < 10:
             logger.warning(f"數據量過少（{len(daily_df_bt)}筆），回測結果可能不準確")
 
-        logger.info(f"準備回測數據: {len(daily_df_bt)} 筆，時間範圍: {daily_df_bt.index[0]} 到 {daily_df_bt.index[-1]}")
+        logger.info(f"準備回測 {symbol} 數據: {len(daily_df_bt)} 筆，時間範圍: {daily_df_bt.index[0]} 到 {daily_df_bt.index[-1]}")
 
         # 設定 cerebro
         cerebro = bt.Cerebro()
@@ -297,15 +305,15 @@ def run_backtest():
         cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')
         cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')
 
-        logger.info("開始回測...")
+        logger.info(f"開始回測 {symbol}...")
 
         # 執行回測
         results = cerebro.run()
 
-        logger.info("回測完成，報告已保存至 data/")
+        logger.info(f"{symbol} 回測完成，報告已保存至 data/")
 
     except Exception as e:
-        logger.error(f"回測失敗: {e}")
+        logger.error(f"{symbol} 回測失敗: {e}")
         logger.error(traceback.format_exc())
 
         # 創建錯誤報告
@@ -323,7 +331,7 @@ def run_backtest():
             }
         }
         os.makedirs("data", exist_ok=True)
-        with open("data/backtest_report.json", "w", encoding="utf-8") as f:
+        with open(f"data/backtest_report_{symbol}.json", "w", encoding="utf-8") as f:
             json.dump(error_report, f, ensure_ascii=False, indent=2)
 
 if __name__ == '__main__':
