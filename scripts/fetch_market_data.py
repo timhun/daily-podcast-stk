@@ -60,12 +60,14 @@ def fetch_market_data(split_daily=True):
                     logger.warning(f"{symbol} 無 'Adj Close' 欄位，使用 'Close'")
                     df['Adj Close'] = df['Close']
                 df = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
+                df.reset_index(inplace=True)  # 將日期從索引轉為欄位
+                df.rename(columns={'index': 'Date'}, inplace=True)  # 確保日期欄位名為 'Date'
                 daily_data.append(df)
                 logger.info(f"成功抓取 {symbol} 的 {len(df)} 筆日線數據")
                 # 保存單獨檔案
                 if split_daily:
                     filename = f"daily_{symbol.replace('^', '').replace('.TW', '')}.csv"
-                    df.to_csv(f'data/{filename}', index=True, encoding='utf-8', mode='w')
+                    df.to_csv(f'data/{filename}', index=False, encoding='utf-8', mode='w')
                     logger.info(f"已生成/覆蓋檔案: {filename}, 形狀: {df.shape}")
                     time.sleep(0.1)  # 短暫延遲以確保檔案時間戳更新
             else:
@@ -75,7 +77,7 @@ def fetch_market_data(split_daily=True):
     
     if daily_data:
         daily_df = pd.concat(daily_data)
-        daily_df.to_csv('data/daily.csv', index=True, encoding='utf-8', mode='w')
+        daily_df.to_csv('data/daily.csv', index=False, encoding='utf-8', mode='w')
         logger.info(f"已生成/覆蓋檔案: daily.csv, 形狀: {daily_df.shape}")
         time.sleep(0.1)  # 確保時間戳更新
     else:
@@ -94,9 +96,11 @@ def fetch_market_data(split_daily=True):
                     logger.warning(f"{symbol} 無 'Adj Close' 欄位，使用 'Close'")
                     df['Adj Close'] = df['Close']
                 df = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
+                df.reset_index(inplace=True)  # 將日期從索引轉為欄位
+                df.rename(columns={'index': 'Date'}, inplace=True)  # 確保日期欄位名為 'Date'
                 # 保存到個別檔案
                 filename = f"hourly_{symbol.replace('^', '').replace('.TW', '')}.csv"
-                df.to_csv(f'data/{filename}', index=True, encoding='utf-8', mode='w')
+                df.to_csv(f'data/{filename}', index=False, encoding='utf-8', mode='w')
                 logger.info(f"已生成/覆蓋檔案: {filename}, 形狀: {df.shape}")
                 time.sleep(0.1)  # 確保時間戳更新
             else:
