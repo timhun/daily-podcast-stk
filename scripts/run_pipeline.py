@@ -171,7 +171,7 @@ def synthesize_audio():
         logger.warning(f"⚠️ 找不到逐字稿 {script_path}，跳過語音合成")
 
 def upload_to_b2():
-    # 修正導入路徑，使用相對導入
+    # 導入 upload_to_b2 模組
     import upload_to_b2
     date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
     base_dir = f"docs/podcast/{date_str}_tw"
@@ -182,6 +182,19 @@ def upload_to_b2():
         upload_to_b2.upload_to_b2()
     else:
         logger.warning(f"⚠️ 找不到 {audio_path} 或 {script_path}，跳過 B2 上傳")
+
+def generate_rss():
+    # 導入 generate_rss 模組
+    import generate_rss
+    date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+    base_dir = f"docs/podcast/{date_str}_tw"
+    audio_path = os.path.join(base_dir, "audio.mp3")
+    archive_url_file = os.path.join(base_dir, "archive_audio_url.txt")
+    if os.path.exists(audio_path) and os.path.exists(archive_url_file):
+        os.environ['PODCAST_MODE'] = 'tw'
+        generate_rss.generate_rss()
+    else:
+        logger.warning(f"⚠️ 找不到 {audio_path} 或 {archive_url_file}，跳過 RSS 生成")
 
 def main():
     # 獲取當前時間 (CST)
@@ -228,11 +241,12 @@ def main():
     # 運行回測
     run_backtest()
 
-    # 僅在 daily 模式生成播客腳本並合成語音及上傳至 B2
+    # 僅在 daily 模式生成播客腳本並合成語音、上傳至 B2 並生成 RSS
     if mode == 'daily':
         generate_podcast_script()
         synthesize_audio()
         upload_to_b2()
+        generate_rss()
 
 if __name__ == '__main__':
     main()
