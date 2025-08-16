@@ -66,7 +66,12 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add data/*.json data/*.csv docs/podcast/*/*_tw/script.txt
+          # 動態添加現有檔案，忽略不存在的路徑
+          git add data/*.json data/*.csv
+          # 檢查並添加 podcast 檔案
+          if [ -f "docs/podcast/$(date +%Y%m%d)_tw/script.txt" ]; then
+            git add docs/podcast/$(date +%Y%m%d)_tw/script.txt
+          fi
           git commit -m "Update generated files [skip ci]" || echo "No changes to commit"
           git push
 
