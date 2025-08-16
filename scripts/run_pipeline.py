@@ -21,7 +21,7 @@ def generate_podcast_script():
             logger.error(f"缺少 {file}，無法生成播客腳本")
             return
 
-    # 讀取市場數據
+    # 讀取市場數據，明確指定日期欄位
     try:
         daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'])
         hourly_0050_df = pd.read_csv('data/hourly_0050.csv', parse_dates=['Date'])
