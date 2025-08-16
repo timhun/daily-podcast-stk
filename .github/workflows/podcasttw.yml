@@ -1,4 +1,4 @@
-name: Auto Trading Loop
+name: Auto Trading 開發版
 
 on:
   schedule:
