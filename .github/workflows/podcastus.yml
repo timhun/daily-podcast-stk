@@ -1,51 +1,209 @@
-name: Generate US Market Podcast Script
+name: Auto Trading Loop
 
 on:
-  #schedule:
-  #  - cron: '0 22 * * *'  # 6:00 AM CST (UTC+8) = 10:00 PM UTC previous day
+  schedule:
+    # 每小時：週一至週五 台北時間 10:00~23:00
+    - cron: "0 2-15 * * 1-5"
+    # 每日：台北時間 09:00（開盤前）
+    - cron: "0 1 * * 1-5"
+    # 每週：週六 台北時間 09:00（週末策略生成/回測）
+    - cron: "0 1 * * 6"
   workflow_dispatch:
 
 jobs:
-  generate-us-podcast:
+  run-trading:
     runs-on: ubuntu-latest
-
     env:
-      XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+      USE_LLM: "1"
+      SYMBOL: "0050.TW"
+      REPORT_DIR: data
+      DATA_DIR: data
+      HISTORY_FILE: data/strategy_history.json
+      TARGET_RETURN: "0.02"
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROQ_MODEL: "llama-3.1-70b-versatile"
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+      EMAIL_USER: ${{ secrets.EMAIL_USER }}
+      EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+      EMAIL_TO: "Tim.oneway@gmail.com"
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: "3.11"
+
+      - name: Cache pip
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
+          pip install --upgrade pip
           pip install -r requirements.txt
+          sudo apt-get update -y
+          sudo apt-get install -y jq
+
+      - name: Fetch market data
+        run: |
+          python scripts/fetch_market_data.py
+
+      - name: Check CSV files
+        run: |
+          ls -l data/ || echo "Data directory not found"
+          for file in daily.csv hourly_0050.csv hourly_TWII.csv hourly_2330.csv; do
+            if [ -f data/$file ]; then
+              echo "$file exists"
+            else
+              echo "$file not found"
+            fi
+          done
+
+      - name: Decide MODE (auto/manual)
+        id: decide
+        run: |
+          NOW_UTC=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          HOUR_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%H)
+          DOW_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%u)
+          echo "now_utc=$NOW_UTC hour_local=$HOUR_LOCAL dow_local=$DOW_LOCAL"
+
+          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
+            MODE="hourly"
+          else
+            if [ "$DOW_LOCAL" = "6" ]; then
+              MODE="weekly"
+            elif [ "$DOW_LOCAL" -ge 1 ] && [ "$DOW_LOCAL" -le 5 ]; then
+              MODE="hourly"
+            else
+              MODE="hourly"
+            fi
+          fi
+
+          echo "MODE=$MODE" | tee -a $GITHUB_ENV
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+
+      - name: Run pipeline (MODE=${{ steps.decide.outputs.mode }})
+        run: |
+          set -e
+          python scripts/run_pipeline.py
+
+      - name: Upload reports and data as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports-${{ github.run_id }}
+          path: |
+            data/*.json
+            data/daily.csv
+            data/hourly_*.csv
+            data/podcast_script.txt
+
+      - name: Extract summary for Slack/email (tolerant)
+        id: summary
+        shell: bash
+        run: |
+          set -e
+          SIG=$(jq -r '.signal // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
+          PRICE=$(jq -r '.price // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
+          VOLUME_RATE=$(jq -r '.volume_rate // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
+          SIZE=$(jq -r '.size_pct // "N/A"' data/daily_sim.json 2>/dev/null || echo "N/A")
+          OOS_SHARPE=$(jq -r '.metrics.sharpe_ratio // "N/A"' data/backtest_report.json 2>/dev/null || echo "N/A")
+          OOS_MDD=$(jq -r '.metrics.max_drawdown // "N/A"' data/backtest_report.json 2>/dev/null || echo "N/A")
+
+          if [ -f data/strategy_history.json ]; then
+            LATEST_HISTORY=$(jq -r '.[-5:][] | "\(.date): signal \(.strategy.signal // "N/A"), sharpe \(.sharpe // "N/A"), mdd \(.mdd // "N/A")"' data/strategy_history.json | sed ':a;N;$!ba;s/\n/\\n/g')
+          else
+            LATEST_HISTORY="no history"
+          fi
+
+          # No hourly_sim.json
+          H_SIG="N/A"
+          H_PRICE="N/A"
+          H_SIZE="N/A"
+
+          {
+            echo "SIG=$SIG"
+            echo "PRICE=$PRICE"
+            echo "VOLUME_RATE=$VOLUME_RATE"
+            echo "SIZE=$SIZE"
+            echo "OOS_SHARPE=$OOS_SHARPE"
+            echo "OOS_MDD=$OOS_MDD"
+            echo "H_SIG=$H_SIG"
+            echo "H_PRICE=$H_PRICE"
+            echo "H_SIZE=$H_SIZE"
+            echo "LATEST_HISTORY<<EOF"
+            echo -e "$LATEST_HISTORY"
+            echo "EOF"
+          } >> $GITHUB_ENV
+
+      - name: Send Slack Notification
+        if: ${{ env.SLACK_BOT_TOKEN != '' && env.SLACK_CHANNEL != '' }}
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          channel-id: ${{ env.SLACK_CHANNEL }}
+          slack-message: |
+            *Auto Trading Loop 完成 ✅*
+            *Repo:* ${{ github.repository }}
+            *Run ID:* ${{ github.run_id }}
+
+            *日K 模擬摘要 (0050.TW):*
+            • Signal: ${{ env.SIG }}
+            • Price: ${{ env.PRICE }}
+            • Volume Rate: ${{ env.VOLUME_RATE }}
+            • Size: ${{ env.SIZE }}
+
+            *週期回測:*
+            • Sharpe: ${{ env.OOS_SHARPE }}
+            • Max Drawdown: ${{ env.OOS_MDD }}
+
+            *策略記憶庫（最近 5 筆）:*
+            ```
+            ${{ env.LATEST_HISTORY }}
+            ```
+
+      - name: Send email (optional, Gmail needs App Password)
+        if: ${{ env.EMAIL_USER != '' && env.EMAIL_PASS != '' }}
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ env.EMAIL_USER }}
+          password: ${{ env.EMAIL_PASS }}
+          subject: "Auto Trading Loop 報告 - ${{ github.repository }} - ${{ github.run_number }}"
+          to: ${{ env.EMAIL_TO }}
+          from: ${{ env.EMAIL_USER }}
+          body: |
+            Auto Trading Loop 已完成。
+            日K: Signal=`\({{ env.SIG }}, Price=\)`{{ env.PRICE }}, Volume Rate=`\({{ env.VOLUME_RATE }}, Size=\)`{{ env.SIZE }}
+            週期回測: Sharpe=`\({{ env.OOS_SHARPE }}, MDD=\)`{{ env.OOS_MDD }}
+
+            策略記憶庫（最近 5 筆）:
+            ${{ env.LATEST_HISTORY }}
+          attachments: |
+            data/backtest_report.json
+            data/daily_sim.json
+            data/strategy_history.json
+            data/daily.csv
+            data/hourly_0050.csv
+            data/hourly_TWII.csv
+            data/hourly_2330.csv
+            data/podcast_script.txt
         continue-on-error: true
 
-      - name: Fetch and update US market data
+      - name: Commit results back to repo
         run: |
-          python datarecord.py --tickers "^IXIC,^GSPC,QQQ,SPY,BTC-USD,GC=F"
-          ls -l data/
-        continue-on-error: true
-
-      - name: Generate US podcast script
-        run: |
-          python generate_script.py --us
-          ls -l docs/podcast/20250811_us/ || echo "US podcast directory not found"
-        continue-on-error: true
-
-      - name: Commit and push changes
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "actions@github.com"
-          git add data/ docs/podcast/
-          git status
-          git commit -m "Update US market data and podcast script for $(date +%Y%m%d)" || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git pull --rebase
+          git add data/*.json data/*.csv data/podcast_script.txt || true
+          git commit -m "Auto update: ${{ github.run_id }} $(date -u +"%Y-%m-%dT%H:%M:%SZ")" || echo "No changes to commit"
           git push
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
