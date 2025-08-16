@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 
 def generate_podcast_script():
     # 檢查必要檔案是否存在
-    required_files = ['data/daily.csv', 'data/hourly_0050.csv']
+    required_files = ['data/daily_0050.csv', 'data/hourly_0050.csv']  # 更新為實際生成的檔案
     for file in required_files:
         if not os.path.exists(file):
             logger.error(f"缺少 {file}，無法生成播客腳本")
@@ -24,7 +24,7 @@ def generate_podcast_script():
 
     # 讀取市場數據
     try:
-        daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float, 'Symbol': str})
+        daily_df = pd.read_csv('data/daily_0050.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float, 'Symbol': str})
         hourly_0050_df = pd.read_csv('data/hourly_0050.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float, 'Symbol': str})
     except Exception as e:
         logger.error(f"讀取市場數據失敗: {e}")
