@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: '運行模式 (hourly/daily/weekly/auto)'
+        description: '運行模式 (hourly/daily/weekly/auto/manual)'
         required: true
         default: 'auto'
         type: choice
@@ -15,6 +15,7 @@ on:
           - daily
           - weekly
           - auto
+          - manual
 
 jobs:
   run-pipeline:
@@ -37,6 +38,7 @@ jobs:
         run: python scripts/run_pipeline.py
         env:
           MODE: ${{ github.event.inputs.mode || 'auto' }}
+          MANUAL_TRIGGER: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.mode == 'manual' && '1' || '0' }}
           USE_LLM: 1
           SYMBOL: 0050.TW
           REPORT_DIR: data
@@ -64,7 +66,7 @@ jobs:
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
-          git add data/*.json data/*.csv data/podcast_script.txt
+          git add data/*.json data/*.csv docs/podcast/*/*_tw/script.txt
           git commit -m "Update generated files [skip ci]" || echo "No changes to commit"
           git push
 
@@ -75,7 +77,7 @@ jobs:
           path: |
             data/*.json
             data/*.csv
-            data/podcast_script.txt
+            docs/podcast/*/*_tw/script.txt
           if-no-files-found: warn
           compression-level: 6
           overwrite: false
