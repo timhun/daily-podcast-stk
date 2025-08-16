@@ -61,11 +61,14 @@ def generate_podcast_script():
     
     # 讀取量價策略輸出
     try:
-        with open('data/daily_sim.json', 'r', encoding='utf-8') as f:
-            daily_sim = json.load(f)
-    except:
-        daily_sim = {'signal': 'N/A', 'price': 'N/A', 'volume_rate': 'N/A', 'size_pct': 'N/A'}
-        logger.warning("無法讀取 daily_sim.json")
+        if os.path.exists('data/daily_sim.json'):
+            with open('data/daily_sim.json', 'r', encoding='utf-8') as f:
+                daily_sim = json.load(f)
+        else:
+            daily_sim = {'signal': '無訊號', 'price': 'N/A', 'volume_rate': 'N/A', 'size_pct': 'N/A'}
+    except Exception as e:
+        logger.warning(f"無法讀取 daily_sim.json: {e}")
+        daily_sim = {'signal': '無訊號', 'price': 'N/A', 'volume_rate': 'N/A', 'size_pct': 'N/A'}
 
     try:
         with open('data/backtest_report.json', 'r', encoding='utf-8') as f:
@@ -81,11 +84,11 @@ def generate_podcast_script():
         history = "無歷史記錄"
         logger.warning("無法讀取 strategy_history.json")
     
-    market_data = f"""
-    - 0050.TW: 收盤 {ts_0050['Close'] if isinstance(ts_0050['Close'], (int, float)) else 'N/A'} 元，漲跌 {ts_0050_pct if isinstance(ts_0050_pct, (int, float)) else 'N/A'}%，成交量 {ts_0050['Volume'] if isinstance(ts_0050['Volume'], (int, float)) else 'N/A'} 股
-    - 0050.TW 小時線: 最新價格 {ts_0050_hourly['Close'] if isinstance(ts_0050_hourly['Close'], (int, float)) else 'N/A'} 元，成交量 {ts_0050_hourly['Volume'] if isinstance(ts_0050_hourly['Close'], (int, float)) else 'N/A'} 股
-    - 外資期貨未平倉水位: {futures_net}
-    """
+        market_data = f"""
+        - 0050.TW: 收盤 {format_number(ts_0050.get('Close'))} 元，漲跌 {format_number(ts_0050_pct)}%，成交量 {format_number(ts_0050.get('Volume'), 0)} 股
+        - 0050.TW 小時線: 最新價格 {format_number(ts_0050_hourly.get('Close'))} 元，成交量 {format_number(ts_0050_hourly.get('Volume'), 0)} 股
+        - 外資期貨未平倉水位: {futures_net}
+        """
     
     # 讀取 prompt 並生成播報
     try:
