@@ -6,10 +6,10 @@ from datetime import datetime
 import traceback
 import time
 from pytz import timezone
+import asyncio
 
-# 確保 scripts 目錄在 sys.path 中
-script_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, script_dir)  # 插入到列表開頭以優先使用
+# 添加 scripts 目錄到 sys.path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 from fetch_market_data import fetch_market_data
 from quantity_strategy_0050 import run_backtest
 import logging
@@ -150,61 +150,38 @@ def generate_podcast_script(date_str=None):
         os.makedirs(output_dir, exist_ok=True)
         output_file = os.path.join(output_dir, "script.txt")
 
-        # 儲存播報
+        # 儲存播報，覆蓋現有檔案
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(prompt)
         logger.info(f"播客腳本已保存至 {output_file}")
-
-        # 生成 market_data_tw.json
-        market_data_json = {
-            "date": datetime.now(timezone('Asia/Taipei')).strftime('%Y-%m-%d'),
-            "0050_TW": {
-                "close": float(ts_0050.get('Close', 'N/A')),
-                "volume": int(ts_0050.get('Volume', 'N/A')),
-                "pct_change": float(ts_0050_pct) if ts_0050_pct != 'N/A' else None
-            },
-            "hourly_0050": {
-                "close": float(ts_0050_hourly.get('Close', 'N/A')),
-                "volume": int(ts_0050_hourly.get('Volume', 'N/A'))
-            }
-        }
-        market_data_file = os.path.join(output_dir, "market_data_tw.json")
-        with open(market_data_file, 'w', encoding='utf-8') as f:
-            json.dump(market_data_json, f, ensure_ascii=False, indent=2)
-        logger.info(f"市場數據已保存至 {market_data_file}")
-
-        # 記錄 B2 連結到 archive_audio_url.txt (假設從環境變數或日誌獲取)
-        b2_url = os.environ.get('B2_URL', 'https://***.s3.us-east-005.backblazeb2.com/***-20250816_tw.mp3')
-        archive_url_file = os.path.join(output_dir, "archive_audio_url.txt")
-        with open(archive_url_file, 'w', encoding='utf-8') as f:
-            f.write(b2_url)
-        logger.info(f"B2 連結已保存至 {archive_url_file}")
-
     except Exception as e:
         logger.error(f"生成播客腳本失敗: {e}")
         logger.error(traceback.format_exc())
 
 def synthesize_audio():
-    # 假設語音合成邏輯（需根據 synthesize_audio.py 實現）
+    # 導入 synthesize_audio 模組
+    from synthesize_audio import synthesize as synthesize_audio_func
     date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
-    output_dir = f"docs/podcast/{date_str}_tw"
-    audio_file = os.path.join(output_dir, "audio.mp3")
-    script_file = os.path.join(output_dir, "script.txt")
-    # 這裡應調用 synthesize_audio.py 的函數（例如 from scripts.synthesize_audio import synthesize）
-    logger.info(f"✅ 已完成語音合成：{audio_file}")
+    base_dir = f"docs/podcast/{date_str}_tw"
+    script_path = os.path.join(base_dir, "script.txt")
+    if os.path.exists(script_path):
+        os.environ['PODCAST_MODE'] = 'tw'
+        asyncio.run(synthesize_audio_func())
+    else:
+        logger.warning(f"⚠️ 找不到逐字稿 {script_path}，跳過語音合成")
 
 def upload_to_b2():
-    try:
-        from scripts.upload_to_b2 import upload_to_b2 as upload_to_b2_func
-        date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
-        output_dir = f"docs/podcast/{date_str}_tw"
-        audio_file = os.path.join(output_dir, "audio.mp3")
-        script_file = os.path.join(output_dir, "script.txt")
-        identifier = f"{os.environ.get('BUCKET_PREFIX', 'podcast')}-{date_str}_tw"
-        upload_to_b2_func(audio_file, script_file, identifier)
-    except ImportError as e:
-        logger.error(f"導入 upload_to_b2 失敗: {e}")
-        logger.error(traceback.format_exc())
+    # 修正導入路徑，使用相對導入
+    import upload_to_b2 as upload_to_b2_module
+    date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+    base_dir = f"docs/podcast/{date_str}_tw"
+    audio_path = os.path.join(base_dir, "audio.mp3")
+    script_path = os.path.join(base_dir, "script.txt")
+    if os.path.exists(audio_path) and os.path.exists(script_path):
+        os.environ['PODCAST_MODE'] = 'tw'
+        upload_to_b2_module.upload_to_b2()
+    else:
+        logger.warning(f"⚠️ 找不到 {audio_path} 或 {script_path}，跳過 B2 上傳")
 
 def main():
     # 獲取當前時間 (CST)
@@ -251,7 +228,7 @@ def main():
     # 運行回測
     run_backtest()
 
-    # 僅在 daily 模式執行完整流程
+    # 僅在 daily 模式生成播客腳本並合成語音及上傳至 B2
     if mode == 'daily':
         generate_podcast_script()
         synthesize_audio()
