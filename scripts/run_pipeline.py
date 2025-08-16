@@ -160,8 +160,12 @@ def generate_podcast_script(date_str=None, mode='tw'):
         logger.error(traceback.format_exc())
 
 def synthesize_audio(date_str=None, mode='tw'):
-    # 導入 synthesize_audio 模組
-    from synthesize_audio import synthesize as synthesize_audio_func
+    # 嘗試導入 synthesize_audio 模組，處理缺失情況
+    try:
+        from synthesize_audio import synthesize as synthesize_audio_func
+    except ImportError as e:
+        logger.error(f"無法導入 synthesize_audio 模組: {e}，請確保已安裝 edge-tts")
+        return
     date_str = date_str or datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
     base_dir = f"docs/podcast/{date_str}_{mode}"
     script_path = os.path.join(base_dir, "script.txt")
@@ -172,8 +176,12 @@ def synthesize_audio(date_str=None, mode='tw'):
         logger.warning(f"⚠️ 找不到 {mode} 逐字稿 {script_path}，跳過語音合成")
 
 def upload_to_b2(date_str=None, mode='tw'):
-    # 導入 upload_to_b2 模組
-    import upload_to_b2
+    # 嘗試導入 upload_to_b2 模組，處理缺失情況
+    try:
+        import upload_to_b2
+    except ImportError as e:
+        logger.error(f"無法導入 upload_to_b2 模組: {e}，請檢查依賴")
+        return
     date_str = date_str or datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
     base_dir = f"docs/podcast/{date_str}_{mode}"
     audio_path = os.path.join(base_dir, "audio.mp3")
@@ -185,8 +193,12 @@ def upload_to_b2(date_str=None, mode='tw'):
         logger.warning(f"⚠️ 找不到 {mode} {audio_path} 或 {script_path}，跳過 B2 上傳")
 
 def generate_rss(date_str=None, mode='tw'):
-    # 導入 generate_rss 模組
-    import generate_rss
+    # 嘗試導入 generate_rss 模組，處理缺失情況
+    try:
+        import generate_rss
+    except ImportError as e:
+        logger.error(f"無法導入 generate_rss 模組: {e}，請檢查依賴")
+        return
     date_str = date_str or datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
     base_dir = f"docs/podcast/{date_str}_{mode}"
     audio_path = os.path.join(base_dir, "audio.mp3")
@@ -202,7 +214,10 @@ def main():
     current_time = datetime.now().astimezone(timezone('Asia/Taipei'))
     mode = os.environ.get('MODE', 'auto')
     is_manual = os.environ.get('MANUAL_TRIGGER', '0') == '1' or mode == 'manual'
-    logger.info(f"以 {mode} 模式運行，當前時間: {current_time.strftime('%Y-%m-%d %H:%M:%S CST')}, 手動觸發: {is_manual}")
+    podcast_mode = os.environ.get('PODCAST_MODE', 'auto')  # 從環境變數獲取
+    if is_manual and 'podcast_mode' in os.environ:
+        podcast_mode = os.environ.get('podcast_mode', 'auto')  # 覆蓋為手動輸入
+    logger.info(f"以 {mode} 模式運行，當前時間: {current_time.strftime('%Y-%m-%d %H:%M:%S CST')}, 手動觸發: {is_manual}, PODCAST_MODE: {podcast_mode}")
 
     if mode not in ['hourly', 'daily', 'weekly', 'auto', 'manual']:
         logger.error(f"無效的 MODE: {mode}, 使用預設 auto")
@@ -215,6 +230,7 @@ def main():
             mode = 'daily'
             os.environ['INTERVAL'] = '1d'
             os.environ['DAYS'] = '90'
+            os.environ['PODCAST_MODE'] = 'us'
             generate_podcast_script(mode='us')
             synthesize_audio(mode='us')
             upload_to_b2(mode='us')
@@ -223,6 +239,7 @@ def main():
             mode = 'daily'
             os.environ['INTERVAL'] = '1d'
             os.environ['DAYS'] = '90'
+            os.environ['PODCAST_MODE'] = 'tw'
             generate_podcast_script(mode='tw')
             synthesize_audio(mode='tw')
             upload_to_b2(mode='tw')
@@ -232,19 +249,24 @@ def main():
             os.environ['INTERVAL'] = '1h'
             os.environ['DAYS'] = '7'
     elif is_manual:
-        # 手動觸發時強制生成當日台股和美股文字稿
+        # 手動觸發時根據 podcast_mode 生成指定模式
         mode = 'daily'
         os.environ['INTERVAL'] = '1d'
         os.environ['DAYS'] = '90'
         date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
-        generate_podcast_script(date_str, mode='tw')
-        synthesize_audio(date_str, mode='tw')
-        upload_to_b2(date_str, mode='tw')
-        generate_rss(date_str, mode='tw')
-        generate_podcast_script(date_str, mode='us')
-        synthesize_audio(date_str, mode='us')
-        upload_to_b2(date_str, mode='us')
-        generate_rss(date_str, mode='us')
+        if podcast_mode in ['tw', 'us']:
+            os.environ['PODCAST_MODE'] = podcast_mode
+            generate_podcast_script(date_str, podcast_mode)
+            synthesize_audio(date_str, podcast_mode)
+            upload_to_b2(date_str, podcast_mode)
+            generate_rss(date_str, podcast_mode)
+        else:
+            for m in ['tw', 'us']:
+                os.environ['PODCAST_MODE'] = m
+                generate_podcast_script(date_str, m)
+                synthesize_audio(date_str, m)
+                upload_to_b2(date_str, m)
+                generate_rss(date_str, m)
 
     # 根據模式調整數據範圍
     if mode == 'hourly':
@@ -257,8 +279,9 @@ def main():
         os.environ['INTERVAL'] = '1wk'
         os.environ['DAYS'] = '365'
 
-    # 抓取市場數據（根據模式動態設定符號）
-    fetch_market_data()
+    # 僅在手動觸發或自動回測時執行 fetch_market_data（避免與 data-fetch.yml 重複）
+    if is_manual or (mode in ['hourly', 'weekly'] and mode != 'auto'):
+        fetch_market_data()
 
     # 運行回測（根據符號調整）
     run_backtest()
