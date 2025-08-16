@@ -15,59 +15,29 @@ logger = logging.getLogger(__name__)
 
 def generate_podcast_script():
     # 檢查必要檔案是否存在
-    required_files = ['data/daily.csv', 'data/hourly_0050.csv', 'data/hourly_TWII.csv', 'data/hourly_2330.csv']
+    required_files = ['data/daily.csv', 'data/hourly_0050.csv']
     for file in required_files:
         if not os.path.exists(file):
             logger.error(f"缺少 {file}，無法生成播客腳本")
             return
 
-    # 讀取市場數據，明確指定日期欄位
+    # 讀取市場數據
     try:
-        daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'])
-        hourly_0050_df = pd.read_csv('data/hourly_0050.csv', parse_dates=['Date'])
+        daily_df = pd.read_csv('data/daily.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float})
+        hourly_0050_df = pd.read_csv('data/hourly_0050.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float})
     except Exception as e:
         logger.error(f"讀取市場數據失敗: {e}")
         return
 
     # 提取最新數據
     try:
-        twii = daily_df[daily_df['Symbol'] == '^TWII'].iloc[-1]
-        twii_prev = daily_df[daily_df['Symbol'] == '^TWII'].iloc[-2]
-        twii_change = twii['Close'] - twii_prev['Close']
-        twii_pct = (twii_change / twii_prev['Close']) * 100
-    except:
-        twii = {'Close': 'N/A', 'Volume': 'N/A'}
-        twii_change = 'N/A'
-        twii_pct = 'N/A'
-        logger.warning("無法提取 ^TWII 數據")
-
-    try:
-        # 優先使用 daily_0050.csv
-        if os.path.exists('data/daily_0050.csv'):
-            ts_0050_df = pd.read_csv('data/daily_0050.csv', parse_dates=['Date'])
-        else:
-            ts_0050_df = daily_df[daily_df['Symbol'] == '0050.TW'].copy()
-        ts_0050 = ts_0050_df.iloc[-1]
-        ts_0050_prev = ts_0050_df.iloc[-2]
+        ts_0050 = daily_df.iloc[-1]
+        ts_0050_prev = daily_df.iloc[-2]
         ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close']) * 100
     except:
         ts_0050 = {'Close': 'N/A', 'Volume': 'N/A'}
         ts_0050_pct = 'N/A'
         logger.warning("無法提取 0050.TW 數據")
-
-    try:
-        # 優先使用 daily_2330.csv
-        if os.path.exists('data/daily_2330.csv'):
-            ts_2330_df = pd.read_csv('data/daily_2330.csv', parse_dates=['Date'])
-        else:
-            ts_2330_df = daily_df[daily_df['Symbol'] == '2330.TW'].copy()
-        ts_2330 = ts_2330_df.iloc[-1]
-        ts_2330_prev = ts_2330_df.iloc[-2]
-        ts_2330_pct = ((ts_2330['Close'] - ts_2330_prev['Close']) / ts_2330_prev['Close']) * 100
-    except:
-        ts_2330 = {'Close': 'N/A', 'Volume': 'N/A'}
-        ts_2330_pct = 'N/A'
-        logger.warning("無法提取 2330.TW 數據")
 
     try:
         ts_0050_hourly = hourly_0050_df.iloc[-1]
@@ -101,9 +71,7 @@ def generate_podcast_script():
         logger.warning("無法讀取 strategy_history.json")
     
     market_data = f"""
-    - TAIEX (^TWII): 收盤 {twii['Close'] if isinstance(twii['Close'], (int, float)) else 'N/A'} 點，漲跌 {twii_change if isinstance(twii_change, (int, float)) else 'N/A'} 點 ({twii_pct if isinstance(twii_pct, (int, float)) else 'N/A'}%)，成交量 {twii['Volume'] if isinstance(twii['Volume'], (int, float)) else 'N/A'} 股
     - 0050.TW: 收盤 {ts_0050['Close'] if isinstance(ts_0050['Close'], (int, float)) else 'N/A'} 元，漲跌 {ts_0050_pct if isinstance(ts_0050_pct, (int, float)) else 'N/A'}%，成交量 {ts_0050['Volume'] if isinstance(ts_0050['Volume'], (int, float)) else 'N/A'} 股
-    - 2330.TW: 收盤 {ts_2330['Close'] if isinstance(ts_2330['Close'], (int, float)) else 'N/A'} 元，漲跌 {ts_2330_pct if isinstance(ts_2330_pct, (int, float)) else 'N/A'}%，成交量 {ts_2330['Volume'] if isinstance(ts_2330['Volume'], (int, float)) else 'N/A'} 股
     - 0050.TW 小時線: 最新價格 {ts_0050_hourly['Close'] if isinstance(ts_0050_hourly['Close'], (int, float)) else 'N/A'} 元，成交量 {ts_0050_hourly['Volume'] if isinstance(ts_0050_hourly['Close'], (int, float)) else 'N/A'} 股
     - 外資期貨未平倉水位: {futures_net}
     """
@@ -138,7 +106,7 @@ def main():
     logger.info(f"以 {mode} 模式運行")
     
     # 抓取市場數據
-    fetch_market_data(split_daily=True)
+    fetch_market_data()
     
     # 運行回測
     run_backtest()
