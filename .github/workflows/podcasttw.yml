@@ -32,7 +32,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas yfinance backtrader requests pytz edge-tts b2sdk
+          pip install pandas yfinance backtrader requests pytz edge-tts b2sdk feedgen mutagen
 
       - name: Run pipeline
         run: python scripts/run_pipeline.py
@@ -70,7 +70,7 @@ jobs:
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
           git add data/*.json data/*.csv
-          # 確保添加所有 podcast 相關檔案
+          # 確保添加所有 podcast 相關檔案和 RSS
           date_str=$(date +%Y%m%d)
           if [ -f "docs/podcast/${date_str}_tw/script.txt" ]; then
             git add docs/podcast/${date_str}_tw/script.txt
@@ -80,6 +80,9 @@ jobs:
           fi
           if [ -f "docs/podcast/${date_str}_tw/archive_audio_url.txt" ]; then
             git add docs/podcast/${date_str}_tw/archive_audio_url.txt
+          fi
+          if [ -f "docs/rss/podcast_tw.xml" ]; then
+            git add docs/rss/podcast_tw.xml
           fi
           git commit -m "Update generated files [skip ci]" || echo "No changes to commit"
           git push
@@ -94,6 +97,7 @@ jobs:
             docs/podcast/*/*_tw/script.txt
             docs/podcast/*/*_tw/audio.mp3
             docs/podcast/*/*_tw/archive_audio_url.txt
+            docs/rss/podcast_tw.xml
           if-no-files-found: warn
           compression-level: 6
           overwrite: false
