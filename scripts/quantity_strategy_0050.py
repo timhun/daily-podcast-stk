@@ -5,6 +5,8 @@ import json
 import os
 from datetime import datetime
 import logging
+import traceback
+
 
 # 設定日誌
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -83,45 +85,152 @@ class QuantityStrategy(bt.Strategy):
             self.trades.append(trade.pnl > 0)
 
     def stop(self):
-        win_rate = sum(1 for t in self.trades if t) / len(self.trades) if self.trades else 0
+    try:
+        # 儲存最新的daily_sim
+        if self.daily_signals:
+            os.makedirs("data", exist_ok=True)
+            with open("data/daily_sim.json", "w", encoding="utf-8") as f:
+                json.dump(self.daily_signals[-1], f, ensure_ascii=False, indent=2)
+            logger.info("已保存 daily_sim.json")
+
+        # 計算績效指標
         final_value = self.broker.getvalue()
-        pnl = final_value - 1000000
-        sharpe = self.analyzers.sharpe_ratio.get_analysis().get('sharperatio', 'N/A')
-        cagr = self.analyzers.returns.get_analysis()['rnorm100']
-        drawdown = self.analyzers.drawdown.get_analysis()['max']['drawdown']
+        initial_cash = 1000000
+        pnl = final_value - initial_cash
+        
+        # 安全取得分析器結果
+        try:
+            returns_analysis = self.analyzers.returns.get_analysis()
+            # 檢查可用的鍵值
+            logger.info(f"Returns analyzer keys: {list(returns_analysis.keys())}")
+            
+            # 嘗試不同的鍵值來獲取年化報酬率
+            if 'rnorm100' in returns_analysis:
+                cagr = returns_analysis['rnorm100']
+            elif 'ravg' in returns_analysis:
+                cagr = returns_analysis['ravg'] * 252 * 100  # 年化
+            elif 'rtot' in returns_analysis:
+                # 計算年化報酬率
+                days = len(self.data)
+                if days > 0:
+                    cagr = (((1 + returns_analysis['rtot']) ** (252 / days)) - 1) * 100
+                else:
+                    cagr = 0
+            else:
+                # 手動計算年化報酬率
+                days = len(self.data)
+                if days > 0:
+                    cagr = (((final_value / initial_cash) ** (252 / days)) - 1) * 100
+                else:
+                    cagr = 0
+        except Exception as e:
+            logger.warning(f"無法從 returns analyzer 獲取數據: {e}")
+            # 手動計算年化報酬率
+            days = len(self.data)
+            if days > 0:
+                cagr = (((final_value / initial_cash) ** (252 / days)) - 1) * 100
+            else:
+                cagr = 0
+        
+        try:
+            sharpe_analysis = self.analyzers.sharpe_ratio.get_analysis()
+            sharpe = sharpe_analysis.get('sharperatio', None)
+            if sharpe is None:
+                # 嘗試其他可能的鍵值
+                for key in ['sharperatio', 'sharpe', 'ratio']:
+                    if key in sharpe_analysis:
+                        sharpe = sharpe_analysis[key]
+                        break
+        except Exception as e:
+            logger.warning(f"無法從 sharpe analyzer 獲取數據: {e}")
+            sharpe = None
+            
+        try:
+            drawdown_analysis = self.analyzers.drawdown.get_analysis()
+            max_drawdown = drawdown_analysis.get('max', {}).get('drawdown', 0)
+            if max_drawdown == 0:
+                # 嘗試其他可能的結構
+                if 'drawdown' in drawdown_analysis:
+                    max_drawdown = drawdown_analysis['drawdown']
+                elif 'maxdrawdown' in drawdown_analysis:
+                    max_drawdown = drawdown_analysis['maxdrawdown']
+        except Exception as e:
+            logger.warning(f"無法從 drawdown analyzer 獲取數據: {e}")
+            max_drawdown = 0
+        
+        # 計算勝率
+        win_rate = 0
+        if self.trades:
+            wins = sum(1 for t in self.trades if t['is_win'])
+            win_rate = wins / len(self.trades)
         
         report = {
             "metrics": {
-                "initial_cash": 1000000,
+                "initial_cash": initial_cash,
                 "final_value": round(final_value, 2),
                 "pnl": round(pnl, 2),
                 "cagr": round(cagr, 2),
-                "max_drawdown": round(drawdown, 2),
-                "sharpe_ratio": sharpe if sharpe != 'N/A' else None,
+                "max_drawdown": round(abs(max_drawdown), 2),
+                "sharpe_ratio": round(sharpe, 3) if sharpe is not None else None,
                 "win_rate": round(win_rate, 3),
                 "total_trades": len(self.trades)
             }
         }
+        
         with open("data/backtest_report.json", "w", encoding="utf-8") as f:
             json.dump(report, f, ensure_ascii=False, indent=2)
-        logger.info("已保存 backtest_report.json")
+        logger.info(f"回測完成 - 最終價值: {final_value:.2f}, 總收益: {pnl:.2f}, 年化報酬率: {cagr:.2f}%")
 
         # 更新策略歷史
         history_entry = {
             "date": str(datetime.now().date()),
-            "strategy": {"signal": report["metrics"]["win_rate"]},
-            "sharpe": sharpe,
-            "mdd": round(drawdown, 2)
+            "strategy": {
+                "signal": self.daily_signals[-1]['signal'] if self.daily_signals else "無訊號",
+                "win_rate": round(win_rate, 3)
+            },
+            "sharpe": round(sharpe, 3) if sharpe is not None else None,
+            "mdd": round(abs(max_drawdown), 2)
         }
+        
         history_file = "data/strategy_history.json"
         history = []
         if os.path.exists(history_file):
-            with open(history_file, "r", encoding="utf-8") as f:
-                history = json.load(f)
+            try:
+                with open(history_file, "r", encoding="utf-8") as f:
+                    history = json.load(f)
+            except:
+                history = []
+        
         history.append(history_entry)
+        # 保留最近5筆記錄
+        history = history[-5:]
+        
         with open(history_file, "w", encoding="utf-8") as f:
-            json.dump(history[-5:], f, ensure_ascii=False, indent=2)
+            json.dump(history, f, ensure_ascii=False, indent=2)
         logger.info("已保存 strategy_history.json")
+        
+    except Exception as e:
+        logger.error(f"策略結束時發生錯誤: {e}")
+        logger.error(traceback.format_exc())
+        
+        # 創建基本報告以避免後續錯誤
+        basic_report = {
+            "metrics": {
+                "initial_cash": 1000000,
+                "final_value": self.broker.getvalue(),
+                "pnl": self.broker.getvalue() - 1000000,
+                "cagr": 0,
+                "max_drawdown": 0,
+                "sharpe_ratio": None,
+                "win_rate": 0,
+                "total_trades": len(self.trades),
+                "error": str(e)
+            }
+        }
+        os.makedirs("data", exist_ok=True)
+        with open("data/backtest_report.json", "w", encoding="utf-8") as f:
+            json.dump(basic_report, f, ensure_ascii=False, indent=2)
+
 
 def run_backtest():
     data_file = 'data/daily_0050.csv'
