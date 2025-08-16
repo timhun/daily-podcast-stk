@@ -19,14 +19,20 @@ def clean_data_directory():
     data_dir = 'data'
     os.makedirs(data_dir, exist_ok=True)
     logger.info("檢查 data 目錄以進行清理...")
+    removed_files = []
     for file in glob.glob(f"{data_dir}/*"):
-        if os.path.basename(file) not in expected_files:
+        file_name = os.path.basename(file)
+        if file_name not in expected_files:
             try:
                 os.remove(file)
+                removed_files.append(file)
                 logger.info(f"已移除無關檔案: {file}")
             except Exception as e:
                 logger.warning(f"無法移除 {file}: {e}")
-    logger.info("data 目錄清理完成")
+    if not removed_files:
+        logger.info("無需清理，data 目錄中無無關檔案")
+    else:
+        logger.info("data 目錄清理完成")
 
 def fetch_market_data(split_daily=True):
     """抓取市場數據，split_daily=True 時生成單獨的日線檔案"""
@@ -58,8 +64,8 @@ def fetch_market_data(split_daily=True):
                 # 保存單獨檔案
                 if split_daily:
                     filename = f"daily_{symbol.replace('^', '').replace('.TW', '')}.csv"
-                    df.to_csv(f'data/{filename}', index=True, encoding='utf-8')
-                    logger.info(f"{filename} 已保存，形狀: {df.shape}")
+                    df.to_csv(f'data/{filename}', index=True, encoding='utf-8', mode='w')
+                    logger.info(f"已生成新檔案: {filename}, 形狀: {df.shape}")
             else:
                 logger.warning(f"{symbol} 未返回日線數據")
         except Exception as e:
@@ -67,8 +73,8 @@ def fetch_market_data(split_daily=True):
     
     if daily_data:
         daily_df = pd.concat(daily_data)
-        daily_df.to_csv('data/daily.csv', index=True, encoding='utf-8')
-        logger.info(f"daily.csv 已保存，形狀: {daily_df.shape}")
+        daily_df.to_csv('data/daily.csv', index=True, encoding='utf-8', mode='w')
+        logger.info(f"已生成新檔案: daily.csv, 形狀: {daily_df.shape}")
     else:
         logger.error("無任何標的日線數據可保存")
 
@@ -87,8 +93,8 @@ def fetch_market_data(split_daily=True):
                 df = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
                 # 保存到個別檔案
                 filename = f"hourly_{symbol.replace('^', '').replace('.TW', '')}.csv"
-                df.to_csv(f'data/{filename}', index=True, encoding='utf-8')
-                logger.info(f"{filename} 已保存，形狀: {df.shape}")
+                df.to_csv(f'data/{filename}', index=True, encoding='utf-8', mode='w')
+                logger.info(f"已生成新檔案: {filename}, 形狀: {df.shape}")
             else:
                 logger.warning(f"{symbol} 未返回小時線數據")
         except Exception as e:
