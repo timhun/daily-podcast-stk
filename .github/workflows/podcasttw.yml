@@ -2,13 +2,13 @@ name: Auto-Trading-Loop
 
 on:
   schedule:
-    - cron: '0 22 * * 1-5'  # 工作日 UTC 22:00 (台灣 06:00)
+    - cron: '0 * * * 1-5'  # 工作日每小時 UTC 00:00 (台灣 08:00) 至 23:00 (次日 07:00)
   workflow_dispatch:
     inputs:
       mode:
         description: '運行模式 (hourly/daily/weekly/auto)'
         required: true
-        default: 'hourly'
+        default: 'auto'
         type: choice
         options:
           - hourly
@@ -31,12 +31,12 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install pandas yfinance backtrader requests
+          pip install pandas yfinance backtrader requests pytz
 
       - name: Run pipeline
         run: python scripts/run_pipeline.py
         env:
-          MODE: ${{ github.event.inputs.mode || 'hourly' }}
+          MODE: ${{ github.event.inputs.mode || 'auto' }}
           USE_LLM: 1
           SYMBOL: 0050.TW
           REPORT_DIR: data
