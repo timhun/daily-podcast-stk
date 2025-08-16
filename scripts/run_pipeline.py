@@ -1,9 +1,12 @@
 import os
+import sys
 import json
 import pandas as pd
 from datetime import datetime
-from scripts.fetch_market_data import fetch_market_data
-from scripts.quantity_strategy_0050 import run_backtest
+# 添加 scripts 目錄到 sys.path
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+from fetch_market_data import fetch_market_data
+from quantity_strategy_0050 import run_backtest
 import logging
 
 # 設定日誌
