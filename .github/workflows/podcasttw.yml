@@ -2,12 +2,7 @@ name: Auto Trading 開發版
 
 on:
   schedule:
-    # 每小時：週一至週五 台北時間 10:00~23:00
-    - cron: "0 2-15 * * 1-5"
-    # 每日：台北時間 09:00（開盤前）
-    - cron: "0 1 * * 1-5"
-    # 每週：週六 台北時間 09:00（週末策略生成/回測）
-    - cron: "0 1 * * 6"
+    - cron: "0 1-15 * * 1-5"  # 台北時間 09:00~23:00
   workflow_dispatch:
 
 jobs:
@@ -63,36 +58,13 @@ jobs:
         run: |
           echo "Listing data directory contents:"
           ls -l data/ || echo "Data directory not found"
-          for file in daily.csv daily_TWII.csv daily_0050.csv daily_2330.csv hourly_0050.csv hourly_TWII.csv hourly_2330.csv; do
+          for file in daily.csv daily_0050.csv hourly_0050.csv; do
             if [ -f data/$file ]; then
               echo "$file exists, last modified: $(stat -c '%y' data/$file)"
             else
               echo "$file not found"
             fi
           done
-
-      - name: Decide MODE (auto/manual)
-        id: decide
-        run: |
-          NOW_UTC=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
-          HOUR_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%H)
-          DOW_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%u)
-          echo "now_utc=$NOW_UTC hour_local=$HOUR_LOCAL dow_local=$DOW_LOCAL"
-
-          if [ "$GITHUB_EVENT_NAME" = "workflow_dispatch" ]; then
-            MODE="hourly"
-          else
-            if [ "$DOW_LOCAL" = "6" ]; then
-              MODE="weekly"
-            elif [ "$DOW_LOCAL" -ge 1 ] && [ "$DOW_LOCAL" -le 5 ]; then
-              MODE="hourly"
-            else
-              MODE="hourly"
-            fi
-          fi
-
-          echo "MODE=$MODE" | tee -a $GITHUB_ENV
-          echo "mode=$MODE" >> $GITHUB_OUTPUT
 
       - name: Upload reports and data as artifact
         uses: actions/upload-artifact@v4
@@ -103,7 +75,7 @@ jobs:
             data/*.csv
             data/podcast_script.txt
 
-      - name: Extract summary for Slack/email (tolerant)
+      - name: Extract summary for Slack/email
         id: summary
         shell: bash
         run: |
@@ -121,11 +93,6 @@ jobs:
             LATEST_HISTORY="no history"
           fi
 
-          # No hourly_sim.json
-          H_SIG="N/A"
-          H_PRICE="N/A"
-          H_SIZE="N/A"
-
           {
             echo "SIG=$SIG"
             echo "PRICE=$PRICE"
@@ -133,9 +100,6 @@ jobs:
             echo "SIZE=$SIZE"
             echo "OOS_SHARPE=$OOS_SHARPE"
             echo "OOS_MDD=$OOS_MDD"
-            echo "H_SIG=$H_SIG"
-            echo "H_PRICE=$H_PRICE"
-            echo "H_SIZE=$H_SIZE"
             echo "LATEST_HISTORY<<EOF"
             echo -e "$LATEST_HISTORY"
             echo "EOF"
