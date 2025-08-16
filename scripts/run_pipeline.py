@@ -172,14 +172,14 @@ def synthesize_audio():
 
 def upload_to_b2():
     # 修正導入路徑，使用相對導入
-    import upload_to_b2 as upload_to_b2_module
+    import upload_to_b2
     date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
     base_dir = f"docs/podcast/{date_str}_tw"
     audio_path = os.path.join(base_dir, "audio.mp3")
     script_path = os.path.join(base_dir, "script.txt")
     if os.path.exists(audio_path) and os.path.exists(script_path):
         os.environ['PODCAST_MODE'] = 'tw'
-        upload_to_b2_module.upload_to_b2()
+        upload_to_b2.upload_to_b2()
     else:
         logger.warning(f"⚠️ 找不到 {audio_path} 或 {script_path}，跳過 B2 上傳")
 
