@@ -6,6 +6,7 @@ from datetime import datetime
 import traceback
 import time
 from pytz import timezone
+import asyncio
 
 # 添加 scripts 目錄到 sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -157,6 +158,18 @@ def generate_podcast_script(date_str=None):
         logger.error(f"生成播客腳本失敗: {e}")
         logger.error(traceback.format_exc())
 
+def synthesize_audio():
+    # 導入 synthesize_audio 模組
+    from synthesize_audio import synthesize as synthesize_audio_func
+    date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+    base_dir = f"docs/podcast/{date_str}_tw"
+    script_path = os.path.join(base_dir, "script.txt")
+    if os.path.exists(script_path):
+        os.environ['PODCAST_MODE'] = 'tw'
+        asyncio.run(synthesize_audio_func())
+    else:
+        logger.warning(f"⚠️ 找不到逐字稿 {script_path}，跳過語音合成")
+
 def main():
     # 獲取當前時間 (CST)
     current_time = datetime.now().astimezone(timezone('Asia/Taipei'))
@@ -202,9 +215,10 @@ def main():
     # 運行回測
     run_backtest()
 
-    # 僅在 daily 模式生成播客腳本
+    # 僅在 daily 模式生成播客腳本並合成語音
     if mode == 'daily':
         generate_podcast_script()
+        synthesize_audio()
 
 if __name__ == '__main__':
     main()
