@@ -76,6 +76,14 @@ jobs:
           B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
 
+      - name: Merge RSS feeds
+        run: python scripts/merge_rss_feeds.py
+        env:
+          RSS_US_PATH: docs/rss/podcast_us.xml
+          RSS_TW_PATH: docs/rss/podcast_tw.xml
+          RSS_OUTPUT_PATH: docs/rss/podcast.xml
+
+    
       - name: Check podcast files
         run: |
           date_str=$(date +%Y%m%d)
