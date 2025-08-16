@@ -1,4 +1,5 @@
 name: Auto Trading 開發版
+
 on:
   schedule:
     # 每小時：週一至週五 台北時間 10:00~23:00
@@ -53,10 +54,10 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install -y jq
 
-      - name: Fetch market data
+      - name: Run pipeline
         run: |
           cd scripts
-          python fetch_market_data.py
+          python run_pipeline.py
 
       - name: Check CSV files
         run: |
@@ -92,11 +93,6 @@ jobs:
 
           echo "MODE=$MODE" | tee -a $GITHUB_ENV
           echo "mode=$MODE" >> $GITHUB_OUTPUT
-
-      - name: Run pipeline (MODE=${{ steps.decide.outputs.mode }})
-        run: |
-          cd scripts
-          python run_pipeline.py
 
       - name: Upload reports and data as artifact
         uses: actions/upload-artifact@v4
