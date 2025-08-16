@@ -32,13 +32,17 @@ def generate_podcast_script():
 
     # 提取最新數據
     try:
-        ts_0050 = daily_df.iloc[-1]
-        ts_0050_prev = daily_df.iloc[-2]
-        ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close']) * 100
-    except:
+        if len(daily_df) >= 2:
+            ts_0050 = daily_df.iloc[-1]
+            ts_0050_prev = daily_df.iloc[-2]
+            ts_0050_pct = ((ts_0050['Close'] - ts_0050_prev['Close']) / ts_0050_prev['Close']) * 100
+        else:
+            ts_0050 = daily_df.iloc[-1] if len(daily_df) > 0 else {'Close': 'N/A', 'Volume': 'N/A'}
+            ts_0050_pct = 'N/A'
+    except Exception as e:
+        logger.warning(f"無法提取 0050.TW 數據: {e}")
         ts_0050 = {'Close': 'N/A', 'Volume': 'N/A'}
         ts_0050_pct = 'N/A'
-        logger.warning("無法提取 0050.TW 數據")
 
     try:
         ts_0050_hourly = hourly_0050_df.iloc[-1]
