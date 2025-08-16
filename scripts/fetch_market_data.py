@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 import os
 import logging
 import glob
+import time
 
 # 設定日誌
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -65,7 +66,8 @@ def fetch_market_data(split_daily=True):
                 if split_daily:
                     filename = f"daily_{symbol.replace('^', '').replace('.TW', '')}.csv"
                     df.to_csv(f'data/{filename}', index=True, encoding='utf-8', mode='w')
-                    logger.info(f"已生成新檔案: {filename}, 形狀: {df.shape}")
+                    logger.info(f"已生成/覆蓋檔案: {filename}, 形狀: {df.shape}")
+                    time.sleep(0.1)  # 短暫延遲以確保檔案時間戳更新
             else:
                 logger.warning(f"{symbol} 未返回日線數據")
         except Exception as e:
@@ -74,7 +76,8 @@ def fetch_market_data(split_daily=True):
     if daily_data:
         daily_df = pd.concat(daily_data)
         daily_df.to_csv('data/daily.csv', index=True, encoding='utf-8', mode='w')
-        logger.info(f"已生成新檔案: daily.csv, 形狀: {daily_df.shape}")
+        logger.info(f"已生成/覆蓋檔案: daily.csv, 形狀: {daily_df.shape}")
+        time.sleep(0.1)  # 確保時間戳更新
     else:
         logger.error("無任何標的日線數據可保存")
 
@@ -94,7 +97,8 @@ def fetch_market_data(split_daily=True):
                 # 保存到個別檔案
                 filename = f"hourly_{symbol.replace('^', '').replace('.TW', '')}.csv"
                 df.to_csv(f'data/{filename}', index=True, encoding='utf-8', mode='w')
-                logger.info(f"已生成新檔案: {filename}, 形狀: {df.shape}")
+                logger.info(f"已生成/覆蓋檔案: {filename}, 形狀: {df.shape}")
+                time.sleep(0.1)  # 確保時間戳更新
             else:
                 logger.warning(f"{symbol} 未返回小時線數據")
         except Exception as e:
