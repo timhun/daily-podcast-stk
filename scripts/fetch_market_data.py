@@ -17,6 +17,7 @@ def clean_data_directory():
     }
     data_dir = 'data'
     os.makedirs(data_dir, exist_ok=True)
+    logger.info("Checking data directory for cleanup...")
     for file in glob.glob(f"{data_dir}/*"):
         if os.path.basename(file) not in expected_files:
             try:
@@ -24,6 +25,7 @@ def clean_data_directory():
                 logger.info(f"Removed irrelevant file: {file}")
             except Exception as e:
                 logger.warning(f"Failed to remove {file}: {e}")
+    logger.info("Data directory cleanup completed")
 
 def fetch_market_data():
     # 清理 data/ 目錄
@@ -35,6 +37,7 @@ def fetch_market_data():
     start_date_daily = end_date - timedelta(days=90)  # 過去3個月
     start_date_hourly = end_date - timedelta(days=7)   # 過去7天
 
+    logger.info("Starting daily data fetch for all symbols")
     # 抓取日線數據
     daily_data = []
     for symbol in symbols:
@@ -61,6 +64,7 @@ def fetch_market_data():
     else:
         logger.error("No daily data to save for any symbol")
 
+    logger.info("Starting hourly data fetch for all symbols")
     # 抓取小時線數據並儲存到個別檔案
     for symbol in symbols:
         logger.info(f"Fetching hourly data for {symbol}")
@@ -82,6 +86,8 @@ def fetch_market_data():
                 logger.warning(f"No hourly data returned for {symbol}")
         except Exception as e:
             logger.error(f"Error fetching hourly data for {symbol}: {e}")
+    
+    logger.info("Market data fetch completed")
 
 if __name__ == '__main__':
     fetch_market_data()
