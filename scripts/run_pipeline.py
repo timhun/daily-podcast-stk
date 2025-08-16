@@ -7,8 +7,9 @@ import traceback
 import time
 from pytz import timezone
 
-# 添加 scripts 目錄到 sys.path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+# 確保 scripts 目錄在 sys.path 中
+script_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, script_dir)  # 插入到列表開頭以優先使用
 from fetch_market_data import fetch_market_data
 from quantity_strategy_0050 import run_backtest
 import logging
@@ -189,17 +190,21 @@ def synthesize_audio():
     output_dir = f"docs/podcast/{date_str}_tw"
     audio_file = os.path.join(output_dir, "audio.mp3")
     script_file = os.path.join(output_dir, "script.txt")
-    # 這裡應調用 synthesize_audio.py 的函數
+    # 這裡應調用 synthesize_audio.py 的函數（例如 from scripts.synthesize_audio import synthesize）
     logger.info(f"✅ 已完成語音合成：{audio_file}")
 
 def upload_to_b2():
-    from scripts.upload_to_b2 import upload_to_b2 as upload_to_b2_func
-    date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
-    output_dir = f"docs/podcast/{date_str}_tw"
-    audio_file = os.path.join(output_dir, "audio.mp3")
-    script_file = os.path.join(output_dir, "script.txt")
-    identifier = f"{os.environ.get('BUCKET_PREFIX', 'podcast')}-{date_str}_tw"
-    upload_to_b2_func(audio_file, script_file, identifier)
+    try:
+        from scripts.upload_to_b2 import upload_to_b2 as upload_to_b2_func
+        date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+        output_dir = f"docs/podcast/{date_str}_tw"
+        audio_file = os.path.join(output_dir, "audio.mp3")
+        script_file = os.path.join(output_dir, "script.txt")
+        identifier = f"{os.environ.get('BUCKET_PREFIX', 'podcast')}-{date_str}_tw"
+        upload_to_b2_func(audio_file, script_file, identifier)
+    except ImportError as e:
+        logger.error(f"導入 upload_to_b2 失敗: {e}")
+        logger.error(traceback.format_exc())
 
 def main():
     # 獲取當前時間 (CST)
