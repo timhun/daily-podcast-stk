@@ -22,19 +22,39 @@ def format_number(value, decimal_places=2):
     
 def generate_podcast_script():
     # 檢查必要檔案是否存在
-    required_files = ['data/daily_0050.csv', 'data/hourly_0050.csv']  # 更新為實際生成的檔案
+    required_files = ['data/daily_0050.csv', 'data/hourly_0050.csv']
     for file in required_files:
         if not os.path.exists(file):
             logger.error(f"缺少 {file}，無法生成播客腳本")
             return
 
-    # 讀取市場數據
+    # 讀取市場數據 - 移除 dtype 規範以避免轉換錯誤
     try:
-        daily_df = pd.read_csv('data/daily_0050.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float, 'Symbol': str})
-        hourly_0050_df = pd.read_csv('data/hourly_0050.csv', parse_dates=['Date'], dtype={'Open': float, 'High': float, 'Low': float, 'Close': float, 'Adj Close': float, 'Volume': float, 'Symbol': str})
+        daily_df = pd.read_csv('data/daily_0050.csv')
+        hourly_0050_df = pd.read_csv('data/hourly_0050.csv')
+        
+        # 轉換日期欄位
+        daily_df['Date'] = pd.to_datetime(daily_df['Date'])
+        hourly_0050_df['Date'] = pd.to_datetime(hourly_0050_df['Date'])
+        
+        # 確保數值欄位為正確型態
+        numeric_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
+        for col in numeric_columns:
+            if col in daily_df.columns:
+                daily_df[col] = pd.to_numeric(daily_df[col], errors='coerce')
+            if col in hourly_0050_df.columns:
+                hourly_0050_df[col] = pd.to_numeric(hourly_0050_df[col], errors='coerce')
+        
+        # 確保數據不為空
+        if daily_df.empty or hourly_0050_df.empty:
+            logger.error("市場數據為空，無法生成播客腳本")
+            return
+            
     except Exception as e:
         logger.error(f"讀取市場數據失敗: {e}")
+        logger.error(traceback.format_exc())
         return
+
 
     # 提取最新數據
     try:
