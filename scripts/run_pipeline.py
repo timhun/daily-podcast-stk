@@ -23,7 +23,7 @@ def format_number(value, decimal_places=2):
         return f"{value:.{decimal_places}f}"
     return 'N/A'
 
-def generate_podcast_script():
+def generate_podcast_script(date_str=None):
     # 檢查必要檔案是否存在
     required_files = ['data/daily_0050.csv', 'data/hourly_0050.csv']
     for file in required_files:
@@ -144,12 +144,12 @@ def generate_podcast_script():
         )
 
         # 根據日期生成目錄和檔案
-        date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+        date_str = date_str or datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
         output_dir = f"docs/podcast/{date_str}_tw"
         os.makedirs(output_dir, exist_ok=True)
         output_file = os.path.join(output_dir, "script.txt")
 
-        # 儲存播報
+        # 儲存播報，覆蓋現有檔案
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(prompt)
         logger.info(f"播客腳本已保存至 {output_file}")
@@ -161,9 +161,10 @@ def main():
     # 獲取當前時間 (CST)
     current_time = datetime.now().astimezone(timezone('Asia/Taipei'))
     mode = os.environ.get('MODE', 'auto')
-    logger.info(f"以 {mode} 模式運行，當前時間: {current_time.strftime('%Y-%m-%d %H:%M:%S CST')}")
+    is_manual = os.environ.get('MANUAL_TRIGGER', '0') == '1' or mode == 'manual'
+    logger.info(f"以 {mode} 模式運行，當前時間: {current_time.strftime('%Y-%m-%d %H:%M:%S CST')}, 手動觸發: {is_manual}")
 
-    if mode not in ['hourly', 'daily', 'weekly', 'auto']:
+    if mode not in ['hourly', 'daily', 'weekly', 'auto', 'manual']:
         logger.error(f"無效的 MODE: {mode}, 使用預設 auto")
         mode = 'auto'
 
@@ -171,13 +172,18 @@ def main():
     if mode == 'auto':
         # 每天 16:00 CST 生成文字稿，其餘時間每小時回測
         if current_time.hour == 16 and 0 <= current_time.minute < 5:
-            mode = 'daily'  # 每天 16:00 生成文字稿
+            mode = 'daily'
             os.environ['INTERVAL'] = '1d'
             os.environ['DAYS'] = '90'
         else:
-            mode = 'hourly'  # 每小時回測
+            mode = 'hourly'
             os.environ['INTERVAL'] = '1h'
             os.environ['DAYS'] = '7'
+    elif is_manual:
+        # 手動觸發時強制生成當日文字稿
+        mode = 'daily'
+        os.environ['INTERVAL'] = '1d'
+        os.environ['DAYS'] = '90'
 
     # 根據模式調整數據範圍
     if mode == 'hourly':
