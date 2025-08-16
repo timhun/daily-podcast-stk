@@ -5,6 +5,7 @@ import pandas as pd
 from datetime import datetime
 import traceback
 import time
+from pytz import timezone
 
 # 添加 scripts 目錄到 sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -131,7 +132,7 @@ def generate_podcast_script():
             prompt = f.read()
 
         prompt = prompt.format(
-            current_date=datetime.now().strftime('%Y-%m-%d'),
+            current_date=datetime.now(timezone('Asia/Taipei')).strftime('%Y-%m-%d'),
             market_data=market_data,
             SIG=daily_sim.get('signal', 'N/A'),
             PRICE=daily_sim.get('price', 'N/A'),
@@ -142,11 +143,16 @@ def generate_podcast_script():
             LATEST_HISTORY=history
         )
 
+        # 根據日期生成目錄和檔案
+        date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+        output_dir = f"docs/podcast/{date_str}_tw"
+        os.makedirs(output_dir, exist_ok=True)
+        output_file = os.path.join(output_dir, "script.txt")
+
         # 儲存播報
-        os.makedirs('data', exist_ok=True)
-        with open('data/podcast_script.txt', 'w', encoding='utf-8') as f:
+        with open(output_file, 'w', encoding='utf-8') as f:
             f.write(prompt)
-        logger.info("播客腳本已保存至 data/podcast_script.txt")
+        logger.info(f"播客腳本已保存至 {output_file}")
     except Exception as e:
         logger.error(f"生成播客腳本失敗: {e}")
         logger.error(traceback.format_exc())
@@ -169,4 +175,30 @@ def main():
             os.environ['INTERVAL'] = '1d'
             os.environ['DAYS'] = '90'
         else:
-            mode
+            mode = 'hourly'  # 每小時回測
+            os.environ['INTERVAL'] = '1h'
+            os.environ['DAYS'] = '7'
+
+    # 根據模式調整數據範圍
+    if mode == 'hourly':
+        os.environ['INTERVAL'] = '1h'
+        os.environ['DAYS'] = '7'
+    elif mode == 'daily':
+        os.environ['INTERVAL'] = '1d'
+        os.environ['DAYS'] = '90'
+    elif mode == 'weekly':
+        os.environ['INTERVAL'] = '1wk'
+        os.environ['DAYS'] = '365'
+
+    # 抓取市場數據
+    fetch_market_data()
+
+    # 運行回測
+    run_backtest()
+
+    # 僅在 daily 模式生成播客腳本
+    if mode == 'daily':
+        generate_podcast_script()
+
+if __name__ == '__main__':
+    main()
