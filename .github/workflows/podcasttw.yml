@@ -64,7 +64,7 @@ jobs:
           ls -l data/ || echo "Data directory not found"
           for file in daily.csv daily_TWII.csv daily_0050.csv daily_2330.csv hourly_0050.csv hourly_TWII.csv hourly_2330.csv; do
             if [ -f data/$file ]; then
-              echo "$file exists"
+              echo "$file exists, last modified: $(stat -c '%y' data/$file)"
             else
               echo "$file not found"
             fi
