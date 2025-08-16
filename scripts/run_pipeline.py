@@ -4,6 +4,7 @@ import json
 import pandas as pd
 from datetime import datetime
 import traceback
+import time
 
 # 添加 scripts 目錄到 sys.path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -151,35 +152,21 @@ def generate_podcast_script():
         logger.error(traceback.format_exc())
 
 def main():
+    # 獲取當前時間 (CST)
+    current_time = datetime.now().astimezone(timezone('Asia/Taipei'))
     mode = os.environ.get('MODE', 'auto')
-    logger.info(f"以 {mode} 模式運行")
-    
+    logger.info(f"以 {mode} 模式運行，當前時間: {current_time.strftime('%Y-%m-%d %H:%M:%S CST')}")
+
     if mode not in ['hourly', 'daily', 'weekly', 'auto']:
         logger.error(f"無效的 MODE: {mode}, 使用預設 auto")
         mode = 'auto'
 
-    # 根據模式調整數據範圍
-    if mode == 'hourly':
-        os.environ['INTERVAL'] = '1h'
-        os.environ['DAYS'] = '7'
-    elif mode == 'daily':
-        os.environ['INTERVAL'] = '1d'
-        os.environ['DAYS'] = '90'
-    elif mode == 'weekly':
-        os.environ['INTERVAL'] = '1wk'
-        os.environ['DAYS'] = '365'
-    else:  # auto
-        os.environ['INTERVAL'] = '1h'  # 預設小時線
-        os.environ['DAYS'] = '7'
-
-    # 抓取市場數據
-    fetch_market_data()
-
-    # 運行回測
-    run_backtest()
-
-    # 生成播報腳本
-    generate_podcast_script()
-
-if __name__ == '__main__':
-    main()
+    # 根據模式和時間觸發任務
+    if mode == 'auto':
+        # 每天 16:00 CST 生成文字稿，其餘時間每小時回測
+        if current_time.hour == 16 and 0 <= current_time.minute < 5:
+            mode = 'daily'  # 每天 16:00 生成文字稿
+            os.environ['INTERVAL'] = '1d'
+            os.environ['DAYS'] = '90'
+        else:
+            mode
