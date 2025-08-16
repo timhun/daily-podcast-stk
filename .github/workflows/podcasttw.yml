@@ -51,8 +51,7 @@ jobs:
 
       - name: Run pipeline
         run: |
-          cd scripts
-          python run_pipeline.py
+          scripts/python run_pipeline.py
 
       - name: Check CSV files
         run: |
