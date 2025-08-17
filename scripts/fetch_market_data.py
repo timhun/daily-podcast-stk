@@ -13,7 +13,7 @@ def clean_data_directory():
     """移除 data/ 目錄中的無關檔案，保留預期輸出"""
     expected_files = {
         'daily.csv', 'daily_0050.TW.csv', 'daily_QQQ.csv', 'daily_^TWII.csv', 'daily_BTC-USD.csv',
-        'daily_DJI.csv', 'daily_GC=F.csv', 'daily_GSPC.csv', 'daily_IXIC.csv', 'daily_SPY.csv',
+        'daily_^DJI.csv', 'daily_GC=F.csv', 'daily_^GSPC.csv', 'daily_^IXIC.csv', 'daily_SPY.csv',
         'hourly_0050.TW.csv', 'hourly_QQQ.csv',
         'daily_sim_0050.TW.json', 'daily_sim_QQQ.json',
         'backtest_report_0050.TW.json', 'backtest_report_QQQ.json',
