@@ -31,6 +31,8 @@ def generate_podcast_script(date_str=None, mode='tw'):
 
     # 檢查必要檔案是否存在
     required_files = [f'data/daily_{symbol}.csv', f'data/hourly_{symbol}.csv']
+    podcast_symbols = ['^TWII', 'BTC-USD', 'DJI', 'GC=F', 'GSPC', 'IXIC', 'SPY']
+    required_files.extend([f'data/daily_{s}.csv' for s in podcast_symbols])
     for file in required_files:
         if not os.path.exists(file):
             logger.error(f"缺少 {file}，無法生成播客腳本")
@@ -40,6 +42,18 @@ def generate_podcast_script(date_str=None, mode='tw'):
     try:
         daily_df = pd.read_csv(f'data/daily_{symbol}.csv')
         hourly_df = pd.read_csv(f'data/hourly_{symbol}.csv')
+
+        # 讀取 podcast 相關數據
+        podcast_data = {}
+        for s in podcast_symbols:
+            df = pd.read_csv(f'data/daily_{s}.csv')
+            if len(df) >= 2:
+                ts = df.iloc[-1]
+                ts_prev = df.iloc[-2]
+                pct = ((ts['Close'] - ts_prev['Close']) / ts_prev['Close'] * 100) if not pd.isna(ts_prev['Close']) else 'N/A'
+                podcast_data[s] = {'Close': ts['Close'], 'pct': pct}
+            else:
+                podcast_data[s] = {'Close': 'N/A', 'pct': 'N/A'}
 
         # 轉換日期欄位，處理缺失情況
         if 'Date' not in daily_df.columns:
@@ -91,8 +105,15 @@ def generate_podcast_script(date_str=None, mode='tw'):
         logger.warning(f"無法提取 {symbol} 小時線數據: {e}")
         ts_hourly = pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
 
-    # 假設外資期貨數據（美股使用不同的假設數據）
-    futures_net = "淨多 12,345 口，較前日增加 500 口（假設數據）" if mode == 'us' else "淨空 34,207 口，較前日減少 172 口（假設數據）"
+    # 格式化市場數據，移除外資期貨假設數據
+    market_data = f"""
+- {symbol}: 收盤 {format_number(ts.get('Close'))} 元，漲跌 {format_number(ts_pct)}%，成交量 {format_number(ts.get('Volume'), 0)} 股
+- {symbol} 小時線: 最新價格 {format_number(ts_hourly.get('Close'))} 元，成交量 {format_number(ts_hourly.get('Volume'), 0)} 股
+"""
+    # 添加 podcast 相關數據
+    for s in podcast_symbols:
+        data = podcast_data[s]
+        market_data += f"\n- {s}: 收盤 {format_number(data['Close'])}, 漲跌 {format_number(data['pct'])}%"
 
     # 讀取量價策略輸出
     sim_file = f'data/daily_sim_{symbol}.json'
@@ -120,13 +141,6 @@ def generate_podcast_script(date_str=None, mode='tw'):
     except Exception as e:
         logger.warning(f"無法讀取 strategy_history_{symbol}.json: {e}")
         history = "無歷史記錄"
-
-    # 格式化市場數據
-    market_data = f"""
-    - {symbol}: 收盤 {format_number(ts.get('Close'))} 元，漲跌 {format_number(ts_pct)}%，成交量 {format_number(ts.get('Volume'), 0)} 股
-    - {symbol} 小時線: 最新價格 {format_number(ts_hourly.get('Close'))} 元，成交量 {format_number(ts_hourly.get('Volume'), 0)} 股
-    - 外資期貨未平倉水位: {futures_net}
-    """
 
     # 讀取 prompt 並生成播報
     try:
