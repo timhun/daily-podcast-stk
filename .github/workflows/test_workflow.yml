@@ -14,7 +14,7 @@ on:
       simulate_time:
         description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '19:29'  # 當前時間約 19:29 CST
+        default: '19:35'  # 當前時間約 19:35 CST
 
 jobs:
   data-collection:
@@ -68,6 +68,7 @@ EOF
             exit 1
           fi
           echo "✅ 執行完成，檢查檔案: ls -la data/"
+        continue-on-error: false
       - name: Check Output
         working-directory: repo
         run: |
