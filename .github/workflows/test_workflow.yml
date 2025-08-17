@@ -1,80 +1,80 @@
 name: Test Data Collection Workflow
 
 on:
-workflow_dispatch:
-  inputs:
-    podcast_mode:
-      description: '播客模式 (tw/us)'
-      required: true
-      default: 'tw'
-      type: choice
-      options:
-        - tw
-        - us
-    simulate_time:
-      description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
-      required: false
-      default: '19:42'  # 當前時間約 19:42 CST
+  workflow_dispatch:
+    inputs:
+      podcast_mode:
+        description: '播客模式 (tw/us)'
+        required: true
+        default: 'tw'
+        type: choice
+        options:
+          - tw
+          - us
+      simulate_time:
+        description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
+        required: false
+        default: '19:55'  # 當前時間約 19:55 CST
 
 jobs:
-data-collection:
-  runs-on: ubuntu-latest
-  steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
-      with:
-        path: repo
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-    - name: Install Dependencies
-      working-directory: repo
-      run: |
-        pip install pandas
-    - name: Run Data Collector
-      working-directory: repo
-      run: |
-        echo "📥 開始執行資料收集員 - 模式: ${{ inputs.podcast_mode }}"
-        mkdir -p data logs
-        if [ ! -f "scripts/data_collector.py" ]; then
-          echo "⚠️ 創建模擬腳本"
-          cat > scripts/data_collector.py << 'EOF'
-      import os
-      import pandas as pd
-      from datetime import datetime
+  data-collection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: repo
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install Dependencies
+        working-directory: repo
+        run: |
+          pip install pandas
+      - name: Run Data Collector
+        working-directory: repo
+        run: |
+          echo "📥 開始執行資料收集員 - 模式: ${{ inputs.podcast_mode }}"
+          mkdir -p data logs
+          if [ ! -f "scripts/data_collector.py" ]; then
+            echo "⚠️ 創建模擬腳本"
+            cat > scripts/data_collector.py << 'EOF'
+import os
+import pandas as pd
+from datetime import datetime
 
 def main():
-  mode = os.getenv('PODCAST_MODE', '${{ inputs.podcast_mode }}')
-  print(f"數據收集開始 - 模式: {mode}")
-  data_dir = "data"
-  os.makedirs(data_dir, exist_ok=True)
-  dates = pd.date_range('2024-01-01', periods=10, freq='D')
-  prices = 100 + (pd.Series(range(10)) * 0.1)
-  df = pd.DataFrame({'Date': dates, 'Close': prices})
-  filename = f"{data_dir}/daily_{mode}.csv"
-  df.to_csv(filename, index=False)
-  print(f"✅ 數據已保存到: {filename}")
-  with open("logs/data_collector.log", "w") as f:
-      f.write(f"{datetime.now()}: Data collection completed\n")
+    mode = os.getenv('PODCAST_MODE', '${{ inputs.podcast_mode }}')
+    print(f"數據收集開始 - 模式: {mode}")
+    data_dir = "data"
+    os.makedirs(data_dir, exist_ok=True)
+    dates = pd.date_range('2024-01-01', periods=10, freq='D')
+    prices = 100 + (pd.Series(range(10)) * 0.1)
+    df = pd.DataFrame({'Date': dates, 'Close': prices})
+    filename = f"{data_dir}/daily_{mode}.csv"
+    df.to_csv(filename, index=False)
+    print(f"✅ 數據已保存到: {filename}")
+    with open("logs/data_collector.log", "w") as f:
+        f.write(f"{datetime.now()}: Data collection completed\n")
 
 if __name__ == "__main__":
-  main()
+    main()
 EOF
-        fi
-        python scripts/data_collector.py
-        if [ $? -ne 0 ]; then
-          echo "❌ 執行失敗"
-          exit 1
-        fi
-        echo "✅ 執行完成，檢查檔案: ls -la data/"
-      continue-on-error: false
-    - name: Check Output
-      working-directory: repo
-      run: |
-        if [ -f "data/daily_${{ inputs.podcast_mode }}.csv" ]; then
-          echo "✅ 數據文件生成成功"
-        else
-          echo "❌ 數據文件未生成"
-          exit 1
-        fi
+          fi
+          python scripts/data_collector.py
+          if [ $? -ne 0 ]; then
+            echo "❌ 執行失敗"
+            exit 1
+          fi
+          echo "✅ 執行完成，檢查檔案: ls -la data/"
+        continue-on-error: false
+      - name: Check Output
+        working-directory: repo
+        run: |
+          if [ -f "data/daily_${{ inputs.podcast_mode }}.csv" ]; then
+            echo "✅ 數據文件生成成功"
+          else
+            echo "❌ 數據文件未生成"
+            exit 1
+          fi
