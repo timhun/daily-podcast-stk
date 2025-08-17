@@ -42,38 +42,38 @@ jobs:
           echo "Starting data collection"
           if [ ! -f "scripts/data_collector.py" ]; then
             cat > scripts/data_collector.py << 'EOF'
-          import os
-          import pandas as pd
-          from datetime import datetime
-          
-          def main():
-              mode = os.getenv('PODCAST_MODE', 'tw')
-              simulate_time = os.getenv('SIMULATE_TIME', '20:02')
-              
-              print(f"Mode: {mode}, Time: {simulate_time}")
-              
-              os.makedirs("data", exist_ok=True)
-              
-              dates = pd.date_range('2024-01-01', periods=10, freq='D')
-              prices = [100 + i * 0.1 for i in range(10)]
-              df = pd.DataFrame({
-                  'Date': dates, 
-                  'Close': prices,
-                  'Mode': mode,
-                  'SimulateTime': simulate_time
-              })
-              
-              filename = f"data/daily_{mode}.csv"
-              df.to_csv(filename, index=False)
-              print(f"Data saved to: {filename}")
-              
-              os.makedirs("logs", exist_ok=True)
-              with open("logs/data_collector.log", "w") as f:
-                  f.write(f"{datetime.now()}: Completed for {mode}\n")
-          
-          if __name__ == "__main__":
-              main()
-          EOF
+import os
+import pandas as pd
+from datetime import datetime
+
+def main():
+    mode = os.getenv('PODCAST_MODE', 'tw')
+    simulate_time = os.getenv('SIMULATE_TIME', '20:02')
+
+    print(f"Mode: {mode}, Time: {simulate_time}")
+
+    os.makedirs("data", exist_ok=True)
+
+    dates = pd.date_range('2024-01-01', periods=10, freq='D')
+    prices = [100 + i * 0.1 for i in range(10)]
+    df = pd.DataFrame({
+        'Date': dates, 
+        'Close': prices,
+        'Mode': mode,
+        'SimulateTime': simulate_time
+    })
+
+    filename = f"data/daily_{mode}.csv"
+    df.to_csv(filename, index=False)
+    print(f"Data saved to: {filename}")
+
+    os.makedirs("logs", exist_ok=True)
+    with open("logs/data_collector.log", "w") as f:
+        f.write(f"{datetime.now()}: Completed for {mode}\n")
+
+if __name__ == "__main__":
+    main()
+EOF
           fi
           python scripts/data_collector.py
 
