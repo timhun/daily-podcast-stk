@@ -20,7 +20,7 @@ on:
       simulate_time:
         description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '15:58'  # 當前時間約 15:58 CST
+        default: '16:08'  # 當前時間約 16:08 CST
 
 # 定義作業環境
 jobs:
@@ -36,9 +36,10 @@ jobs:
         run: |
           echo "📋 驗證倉庫結構"
           pwd  # 顯示當前工作目錄
-          ls -la
-          if [ ! -d "scripts" ]; then echo "❌ 缺少 scripts 目錄"; exit 1; fi
-          if [ ! -f "config.json" ]; then echo "❌ 缺少 config.json"; exit 1; fi
+          ls -la  # 列出所有檔案和目錄
+          if [ ! -d "scripts" ]; then echo "❌ 缺少 scripts 目錄，確認倉庫是否正確推送"; exit 1; fi
+          if [ ! -f "config.json" ]; then echo "❌ 缺少 config.json，確認倉庫是否正確推送"; exit 1; fi
+          ls -la scripts/  # 檢查 scripts 目錄內容
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
