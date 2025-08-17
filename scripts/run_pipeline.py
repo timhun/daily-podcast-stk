@@ -31,7 +31,7 @@ def generate_podcast_script(date_str=None, mode='tw'):
 
     # 檢查必要檔案是否存在
     required_files = [f'data/daily_{symbol}.csv', f'data/hourly_{symbol}.csv']
-    podcast_symbols = ['^TWII', 'BTC-USD', 'DJI', 'GC=F', 'GSPC', 'IXIC', 'SPY']
+    podcast_symbols = ['^TWII', 'BTC-USD', '^DJI', 'GC=F', '^GSPC', '^IXIC', 'SPY']
     required_files.extend([f'data/daily_{s}.csv' for s in podcast_symbols])
     for file in required_files:
         if not os.path.exists(file):
