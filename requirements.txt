@@ -25,4 +25,6 @@ groq
 slack_sdk
 jinja2
 jq
+scikit-learn
+tensorflow
 
