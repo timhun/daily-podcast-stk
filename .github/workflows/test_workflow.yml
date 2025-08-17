@@ -20,7 +20,7 @@ on:
       simulate_time:
         description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '16:08'  # 當前時間約 16:08 CST
+        default: '17:49'  # 當前時間約 17:49 CST
 
 # 定義作業環境
 jobs:
@@ -30,9 +30,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          path: ./repo  # 明確指定單一目錄，避免重複
+          path: repo  # 直接使用 repo 作為單一目錄
       - name: Verify Repository Structure
-        working-directory: ./repo
+        working-directory: repo
         run: |
           echo "📋 驗證倉庫結構"
           pwd  # 顯示當前工作目錄
@@ -45,12 +45,12 @@ jobs:
         with:
           python-version: '3.9'
       - name: Install Dependencies
-        working-directory: ./repo
+        working-directory: repo
         run: |
           echo "📦 安裝依賴"
           pip install yfinance pandas backtrader numpy scikit-learn tensorflow requests feedparser edge-tts b2sdk
       - name: Set Environment Variables
-        working-directory: ./repo
+        working-directory: repo
         run: |
           echo "🔑 設定環境變數"
           # 根據模擬時間設置 PODCAST_MODE
@@ -79,7 +79,7 @@ jobs:
     needs: setup
     steps:
       - name: Run Data Collector
-        working-directory: ./repo
+        working-directory: repo
         run: |
           echo "📥 開始執行資料收集員 (Data Collector) - 模式: $PODCAST_MODE"
           pwd  # 顯示當前工作目錄
@@ -97,7 +97,7 @@ jobs:
     needs: data-collection
     steps:
       - name: Run Strategy Manager
-        working-directory: ./repo
+        working-directory: repo
         run: |
           echo "🤖 開始執行策略管理師 (Strategy Manager) - 模式: $PODCAST_MODE"
           pwd  # 顯示當前工作目錄
@@ -115,7 +115,7 @@ jobs:
     needs: strategy-management
     steps:
       - name: Run Market Analyst
-        working-directory: ./repo
+        working-directory: repo
         run: |
           echo "📊 開始執行市場分析師 (Market Analyst) - 模式: $PODCAST_MODE"
           pwd  # 顯示當前工作目錄
@@ -133,7 +133,7 @@ jobs:
     needs: market-analysis
     steps:
       - name: Run Script Editor
-        working-directory: ./repo
+        working-directory: repo
         run: |
           echo "✍️ 開始執行文字編輯師 (Script Editor) - 模式: $PODCAST_MODE"
           pwd  # 顯示當前工作目錄
@@ -153,7 +153,7 @@ jobs:
     needs: script-editing
     steps:
       - name: Run Podcast Producer
-        working-directory: ./repo
+        working-directory: repo
         run: |
           echo "🎙️ 開始執行播報員 (Podcast Producer) - 模式: $PODCAST_MODE"
           pwd  # 顯示當前工作目錄
@@ -171,7 +171,7 @@ jobs:
     needs: podcast-production
     steps:
       - name: Run Upload Manager
-        working-directory: ./repo
+        working-directory: repo
         run: |
           echo "☁️ 開始執行雲端上傳員 (Upload Manager) - 模式: $PODCAST_MODE"
           pwd  # 顯示當前工作目錄
@@ -193,7 +193,7 @@ jobs:
     needs: upload-management
     steps:
       - name: Run Feed Publisher
-        working-directory: ./repo
+        working-directory: repo
         run: |
           echo "📡 開始執行推播員 (Feed Publisher) - 模式: $PODCAST_MODE"
           pwd  # 顯示當前工作目錄
@@ -216,9 +216,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          path: ./repo  # 確保檢查到根目錄
+          path: repo  # 確保檢查到根目錄
       - name: Check Podcast Files
-        working-directory: ./repo
+        working-directory: repo
         run: |
           date_str=$(date +%Y%m%d)
           for mode in tw us; do
@@ -238,7 +238,7 @@ jobs:
             fi
           done
       - name: Commit and Push Changes
-        working-directory: ./repo
+        working-directory: repo
         run: |
           git config --global user.name "GitHub Action"
           git config --global user.email "action@github.com"
@@ -270,15 +270,15 @@ jobs:
         with:
           name: podcast-reports-${{ github.run_id }}
           path: |
-            ./repo/docs/podcast/*/*_tw/script.txt
-            ./repo/docs/podcast/*/*_tw/audio.mp3
-            ./repo/docs/podcast/*/*_tw/archive_audio_url.txt
-            ./repo/docs/podcast/*/*_us/script.txt
-            ./repo/docs/podcast/*/*_us/audio.mp3
-            ./repo/docs/podcast/*/*_us/archive_audio_url.txt
-            ./repo/docs/rss/podcast_tw.xml
-            ./repo/docs/rss/podcast_us.xml
-            ./repo/docs/rss/podcast.xml
+            repo/docs/podcast/*/*_tw/script.txt
+            repo/docs/podcast/*/*_tw/audio.mp3
+            repo/docs/podcast/*/*_tw/archive_audio_url.txt
+            repo/docs/podcast/*/*_us/script.txt
+            repo/docs/podcast/*/*_us/audio.mp3
+            repo/docs/podcast/*/*_us/archive_audio_url.txt
+            repo/docs/rss/podcast_tw.xml
+            repo/docs/rss/podcast_us.xml
+            repo/docs/rss/podcast.xml
           if-no-files-found: warn
           compression-level: 6
           overwrite: false
