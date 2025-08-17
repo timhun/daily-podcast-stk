@@ -52,7 +52,7 @@ def fetch_market_data():
     symbols = {
         'tw': ['0050.TW'],
         'us': ['QQQ'],
-        'podcast': ['^TWII', 'BTC-USD', 'DJI', 'GC=F', 'GSPC', 'IXIC', 'SPY','TSM','2330.TW']
+        'podcast': ['^TWII', 'BTC-USD', '^DJI', 'GC=F', '^GSPC', '^IXIC', 'SPY','TSM','2330.TW']
     }
 
     # 根據模式選擇符號
