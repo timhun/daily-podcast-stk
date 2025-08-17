@@ -1,61 +1,77 @@
-# scripts/run_pipeline.py
 import os
+import sys
+import json
 import logging
-from datetime import datetime
-from .data_collector import collect_from_config
-from .strategy_manager import run_pk
-from .script_editor import generate_script
-from .podcast_producer import synthesize
-from .upload_manager import upload_and_prune
-from .feed_publisher import publish
-from .market_analyst import build_market_summary
+import datetime
+import pandas as pd
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
-logger = logging.getLogger("runner")
+from strategy_manager import load_market_data, save_strategy, normalize_symbol
+
+# ===== Logging =====
+logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)]
+)
+
+# ===== Config =====
+CONFIG_PATH = "config.json"
+
+def load_config():
+    if not os.path.exists(CONFIG_PATH):
+        logger.error(f"⚠️ 找不到 {CONFIG_PATH}")
+        sys.exit(1)
+    with open(CONFIG_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def generate_podcast_script(symbol: str, mode: str = "hourly"):
+    """
+    根據行情生成逐字稿 (示範: 只寫 summary，不做完整 NLP)
+    """
+    df = load_market_data(symbol, use_hourly=(mode == "hourly"))
+    if df is None or df.empty:
+        logger.error(f"{symbol} 無法生成逐字稿，缺少數據")
+        return None
+
+    latest = df.iloc[-1]
+    prev = df.iloc[-2] if len(df) > 1 else None
+
+    close = latest.get("Close", None)
+    pct = "N/A"
+    if prev is not None and "Close" in prev and pd.notna(prev["Close"]):
+        try:
+            pct = ((float(close) - float(prev["Close"])) / float(prev["Close"]) * 100)
+            pct = round(pct, 2)
+        except Exception as e:
+            logger.error(f"計算漲跌幅失敗: {e}")
+
+    script = f"{symbol} 最新收盤 {close}, 漲跌 {pct}%"
+    logger.info(f"已生成逐字稿: {script}")
+    return script
 
 def main():
-    mode = os.getenv("MODE", "hourly")  # 你的需求：手動執行就跑 hourly
-    symbol = os.getenv("SYMBOL", "0050.TW")
-    benchmark_map = {"0050.TW": "^TWII", "QQQ": "^NDX"}
-    benchmark = benchmark_map.get(symbol)
+    config = load_config()
+    symbols = config.get("symbols", [])
+    podcast_mode = os.environ.get("PODCAST_MODE", "tw")
 
-    logger.info(f"以 {mode} 模式執行，symbol={symbol}")
+    now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    logger.info(f"🚀 Pipeline 開始: {now}, 模式={podcast_mode}")
 
-    if mode in ("collector","auto_collector"):
-        collect_from_config()
-        return
+    mode = os.environ.get("MODE", "hourly")
 
-    if mode in ("strategy","hourly","auto_strategy"):
-        # 假設小時線 PK
-        run_pk(symbol, benchmark=benchmark, use_hourly=True)
+    for sym in symbols:
+        script = generate_podcast_script(sym, mode=mode)
+        if script:
+            norm_sym = normalize_symbol(sym)
+            out_dir = f"docs/podcast/{datetime.date.today().strftime('%Y%m%d')}_{podcast_mode}"
+            os.makedirs(out_dir, exist_ok=True)
+            out_path = f"{out_dir}/script_{norm_sym}.txt"
+            with open(out_path, "w", encoding="utf-8") as f:
+                f.write(script)
+            logger.info(f"已寫入逐字稿 {out_path}")
 
-    if mode in ("editor","hourly","auto_editor"):
-        strat_json = os.path.join("data", f"strategy_best_{symbol.replace('^','INDEX_')}.json")
-        script_path = generate_script("tw" if symbol.endswith(".TW") else "us", symbol, strat_json)
-    else:
-        script_path = ""
-
-    if mode in ("producer","hourly","auto_producer"):
-        if script_path:
-            audio_path = synthesize(script_path)  # 產出 wav（stub）
-        else:
-            audio_path = ""
-    else:
-        audio_path = ""
-
-    if mode in ("uploader","hourly","auto_uploader"):
-        if script_path:
-            out_dir = os.path.dirname(script_path)
-            link = upload_and_prune(out_dir, hours_gate=True)
-        else:
-            link = ""
-    else:
-        link = ""
-
-    if mode in ("publisher","hourly","auto_publisher"):
-        if script_path:
-            publish("tw" if symbol.endswith(".TW") else "us", script_path, link or "")
-    logger.info("pipeline 完成")
+    logger.info("✅ Pipeline 完成")
 
 if __name__ == "__main__":
     main()
