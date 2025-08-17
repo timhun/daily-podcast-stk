@@ -38,8 +38,14 @@ jobs:
 
       - name: Install deps
         run: |
-          pip install --upgrade pip
-          pip install yfinance pandas numpy scikit-learn feedparser
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          else
+            pip install yfinance pandas numpy scikit-learn feedparser mutagen
+          fi
+          echo "==== 已安裝套件 ===="
+          pip list | grep mutagen || echo "⚠️ mutagen 沒有安裝成功！"
 
       - name: Decide MODE
         id: decide
@@ -50,17 +56,14 @@ jobs:
           DOW_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%u)
           echo "now_utc=$NOW_UTC hour_local=$HOUR_LOCAL min=$MIN_LOCAL dow=$DOW_LOCAL"
 
-          # 手動觸發：固定跑 hourly（你之前的要求）
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             MODE="hourly"
           else
-            # Collector 檔位
             if { [ "$HOUR_LOCAL" = "05" ] && [ "$MIN_LOCAL" = "00" ]; } || \
                { [ "$HOUR_LOCAL" = "13" ] && [ "$MIN_LOCAL" = "45" ]; } || \
                { [ "$HOUR_LOCAL" = "18" ] && [ "$MIN_LOCAL" = "00" ]; } || \
                { [ "$HOUR_LOCAL" = "22" ] && [ "$MIN_LOCAL" = "00" ]; }; then
               MODE="collector"
-            # Editor/Producer/Uploader/Publisher 檔位 (06:00 / 14:00)
             elif { [ "$HOUR_LOCAL" = "06" ] || [ "$HOUR_LOCAL" = "14" ]; } && [ "$MIN_LOCAL" = "00" ]; then
               MODE="publisher"
             else
@@ -92,7 +95,6 @@ jobs:
           elif mode == "strategy" or mode == "hourly":
               run_pk(symbol, benchmark=bench, use_hourly=True)
           elif mode == "publisher":
-              # 走一條龍：策略（確保最新）-> 稿 -> 音檔 -> 上傳 -> RSS
               run_pk(symbol, benchmark=bench, use_hourly=True)
               strat_json = f"data/strategy_best_{symbol.replace('^','INDEX_')}.json"
               sp = generate_script("tw" if symbol.endswith(".TW") else "us", symbol, strat_json)
