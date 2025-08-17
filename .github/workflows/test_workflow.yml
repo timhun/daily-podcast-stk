@@ -16,15 +16,28 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+        with:
+          path: ./  # 確保檢查到根目錄，避免重複倉庫名稱
+      - name: Verify Repository Structure
+        run: |
+          cd ./  # 切換到根目錄
+          echo "📋 驗證倉庫結構"
+          ls -la
+          if [ ! -d "scripts" ]; then echo "❌ 缺少 scripts 目錄"; exit 1; fi
+          if [ ! -f "config.json" ]; then echo "❌ 缺少 config.json"; exit 1; fi
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
       - name: Install Dependencies
         run: |
+          cd ./  # 切換到根目錄
+          echo "📦 安裝依賴"
           pip install yfinance pandas backtrader numpy scikit-learn tensorflow requests feedparser edge-tts b2sdk
       - name: Set Environment Variables
         run: |
+          cd ./  # 切換到根目錄
+          echo "🔑 設定環境變數"
           echo "GROK_API_KEY=${{ secrets.GROK_API_KEY }}" >> $GITHUB_ENV
           echo "B2_KEY_ID=${{ secrets.B2_KEY_ID }}" >> $GITHUB_ENV
           echo "B2_APPLICATION_KEY=${{ secrets.B2_APPLICATION_KEY }}" >> $GITHUB_ENV
@@ -37,13 +50,14 @@ jobs:
     steps:
       - name: Run Data Collector
         run: |
+          cd ./  # 切換到根目錄
           echo "📥 開始執行資料收集員 (Data Collector)"
           python scripts/data_collector.py
           if [ $? -ne 0 ]; then
-            echo "❌ 資料收集員執行失敗，請檢查日誌"
+            echo "❌ 資料收集員執行失敗，請檢查日誌: cat logs/data_collector.log"
             exit 1
           fi
-          echo "✅ 資料收集員執行完成，檢查 data/ 目錄下的 CSV 檔案"
+          echo "✅ 資料收集員執行完成，檢查 data/ 目錄下的 CSV 檔案: ls -la data/"
         continue-on-error: false
 
   strategy-management:
@@ -52,13 +66,14 @@ jobs:
     steps:
       - name: Run Strategy Manager
         run: |
+          cd ./  # 切換到根目錄
           echo "🤖 開始執行策略管理師 (Strategy Manager)"
           python scripts/strategy_manager.py
           if [ $? -ne 0 ]; then
-            echo "❌ 策略管理師執行失敗，請檢查日誌"
+            echo "❌ 策略管理師執行失敗，請檢查日誌: cat logs/strategy_manager.log"
             exit 1
           fi
-          echo "✅ 策略管理師執行完成，檢查 data/ 目錄下的 strategy_best_*.json"
+          echo "✅ 策略管理師執行完成，檢查 data/ 目錄下的 strategy_best_*.json: ls -la data/strategy_best_*.json"
         continue-on-error: false
 
   market-analysis:
@@ -67,13 +82,14 @@ jobs:
     steps:
       - name: Run Market Analyst
         run: |
+          cd ./  # 切換到根目錄
           echo "📊 開始執行市場分析師 (Market Analyst)"
           python scripts/market_analyst.py
           if [ $? -ne 0 ]; then
-            echo "❌ 市場分析師執行失敗，請檢查日誌"
+            echo "❌ 市場分析師執行失敗，請檢查日誌: cat logs/market_analyst.log"
             exit 1
           fi
-          echo "✅ 市場分析師執行完成，檢查 data/ 目錄下的 market_analysis_*.json"
+          echo "✅ 市場分析師執行完成，檢查 data/ 目錄下的 market_analysis_*.json: ls -la data/market_analysis_*.json"
         continue-on-error: false
 
   script-editing:
@@ -82,13 +98,14 @@ jobs:
     steps:
       - name: Run Script Editor
         run: |
+          cd ./  # 切換到根目錄
           echo "✍️ 開始執行文字編輯師 (Script Editor)"
           python scripts/script_editor.py
           if [ $? -ne 0 ]; then
-            echo "❌ 文字編輯師執行失敗，請檢查日誌"
+            echo "❌ 文字編輯師執行失敗，請檢查日誌: cat logs/script_editor.log"
             exit 1
           fi
-          echo "✅ 文字編輯師執行完成，檢查 docs/podcast/YYYYMMDD_*/script.txt"
+          echo "✅ 文字編輯師執行完成，檢查 docs/podcast/YYYYMMDD_*/script.txt: ls -la docs/podcast/$(date +%Y%m%d)_*/script.txt"
         continue-on-error: false
         env:
           GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
@@ -99,13 +116,14 @@ jobs:
     steps:
       - name: Run Podcast Producer
         run: |
+          cd ./  # 切換到根目錄
           echo "🎙️ 開始執行播報員 (Podcast Producer)"
           python scripts/podcast_producer.py
           if [ $? -ne 0 ]; then
-            echo "❌ 播報員執行失敗，請檢查日誌"
+            echo "❌ 播報員執行失敗，請檢查日誌: cat logs/podcast_producer.log"
             exit 1
           fi
-          echo "✅ 播報員執行完成，檢查 docs/podcast/YYYYMMDD_*/audio.mp3"
+          echo "✅ 播報員執行完成，檢查 docs/podcast/YYYYMMDD_*/audio.mp3: ls -la docs/podcast/$(date +%Y%m%d)_*/audio.mp3"
         continue-on-error: false
 
   upload-management:
@@ -114,13 +132,14 @@ jobs:
     steps:
       - name: Run Upload Manager
         run: |
+          cd ./  # 切換到根目錄
           echo "☁️ 開始執行雲端上傳員 (Upload Manager)"
           python scripts/upload_manager.py
           if [ $? -ne 0 ]; then
-            echo "❌ 雲端上傳員執行失敗，請檢查日誌"
+            echo "❌ 雲端上傳員執行失敗，請檢查日誌: cat logs/upload_manager.log"
             exit 1
           fi
-          echo "✅ 雲端上傳員執行完成，檢查 docs/podcast/YYYYMMDD_*/archive_audio_url.txt"
+          echo "✅ 雲端上傳員執行完成，檢查 docs/podcast/YYYYMMDD_*/archive_audio_url.txt: ls -la docs/podcast/$(date +%Y%m%d)_*/archive_audio_url.txt"
         continue-on-error: false
         env:
           B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
@@ -133,13 +152,14 @@ jobs:
     steps:
       - name: Run Feed Publisher
         run: |
+          cd ./  # 切換到根目錄
           echo "📡 開始執行推播員 (Feed Publisher)"
           python scripts/feed_publisher.py
           if [ $? -ne 0 ]; then
-            echo "❌ 推播員執行失敗，請檢查日誌"
+            echo "❌ 推播員執行失敗，請檢查日誌: cat logs/feed_publisher.log"
             exit 1
           fi
-          echo "✅ 推播員執行完成，檢查 docs/rss/podcast_*.xml"
+          echo "✅ 推播員執行完成，檢查 docs/rss/podcast_*.xml: ls -la docs/rss/podcast_*.xml"
         continue-on-error: false
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
