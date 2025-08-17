@@ -1,9 +1,8 @@
-# scripts/strategy_manager.py
 import os
 import json
 import logging
 from logging.handlers import RotatingFileHandler
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, Tuple
 
 import numpy as np
@@ -18,12 +17,31 @@ os.makedirs(LOG_DIR, exist_ok=True)
 
 logger = logging.getLogger("strategy_manager")
 logger.setLevel(logging.INFO)
-fh = RotatingFileHandler(os.path.join(LOG_DIR, "strategy_manager.log"), maxBytes=2_000_000, backupCount=3, encoding="utf-8")
+fh = RotatingFileHandler(
+    os.path.join(LOG_DIR, "strategy_manager.log"),
+    maxBytes=2_000_000,
+    backupCount=3,
+    encoding="utf-8"
+)
 fh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
 logger.addHandler(fh)
 sh = logging.StreamHandler()
 sh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
 logger.addHandler(sh)
+
+# ========== 新增 ==========
+def normalize_symbol(symbol: str) -> str:
+    """
+    把 Yahoo Finance 符號轉換成檔名可用的名稱
+    例如：
+      - ^TWII -> INDEX_TWII
+      - ^GSPC -> INDEX_GSPC
+      - 0050.TW -> 0050.TW (不變)
+    """
+    if symbol.startswith("^"):
+        return "INDEX_" + symbol[1:]
+    return symbol
+# ===========================
 
 def _load_csv(symbol: str, intraday=False) -> pd.DataFrame:
     name = f"hourly_{symbol}.csv" if intraday else f"daily_{symbol}.csv"
@@ -45,9 +63,6 @@ def _return(df: pd.DataFrame) -> float:
     return (c1 - c0) / c0
 
 def _vector_bt(df: pd.DataFrame, signal: pd.Series) -> float:
-    """
-    簡化回測：根據 signal（{0,1}，1=持有/做多），用「隔一棒收盤到下一棒收盤」報酬相乘。
-    """
     rets = df["Close"].pct_change().fillna(0.0)
     strat = (1 + rets * signal.shift(1).fillna(0.0)).prod() - 1
     return float(strat)
@@ -71,19 +86,18 @@ def strat_rsi(df: pd.DataFrame) -> Tuple[float, Dict]:
     dn = (-delta.clip(upper=0)).rolling(14).mean()
     rs = up / (dn.replace(0, np.nan))
     rsi = 100 - 100/(1+rs)
-    signal = (rsi < 30).astype(int)  # 超賣買進
+    signal = (rsi < 30).astype(int)
     r = _vector_bt(df, signal)
     return r, {"name":"rsi14_buy_the_dip"}
 
 def model_random_forest(df: pd.DataFrame) -> Tuple[float, Dict, float]:
-    # features
     feats = pd.DataFrame({
         "ret1": df["Close"].pct_change(),
         "ret5": df["Close"].pct_change(5),
         "vol_z": (df["Volume"] - df["Volume"].rolling(20).mean()) / (df["Volume"].rolling(20).std() + 1e-9),
         "ma10": df["Close"].rolling(10).mean() / (df["Close"].rolling(30).mean() + 1e-9),
     }).fillna(0.0)
-    y = (df["Close"].shift(-1) > df["Close"]).astype(int)  # 下一棒漲跌
+    y = (df["Close"].shift(-1) > df["Close"]).astype(int)
     X = feats.values
     yv = y.values
     n = len(df)-1
@@ -93,42 +107,32 @@ def model_random_forest(df: pd.DataFrame) -> Tuple[float, Dict, float]:
     clf = RandomForestClassifier(n_estimators=200, random_state=42)
     clf.fit(X[:split], yv[:split])
     prob = clf.predict_proba(X[split:-1])[:,1]
-    signal = (prob > 0.52).astype(int)  # 輕微門檻
-    # 回測段
+    signal = (prob > 0.52).astype(int)
     test_df = df.iloc[split+1:-0] if (split+1)<len(df) else df.iloc[split:]
     rr = _vector_bt(test_df, pd.Series(signal, index=test_df.index))
     acc = accuracy_score(yv[split:-1], (prob>0.5).astype(int)) if len(prob)>0 else 0.0
     return float(rr), {"name":"rf","thresh":0.52,"n_estimators":200,"acc":round(float(acc),3)}, float(acc)
 
 def model_lstm_stub(df: pd.DataFrame) -> Tuple[float, Dict]:
-    """
-    為了 CI 穩定，先提供 Stub：
-    - 若環境有 tensorflow/keras，你可替換實做
-    - 目前回傳 0 並標記略過
-    """
     return 0.0, {"name":"lstm","note":"stub_skipped"}
 
 def _pick_best(cands: Dict[str, Dict], baseline: float) -> Dict:
-    # 僅挑報酬 > baseline 且 > 0 的，否則輸出 baseline 作為勝者
     good = [(k,v) for k,v in cands.items() if (v["return"] > max(0.0, baseline))]
     if not good:
-        # 若沒人贏過基準：回傳 baseline 資訊
         return {"winner":"baseline","winner_return":baseline,"details":cands}
-    # 否則挑最高
     best = max(good, key=lambda kv: kv[1]["return"])
     out = {"winner":best[0],"winner_return":best[1]["return"],"details":cands}
     return out
 
 def run_pk(symbol: str, benchmark: str = None, use_hourly=True) -> Dict:
-    sym_file = symbol.replace("^","INDEX_")
+    sym_file = normalize_symbol(symbol)
     df = _load_csv(sym_file, intraday=use_hourly)
-    # baseline：若提供基準，與 symbol 同頻率；否則 baseline=0
+
     baseline = 0.0
     if benchmark:
-        bench_file = benchmark.replace("^","INDEX_")
+        bench_file = normalize_symbol(benchmark)
         try:
             bdf = _load_csv(bench_file, intraday=use_hourly)
-            # 對齊期間
             s = df.set_index("Date")["Close"].pct_change().dropna()
             b = bdf.set_index("Date")["Close"].pct_change().dropna()
             idx = s.index.intersection(b.index)
@@ -148,7 +152,6 @@ def run_pk(symbol: str, benchmark: str = None, use_hourly=True) -> Dict:
         except Exception as e:
             logger.error(f"{symbol} {fn} 失敗: {e}")
 
-    # ML: RandomForest
     try:
         rrf, p, acc = model_random_forest(df.copy())
         cands["rf"] = {"return": float(rrf), "params": p}
@@ -156,7 +159,6 @@ def run_pk(symbol: str, benchmark: str = None, use_hourly=True) -> Dict:
     except Exception as e:
         logger.error(f"{symbol} RF 失敗: {e}")
 
-    # LSTM (stub)
     try:
         rnn, pnn = model_lstm_stub(df.copy())
         cands["lstm"] = {"return": float(rnn), "params": pnn}
@@ -166,7 +168,7 @@ def run_pk(symbol: str, benchmark: str = None, use_hourly=True) -> Dict:
     result = _pick_best(cands, baseline)
     result["baseline_return"] = baseline
     result["asof"] = datetime.utcnow().isoformat() + "Z"
-    # 生成 buy/sell 訊號（以最終贏家重算最後一棒的 signal）
+
     result["signal"] = "hold"
     try:
         if result["winner"] == "volume_breakout":
@@ -202,5 +204,4 @@ def run_pk(symbol: str, benchmark: str = None, use_hourly=True) -> Dict:
     return result
 
 if __name__ == "__main__":
-    # 範例：0050.TW 對 ^TWII；QQQ 對 ^NDX
-    run_pk("0050.TW".replace("^","INDEX_"), benchmark="^TWII")
+    run_pk("0050.TW", benchmark="^TWII")
