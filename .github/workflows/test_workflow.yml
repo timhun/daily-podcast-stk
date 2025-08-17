@@ -79,10 +79,7 @@ jobs:
     steps:
       - name: Run Data Collector
         run: |
-          cd ./  # 切換到根目錄
           echo "📥 開始執行資料收集員 (Data Collector) - 模式: $PODCAST_MODE"
-          pwd  # 顯示當前工作目錄
-          ls -la scripts/  # 檢查 scripts 目錄內容
           python scripts/data_collector.py
           if [ $? -ne 0 ]; then
             echo "❌ 資料收集員執行失敗，請檢查日誌: cat logs/data_collector.log"
