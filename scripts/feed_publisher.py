@@ -4,6 +4,7 @@ from datetime import datetime
 import logging
 import requests
 from xml.etree import ElementTree as ET
+from mutagen.mp3 import MP3
 
 # 設定日誌
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -14,7 +15,7 @@ CONFIG_FILE = 'config.json'
 SLACK_WEBHOOK_URL = os.getenv('SLACK_WEBHOOK_URL')
 PODCAST_TITLE = "每日市場分析"
 PODCAST_DESCRIPTION = "提供台股與美股的最新市場分析與策略建議。"
-FEED_URL = "https://your-domain.com/rss/podcast_{mode}.xml"  # 替換為實際域名
+FEED_URL = "https://your-domain.com/rss/podcast_{mode}.xml"
 ITUNES_CATEGORY = "Business"
 
 def load_config():
@@ -43,6 +44,19 @@ def load_analysis(symbol):
         logger.error(f"載入 {symbol} 分析結果失敗: {e}")
         return None
 
+def load_strategy(symbol):
+    """載入策略結果"""
+    strategy_path = os.path.join('data', f'strategy_best_{symbol}.json')
+    if not os.path.exists(strategy_path):
+        logger.error(f"缺少 {strategy_path}")
+        return None
+    try:
+        with open(strategy_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        logger.error(f"載入 {symbol} 策略結果失敗: {e}")
+        return None
+
 def load_upload_url(mode):
     """載入 B2 上傳後的公開連結"""
     date_str = datetime.now().strftime("%Y%m%d")
@@ -60,11 +74,12 @@ def load_upload_url(mode):
 def generate_rss(mode, audio_url):
     """生成 RSS XML"""
     date_str = datetime.now().strftime("%Y-%m-%d")
-    pub_date = datetime.now().strftime("%a, %d %b %Y %H:%M:%S %z")  # RFC 2822 格式
+    pub_date = datetime.now().strftime("%a, %d %b %Y %H:%M:%S %z")
     symbol = '0050.TW' if mode == 'tw' else 'QQQ'
     analysis = load_analysis(symbol)
+    strategy = load_strategy(symbol)
 
-    rss = ET.Element("rss", version="2.0", xmlns_itunes="http://www.itunes.com/dtds/podcast-1.0.dtd")
+    rss = ET.Element("rss", version="2.0", xmlns_itunes="http://www.itunes.com/dtds/podcast-1.0.dtd", xmlns_googleplay="http://www.google.com/schemas/play-podcasts/1.0")
     channel = ET.SubElement(rss, "channel")
     
     ET.SubElement(channel, "title").text = PODCAST_TITLE
@@ -74,15 +89,18 @@ def generate_rss(mode, audio_url):
     ET.SubElement(channel, "pubDate").text = pub_date
     ET.SubElement(channel, "lastBuildDate").text = pub_date
     ET.SubElement(channel, "itunes:category", attrib={"text": ITUNES_CATEGORY})
+    ET.SubElement(channel, "googleplay:category", attrib={"text": ITUNES_CATEGORY})
 
     item = ET.SubElement(channel, "item")
     ET.SubElement(item, "title").text = f"{date_str} {mode.upper()} 市場分析"
     ET.SubElement(item, "link").text = audio_url
     ET.SubElement(item, "guid").text = f"{date_str}_{mode}"
     ET.SubElement(item, "pubDate").text = pub_date
-    ET.SubElement(item, "description").text = f"建議: {analysis.get('recommendation', 'N/A')}, 倉位: {analysis.get('position_size', 0.0)}, 目標價/停損: {analysis.get('target_price', 'N/A') or analysis.get('stop_loss', 'N/A')}"
-    ET.SubElement(item, "enclosure", attrib={"url": audio_url, "length": "0", "type": "audio/mpeg"})  # length 需動態計算
-    ET.SubElement(item, "itunes:duration").text = "00:05:00"  # 假設 5 分鐘，需動態計算
+    ET.SubElement(item, "description").text = f"建議: {analysis.get('recommendation', 'N/A')}, 倉位: {analysis.get('position_size', 0.0)}, 策略回報: {strategy.get('return', 'N/A')}%"
+    audio = MP3(os.path.join('docs', 'podcast', f"{date_str}_{mode}", 'audio.mp3'))
+    duration = str(timedelta(seconds=int(audio.info.length)))
+    ET.SubElement(item, "enclosure", attrib={"url": audio_url, "length": str(os.path.getsize(os.path.join('docs', 'podcast', f"{date_str}_{mode}", 'audio.mp3'))), "type": "audio/mpeg"})
+    ET.SubElement(item, "itunes:duration").text = duration
 
     # 格式化 XML
     rough_string = ET.tostring(rss, 'utf-8')
@@ -103,7 +121,7 @@ def save_rss(xml_str, mode):
     except Exception as e:
         logger.error(f"保存 RSS 失敗: {e}")
 
-def send_slack_notification(mode, audio_url, analysis):
+def send_slack_notification(mode, audio_url, analysis, strategy):
     """發送 Slack 通知"""
     if not SLACK_WEBHOOK_URL:
         logger.warning("缺少 SLACK_WEBHOOK_URL，跳過通知")
@@ -129,7 +147,7 @@ def send_slack_notification(mode, audio_url, analysis):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": f"*週期回測:*\n• Sharpe: N/A\n• Max Drawdown: N/A"
+                        "text": f"*週期回測:*\n• Sharpe: N/A\n• Max Drawdown: N/A\n• 策略回報: {strategy.get('return', 'N/A')}%"
                     }
                 },
                 {
@@ -162,13 +180,14 @@ def main():
 
     symbol = '0050.TW' if mode == 'tw' else 'QQQ'
     analysis = load_analysis(symbol)
-    if not analysis:
-        logger.warning(f"跳過 {mode} 推播，因缺少分析數據")
+    strategy = load_strategy(symbol)
+    if not analysis or not strategy:
+        logger.warning(f"跳過 {mode} 推播，因缺少分析或策略數據")
         return
 
     rss_xml = generate_rss(mode, audio_url)
     save_rss(rss_xml, mode)
-    send_slack_notification(mode, audio_url, analysis)
+    send_slack_notification(mode, audio_url, analysis, strategy)
 
 if __name__ == '__main__':
     main()
