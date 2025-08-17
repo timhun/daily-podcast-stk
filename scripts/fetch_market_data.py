@@ -45,8 +45,8 @@ def fetch_market_data():
 
     mode = os.getenv('PODCAST_MODE', 'tw')
     end_date = datetime.now()
-    start_date_daily = end_date - timedelta(days=90)  # 過去3個月
-    start_date_hourly = end_date - timedelta(days=7)   # 過去7天
+    start_date_daily = end_date - timedelta(days=380)  # 過去12個月
+    start_date_hourly = end_date - timedelta(days=14)   # 過去14天
 
     # 定義所有符號
     symbols = {
