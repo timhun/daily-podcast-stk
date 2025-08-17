@@ -14,6 +14,7 @@ def clean_data_directory():
     expected_files = {
         'daily.csv', 'daily_0050.TW.csv', 'daily_QQQ.csv', 'daily_^TWII.csv', 'daily_BTC-USD.csv',
         'daily_^DJI.csv', 'daily_GC=F.csv', 'daily_^GSPC.csv', 'daily_^IXIC.csv', 'daily_SPY.csv',
+        'daily_TSM.csv', 'daily_2330.TW.csv',
         'hourly_0050.TW.csv', 'hourly_QQQ.csv',
         'daily_sim_0050.TW.json', 'daily_sim_QQQ.json',
         'backtest_report_0050.TW.json', 'backtest_report_QQQ.json',
@@ -52,7 +53,7 @@ def fetch_market_data():
     symbols = {
         'tw': ['0050.TW'],
         'us': ['QQQ'],
-        'podcast': ['^TWII', 'BTC-USD', '^DJI', 'GC=F', '^GSPC', '^IXIC', 'SPY','TSM','2330.TW']
+        'podcast': ['^TWII', 'BTC-USD', '^DJI', 'GC=F', '^GSPC', '^IXIC', 'SPY', 'TSM', '2330.TW']
     }
 
     # 根據模式選擇符號
@@ -75,10 +76,14 @@ def fetch_market_data():
                     df_daily['Date'] = df_daily.index
                     df_daily['Date'] = pd.to_datetime(df_daily['Date'])
                 df_daily.rename(columns={'index': 'Date'}, inplace=True)  # 確保日期欄位名為 'Date'
+                # 確保所有數值欄位為浮點數
+                for col in ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']:
+                    if col in df_daily.columns:
+                        df_daily[col] = pd.to_numeric(df_daily[col], errors='coerce')
                 logger.info(f"成功抓取 {symbol} 的 {len(df_daily)} 筆日線數據，欄位: {df_daily.columns.tolist()}")
                 # 保存單獨檔案
                 daily_symbol_path = os.path.join('data', f'daily_{symbol}.csv')
-                df_daily.to_csv(daily_symbol_path, index=False, encoding='utf-8')
+                df_daily.to_csv(daily_symbol_path, index=False, encoding='utf-8', float_format='%.2f')
                 logger.info(f"已生成/覆蓋檔案: {daily_symbol_path}, 形狀: {df_daily.shape}")
                 time.sleep(0.1)  # 避免 API 速率限制
             else:
@@ -103,8 +108,12 @@ def fetch_market_data():
                     df_hourly['Date'] = df_hourly.index
                     df_hourly['Date'] = pd.to_datetime(df_hourly['Date'])
                 df_hourly.rename(columns={'index': 'Date'}, inplace=True)  # 確保日期欄位名為 'Date'
+                # 確保所有數值欄位為浮點數
+                for col in ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']:
+                    if col in df_hourly.columns:
+                        df_hourly[col] = pd.to_numeric(df_hourly[col], errors='coerce')
                 hourly_symbol_path = os.path.join('data', f'hourly_{symbol}.csv')
-                df_hourly.to_csv(hourly_symbol_path, index=False, encoding='utf-8')
+                df_hourly.to_csv(hourly_symbol_path, index=False, encoding='utf-8', float_format='%.2f')
                 logger.info(f"已生成/覆蓋檔案: {hourly_symbol_path}, 形狀: {df_hourly.shape}")
                 time.sleep(0.1)  # 確保時間戳更新
             else:
