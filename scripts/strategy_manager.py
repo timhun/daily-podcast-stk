@@ -1,181 +1,206 @@
-import pandas as pd
-import json
+# scripts/strategy_manager.py
 import os
-from datetime import datetime
+import json
 import logging
-from backtrader import Cerebro, Strategy
-import backtrader.indicators as btind
+from logging.handlers import RotatingFileHandler
+from datetime import datetime, timedelta
+from typing import Dict, Tuple
+
 import numpy as np
+import pandas as pd
+
 from sklearn.ensemble import RandomForestClassifier
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
-import requests
-import asyncio
+from sklearn.metrics import accuracy_score
 
-# 設定日誌
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+LOG_DIR = "logs"
+DATA_DIR = "data"
+os.makedirs(LOG_DIR, exist_ok=True)
 
-# 配置 Grok API
-GROK_API_KEY = os.getenv('GROK_API_KEY')
-GROK_API_URL = "https://api.grok.xai.com/v1/improve_strategy"
+logger = logging.getLogger("strategy_manager")
+logger.setLevel(logging.INFO)
+fh = RotatingFileHandler(os.path.join(LOG_DIR, "strategy_manager.log"), maxBytes=2_000_000, backupCount=3, encoding="utf-8")
+fh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+logger.addHandler(fh)
+sh = logging.StreamHandler()
+sh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+logger.addHandler(sh)
 
-def load_config():
-    """載入配置檔案 config.json"""
-    config_file = 'config.json'
-    if not os.path.exists(config_file):
-        logger.error(f"缺少配置檔案: {config_file}")
-        raise FileNotFoundError(f"缺少配置檔案: {config_file}")
+def _load_csv(symbol: str, intraday=False) -> pd.DataFrame:
+    name = f"hourly_{symbol}.csv" if intraday else f"daily_{symbol}.csv"
+    path = os.path.join(DATA_DIR, name)
+    if not os.path.exists(path):
+        raise FileNotFoundError(path)
+    df = pd.read_csv(path, parse_dates=["Date"])
+    df.sort_values("Date", inplace=True)
+    df.reset_index(drop=True, inplace=True)
+    for c in ["Open","High","Low","Close","Adj Close","Volume"]:
+        if c in df.columns:
+            df[c] = pd.to_numeric(df[c], errors="coerce")
+    return df.dropna(subset=["Close"]).copy()
+
+def _return(df: pd.DataFrame) -> float:
+    if len(df) < 2: return 0.0
+    c0, c1 = df["Close"].iloc[0], df["Close"].iloc[-1]
+    if c0 == 0 or np.isnan(c0) or np.isnan(c1): return 0.0
+    return (c1 - c0) / c0
+
+def _vector_bt(df: pd.DataFrame, signal: pd.Series) -> float:
+    """
+    簡化回測：根據 signal（{0,1}，1=持有/做多），用「隔一棒收盤到下一棒收盤」報酬相乘。
+    """
+    rets = df["Close"].pct_change().fillna(0.0)
+    strat = (1 + rets * signal.shift(1).fillna(0.0)).prod() - 1
+    return float(strat)
+
+def strat_volume_breakout(df: pd.DataFrame) -> Tuple[float, Dict]:
+    vol_ma = df["Volume"].rolling(5).mean()
+    signal = ((df["Volume"] > 1.5 * vol_ma) & (df["Close"] > df["Close"].shift(1))).astype(int)
+    r = _vector_bt(df, signal)
+    return r, {"name":"volume_breakout","volume_ma":5,"mult":1.5}
+
+def strat_ma_cross(df: pd.DataFrame) -> Tuple[float, Dict]:
+    ma_fast = df["Close"].rolling(10).mean()
+    ma_slow = df["Close"].rolling(30).mean()
+    signal = (ma_fast > ma_slow).astype(int)
+    r = _vector_bt(df, signal)
+    return r, {"name":"ma_cross","fast":10,"slow":30}
+
+def strat_rsi(df: pd.DataFrame) -> Tuple[float, Dict]:
+    delta = df["Close"].diff()
+    up = delta.clip(lower=0).rolling(14).mean()
+    dn = (-delta.clip(upper=0)).rolling(14).mean()
+    rs = up / (dn.replace(0, np.nan))
+    rsi = 100 - 100/(1+rs)
+    signal = (rsi < 30).astype(int)  # 超賣買進
+    r = _vector_bt(df, signal)
+    return r, {"name":"rsi14_buy_the_dip"}
+
+def model_random_forest(df: pd.DataFrame) -> Tuple[float, Dict, float]:
+    # features
+    feats = pd.DataFrame({
+        "ret1": df["Close"].pct_change(),
+        "ret5": df["Close"].pct_change(5),
+        "vol_z": (df["Volume"] - df["Volume"].rolling(20).mean()) / (df["Volume"].rolling(20).std() + 1e-9),
+        "ma10": df["Close"].rolling(10).mean() / (df["Close"].rolling(30).mean() + 1e-9),
+    }).fillna(0.0)
+    y = (df["Close"].shift(-1) > df["Close"]).astype(int)  # 下一棒漲跌
+    X = feats.values
+    yv = y.values
+    n = len(df)-1
+    if n < 60: 
+        return 0.0, {"name":"rf","note":"too_short"}, 0.0
+    split = int(n*0.7)
+    clf = RandomForestClassifier(n_estimators=200, random_state=42)
+    clf.fit(X[:split], yv[:split])
+    prob = clf.predict_proba(X[split:-1])[:,1]
+    signal = (prob > 0.52).astype(int)  # 輕微門檻
+    # 回測段
+    test_df = df.iloc[split+1:-0] if (split+1)<len(df) else df.iloc[split:]
+    rr = _vector_bt(test_df, pd.Series(signal, index=test_df.index))
+    acc = accuracy_score(yv[split:-1], (prob>0.5).astype(int)) if len(prob)>0 else 0.0
+    return float(rr), {"name":"rf","thresh":0.52,"n_estimators":200,"acc":round(float(acc),3)}, float(acc)
+
+def model_lstm_stub(df: pd.DataFrame) -> Tuple[float, Dict]:
+    """
+    為了 CI 穩定，先提供 Stub：
+    - 若環境有 tensorflow/keras，你可替換實做
+    - 目前回傳 0 並標記略過
+    """
+    return 0.0, {"name":"lstm","note":"stub_skipped"}
+
+def _pick_best(cands: Dict[str, Dict], baseline: float) -> Dict:
+    # 僅挑報酬 > baseline 且 > 0 的，否則輸出 baseline 作為勝者
+    good = [(k,v) for k,v in cands.items() if (v["return"] > max(0.0, baseline))]
+    if not good:
+        # 若沒人贏過基準：回傳 baseline 資訊
+        return {"winner":"baseline","winner_return":baseline,"details":cands}
+    # 否則挑最高
+    best = max(good, key=lambda kv: kv[1]["return"])
+    out = {"winner":best[0],"winner_return":best[1]["return"],"details":cands}
+    return out
+
+def run_pk(symbol: str, benchmark: str = None, use_hourly=True) -> Dict:
+    sym_file = symbol.replace("^","INDEX_")
+    df = _load_csv(sym_file, intraday=use_hourly)
+    # baseline：若提供基準，與 symbol 同頻率；否則 baseline=0
+    baseline = 0.0
+    if benchmark:
+        bench_file = benchmark.replace("^","INDEX_")
+        try:
+            bdf = _load_csv(bench_file, intraday=use_hourly)
+            # 對齊期間
+            s = df.set_index("Date")["Close"].pct_change().dropna()
+            b = bdf.set_index("Date")["Close"].pct_change().dropna()
+            idx = s.index.intersection(b.index)
+            if len(idx) > 5:
+                baseline = float((1 + b.loc[idx]).prod() - 1)
+        except Exception as e:
+            logger.warning(f"Baseline {benchmark} 讀取失敗: {e}")
+
+    cands = {}
+    for fn, strat in [("volume_breakout", strat_volume_breakout),
+                      ("ma_cross", strat_ma_cross),
+                      ("rsi14", strat_rsi)]:
+        try:
+            r, params = strat(df.copy())
+            cands[fn] = {"return": float(r), "params": params}
+            logger.info(f"{symbol} {fn} return={r:.4f}")
+        except Exception as e:
+            logger.error(f"{symbol} {fn} 失敗: {e}")
+
+    # ML: RandomForest
     try:
-        with open(config_file, 'r', encoding='utf-8') as f:
-            config = json.load(f)
-        return config.get('symbols', []), config.get('strategies', {})
-    except json.JSONDecodeError as e:
-        logger.error(f"配置檔案解析失敗: {e}")
-        raise ValueError(f"配置檔案解析失敗: {e}")
-
-class VolumeBreakout(Strategy):
-    """簡單量價突破策略"""
-    params = (('volume_multiplier', 1.5),)
-
-    def __init__(self):
-        self.volume_ma = btind.SimpleMovingAverage(self.data.volume, period=5)
-        self.close_ma = btind.SimpleMovingAverage(self.data.close, period=5)
-
-    def next(self):
-        if self.data.volume[0] > self.volume_ma[0] * self.params.volume_multiplier and self.data.close[0] > self.close_ma[0]:
-            self.buy()
-        elif self.data.close[0] < self.close_ma[0] * 0.98 or self.data.close[0] > self.close_ma[0] * 1.02:
-            self.sell()
-
-class MLStrategy(Strategy):
-    """基於 ML 的策略"""
-    params = (('model_type', 'rf'), ('model', None))
-
-    def __init__(self):
-        self.model = self.params.model
-        self.features = ['Open', 'High', 'Low', 'Close', 'Volume']
-
-    def next(self):
-        X = np.array([self.data.get(size=5)[-1][self.features]]).reshape(1, -1)
-        if self.params.model_type == 'rf':
-            prediction = self.model.predict(X)[0]
-        else:  # LSTM
-            X_lstm = X.reshape(1, X.shape[1], 1)
-            prediction = self.model.predict(X_lstm)[0][0] > 0.5
-        if prediction and not self.position:
-            self.buy()
-        elif not prediction and self.position:
-            self.sell()
-
-def prepare_ml_data(df):
-    """準備 ML 數據"""
-    df['Return'] = df['Close'].pct_change().shift(-1)
-    df['Target'] = (df['Return'] > 0).astype(int)
-    features = ['Open', 'High', 'Low', 'Close', 'Volume']
-    return df.dropna()[features], df.dropna()['Target']
-
-def train_ml_models(df, symbol):
-    """訓練 Random Forest 和 LSTM 模型"""
-    X, y = prepare_ml_data(df)
-    # Random Forest
-    rf = RandomForestClassifier(n_estimators=100, random_state=42)
-    rf.fit(X, y)
-    # LSTM
-    model = Sequential()
-    model.add(LSTM(50, return_sequences=True, input_shape=(X.shape[1], 1)))
-    model.add(LSTM(50))
-    model.add(Dense(1, activation='sigmoid'))
-    model.compile(optimizer='adam', loss='binary_crossentropy')
-    X_lstm = np.reshape(X.values, (X.shape[0], X.shape[1], 1))
-    model.fit(X_lstm, y.values, epochs=10, batch_size=32, verbose=0)
-    return {'rf': rf, 'lstm': model}
-
-def evaluate_strategy(cerebro, symbol, data, strategy, params):
-    """評估策略回測結果"""
-    cerebro.adddata(data)
-    cerebro.addstrategy(strategy, **params)
-    cerebro.run()
-    return cerebro.broker.getvalue() / cerebro.broker.getvalue() - 1  # 簡化回報率
-
-def get_market_baseline(df):
-    """計算大盤每日/每周漲跌幅作為基準"""
-    daily_change = df['Close'].pct_change().iloc[-1] * 100
-    weekly_change = df['Close'].pct_change(periods=5).iloc[-1] * 100 / 5
-    baseline = max(daily_change, weekly_change)
-    with open('logs/baseline_history.log', 'a') as f:
-        f.write(f"{datetime.now()}: {df['Symbol'].iloc[0]} Baseline: {baseline:.2f}%\n")
-    return baseline
-
-async def improve_with_grok(current_params, symbol):
-    """使用 Grok API 異步改進策略參數"""
-    if not GROK_API_KEY:
-        logger.warning(f"缺少 GROK_API_KEY，跳過 {symbol} 改進")
-        return current_params
-    try:
-        response = requests.post(GROK_API_URL, json={'params': current_params, 'symbol': symbol}, headers={'Authorization': f'Bearer {GROK_API_KEY}'})
-        response.raise_for_status()
-        improved_params = response.json().get('improved_params', current_params)
-        logger.info(f"Grok API 改進 {symbol} 參數: {improved_params}")
-        return improved_params
+        rrf, p, acc = model_random_forest(df.copy())
+        cands["rf"] = {"return": float(rrf), "params": p}
+        logger.info(f"{symbol} RF return={rrf:.4f} acc={acc:.3f}")
     except Exception as e:
-        logger.error(f"Grok API 請求 {symbol} 失敗: {e}")
-        return current_params
+        logger.error(f"{symbol} RF 失敗: {e}")
 
-async def main():
-    """主函數，執行策略管理"""
-    symbols, strategies = load_config()
-    data_dir = 'data'
+    # LSTM (stub)
+    try:
+        rnn, pnn = model_lstm_stub(df.copy())
+        cands["lstm"] = {"return": float(rnn), "params": pnn}
+    except Exception as e:
+        logger.error(f"{symbol} LSTM 失敗: {e}")
 
-    tasks = []
-    for symbol in symbols:
-        daily_path = os.path.join(data_dir, f'daily_{symbol}.csv')
-        if not os.path.exists(daily_path):
-            logger.error(f"缺少 {daily_path}，跳過 {symbol}")
-            continue
+    result = _pick_best(cands, baseline)
+    result["baseline_return"] = baseline
+    result["asof"] = datetime.utcnow().isoformat() + "Z"
+    # 生成 buy/sell 訊號（以最終贏家重算最後一棒的 signal）
+    result["signal"] = "hold"
+    try:
+        if result["winner"] == "volume_breakout":
+            vol_ma = df["Volume"].rolling(5).mean()
+            last_sig = int((df["Volume"].iloc[-1] > 1.5 * vol_ma.iloc[-1]) and (df["Close"].iloc[-1] > df["Close"].iloc[-2]))
+            result["signal"] = "buy" if last_sig else "hold"
+            result["price"] = float(df["Close"].iloc[-1])
+        elif result["winner"] == "ma_cross":
+            ma_fast = df["Close"].rolling(10).mean()
+            ma_slow = df["Close"].rolling(30).mean()
+            last_sig = int(ma_fast.iloc[-1] > ma_slow.iloc[-1])
+            result["signal"] = "buy" if last_sig else "hold"
+            result["price"] = float(df["Close"].iloc[-1])
+        elif result["winner"] == "rsi14":
+            delta = df["Close"].diff()
+            up = delta.clip(lower=0).rolling(14).mean()
+            dn = (-delta.clip(upper=0)).rolling(14).mean()
+            rs = up / (dn.replace(0, np.nan))
+            rsi = 100 - 100/(1+rs)
+            last_sig = int(rsi.iloc[-1] < 30)
+            result["signal"] = "buy" if last_sig else "hold"
+            result["price"] = float(df["Close"].iloc[-1])
+        elif result["winner"] == "rf":
+            result["signal"] = "buy" if result["details"]["rf"]["return"] > baseline else "hold"
+            result["price"] = float(df["Close"].iloc[-1])
+    except Exception as e:
+        logger.warning(f"產生最終訊號失敗: {e}")
 
-        df = pd.read_csv(daily_path)
-        df['Date'] = pd.to_datetime(df['Date'])
-        baseline_return = get_market_baseline(df)
+    out_path = os.path.join(DATA_DIR, f"strategy_best_{sym_file}.json")
+    with open(out_path, "w", encoding="utf-8") as f:
+        json.dump(result, f, ensure_ascii=False, indent=2)
+    logger.info(f"已輸出最佳策略 -> {out_path}")
+    return result
 
-        cerebro = Cerebro()
-        best_strategy = None
-        best_return = -float('inf')
-        best_params = {}
-
-        for strategy_name, params in strategies.items():
-            cerebro = Cerebro()
-            if strategy_name == 'VolumeBreakout':
-                strategy_class = VolumeBreakout
-            elif strategy_name == 'MLStrategy':
-                ml_models = train_ml_models(df, symbol)
-                strategy_class = MLStrategy
-                params['model'] = ml_models['rf'] if params.get('model_type', 'rf') == 'rf' else ml_models['lstm']
-                params['model_type'] = params.get('model_type', 'rf')
-
-            data = btind.PandasData(dataname=df)
-            return_value = evaluate_strategy(cerebro, symbol, data, strategy_class, params)
-            if return_value > baseline_return and return_value > 0:
-                if return_value > best_return:
-                    best_return = return_value
-                    best_strategy = strategy_name
-                    best_params = params.copy()
-
-        if best_strategy:
-            improved_params = await improve_with_grok(best_params, symbol)
-            output = {
-                'symbol': symbol,
-                'best_strategy': best_strategy,
-                'params': improved_params,
-                'return': best_return,
-                'baseline': baseline_return
-            }
-            output_path = os.path.join(data_dir, f'strategy_best_{symbol}.json')
-            with open(output_path, 'w', encoding='utf-8') as f:
-                json.dump(output, f, ensure_ascii=False, indent=2)
-            logger.info(f"為 {symbol} 選出最佳策略: {best_strategy}, 回報率: {best_return:.2f}%, 基準: {baseline_return:.2f}%")
-        else:
-            logger.warning(f"{symbol} 無勝過基準的策略")
-
-if __name__ == '__main__':
-    asyncio.run(main())
+if __name__ == "__main__":
+    # 範例：0050.TW 對 ^TWII；QQQ 對 ^NDX
+    run_pk("0050.TW".replace("^","INDEX_"), benchmark="^TWII")
