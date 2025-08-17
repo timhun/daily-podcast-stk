@@ -1,15 +1,18 @@
 import os
 from datetime import datetime
 import logging
-import subprocess
+import asyncio
+import edge_tts
 
 # 設定日誌
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# 配置 TTS 工具（使用 gTTS 作為示例，可替換）
-TTS_COMMAND = "gtts-cli --output {output_path} --lang zh-tw {text_file}"
-FALLBACK_TTS_COMMAND = "gtts-cli --output {output_path} --lang en {text_file}"
+# 配置 edge-tts 參數
+VOICE = "zh-TW-YunJheNeural"  # 台灣中文語音選項
+FALLBACK_VOICE = "en-US-JennyNeural"  # 備用英文語音
+RATE = "+0%"  # 語速調整
+VOLUME = "+0%"  # 音量調整
 
 def load_script(mode):
     """載入文字稿"""
@@ -26,21 +29,15 @@ def load_script(mode):
         logger.error(f"載入文字稿失敗: {e}")
         return None
 
-def generate_audio(text, output_path):
-    """使用 TTS 工具生成 MP3"""
+async def generate_audio(text, output_path, voice):
+    """使用 edge-tts 生成 MP3"""
     try:
-        command = TTS_COMMAND.format(output_path=output_path, text_file=text)
-        subprocess.run(command, shell=True, check=True, text=True)
+        communicate = edge_tts.Communicate(text, voice, rate=RATE, volume=VOLUME)
+        await communicate.save(output_path)
         logger.info(f"成功生成音檔: {output_path}")
-    except subprocess.CalledProcessError as e:
-        logger.error(f"TTS 生成失敗，嘗試備用語音: {e}")
-        fallback_command = FALLBACK_TTS_COMMAND.format(output_path=output_path, text_file=text)
-        try:
-            subprocess.run(fallback_command, shell=True, check=True, text=True)
-            logger.info(f"使用備用語音生成音檔: {output_path}")
-        except Exception as e:
-            logger.error(f"備用 TTS 失敗: {e}")
-            return False
+    except Exception as e:
+        logger.error(f"edge-tts 生成失敗: {e}")
+        return False
     return True
 
 def save_audio(mode):
@@ -51,7 +48,12 @@ def save_audio(mode):
     output_path = os.path.join(output_dir, 'audio.mp3')
     text = load_script(mode)
     if text:
-        if generate_audio(text, output_path):
+        loop = asyncio.get_event_loop()
+        if mode == 'tw':
+            success = loop.run_until_complete(generate_audio(text, output_path, VOICE))
+        else:  # 備用英文語音
+            success = loop.run_until_complete(generate_audio(text, output_path, FALLBACK_VOICE))
+        if success:
             file_size = os.path.getsize(output_path)
             logger.info(f"音檔大小: {file_size} 位元組")
         else:
