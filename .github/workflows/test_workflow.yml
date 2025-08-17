@@ -23,7 +23,7 @@ jobs:
         working-directory: ${{ env.WORKING_DIR }}
         run: |
           mkdir -p data logs docs/podcast docs/rss
-          echo '{"symbols": ["0050.TW", "QQQ"]}' > config.json
+          echo '{"symbols": ["0050.TW", "QQQ", "^TWII"], "data_sources": {"yfinance": {"enabled": true}}}' > config.json
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -31,7 +31,17 @@ jobs:
       - name: Install Dependencies
         working-directory: ${{ env.WORKING_DIR }}
         run: |
+          python -m pip install --upgrade pip
           pip install yfinance pandas numpy backtrader scikit-learn tensorflow requests feedparser edge-tts b2sdk mutagen
+        env:
+          PYTHONPATH: ${{ env.WORKING_DIR }}
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
 
   data-collection:
     runs-on: ubuntu-latest
@@ -43,13 +53,16 @@ jobs:
           path: ${{ env.WORKING_DIR }}
       - name: Run Data Collector
         working-directory: ${{ env.WORKING_DIR }}
-        run: python scripts/data_collector.py
+        run: |
+          echo "當前工作目錄: $(pwd)"
+          python scripts/data_collector.py
         env:
+          WORKING_DIR: repo
           PYTHONPATH: ${{ env.WORKING_DIR }}
 
   strategy-management:
     runs-on: ubuntu-latest
-    needs: setup
+    needs: [setup, data-collection]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -57,9 +70,12 @@ jobs:
           path: ${{ env.WORKING_DIR }}
       - name: Run Strategy Manager
         working-directory: ${{ env.WORKING_DIR }}
-        run: python scripts/strategy_manager.py
+        run: |
+          echo "當前工作目錄: $(pwd)"
+          python scripts/strategy_manager.py
         env:
           GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+          WORKING_DIR: repo
           PYTHONPATH: ${{ env.WORKING_DIR }}
 
   market-analysis:
@@ -72,8 +88,11 @@ jobs:
           path: ${{ env.WORKING_DIR }}
       - name: Run Market Analyst
         working-directory: ${{ env.WORKING_DIR }}
-        run: python scripts/market_analyst.py
+        run: |
+          echo "當前工作目錄: $(pwd)"
+          python scripts/market_analyst.py
         env:
+          WORKING_DIR: repo
           PYTHONPATH: ${{ env.WORKING_DIR }}
 
   script-editing:
@@ -94,9 +113,12 @@ jobs:
           echo "PODCAST_MODE=$MODE" >> $GITHUB_ENV
       - name: Run Script Editor
         working-directory: ${{ env.WORKING_DIR }}
-        run: python scripts/script_editor.py
+        run: |
+          echo "當前工作目錄: $(pwd)"
+          python scripts/script_editor.py
         env:
           GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+          WORKING_DIR: repo
           PYTHONPATH: ${{ env.WORKING_DIR }}
 
   podcast-production:
@@ -110,8 +132,11 @@ jobs:
           path: ${{ env.WORKING_DIR }}
       - name: Run Podcast Producer
         working-directory: ${{ env.WORKING_DIR }}
-        run: python scripts/podcast_producer.py
+        run: |
+          echo "當前工作目錄: $(pwd)"
+          python scripts/podcast_producer.py
         env:
+          WORKING_DIR: repo
           PYTHONPATH: ${{ env.WORKING_DIR }}
 
   upload-management:
@@ -125,11 +150,14 @@ jobs:
           path: ${{ env.WORKING_DIR }}
       - name: Run Upload Manager
         working-directory: ${{ env.WORKING_DIR }}
-        run: python scripts/upload_manager.py
+        run: |
+          echo "當前工作目錄: $(pwd)"
+          python scripts/upload_manager.py
         env:
           B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
           B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
           B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+          WORKING_DIR: repo
           PYTHONPATH: ${{ env.WORKING_DIR }}
 
   feed-publishing:
@@ -143,7 +171,26 @@ jobs:
           path: ${{ env.WORKING_DIR }}
       - name: Run Feed Publisher
         working-directory: ${{ env.WORKING_DIR }}
-        run: python scripts/feed_publisher.py
+        run: |
+          echo "當前工作目錄: $(pwd)"
+          python scripts/feed_publisher.py
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WORKING_DIR: repo
           PYTHONPATH: ${{ env.WORKING_DIR }}
+
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: feed-publishing
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.WORKING_DIR }}
+      - name: Cleanup Old Files
+        working-directory: ${{ env.WORKING_DIR }}
+        run: |
+          find docs/podcast -type f -mtime +14 -exec rm -v {} \;
+          echo "已刪除 14 天前檔案"
+        env:
+          WORKING_DIR: repo
