@@ -1,0 +1,145 @@
+name: Test Podcast Workflow
+
+# 手動觸發以便測試
+on:
+  workflow_dispatch:
+    inputs:
+      debug_mode:
+        description: '啟用詳細 debug 模式'
+        required: false
+        default: 'true'
+
+# 定義作業環境
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install Dependencies
+        run: |
+          pip install yfinance pandas backtrader numpy scikit-learn tensorflow requests feedparser edge-tts b2sdk
+      - name: Set Environment Variables
+        run: |
+          echo "GROK_API_KEY=${{ secrets.GROK_API_KEY }}" >> $GITHUB_ENV
+          echo "B2_KEY_ID=${{ secrets.B2_KEY_ID }}" >> $GITHUB_ENV
+          echo "B2_APPLICATION_KEY=${{ secrets.B2_APPLICATION_KEY }}" >> $GITHUB_ENV
+          echo "B2_BUCKET_NAME=${{ secrets.B2_BUCKET_NAME }}" >> $GITHUB_ENV
+          echo "SLACK_WEBHOOK_URL=${{ secrets.SLACK_WEBHOOK_URL }}" >> $GITHUB_ENV
+
+  data-collection:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Run Data Collector
+        run: |
+          echo "📥 開始執行資料收集員 (Data Collector)"
+          python scripts/data_collector.py
+          if [ $? -ne 0 ]; then
+            echo "❌ 資料收集員執行失敗，請檢查日誌"
+            exit 1
+          fi
+          echo "✅ 資料收集員執行完成，檢查 data/ 目錄下的 CSV 檔案"
+        continue-on-error: false
+
+  strategy-management:
+    runs-on: ubuntu-latest
+    needs: data-collection
+    steps:
+      - name: Run Strategy Manager
+        run: |
+          echo "🤖 開始執行策略管理師 (Strategy Manager)"
+          python scripts/strategy_manager.py
+          if [ $? -ne 0 ]; then
+            echo "❌ 策略管理師執行失敗，請檢查日誌"
+            exit 1
+          fi
+          echo "✅ 策略管理師執行完成，檢查 data/ 目錄下的 strategy_best_*.json"
+        continue-on-error: false
+
+  market-analysis:
+    runs-on: ubuntu-latest
+    needs: strategy-management
+    steps:
+      - name: Run Market Analyst
+        run: |
+          echo "📊 開始執行市場分析師 (Market Analyst)"
+          python scripts/market_analyst.py
+          if [ $? -ne 0 ]; then
+            echo "❌ 市場分析師執行失敗，請檢查日誌"
+            exit 1
+          fi
+          echo "✅ 市場分析師執行完成，檢查 data/ 目錄下的 market_analysis_*.json"
+        continue-on-error: false
+
+  script-editing:
+    runs-on: ubuntu-latest
+    needs: market-analysis
+    steps:
+      - name: Run Script Editor
+        run: |
+          echo "✍️ 開始執行文字編輯師 (Script Editor)"
+          python scripts/script_editor.py
+          if [ $? -ne 0 ]; then
+            echo "❌ 文字編輯師執行失敗，請檢查日誌"
+            exit 1
+          fi
+          echo "✅ 文字編輯師執行完成，檢查 docs/podcast/YYYYMMDD_*/script.txt"
+        continue-on-error: false
+        env:
+          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+
+  podcast-production:
+    runs-on: ubuntu-latest
+    needs: script-editing
+    steps:
+      - name: Run Podcast Producer
+        run: |
+          echo "🎙️ 開始執行播報員 (Podcast Producer)"
+          python scripts/podcast_producer.py
+          if [ $? -ne 0 ]; then
+            echo "❌ 播報員執行失敗，請檢查日誌"
+            exit 1
+          fi
+          echo "✅ 播報員執行完成，檢查 docs/podcast/YYYYMMDD_*/audio.mp3"
+        continue-on-error: false
+
+  upload-management:
+    runs-on: ubuntu-latest
+    needs: podcast-production
+    steps:
+      - name: Run Upload Manager
+        run: |
+          echo "☁️ 開始執行雲端上傳員 (Upload Manager)"
+          python scripts/upload_manager.py
+          if [ $? -ne 0 ]; then
+            echo "❌ 雲端上傳員執行失敗，請檢查日誌"
+            exit 1
+          fi
+          echo "✅ 雲端上傳員執行完成，檢查 docs/podcast/YYYYMMDD_*/archive_audio_url.txt"
+        continue-on-error: false
+        env:
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+
+  feed-publishing:
+    runs-on: ubuntu-latest
+    needs: upload-management
+    steps:
+      - name: Run Feed Publisher
+        run: |
+          echo "📡 開始執行推播員 (Feed Publisher)"
+          python scripts/feed_publisher.py
+          if [ $? -ne 0 ]; then
+            echo "❌ 推播員執行失敗，請檢查日誌"
+            exit 1
+          fi
+          echo "✅ 推播員執行完成，檢查 docs/rss/podcast_*.xml"
+        continue-on-error: false
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
