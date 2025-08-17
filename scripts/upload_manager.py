@@ -3,6 +3,7 @@ import json
 from datetime import datetime, timedelta
 import logging
 from b2sdk.v2 import InMemoryAccountInfo, B2Api
+import zipfile
 
 # 設定日誌
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -27,9 +28,9 @@ def load_config():
 def connect_to_b2():
     """連接至 Backblaze B2"""
     try:
-        key_id = os.environ["B2_KEY_ID"]
-        application_key = os.environ["B2_APPLICATION_KEY"]
-        bucket_name = os.environ["B2_BUCKET_NAME"]
+        key_id = os.environ.get("B2_KEY_ID", "請設置 B2_KEY_ID 環境變數")
+        application_key = os.environ.get("B2_APPLICATION_KEY", "請設置 B2_APPLICATION_KEY 環境變數")
+        bucket_name = os.environ.get("B2_BUCKET_NAME", "請設置 B2_BUCKET_NAME 環境變數")
     except KeyError as e:
         logger.error(f"⚠️ 缺少環境變數: {e}")
         raise EnvironmentError(f"⚠️ 缺少環境變數: {e}")
@@ -46,16 +47,13 @@ def connect_to_b2():
         raise ConnectionError(f"⚠️ B2 連接失敗: {e}")
 
 def upload_file(bucket, local_path, identifier, content_type):
-    """上傳單一檔案到 B2"""
+    """上傳單一檔案到 B2，支援壓縮"""
     try:
-        file_name = f"{identifier}.{os.path.splitext(local_path)[1][1:]}"
-        bucket.upload_local_file(
-            local_file=local_path,
-            file_name=file_name,
-            content_type=content_type
-        )
-        logger.info(f"✅ 已上傳 {file_name} 至 B2")
-        return file_name
+        with zipfile.ZipFile(f"{identifier}.zip", 'w', zipfile.ZIP_DEFLATED) as zipf:
+            zipf.write(local_path, os.path.basename(local_path))
+        bucket.upload_local_file(local_file=f"{identifier}.zip", file_name=f"{identifier}.zip", content_type=content_type)
+        logger.info(f"✅ 已壓縮並上傳 {identifier}.zip 至 B2")
+        return f"{identifier}.zip"
     except Exception as e:
         logger.error(f"⚠️ 上傳 {local_path} 失敗: {e}")
         raise RuntimeError(f"⚠️ 上傳失敗: {e}")
@@ -106,7 +104,7 @@ def main():
     # 連接 B2
     bucket = connect_to_b2()
 
-    # 確認並上傳檔案
+    # 批量上傳檔案
     files_to_upload = [
         {'path': os.path.join(podcast_dir, 'audio.mp3'), 'type': 'audio/mpeg'},
         {'path': os.path.join(podcast_dir, 'script.txt'), 'type': 'text/plain'}
@@ -124,6 +122,3 @@ def main():
 
     # 清理舊檔案
     cleanup_old_files()
-
-if __name__ == '__main__':
-    main()
