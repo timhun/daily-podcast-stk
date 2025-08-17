@@ -1,13 +1,12 @@
 name: Podcast Workflow Pipeline
 
-# 定義觸發條件
 on:
-  workflow_dispatch:  # 手動觸發
-  schedule:
-    - cron: '0 21 * * *'  # 台灣時間 5:00 AM (每日)
-    - cron: '0 5,14,18 * * *'  # 台灣時間 1:45 PM, 6:00 PM, 10:00 PM
-    - cron: '0 * * * *'  # 每小時 (策略管理師)
-    - cron: '0 22,6 * * *'  # 台灣時間 6:00 AM, 2:00 PM (播客相關)
+  workflow_dispatch:
+    inputs:
+      simulate_time:
+        description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
+        required: false
+        default: '06:00'
 
 env:
   WORKING_DIR: 'repo'
@@ -20,17 +19,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: ${{ env.WORKING_DIR }}
-      - name: Verify Repository Structure
+      - name: Verify Structure
         working-directory: ${{ env.WORKING_DIR }}
         run: |
-          pwd
-          ls -la
-          for dir in scripts data logs docs/podcast docs/rss; do
-            mkdir -p "$dir" || echo "目錄 $dir 已存在"
-          done
-          if [ ! -f "config.json" ]; then
-            echo '{"symbols": ["0050.TW", "QQQ", "^TWII", "BTC-USD"]}' > config.json
-          fi
+          mkdir -p data logs docs/podcast docs/rss
+          echo '{"symbols": ["0050.TW", "QQQ"]}' > config.json
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -38,13 +31,11 @@ jobs:
       - name: Install Dependencies
         working-directory: ${{ env.WORKING_DIR }}
         run: |
-          pip install --upgrade pip
-          pip install yfinance pandas numpy backtrader scikit-learn tensorflow requests feedparser edge-tts b2sdk
+          pip install yfinance pandas numpy backtrader scikit-learn tensorflow requests feedparser edge-tts b2sdk mutagen
 
   data-collection:
     runs-on: ubuntu-latest
     needs: setup
-    if: github.event.schedule == '0 21 * * *' || github.event.schedule == '0 5,14,18 * * *'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -52,49 +43,13 @@ jobs:
           path: ${{ env.WORKING_DIR }}
       - name: Run Data Collector
         working-directory: ${{ env.WORKING_DIR }}
-        run: |
-          echo "📥 執行資料收集員"
-          if [ ! -f "scripts/data_collector.py" ]; then
-            echo "創建模擬 data_collector.py"
-            cat > scripts/data_collector.py << 'EOF'
-import os
-import pandas as pd
-import yfinance as yf
-from datetime import datetime
-
-def fetch_data(symbol):
-    df = yf.download(symbol, period="300d" if "daily" in symbol else "14d", interval="1h" if "hourly" in symbol else "1d")
-    return df
-
-def validate_data(df, symbol):
-    if df.empty or 'Close' not in df.columns:
-        raise ValueError(f"數據缺失: {symbol}")
-    change = (df['Close'].iloc[-1] - df['Close'].iloc[0]) / df['Close'].iloc[0] * 100
-    if abs(change) > 20:
-        print(f"警告: {symbol} 漲跌幅度 {change:.2f}% 異常")
-    return df
-
-symbols = eval(open("config.json").read())["symbols"]
-for symbol in symbols:
-    try:
-        df = fetch_data(symbol)
-        df = validate_data(df, symbol)
-        os.makedirs("data", exist_ok=True)
-        df.to_csv(f"data/daily_{symbol}.csv" if "daily" in symbol else f"data/hourly_{symbol}.csv")
-        with open("logs/data_collector.log", "a") as f:
-            f.write(f"{datetime.now()}: {symbol} 數據收集完成, 筆數: {len(df)}\n")
-    except Exception as e:
-        with open("logs/data_collector.log", "a") as f:
-            f.write(f"{datetime.now()}: 錯誤 - {symbol}: {str(e)}\n")
-EOF
-          fi
-          python scripts/data_collector.py
-        continue-on-error: false
+        run: python scripts/data_collector.py
+        env:
+          PYTHONPATH: ${{ env.WORKING_DIR }}
 
   strategy-management:
     runs-on: ubuntu-latest
     needs: setup
-    if: github.event.schedule == '0 * * * *'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -102,183 +57,93 @@ EOF
           path: ${{ env.WORKING_DIR }}
       - name: Run Strategy Manager
         working-directory: ${{ env.WORKING_DIR }}
-        run: |
-          echo "🤖 執行策略管理師"
-          if [ ! -f "scripts/strategy_manager.py" ]; then
-            echo "創建模擬 strategy_manager.py"
-            cat > scripts/strategy_manager.py << 'EOF'
-import os
-import json
-import pandas as pd
-import backtrader as bt
-from datetime import datetime
+        run: python scripts/strategy_manager.py
+        env:
+          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+          PYTHONPATH: ${{ env.WORKING_DIR }}
 
-class Strategy(bt.Strategy):
-    params = (("period", 15),)
-
-    def __init__(self):
-        self.sma = bt.indicators.SMA(self.data.close, period=self.params.period)
-
-    def next(self):
-        if not self.position:
-            if self.data.close[0] > self.sma[0]:
-                self.buy()
-        elif self.data.close[0] < self.sma[0]:
-            self.sell()
-
-def run_strategy(symbol):
-    cerebro = bt.Cerebro()
-    data = bt.feeds.PandasData(dataname=pd.read_csv(f"data/daily_{symbol}.csv"))
-    cerebro.adddata(data)
-    cerebro.addstrategy(Strategy)
-    cerebro.run()
-    return cerebro.broker.getvalue()
-
-symbols = eval(open("config.json").read())["symbols"]
-for symbol in symbols:
-    try:
-        value = run_strategy(symbol)
-        result = {"symbol": symbol, "value": value, "timestamp": datetime.now().isoformat()}
-        os.makedirs("data", exist_ok=True)
-        with open(f"data/strategy_best_{symbol}.json", "w") as f:
-            json.dump(result, f)
-        with open("logs/strategy_manager.log", "a") as f:
-            f.write(f"{datetime.now()}: {symbol} 策略運行完成, 價值: {value}\n")
-    except Exception as e:
-        with open("logs/strategy_manager.log", "a") as f:
-            f.write(f"{datetime.now()}: 錯誤 - {symbol}: {str(e)}\n")
-EOF
-          fi
-          python scripts/strategy_manager.py
-        continue-on-error: false
-
-  podcast-stages:
+  market-analysis:
     runs-on: ubuntu-latest
-    needs: [setup, data-collection, strategy-management]
-    if: github.event.schedule == '0 22 * * *' || github.event.schedule == '6 * * *'
+    needs: [setup, strategy-management]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
           path: ${{ env.WORKING_DIR }}
-      - name: Set Date and Mode
-        id: set-date-mode
+      - name: Run Market Analyst
+        working-directory: ${{ env.WORKING_DIR }}
+        run: python scripts/market_analyst.py
+        env:
+          PYTHONPATH: ${{ env.WORKING_DIR }}
+
+  script-editing:
+    runs-on: ubuntu-latest
+    needs: [setup, market-analysis]
+    if: github.event.inputs.simulate_time == '06:00' || github.event.inputs.simulate_time == '14:00'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.WORKING_DIR }}
+      - name: Set Mode
+        id: set-mode
         working-directory: ${{ env.WORKING_DIR }}
         run: |
-          DATE_STR=$(date +%Y%m%d)
-          HOUR=$(date +%H)
-          if [ "$HOUR" = "06" ]; then
-            MODE="us"
-          elif [ "$HOUR" = "14" ]; then
-            MODE="tw"
-          else
-            MODE="tw"
-          fi
-          echo "DATE_STR=$DATE_STR" >> $GITHUB_ENV
+          HOUR=$(echo ${{ github.event.inputs.simulate_time }} | cut -d':' -f1)
+          MODE="us" if [ "$HOUR" == "06" ]; else "tw"
           echo "PODCAST_MODE=$MODE" >> $GITHUB_ENV
       - name: Run Script Editor
         working-directory: ${{ env.WORKING_DIR }}
-        run: |
-          echo "✍️ 執行文字編輯師"
-          mkdir -p "docs/podcast/${{ env.DATE_STR }}_${{ env.PODCAST_MODE }}"
-          if [ ! -f "scripts/script_editor.py" ]; then
-            echo "創建模擬 script_editor.py"
-            cat > scripts/script_editor.py << 'EOF'
-import os
-from datetime import datetime
+        run: python scripts/script_editor.py
+        env:
+          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+          PYTHONPATH: ${{ env.WORKING_DIR }}
 
-def generate_script(mode):
-    script = f"這是 {mode} 播客腳本 - {datetime.now().strftime('%Y%m%d')}"
-    dir_path = f"docs/podcast/{datetime.now().strftime('%Y%m%d')}_{mode}"
-    os.makedirs(dir_path, exist_ok=True)
-    with open(f"{dir_path}/script.txt", "w") as f:
-        f.write(script)
-    with open("logs/script_editor.log", "a") as f:
-        f.write(f"{datetime.now()}: 腳本生成完成\n")
-
-generate_script(os.getenv("PODCAST_MODE", "tw"))
-EOF
-          fi
-          python scripts/script_editor.py
-        continue-on-error: false
-      - name: Run Podcast Producer
-        working-directory: ${{ env.WORKING_DIR }}
-        run: |
-          echo "🎙️ 執行播報員"
-          if [ ! -f "scripts/podcast_producer.py" ]; then
-            echo "創建模擬 podcast_producer.py"
-            cat > scripts/podcast_producer.py << 'EOF'
-import os
-from datetime import datetime
-
-def generate_audio(mode):
-    dir_path = f"docs/podcast/{datetime.now().strftime('%Y%m%d')}_{mode}"
-    with open(f"{dir_path}/audio.mp3", "w") as f:
-        f.write("模擬音頻")
-    with open("logs/podcast_producer.log", "a") as f:
-        f.write(f"{datetime.now()}: 音頻生成完成\n")
-
-generate_audio(os.getenv("PODCAST_MODE", "tw"))
-EOF
-          fi
-          python scripts/podcast_producer.py
-        continue-on-error: false
-      - name: Run Upload Manager
-        working-directory: ${{ env.WORKING_DIR }}
-        run: |
-          echo "☁️ 執行雲端上傳員"
-          if [ ! -f "scripts/upload_manager.py" ]; then
-            echo "創建模擬 upload_manager.py"
-            cat > scripts/upload_manager.py << 'EOF'
-import os
-from datetime import datetime
-
-def upload_file(mode):
-    dir_path = f"docs/podcast/{datetime.now().strftime('%Y%m%d')}_{mode}"
-    with open(f"{dir_path}/archive_audio_url.txt", "w") as f:
-        f.write("https://example.com/audio.mp3")
-    with open("logs/upload_manager.log", "a") as f:
-        f.write(f"{datetime.now()}: 上傳完成\n")
-
-upload_file(os.getenv("PODCAST_MODE", "tw"))
-EOF
-          fi
-          python scripts/upload_manager.py
-        continue-on-error: false
-      - name: Run Feed Publisher
-        working-directory: ${{ env.WORKING_DIR }}
-        run: |
-          echo "📡 執行推播員"
-          if [ ! -f "scripts/feed_publisher.py" ]; then
-            echo "創建模擬 feed_publisher.py"
-            cat > scripts/feed_publisher.py << 'EOF'
-import os
-from datetime import datetime
-
-def publish_feed(mode):
-    dir_path = "docs/rss"
-    os.makedirs(dir_path, exist_ok=True)
-    with open(f"{dir_path}/podcast_{mode}.xml", "w") as f:
-        f.write(f"<rss><channel><title>{mode} Podcast</title></channel></rss>")
-    with open("logs/feed_publisher.log", "a") as f:
-        f.write(f"{datetime.now()}: RSS 發布完成\n")
-
-publish_feed(os.getenv("PODCAST_MODE", "tw"))
-EOF
-          fi
-          python scripts/feed_publisher.py
-        continue-on-error: false
-
-  cleanup:
+  podcast-production:
     runs-on: ubuntu-latest
-    needs: podcast-stages
+    needs: [setup, script-editing]
+    if: github.event.inputs.simulate_time == '06:00' || github.event.inputs.simulate_time == '14:00'
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
           path: ${{ env.WORKING_DIR }}
-      - name: Cleanup Old Files
+      - name: Run Podcast Producer
         working-directory: ${{ env.WORKING_DIR }}
-        run: |
-          find docs/podcast -type f -mtime +14 -exec rm -v {} \;
-          echo "已刪除 14 天前檔案"
+        run: python scripts/podcast_producer.py
+        env:
+          PYTHONPATH: ${{ env.WORKING_DIR }}
+
+  upload-management:
+    runs-on: ubuntu-latest
+    needs: [setup, podcast-production]
+    if: github.event.inputs.simulate_time == '06:00' || github.event.inputs.simulate_time == '14:00'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.WORKING_DIR }}
+      - name: Run Upload Manager
+        working-directory: ${{ env.WORKING_DIR }}
+        run: python scripts/upload_manager.py
+        env:
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+          PYTHONPATH: ${{ env.WORKING_DIR }}
+
+  feed-publishing:
+    runs-on: ubuntu-latest
+    needs: [setup, upload-management]
+    if: github.event.inputs.simulate_time == '06:00' || github.event.inputs.simulate_time == '14:00'
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: ${{ env.WORKING_DIR }}
+      - name: Run Feed Publisher
+        working-directory: ${{ env.WORKING_DIR }}
+        run: python scripts/feed_publisher.py
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          PYTHONPATH: ${{ env.WORKING_DIR }}
