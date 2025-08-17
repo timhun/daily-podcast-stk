@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 # 配置 Grok API
 GROK_API_KEY = os.getenv('GROK_API_KEY')
-GROK_API_URL = "https://api.grok.xai.com/v1/improve_strategy"  # 假設的 API 端點
+GROK_API_URL = "https://api.grok.xai.com/v1/improve_strategy"
 
 def load_config():
     """載入配置檔案 config.json"""
@@ -49,9 +49,24 @@ class VolumeBreakout(Strategy):
             self.sell()
 
 class MLStrategy(Strategy):
-    """基於 ML 的策略（使用預訓練模型）"""
+    """基於 ML 的策略"""
+    params = (('model_type', 'rf'), ('model', None))
+
     def __init__(self):
-        pass  # 需預訓練模型預測
+        self.model = self.params.model
+        self.features = ['Open', 'High', 'Low', 'Close', 'Volume']
+
+    def next(self):
+        X = np.array([self.data.get(size=5)[-1][self.features]]).reshape(1, -1)
+        if self.params.model_type == 'rf':
+            prediction = self.model.predict(X)[0]
+        else:  # LSTM
+            X_lstm = X.reshape(1, X.shape[1], 1)
+            prediction = self.model.predict(X_lstm)[0][0] > 0.5
+        if prediction and not self.position:
+            self.buy()
+        elif not prediction and self.position:
+            self.sell()
 
 def prepare_ml_data(df):
     """準備 ML 數據"""
@@ -66,50 +81,53 @@ def train_ml_models(df, symbol):
     # Random Forest
     rf = RandomForestClassifier(n_estimators=100, random_state=42)
     rf.fit(X, y)
-    # LSTM (簡單版本)
+    # LSTM
     model = Sequential()
     model.add(LSTM(50, return_sequences=True, input_shape=(X.shape[1], 1)))
     model.add(LSTM(50))
     model.add(Dense(1, activation='sigmoid'))
     model.compile(optimizer='adam', loss='binary_crossentropy')
-    # 假設數據轉為 3D 格式 (samples, timesteps, features)
     X_lstm = np.reshape(X.values, (X.shape[0], X.shape[1], 1))
     model.fit(X_lstm, y.values, epochs=10, batch_size=32, verbose=0)
     return {'rf': rf, 'lstm': model}
 
-def evaluate_strategy(cerebro, symbol, data):
+def evaluate_strategy(cerebro, symbol, data, strategy, params):
     """評估策略回測結果"""
     cerebro.adddata(data)
+    cerebro.addstrategy(strategy, **params)
     cerebro.run()
-    results = cerebro.broker.getvalue() / cerebro.broker.getvalue() - 1  # 簡化回報率
-    return results if results > 0 else 0
+    return cerebro.broker.getvalue() / cerebro.broker.getvalue() - 1  # 簡化回報率
 
 def get_market_baseline(df):
     """計算大盤每日/每周漲跌幅作為基準"""
     daily_change = df['Close'].pct_change().iloc[-1] * 100
-    weekly_change = df['Close'].pct_change(periods=5).iloc[-1] * 100
-    return max(daily_change, weekly_change / 5)  # 取每日或每周平均作為基準
+    weekly_change = df['Close'].pct_change(periods=5).iloc[-1] * 100 / 5
+    baseline = max(daily_change, weekly_change)
+    with open('logs/baseline_history.log', 'a') as f:
+        f.write(f"{datetime.now()}: {df['Symbol'].iloc[0]} Baseline: {baseline:.2f}%\n")
+    return baseline
 
-def improve_with_grok(current_params):
-    """使用 Grok API 改進策略參數"""
+async def improve_with_grok(current_params, symbol):
+    """使用 Grok API 異步改進策略參數"""
     if not GROK_API_KEY:
-        logger.warning("缺少 GROK_API_KEY，跳過改進")
+        logger.warning(f"缺少 GROK_API_KEY，跳過 {symbol} 改進")
         return current_params
     try:
-        response = requests.post(GROK_API_URL, json={'params': current_params}, headers={'Authorization': f'Bearer {GROK_API_KEY}'})
+        response = requests.post(GROK_API_URL, json={'params': current_params, 'symbol': symbol}, headers={'Authorization': f'Bearer {GROK_API_KEY}'})
         response.raise_for_status()
         improved_params = response.json().get('improved_params', current_params)
-        logger.info(f"Grok API 改進參數: {improved_params}")
+        logger.info(f"Grok API 改進 {symbol} 參數: {improved_params}")
         return improved_params
     except Exception as e:
-        logger.error(f"Grok API 請求失敗: {e}")
+        logger.error(f"Grok API 請求 {symbol} 失敗: {e}")
         return current_params
 
-def main():
+async def main():
     """主函數，執行策略管理"""
     symbols, strategies = load_config()
     data_dir = 'data'
 
+    tasks = []
     for symbol in symbols:
         daily_path = os.path.join(data_dir, f'daily_{symbol}.csv')
         if not os.path.exists(daily_path):
@@ -128,22 +146,23 @@ def main():
         for strategy_name, params in strategies.items():
             cerebro = Cerebro()
             if strategy_name == 'VolumeBreakout':
-                cerebro.addstrategy(VolumeBreakout, **params)
+                strategy_class = VolumeBreakout
             elif strategy_name == 'MLStrategy':
                 ml_models = train_ml_models(df, symbol)
-                # 這裡簡化 ML 策略應用，實際需整合預測
-                cerebro.addstrategy(MLStrategy)
+                strategy_class = MLStrategy
+                params['model'] = ml_models['rf'] if params.get('model_type', 'rf') == 'rf' else ml_models['lstm']
+                params['model_type'] = params.get('model_type', 'rf')
 
             data = btind.PandasData(dataname=df)
-            return_value = evaluate_strategy(cerebro, symbol, data)
+            return_value = evaluate_strategy(cerebro, symbol, data, strategy_class, params)
             if return_value > baseline_return and return_value > 0:
                 if return_value > best_return:
                     best_return = return_value
                     best_strategy = strategy_name
-                    best_params = params
+                    best_params = params.copy()
 
         if best_strategy:
-            improved_params = improve_with_grok(best_params)
+            improved_params = await improve_with_grok(best_params, symbol)
             output = {
                 'symbol': symbol,
                 'best_strategy': best_strategy,
@@ -159,4 +178,4 @@ def main():
             logger.warning(f"{symbol} 無勝過基準的策略")
 
 if __name__ == '__main__':
-    main()
+    asyncio.run(main())
