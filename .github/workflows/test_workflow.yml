@@ -28,9 +28,10 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: '3.9'
-      - name: Install Dependencies
+      - name: Clear Cache and Install Dependencies
         working-directory: ${{ env.WORKING_DIR }}
         run: |
+          rm -rf ~/.cache/pip
           python -m pip install --upgrade pip
           pip install yfinance pandas numpy backtrader scikit-learn tensorflow requests feedparser edge-tts b2sdk mutagen
         env:
@@ -55,6 +56,12 @@ jobs:
         working-directory: ${{ env.WORKING_DIR }}
         run: |
           echo "當前工作目錄: $(pwd)"
+          echo "已安裝的 Python 套件:"
+          python -m pip list | grep yfinance || echo "yfinance 未安裝"
+          if ! python -c "import yfinance" 2>/dev/null; then
+            echo "重新安裝 yfinance..."
+            python -m pip install --force-reinstall yfinance
+          fi
           python scripts/data_collector.py
         env:
           WORKING_DIR: repo
