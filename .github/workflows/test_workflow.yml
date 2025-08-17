@@ -1,50 +1,29 @@
 name: Test Data Collection Workflow
 
-# 手動觸發以便測試，新增模擬模式選項
 on:
   workflow_dispatch:
     inputs:
-      debug_mode:
-        description: '啟用詳細 debug 模式'
-        required: false
-        default: 'true'
-        type: boolean
       podcast_mode:
-        description: '播客模式 (tw/us/auto)'
+        description: '播客模式 (tw/us)'
         required: true
-        default: 'auto'
+        default: 'tw'
         type: choice
         options:
           - tw
           - us
-          - auto
       simulate_time:
         description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '19:16'  # 當前時間約 19:16 CST
+        default: '19:29'  # 當前時間約 19:29 CST
 
-# 定義作業環境
 jobs:
-  setup:
+  data-collection:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          path: repo  # 直接使用 repo 作為單一目錄
-      - name: Verify Repository Structure
-        working-directory: repo
-        run: |
-          echo "📋 驗證倉庫結構"
-          pwd
-          ls -la
-          for dir in scripts data logs; do
-            if [ ! -d "$dir" ]; then
-              echo "⚠️ 創建缺少的目錄: $dir"
-              mkdir -p "$dir"
-            fi
-          done
-          ls -la scripts/ || echo "⚠️ scripts 目錄為空"
+          path: repo
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -52,56 +31,28 @@ jobs:
       - name: Install Dependencies
         working-directory: repo
         run: |
-          echo "📦 安裝依賴"
-          pip install --upgrade pip
-          pip install yfinance pandas numpy
-      - name: Set Environment Variables
-        working-directory: repo
-        run: |
-          echo "🔑 設定環境變數"
-          SIMULATED_HOUR=$(echo ${{ inputs.simulate_time }} | cut -d':' -f1)
-          if [ "$SIMULATED_HOUR" = "06" ]; then
-            echo "PODCAST_MODE=us" >> $GITHUB_ENV
-          elif [ "$SIMULATED_HOUR" = "14" ]; then
-            echo "PODCAST_MODE=tw" >> $GITHUB_ENV
-          else
-            echo "PODCAST_MODE=${{ github.event.inputs.podcast_mode || 'auto' }}" >> $GITHUB_ENV
-          fi
-          echo "MODE=manual" >> $GITHUB_ENV
-          echo "MANUAL_TRIGGER=1" >> $GITHUB_ENV
-          echo "DATA_DIR=data" >> $GITHUB_ENV
-          echo "DEBUG_MODE=${{ inputs.debug_mode }}" >> $GITHUB_ENV
-
-  data-collection:
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          path: repo
+          pip install pandas
       - name: Run Data Collector
         working-directory: repo
         run: |
-          echo "📥 開始執行資料收集員 (Data Collector) - 模式: $PODCAST_MODE"
-          pwd
-          ls -la scripts/
-          mkdir -p logs
+          echo "📥 開始執行資料收集員 - 模式: ${{ inputs.podcast_mode }}"
+          mkdir -p data logs
           if [ ! -f "scripts/data_collector.py" ]; then
-            echo "⚠️ data_collector.py 不存在，創建模擬腳本"
+            echo "⚠️ 創建模擬腳本"
             cat > scripts/data_collector.py << 'EOF'
 import os
 import pandas as pd
 from datetime import datetime
 
 def main():
-    print(f"數據收集開始 - 模式: {os.getenv('PODCAST_MODE', 'tw')}")
-    data_dir = os.getenv('DATA_DIR', 'data')
+    mode = os.getenv('PODCAST_MODE', '${{ inputs.podcast_mode }}')
+    print(f"數據收集開始 - 模式: {mode}")
+    data_dir = "data"
     os.makedirs(data_dir, exist_ok=True)
-    dates = pd.date_range('2024-01-01', periods=100, freq='D')
-    prices = 100 + (pd.Series(range(100)) * 0.1)
+    dates = pd.date_range('2024-01-01', periods=10, freq='D')
+    prices = 100 + (pd.Series(range(10)) * 0.1)
     df = pd.DataFrame({'Date': dates, 'Close': prices})
-    filename = f"{data_dir}/daily_0050.TW.csv"
+    filename = f"{data_dir}/daily_{mode}.csv"
     df.to_csv(filename, index=False)
     print(f"✅ 數據已保存到: {filename}")
     with open("logs/data_collector.log", "w") as f:
@@ -113,44 +64,16 @@ EOF
           fi
           python scripts/data_collector.py
           if [ $? -ne 0 ]; then
-            echo "❌ 資料收集員執行失敗，請檢查日誌: cat logs/data_collector.log"
+            echo "❌ 執行失敗"
             exit 1
           fi
-          echo "✅ 資料收集員執行完成，檢查 data/ 目錄下的 CSV 檔案: ls -la data/"
-        continue-on-error: false
-
-  finalize:
-    runs-on: ubuntu-latest
-    needs: data-collection
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          path: repo
-      - name: Check Data Files
+          echo "✅ 執行完成，檢查檔案: ls -la data/"
+      - name: Check Output
         working-directory: repo
         run: |
-          echo "🔍 檢查資料檔案"
-          if [ -f "data/daily_0050.TW.csv" ]; then
-            echo "✅ data/daily_0050.TW.csv exists, size: $(du -h data/daily_0050.TW.csv | cut -f1)"
+          if [ -f "data/daily_${{ inputs.podcast_mode }}.csv" ]; then
+            echo "✅ 數據文件生成成功"
           else
-            echo "❌ data/daily_0050.TW.csv does not exist"
+            echo "❌ 數據文件未生成"
             exit 1
           fi
-          if [ -f "logs/data_collector.log" ]; then
-            echo "✅ logs/data_collector.log exists, last modified: $(stat -c %y logs/data_collector.log)"
-            echo "Latest log entry: $(tail -1 logs/data_collector.log)"
-          else
-            echo "❌ logs/data_collector.log does not exist"
-          fi
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: data-collection-${{ github.run_id }}
-          path: |
-            repo/data/*.csv
-            repo/logs/data_collector.log
-          if-no-files-found: warn
-          retention-days: 7
-          compression-level: 6
-          overwrite: false
