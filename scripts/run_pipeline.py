@@ -31,7 +31,7 @@ def generate_podcast_script(date_str=None, mode='tw'):
 
     # 檢查必要檔案是否存在
     required_files = [f'data/daily_{symbol}.csv', f'data/hourly_{symbol}.csv']
-    podcast_symbols = ['^TWII', 'BTC-USD', '^DJI', 'GC=F', '^GSPC', '^IXIC', 'SPY']
+    podcast_symbols = ['^TWII', 'BTC-USD', 'DJI', 'GC=F', 'GSPC', 'IXIC', 'SPY']
     required_files.extend([f'data/daily_{s}.csv' for s in podcast_symbols])
     for file in required_files:
         if not os.path.exists(file):
@@ -50,7 +50,10 @@ def generate_podcast_script(date_str=None, mode='tw'):
             if len(df) >= 2:
                 ts = df.iloc[-1]
                 ts_prev = df.iloc[-2]
-                pct = ((ts['Close'] - ts_prev['Close']) / ts_prev['Close'] * 100) if not pd.isna(ts_prev['Close']) else 'N/A'
+                # 確保 Close 為數值型態
+                ts['Close'] = pd.to_numeric(ts['Close'], errors='coerce')
+                ts_prev['Close'] = pd.to_numeric(ts_prev['Close'], errors='coerce')
+                pct = ((ts['Close'] - ts_prev['Close']) / ts_prev['Close'] * 100) if not pd.isna(ts_prev['Close']) and ts_prev['Close'] != 0 else 'N/A'
                 podcast_data[s] = {'Close': ts['Close'], 'pct': pct}
             else:
                 podcast_data[s] = {'Close': 'N/A', 'pct': 'N/A'}
@@ -90,7 +93,10 @@ def generate_podcast_script(date_str=None, mode='tw'):
         if len(daily_df) >= 2:
             ts = daily_df.iloc[-1]
             ts_prev = daily_df.iloc[-2]
-            ts_pct = ((ts['Close'] - ts_prev['Close']) / ts_prev['Close'] * 100) if not pd.isna(ts_prev['Close']) else 'N/A'
+            # 確保 Close 為數值型態
+            ts['Close'] = pd.to_numeric(ts['Close'], errors='coerce')
+            ts_prev['Close'] = pd.to_numeric(ts_prev['Close'], errors='coerce')
+            ts_pct = ((ts['Close'] - ts_prev['Close']) / ts_prev['Close'] * 100) if not pd.isna(ts_prev['Close']) and ts_prev['Close'] != 0 else 'N/A'
         else:
             ts = daily_df.iloc[-1] if len(daily_df) > 0 else pd.Series({'Close': 'N/A', 'Volume': 'N/A'})
             ts_pct = 'N/A'
@@ -261,13 +267,14 @@ def main():
         else:
             mode = 'hourly'
             os.environ['INTERVAL'] = '1h'
-            os.environ['DAYS'] = '14'
+            os.environ['DAYS'] = '7'
     elif is_manual:
         # 手動觸發時根據 podcast_mode 生成指定模式
         mode = 'daily'
         os.environ['INTERVAL'] = '1d'
         os.environ['DAYS'] = '90'
         date_str = datetime.now(timezone('Asia/Taipei')).strftime('%Y%m%d')
+        fetch_market_data()  # 確保手動模式下總是抓取數據
         if podcast_mode in ['tw', 'us']:
             os.environ['PODCAST_MODE'] = podcast_mode
             generate_podcast_script(date_str, podcast_mode)
@@ -285,16 +292,16 @@ def main():
     # 根據模式調整數據範圍
     if mode == 'hourly':
         os.environ['INTERVAL'] = '1h'
-        os.environ['DAYS'] = '14'
+        os.environ['DAYS'] = '7'
     elif mode == 'daily':
         os.environ['INTERVAL'] = '1d'
-        os.environ['DAYS'] = '120'
+        os.environ['DAYS'] = '90'
     elif mode == 'weekly':
         os.environ['INTERVAL'] = '1wk'
         os.environ['DAYS'] = '365'
 
-    # 僅在手動觸發或自動回測時執行 fetch_market_data（避免與 data-fetch.yml 重複）
-    if is_manual or (mode in ['hourly', 'weekly'] and mode != 'auto'):
+    # 僅在自動回測時執行 fetch_market_data（避免與手動重複）
+    if not is_manual and (mode in ['hourly', 'weekly'] and mode != 'auto'):
         fetch_market_data()
 
     # 運行回測（根據符號調整）
