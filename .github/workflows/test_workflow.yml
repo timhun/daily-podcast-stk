@@ -1,6 +1,6 @@
 name: Test Podcast Workflow
 
-# 手動觸發以便測試
+# 手動觸發以便測試，新增模擬模式選項
 on:
   workflow_dispatch:
     inputs:
@@ -8,6 +8,19 @@ on:
         description: '啟用詳細 debug 模式'
         required: false
         default: 'true'
+      podcast_mode:
+        description: '播客模式 (tw/us/auto)'
+        required: true
+        default: 'auto'
+        type: choice
+        options:
+          - tw
+          - us
+          - auto
+      simulate_time:
+        description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
+        required: false
+        default: '15:52'  # 當前時間 15:52 CST
 
 # 定義作業環境
 jobs:
@@ -22,6 +35,7 @@ jobs:
         run: |
           cd ./  # 切換到根目錄
           echo "📋 驗證倉庫結構"
+          pwd  # 顯示當前工作目錄
           ls -la
           if [ ! -d "scripts" ]; then echo "❌ 缺少 scripts 目錄"; exit 1; fi
           if [ ! -f "config.json" ]; then echo "❌ 缺少 config.json"; exit 1; fi
@@ -38,6 +52,21 @@ jobs:
         run: |
           cd ./  # 切換到根目錄
           echo "🔑 設定環境變數"
+          # 根據模擬時間設置 PODCAST_MODE
+          SIMULATED_HOUR=$(echo ${{ inputs.simulate_time }} | cut -d':' -f1)
+          if [ "$SIMULATED_HOUR" = "06" ]; then
+            echo "PODCAST_MODE=us" >> $GITHUB_ENV
+          elif [ "$SIMULATED_HOUR" = "14" ]; then
+            echo "PODCAST_MODE=tw" >> $GITHUB_ENV
+          else
+            echo "PODCAST_MODE=${{ github.event.inputs.podcast_mode || 'auto' }}" >> $GITHUB_ENV
+          fi
+          echo "MODE=manual" >> $GITHUB_ENV  # 測試模式設為手動
+          echo "MANUAL_TRIGGER=1" >> $GITHUB_ENV
+          echo "USE_LLM=1" >> $GITHUB_ENV
+          echo "REPORT_DIR=data" >> $GITHUB_ENV
+          echo "DATA_DIR=data" >> $GITHUB_ENV
+          echo "TARGET_RETURN=0.02" >> $GITHUB_ENV
           echo "GROK_API_KEY=${{ secrets.GROK_API_KEY }}" >> $GITHUB_ENV
           echo "B2_KEY_ID=${{ secrets.B2_KEY_ID }}" >> $GITHUB_ENV
           echo "B2_APPLICATION_KEY=${{ secrets.B2_APPLICATION_KEY }}" >> $GITHUB_ENV
@@ -51,7 +80,9 @@ jobs:
       - name: Run Data Collector
         run: |
           cd ./  # 切換到根目錄
-          echo "📥 開始執行資料收集員 (Data Collector)"
+          echo "📥 開始執行資料收集員 (Data Collector) - 模式: $PODCAST_MODE"
+          pwd  # 顯示當前工作目錄
+          ls -la scripts/  # 檢查 scripts 目錄內容
           python scripts/data_collector.py
           if [ $? -ne 0 ]; then
             echo "❌ 資料收集員執行失敗，請檢查日誌: cat logs/data_collector.log"
@@ -67,7 +98,9 @@ jobs:
       - name: Run Strategy Manager
         run: |
           cd ./  # 切換到根目錄
-          echo "🤖 開始執行策略管理師 (Strategy Manager)"
+          echo "🤖 開始執行策略管理師 (Strategy Manager) - 模式: $PODCAST_MODE"
+          pwd  # 顯示當前工作目錄
+          ls -la scripts/  # 檢查 scripts 目錄內容
           python scripts/strategy_manager.py
           if [ $? -ne 0 ]; then
             echo "❌ 策略管理師執行失敗，請檢查日誌: cat logs/strategy_manager.log"
@@ -83,7 +116,9 @@ jobs:
       - name: Run Market Analyst
         run: |
           cd ./  # 切換到根目錄
-          echo "📊 開始執行市場分析師 (Market Analyst)"
+          echo "📊 開始執行市場分析師 (Market Analyst) - 模式: $PODCAST_MODE"
+          pwd  # 顯示當前工作目錄
+          ls -la scripts/  # 檢查 scripts 目錄內容
           python scripts/market_analyst.py
           if [ $? -ne 0 ]; then
             echo "❌ 市場分析師執行失敗，請檢查日誌: cat logs/market_analyst.log"
@@ -99,7 +134,9 @@ jobs:
       - name: Run Script Editor
         run: |
           cd ./  # 切換到根目錄
-          echo "✍️ 開始執行文字編輯師 (Script Editor)"
+          echo "✍️ 開始執行文字編輯師 (Script Editor) - 模式: $PODCAST_MODE"
+          pwd  # 顯示當前工作目錄
+          ls -la scripts/  # 檢查 scripts 目錄內容
           python scripts/script_editor.py
           if [ $? -ne 0 ]; then
             echo "❌ 文字編輯師執行失敗，請檢查日誌: cat logs/script_editor.log"
@@ -117,7 +154,9 @@ jobs:
       - name: Run Podcast Producer
         run: |
           cd ./  # 切換到根目錄
-          echo "🎙️ 開始執行播報員 (Podcast Producer)"
+          echo "🎙️ 開始執行播報員 (Podcast Producer) - 模式: $PODCAST_MODE"
+          pwd  # 顯示當前工作目錄
+          ls -la scripts/  # 檢查 scripts 目錄內容
           python scripts/podcast_producer.py
           if [ $? -ne 0 ]; then
             echo "❌ 播報員執行失敗，請檢查日誌: cat logs/podcast_producer.log"
@@ -133,7 +172,9 @@ jobs:
       - name: Run Upload Manager
         run: |
           cd ./  # 切換到根目錄
-          echo "☁️ 開始執行雲端上傳員 (Upload Manager)"
+          echo "☁️ 開始執行雲端上傳員 (Upload Manager) - 模式: $PODCAST_MODE"
+          pwd  # 顯示當前工作目錄
+          ls -la scripts/  # 檢查 scripts 目錄內容
           python scripts/upload_manager.py
           if [ $? -ne 0 ]; then
             echo "❌ 雲端上傳員執行失敗，請檢查日誌: cat logs/upload_manager.log"
@@ -153,7 +194,9 @@ jobs:
       - name: Run Feed Publisher
         run: |
           cd ./  # 切換到根目錄
-          echo "📡 開始執行推播員 (Feed Publisher)"
+          echo "📡 開始執行推播員 (Feed Publisher) - 模式: $PODCAST_MODE"
+          pwd  # 顯示當前工作目錄
+          ls -la scripts/  # 檢查 scripts 目錄內容
           python scripts/feed_publisher.py
           if [ $? -ne 0 ]; then
             echo "❌ 推播員執行失敗，請檢查日誌: cat logs/feed_publisher.log"
@@ -163,3 +206,79 @@ jobs:
         continue-on-error: false
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  # 額外步驟，檢查所有檔案並上傳
+  finalize:
+    runs-on: ubuntu-latest
+    needs: [data-collection, strategy-management, market-analysis, script-editing, podcast-production, upload-management, feed-publishing]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: ./  # 確保檢查到根目錄
+      - name: Check Podcast Files
+        run: |
+          cd ./  # 切換到根目錄
+          date_str=$(date +%Y%m%d)
+          for mode in tw us; do
+            for subfile in docs/podcast/${date_str}_${mode}/script.txt docs/podcast/${date_str}_${mode}/audio.mp3 docs/podcast/${date_str}_${mode}/archive_audio_url.txt; do
+              if [ -f "$subfile" ]; then
+                echo "$subfile exists, last modified: $(stat -c %y "$subfile")"
+              else
+                echo "Warning: $subfile does not exist"
+              fi
+            done
+          done
+          for rss in docs/rss/podcast_tw.xml docs/rss/podcast_us.xml docs/rss/podcast.xml; do
+            if [ -f "$rss" ]; then
+              echo "$rss exists, last modified: $(stat -c %y "$rss")"
+            else
+              echo "Warning: $rss does not exist"
+            fi
+          done
+      - name: Commit and Push Changes
+        run: |
+          cd ./  # 切換到根目錄
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          date_str=$(date +%Y%m%d)
+          for mode in tw us; do
+            if [ -f "docs/podcast/${date_str}_${mode}/script.txt" ]; then
+              git add docs/podcast/${date_str}_${mode}/script.txt
+            fi
+            if [ -f "docs/podcast/${date_str}_${mode}/audio.mp3" ]; then
+              git add docs/podcast/${date_str}_${mode}/audio.mp3
+            fi
+            if [ -f "docs/podcast/${date_str}_${mode}/archive_audio_url.txt" ]; then
+              git add docs/podcast/${date_str}_${mode}/archive_audio_url.txt
+            fi
+          done
+          if [ -f "docs/rss/podcast_tw.xml" ]; then
+            git add docs/rss/podcast_tw.xml
+          fi
+          if [ -f "docs/rss/podcast_us.xml" ]; then
+            git add docs/rss/podcast_us.xml
+          fi
+          if [ -f "docs/rss/podcast.xml" ]; then
+            git add docs/rss/podcast.xml
+          fi
+          git commit -m "Update podcast files [skip ci]" || echo "No changes to commit"
+          git push
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: podcast-reports-${{ github.run_id }}
+          path: |
+            docs/podcast/*/*_tw/script.txt
+            docs/podcast/*/*_tw/audio.mp3
+            docs/podcast/*/*_tw/archive_audio_url.txt
+            docs/podcast/*/*_us/script.txt
+            docs/podcast/*/*_us/audio.mp3
+            docs/podcast/*/*_us/archive_audio_url.txt
+            docs/rss/podcast_tw.xml
+            docs/rss/podcast_us.xml
+            docs/rss/podcast.xml
+          if-no-files-found: warn
+          compression-level: 6
+          overwrite: false
+          include-hidden-files: false
