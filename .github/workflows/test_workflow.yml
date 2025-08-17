@@ -1,9 +1,3 @@
-這裡 `import os` 如果有縮進（例如 4 個空格），會導致問題。
-
-### 修正
-要解決此問題，內嵌 Python 腳本的每一行必須與 `cat >` 後的第一行對齊（4 個空格），但腳本內容本身應無縮進。以下是修正後的完整 YAML 文件：
-
-```yaml
 name: Test Data Collection Workflow
 
 on:
