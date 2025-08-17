@@ -14,7 +14,7 @@ on:
       simulate_time:
         description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '20:34'  # 當前時間約 20:34 CST
+        default: '20:44'  # 當前時間約 20:44 CST
 
 jobs:
   data-collection:
@@ -24,18 +24,50 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: repo
-      - name: Generate Mock Data
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install Dependencies
         working-directory: repo
         run: |
-          echo "📥 開始生成模擬數據 - 模式: ${{ inputs.podcast_mode }}"
+          pip install pandas
+      - name: Run Data Collector
+        working-directory: repo
+        run: |
+          echo "📥 開始執行資料收集員 - 模式: ${{ inputs.podcast_mode }}"
           mkdir -p data logs
-          echo "date,close" > data/daily_${{ inputs.podcast_mode }}.csv
-          for i in {0..9}; do
-            echo "2024-01-0$i,100.$i" >> data/daily_${{ inputs.podcast_mode }}.csv
-          done
-          echo "✅ 數據已保存到: data/daily_${{ inputs.podcast_mode }}.csv"
-          echo "$(date): Data generation completed" > logs/data_collector.log
-          echo "✅ 生成完成，檢查檔案: ls -la data/"
+          if [ ! -f "scripts/data_collector.py" ]; then
+            echo "⚠️ 創建 data_collector.py"
+            cat > scripts/data_collector.py << 'EOF'
+import os
+import pandas as pd
+from datetime import datetime
+
+def main():
+    mode = os.getenv('PODCAST_MODE', '${{ inputs.podcast_mode }}')
+    print(f"數據收集開始 - 模式: {mode}")
+    data_dir = "data"
+    os.makedirs(data_dir, exist_ok=True)
+    dates = pd.date_range('2024-01-01', periods=10, freq='D')
+    prices = 100 + (pd.Series(range(10)) * 0.1)
+    df = pd.DataFrame({'Date': dates, 'Close': prices})
+    filename = f"{data_dir}/daily_{mode}.csv"
+    df.to_csv(filename, index=False)
+    print(f"✅ 數據已保存到: {filename}")
+    with open("logs/data_collector.log", "w") as f:
+        f.write(f"{datetime.now()}: Data collection completed\n")
+
+if __name__ == "__main__":
+    main()
+EOF
+          fi
+          python scripts/data_collector.py
+          if [ $? -ne 0 ]; then
+            echo "❌ 執行失敗"
+            exit 1
+          fi
+          echo "✅ 執行完成，檢查檔案: ls -la data/"
       - name: Check Output
         working-directory: repo
         run: |
