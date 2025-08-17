@@ -1,7 +1,13 @@
 {
-  "symbols": ["0050.TW", "QQQ", "^TWII", "BTC-USD", "^DJI", "GC=F", "^GSPC", "^IXIC", "SPY", "TSM", "2330.TW"],
-  "strategies": {
+    "symbols": ["0050.TW", "QQQ", "^TWII", "BTC-USD", "^DJI", "GC=F", "^GSPC", "^IXIC", "SPY", "TSM", "2330.TW"],
+    "benchmarks": {
+    "0050.TW": "^TWII",
+    "QQQ": "^NDX",
+    "^GSPC": "^GSPC"
+    },
+    "hourly_symbols": ["0050.TW", "QQQ"]
+    "strategies": {
     "VolumeBreakout": {"volume_multiplier": 1.5},
     "MLStrategy": {}
-  }
+    }
 }
