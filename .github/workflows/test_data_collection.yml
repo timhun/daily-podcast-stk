@@ -14,7 +14,7 @@ on:
       simulate_time:
         description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '20:44'  # 當前時間約 20:44 CST
+        default: '20:51'  # 當前時間約 20:51 CST
 
 jobs:
   data-collection:
@@ -36,37 +36,7 @@ jobs:
         working-directory: repo
         run: |
           echo "📥 開始執行資料收集員 - 模式: ${{ inputs.podcast_mode }}"
-          mkdir -p data logs
-          if [ ! -f "scripts/data_collector.py" ]; then
-            echo "⚠️ 創建 data_collector.py"
-            cat > scripts/data_collector.py << 'EOF'
-import os
-import pandas as pd
-from datetime import datetime
-
-def main():
-    mode = os.getenv('PODCAST_MODE', '${{ inputs.podcast_mode }}')
-    print(f"數據收集開始 - 模式: {mode}")
-    data_dir = "data"
-    os.makedirs(data_dir, exist_ok=True)
-    dates = pd.date_range('2024-01-01', periods=10, freq='D')
-    prices = 100 + (pd.Series(range(10)) * 0.1)
-    df = pd.DataFrame({'Date': dates, 'Close': prices})
-    filename = f"{data_dir}/daily_{mode}.csv"
-    df.to_csv(filename, index=False)
-    print(f"✅ 數據已保存到: {filename}")
-    with open("logs/data_collector.log", "w") as f:
-        f.write(f"{datetime.now()}: Data collection completed\n")
-
-if __name__ == "__main__":
-    main()
-EOF
-          fi
           python scripts/data_collector.py
-          if [ $? -ne 0 ]; then
-            echo "❌ 執行失敗"
-            exit 1
-          fi
           echo "✅ 執行完成，檢查檔案: ls -la data/"
       - name: Check Output
         working-directory: repo
