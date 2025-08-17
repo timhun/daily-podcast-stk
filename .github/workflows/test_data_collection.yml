@@ -1,49 +1,114 @@
-name: Test Data Collection Workflow
+name: Auto Trading Loop
 
 on:
+  schedule:
+    # 台北 05:00（資料收集）
+    - cron: "0 21 * * *"
+    # 台北 13:45（資料收集）
+    - cron: "45 5 * * *"
+    # 台北 18:00（資料收集）
+    - cron: "0 10 * * *"
+    # 台北 22:00（資料收集）
+    - cron: "0 14 * * *"
+
+    # 每小時（策略 PK）
+    - cron: "0 * * * *"
+
+    # 台北 06:00（編輯/播報/上傳/推播）
+    - cron: "0 22 * * *"
+    # 台北 14:00（編輯/播報/上傳/推播）
+    - cron: "0 6 * * *"
   workflow_dispatch:
-    inputs:
-      podcast_mode:
-        description: '播客模式 (tw/us)'
-        required: true
-        default: 'tw'
-        type: choice
-        options:
-          - tw
-          - us
-      simulate_time:
-        description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
-        required: false
-        default: '20:54'  # 當前時間約 20:54 CST
 
 jobs:
-  data-collection:
+  run:
     runs-on: ubuntu-latest
+    env:
+      SYMBOL: "0050.TW"
+      MODE: "hourly"
+      PYTHONUNBUFFERED: "1"
+      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
         with:
-          path: repo
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-      - name: Install Dependencies
-        working-directory: repo
+          python-version: "3.11"
+
+      - name: Install deps
         run: |
-          pip install pandas yfinance
-      - name: Run Data Collector
-        working-directory: repo
+          pip install --upgrade pip
+          pip install yfinance pandas numpy scikit-learn feedparser
+
+      - name: Decide MODE
+        id: decide
         run: |
-          echo "📥 開始執行資料收集員 - 模式: ${{ inputs.podcast_mode }}"
-          python scripts/data_collector.py
-          echo "✅ 執行完成，檢查檔案: ls -la data/"
-      - name: Check Output
-        working-directory: repo
-        run: |
-          if [ -f "data/daily_${{ inputs.podcast_mode }}.csv" ]; then
-            echo "✅ 數據文件生成成功"
+          NOW_UTC=$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          HOUR_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%H)
+          MIN_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%M)
+          DOW_LOCAL=$(date -u -d "$NOW_UTC +8 hours" +%u)
+          echo "now_utc=$NOW_UTC hour_local=$HOUR_LOCAL min=$MIN_LOCAL dow=$DOW_LOCAL"
+
+          # 手動觸發：固定跑 hourly（你之前的要求）
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MODE="hourly"
           else
-            echo "❌ 數據文件未生成"
-            exit 1
+            # Collector 檔位
+            if { [ "$HOUR_LOCAL" = "05" ] && [ "$MIN_LOCAL" = "00" ]; } || \
+               { [ "$HOUR_LOCAL" = "13" ] && [ "$MIN_LOCAL" = "45" ]; } || \
+               { [ "$HOUR_LOCAL" = "18" ] && [ "$MIN_LOCAL" = "00" ]; } || \
+               { [ "$HOUR_LOCAL" = "22" ] && [ "$MIN_LOCAL" = "00" ]; }; then
+              MODE="collector"
+            # Editor/Producer/Uploader/Publisher 檔位 (06:00 / 14:00)
+            elif { [ "$HOUR_LOCAL" = "06" ] || [ "$HOUR_LOCAL" = "14" ]; } && [ "$MIN_LOCAL" = "00" ]; then
+              MODE="publisher"
+            else
+              MODE="strategy"
+            fi
           fi
+          echo "MODE=$MODE" | tee -a $GITHUB_ENV
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+
+      - name: Run module
+        run: |
+          python - << 'PY'
+          import os
+          from scripts.data_collector import collect_from_config
+          from scripts.strategy_manager import run_pk
+          from scripts.script_editor import generate_script
+          from scripts.podcast_producer import synthesize
+          from scripts.upload_manager import upload_and_prune
+          from scripts.feed_publisher import publish
+
+          mode = os.getenv("MODE","hourly")
+          symbol = os.getenv("SYMBOL","0050.TW")
+          bench = {"0050.TW":"^TWII","QQQ":"^NDX"}.get(symbol)
+
+          print("MODE=", mode, "SYMBOL=", symbol, "BENCH=", bench)
+
+          if mode == "collector":
+              collect_from_config()
+          elif mode == "strategy" or mode == "hourly":
+              run_pk(symbol, benchmark=bench, use_hourly=True)
+          elif mode == "publisher":
+              # 走一條龍：策略（確保最新）-> 稿 -> 音檔 -> 上傳 -> RSS
+              run_pk(symbol, benchmark=bench, use_hourly=True)
+              strat_json = f"data/strategy_best_{symbol.replace('^','INDEX_')}.json"
+              sp = generate_script("tw" if symbol.endswith(".TW") else "us", symbol, strat_json)
+              ap = synthesize(sp)
+              link = upload_and_prune(os.path.dirname(sp), hours_gate=True)
+              publish("tw" if symbol.endswith(".TW") else "us", sp, link or "")
+          else:
+              print("No-op")
+          PY
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifacts-${{ github.run_id }}
+          path: |
+            data/
+            docs/rss/
+            docs/podcast/
+            logs/
