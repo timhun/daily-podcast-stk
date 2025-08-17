@@ -42,6 +42,14 @@ def load_data(symbol):
         logger.error(f"載入 {symbol} 數據或策略失敗: {e}")
         return None, None
 
+def calculate_macd(df):
+    """計算 MACD 指標"""
+    exp1 = df['Close'].ewm(span=12, adjust=False).mean()
+    exp2 = df['Close'].ewm(span=26, adjust=False).mean()
+    macd = exp1 - exp2
+    signal = macd.ewm(span=9, adjust=False).mean()
+    return macd.iloc[-1], signal.iloc[-1]
+
 def analyze_market(df, strategy):
     """分析市場趨勢並提供建議"""
     if df is None or strategy is None:
@@ -59,12 +67,18 @@ def analyze_market(df, strategy):
     prev = df.iloc[-2] if len(df) > 1 else latest
     pct_change = ((latest['Close'] - prev['Close']) / prev['Close'] * 100) if prev['Close'] else 0.0
     volume_change = (latest['Volume'] / prev['Volume']) if prev['Volume'] else 1.0
+    macd, signal = calculate_macd(df)
+    trend_5d = df['Close'].pct_change(periods=5).iloc[-1] * 100 if len(df) >= 5 else 0.0
+
+    # 歷史趨勢比較
+    is_trend_up = trend_5d > 0
+    is_recent_up = pct_change > 0
 
     # 基礎建議
-    if pct_change > 1.0 and volume_change > 1.2:  # 價格上漲且成交量增加
+    if pct_change > 1.0 and volume_change > 1.2 and macd > signal and (is_trend_up or is_recent_up):
         recommendation = '買入'
-        position_size = min(0.5, 0.1 + (strategy.get('return', 0) / 20))  # 勝率越高倉位越高
-    elif pct_change < -1.0 or volume_change < 0.8:  # 價格下跌或成交量縮減
+        position_size = min(0.5, 0.1 + (strategy.get('return', 0) / 20))
+    elif pct_change < -1.0 or volume_change < 0.8 or macd < signal or (not is_trend_up and not is_recent_up):
         recommendation = '賣出'
         position_size = 0.0
     else:
@@ -75,8 +89,8 @@ def analyze_market(df, strategy):
     target_price = latest['Close'] * 1.02 if recommendation == '買入' else None
     stop_loss = latest['Close'] * 0.98 if recommendation in ['買入', '持倉'] else None
 
-    # 風險評估
-    risk_note = f"漲跌: {pct_change:.2f}%, 成交量變化: {volume_change:.2f}x"
+    # 風險評估與歷史比較
+    risk_note = f"漲跌: {pct_change:.2f}%, 成交量變化: {volume_change:.2f}x, MACD: {macd:.2f}, 5日趨勢: {trend_5d:.2f}%"
 
     return {
         'symbol': symbol,
