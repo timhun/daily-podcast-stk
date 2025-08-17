@@ -12,7 +12,7 @@ options:
 - tw
 - us
 simulate_time:
-description: ‘Simulate time (HH:MM CST, e.g. 06:00 or 14:00)’
+description: ‘Simulate time (HH:MM CST)’
 required: false
 default: ‘20:02’
 
@@ -30,104 +30,70 @@ uses: actions/checkout@v4
       python-version: '3.11'
 
   - name: Install Dependencies
-    run: |
-      pip install pandas
+    run: pip install pandas
 
-  - name: Create Required Directories
-    run: |
-      mkdir -p data logs scripts
+  - name: Create Directories
+    run: mkdir -p data logs scripts
 
   - name: Run Data Collector
     env:
       PODCAST_MODE: ${{ inputs.podcast_mode }}
       SIMULATE_TIME: ${{ inputs.simulate_time }}
     run: |
-      echo "Starting data collection - Mode: ${{ inputs.podcast_mode }}, Time: ${{ inputs.simulate_time }}"
-      
+      echo "Starting data collection"
       if [ ! -f "scripts/data_collector.py" ]; then
-        echo "Creating simulation script"
         cat > scripts/data_collector.py << 'EOF'
-```
-
-import os
-import pandas as pd
-from datetime import datetime
-
-def main():
-mode = os.getenv(‘PODCAST_MODE’, ‘tw’)
-simulate_time = os.getenv(‘SIMULATE_TIME’, ‘20:02’)
-
-```
-print(f"Data collection started - Mode: {mode}, Simulate time: {simulate_time}")
-
-data_dir = "data"
-os.makedirs(data_dir, exist_ok=True)
-
-dates = pd.date_range('2024-01-01', periods=10, freq='D')
-prices = 100 + (pd.Series(range(10)) * 0.1)
-df = pd.DataFrame({
-    'Date': dates, 
-    'Close': prices,
-    'Mode': mode,
-    'SimulateTime': simulate_time
-})
-
-filename = f"{data_dir}/daily_{mode}.csv"
-df.to_csv(filename, index=False)
-print(f"Data saved to: {filename}")
-
-log_dir = "logs"
-os.makedirs(log_dir, exist_ok=True)
-with open(f"{log_dir}/data_collector.log", "w", encoding='utf-8') as f:
-    f.write(f"{datetime.now()}: Data collection completed for mode {mode}\n")
-    f.write(f"Simulate time: {simulate_time}\n")
-```
-
-if **name** == “**main**”:
-main()
-EOF
-fi
-
-```
-      python scripts/data_collector.py
+      import os
+      import pandas as pd
+      from datetime import datetime
       
-      if [ $? -ne 0 ]; then
-        echo "Execution failed"
-        exit 1
+      def main():
+          mode = os.getenv('PODCAST_MODE', 'tw')
+          simulate_time = os.getenv('SIMULATE_TIME', '20:02')
+          
+          print(f"Mode: {mode}, Time: {simulate_time}")
+          
+          os.makedirs("data", exist_ok=True)
+          
+          dates = pd.date_range('2024-01-01', periods=10, freq='D')
+          prices = [100 + i * 0.1 for i in range(10)]
+          df = pd.DataFrame({
+              'Date': dates, 
+              'Close': prices,
+              'Mode': mode,
+              'SimulateTime': simulate_time
+          })
+          
+          filename = f"data/daily_{mode}.csv"
+          df.to_csv(filename, index=False)
+          print(f"Data saved to: {filename}")
+          
+          os.makedirs("logs", exist_ok=True)
+          with open("logs/data_collector.log", "w") as f:
+              f.write(f"{datetime.now()}: Completed for {mode}\n")
+      
+      if __name__ == "__main__":
+          main()
+      EOF
       fi
-      
-      echo "Execution completed, checking files:"
-      ls -la data/
+      python scripts/data_collector.py
 
   - name: Verify Output
     run: |
-      echo "Verifying output files..."
-      
       if [ -f "data/daily_${{ inputs.podcast_mode }}.csv" ]; then
-        echo "Data file generated successfully: data/daily_${{ inputs.podcast_mode }}.csv"
-        echo "File content preview:"
-        head -5 "data/daily_${{ inputs.podcast_mode }}.csv"
+        echo "Success: Data file created"
+        head -3 "data/daily_${{ inputs.podcast_mode }}.csv"
       else
-        echo "Data file not generated"
+        echo "Error: Data file not found"
         exit 1
       fi
-      
-      if [ -f "logs/data_collector.log" ]; then
-        echo "Log file generated successfully"
-        echo "Log content:"
-        cat "logs/data_collector.log"
-      else
-        echo "Log file not generated"
-      fi
 
-  - name: Upload Artifacts
+  - name: Upload Results
     uses: actions/upload-artifact@v3
     if: always()
     with:
-      name: data-collection-results-${{ inputs.podcast_mode }}
+      name: results-${{ inputs.podcast_mode }}
       path: |
         data/
         logs/
-      retention-days: 30
 ```
-
