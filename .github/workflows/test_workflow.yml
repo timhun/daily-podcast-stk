@@ -21,7 +21,7 @@ on:
       simulate_time:
         description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '18:40'  # 當前時間約 18:40 CST
+        default: '18:40' # 當前時間約 18:40 CST
 
 # 定義作業環境
 jobs:
@@ -31,20 +31,20 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
         with:
-          path: repo  # 直接使用 repo 作為單一目錄
+          path: repo # 直接使用 repo 作為單一目錄
       - name: Verify Repository Structure
         working-directory: repo
         run: |
           echo "📋 驗證倉庫結構"
-          pwd  # 顯示當前工作目錄
-          ls -la  # 列出所有檔案和目錄
+          pwd # 顯示當前工作目錄
+          ls -la # 列出所有檔案和目錄
           for dir in scripts data logs; do
             if [ ! -d "$dir" ]; then 
-              echo "⚠️  創建缺少的目錄: $dir"
+              echo "⚠️ 創建缺少的目錄: $dir"
               mkdir -p "$dir"
             fi
           done
-          ls -la scripts/ || echo "⚠️  scripts 目錄為空"
+          ls -la scripts/ || echo "⚠️ scripts 目錄為空"
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -72,85 +72,85 @@ jobs:
           echo "DATA_DIR=data" >> $GITHUB_ENV
           echo "DEBUG_MODE=${{ inputs.debug_mode }}" >> $GITHUB_ENV
 
-    data-collection:
-      runs-on: ubuntu-latest
-      needs: setup
-      steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v3
-          with:
-            path: repo
-        - name: Run Data Collector
-          working-directory: repo
-          run: |
-            echo "📥 開始執行資料收集員 (Data Collector) - 模式: $PODCAST_MODE"
-            pwd  # 顯示當前工作目錄
-            ls -la scripts/  # 檢查 scripts 目錄內容
-            mkdir -p logs
-            if [ ! -f "scripts/data_collector.py" ]; then
-              echo "⚠️  data_collector.py 不存在，創建模擬腳本"
-              cat > scripts/data_collector.py << 'EOF'
-            import os
-            import pandas as pd
-            from datetime import datetime
+  data-collection:
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: repo
+      - name: Run Data Collector
+        working-directory: repo
+        run: |
+          echo "📥 開始執行資料收集員 (Data Collector) - 模式: $PODCAST_MODE"
+          pwd # 顯示當前工作目錄
+          ls -la scripts/ # 檢查 scripts 目錄內容
+          mkdir -p logs
+          if [ ! -f "scripts/data_collector.py" ]; then
+            echo "⚠️ data_collector.py 不存在，創建模擬腳本"
+            cat > scripts/data_collector.py << 'EOF'
+import os
+import pandas as pd
+from datetime import datetime
 
-    def main():
-        print(f"數據收集開始 - 模式: {os.getenv('PODCAST_MODE', 'tw')}")
-        data_dir = os.getenv('DATA_DIR', 'data')
-        os.makedirs(data_dir, exist_ok=True)
-        dates = pd.date_range('2024-01-01', periods=100, freq='D')
-        prices = 100 + (pd.Series(range(100)) * 0.1)
-        df = pd.DataFrame({'Date': dates, 'Close': prices})
-        filename = f"{data_dir}/daily_0050.TW.csv"
-        df.to_csv(filename, index=False)
-        print(f"✅ 數據已保存到: {filename}")
-        with open("logs/data_collector.log", "w") as f:
-            f.write(f"{datetime.now()}: Data collection completed\n")
-    
-        if __name__ == "__main__":
-            main()
-        EOF
-              fi
-              python scripts/data_collector.py
-              if [ $? -ne 0 ]; then
-                echo "❌ 資料收集員執行失敗，請檢查日誌: cat logs/data_collector.log"
-                exit 1
-              fi
-              echo "✅ 資料收集員執行完成，檢查 data/ 目錄下的 CSV 檔案: ls -la data/"
-            continue-on-error: false
-    
-      finalize:
-        runs-on: ubuntu-latest
-        needs: data-collection
-        steps:
-          - name: Checkout Repository
-            uses: actions/checkout@v3
-            with:
-              path: repo
-          - name: Check Data Files
-            working-directory: repo
-            run: |
-              echo "🔍 檢查資料檔案"
-              if [ -f "data/daily_0050.TW.csv" ]; then
-                echo "✅ data/daily_0050.TW.csv exists, size: $(du -h data/daily_0050.TW.csv | cut -f1)"
-              else
-                echo "❌ data/daily_0050.TW.csv does not exist"
-                exit 1
-              fi
-              if [ -f "logs/data_collector.log" ]; then
-                echo "✅ logs/data_collector.log exists, last modified: $(stat -c %y logs/data_collector.log)"
-                echo "Latest log entry: $(tail -1 logs/data_collector.log)"
-              else
-                echo "❌ logs/data_collector.log does not exist"
-              fi
-          - name: Upload Artifacts
-            uses: actions/upload-artifact@v4
-            with:
-              name: data-collection-${{ github.run_id }}
-              path: |
-                repo/data/*.csv
-                repo/logs/data_collector.log
-              if-no-files-found: warn
-              retention-days: 7
-              compression-level: 6
-              overwrite: false
+def main():
+    print(f"數據收集開始 - 模式: {os.getenv('PODCAST_MODE', 'tw')}")
+    data_dir = os.getenv('DATA_DIR', 'data')
+    os.makedirs(data_dir, exist_ok=True)
+    dates = pd.date_range('2024-01-01', periods=100, freq='D')
+    prices = 100 + (pd.Series(range(100)) * 0.1)
+    df = pd.DataFrame({'Date': dates, 'Close': prices})
+    filename = f"{data_dir}/daily_0050.TW.csv"
+    df.to_csv(filename, index=False)
+    print(f"✅ 數據已保存到: {filename}")
+    with open("logs/data_collector.log", "w") as f:
+        f.write(f"{datetime.now()}: Data collection completed\n")
+
+if __name__ == "__main__":
+    main()
+EOF
+          fi
+          python scripts/data_collector.py
+          if [ $? -ne 0 ]; then
+            echo "❌ 資料收集員執行失敗，請檢查日誌: cat logs/data_collector.log"
+            exit 1
+          fi
+          echo "✅ 資料收集員執行完成，檢查 data/ 目錄下的 CSV 檔案: ls -la data/"
+    continue-on-error: false
+
+  finalize:
+    runs-on: ubuntu-latest
+    needs: data-collection
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          path: repo
+      - name: Check Data Files
+        working-directory: repo
+        run: |
+          echo "🔍 檢查資料檔案"
+          if [ -f "data/daily_0050.TW.csv" ]; then
+            echo "✅ data/daily_0050.TW.csv exists, size: $(du -h data/daily_0050.TW.csv | cut -f1)"
+          else
+            echo "❌ data/daily_0050.TW.csv does not exist"
+            exit 1
+          fi
+          if [ -f "logs/data_collector.log" ]; then
+            echo "✅ logs/data_collector.log exists, last modified: $(stat -c %y logs/data_collector.log)"
+            echo "Latest log entry: $(tail -1 logs/data_collector.log)"
+          else
+            echo "❌ logs/data_collector.log does not exist"
+          fi
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: data-collection-${{ github.run_id }}
+          path: |
+            repo/data/*.csv
+            repo/logs/data_collector.log
+          if-no-files-found: warn
+          retention-days: 7
+          compression-level: 6
+          overwrite: false
