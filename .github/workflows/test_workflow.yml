@@ -29,11 +29,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
-        with:
-          path: ./  # 確保檢查到根目錄，避免重複倉庫名稱
       - name: Verify Repository Structure
         run: |
-          cd ./  # 切換到根目錄
           echo "📋 驗證倉庫結構"
           pwd  # 顯示當前工作目錄
           ls -la
@@ -45,12 +42,10 @@ jobs:
           python-version: '3.9'
       - name: Install Dependencies
         run: |
-          cd ./  # 切換到根目錄
           echo "📦 安裝依賴"
           pip install yfinance pandas backtrader numpy scikit-learn tensorflow requests feedparser edge-tts b2sdk
       - name: Set Environment Variables
         run: |
-          cd ./  # 切換到根目錄
           echo "🔑 設定環境變數"
           # 根據模擬時間設置 PODCAST_MODE
           SIMULATED_HOUR=$(echo ${{ inputs.simulate_time }} | cut -d':' -f1)
