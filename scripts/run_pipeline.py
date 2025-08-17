@@ -31,7 +31,7 @@ def generate_podcast_script(date_str=None, mode='tw'):
 
     # 檢查必要檔案是否存在
     required_files = [f'data/daily_{symbol}.csv', f'data/hourly_{symbol}.csv']
-    podcast_symbols = ['^TWII', 'BTC-USD', 'DJI', 'GC=F', 'GSPC', 'IXIC', 'SPY']
+    podcast_symbols = ['^TWII', 'BTC-USD', '^DJI', 'GC=F', '^GSPC', '^IXIC', 'SPY']
     required_files.extend([f'data/daily_{s}.csv' for s in podcast_symbols])
     for file in required_files:
         if not os.path.exists(file):
@@ -261,7 +261,7 @@ def main():
         else:
             mode = 'hourly'
             os.environ['INTERVAL'] = '1h'
-            os.environ['DAYS'] = '7'
+            os.environ['DAYS'] = '14'
     elif is_manual:
         # 手動觸發時根據 podcast_mode 生成指定模式
         mode = 'daily'
@@ -285,10 +285,10 @@ def main():
     # 根據模式調整數據範圍
     if mode == 'hourly':
         os.environ['INTERVAL'] = '1h'
-        os.environ['DAYS'] = '7'
+        os.environ['DAYS'] = '14'
     elif mode == 'daily':
         os.environ['INTERVAL'] = '1d'
-        os.environ['DAYS'] = '90'
+        os.environ['DAYS'] = '120'
     elif mode == 'weekly':
         os.environ['INTERVAL'] = '1wk'
         os.environ['DAYS'] = '365'
