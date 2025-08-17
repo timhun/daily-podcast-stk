@@ -1,3 +1,7 @@
 {
-  "symbols": ["0050.TW", "QQQ", "^TWII", "BTC-USD", "^DJI", "GC=F", "^GSPC", "^IXIC", "SPY", "TSM", "2330.TW"]
+  "symbols": ["0050.TW", "QQQ", "^TWII", "BTC-USD", "^DJI", "GC=F", "^GSPC", "^IXIC", "SPY", "TSM", "2330.TW"],
+  "strategies": {
+    "VolumeBreakout": {"volume_multiplier": 1.5},
+    "MLStrategy": {}
+  }
 }
