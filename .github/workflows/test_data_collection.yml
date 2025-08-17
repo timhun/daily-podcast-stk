@@ -1,98 +1,97 @@
 name: Test Data Collection Workflow
 
 on:
-workflow_dispatch:
-inputs:
-podcast_mode:
-description: ‘Podcast mode (tw/us)’
-required: true
-default: ‘tw’
-type: choice
-options:
-- tw
-- us
-simulate_time:
-description: ‘Simulate time (HH:MM CST)’
-required: false
-default: ‘20:02’
+  workflow_dispatch:
+    inputs:
+      podcast_mode:
+        description: 'Podcast mode (tw/us)'
+        required: true
+        default: 'tw'
+        type: choice
+        options:
+          - tw
+          - us
+      simulate_time:
+        description: 'Simulate time (HH:MM CST)'
+        required: false
+        default: '20:02'
 
 jobs:
-data-collection:
-runs-on: ubuntu-latest
-steps:
-- name: Checkout Repository
-uses: actions/checkout@v4
+  data-collection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-  - name: Set up Python
-    uses: actions/setup-python@v4
-    with:
-      python-version: '3.11'
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
 
-  - name: Install Dependencies
-    run: pip install pandas
+      - name: Install Dependencies
+        run: pip install pandas
 
-  - name: Create Directories
-    run: mkdir -p data logs scripts
+      - name: Create Directories
+        run: mkdir -p data logs scripts
 
-  - name: Run Data Collector
-    env:
-      PODCAST_MODE: ${{ inputs.podcast_mode }}
-      SIMULATE_TIME: ${{ inputs.simulate_time }}
-    run: |
-      echo "Starting data collection"
-      if [ ! -f "scripts/data_collector.py" ]; then
-        cat > scripts/data_collector.py << 'EOF'
-      import os
-      import pandas as pd
-      from datetime import datetime
-      
-      def main():
-          mode = os.getenv('PODCAST_MODE', 'tw')
-          simulate_time = os.getenv('SIMULATE_TIME', '20:02')
+      - name: Run Data Collector
+        env:
+          PODCAST_MODE: ${{ inputs.podcast_mode }}
+          SIMULATE_TIME: ${{ inputs.simulate_time }}
+        run: |
+          echo "Starting data collection"
+          if [ ! -f "scripts/data_collector.py" ]; then
+            cat > scripts/data_collector.py << 'EOF'
+          import os
+          import pandas as pd
+          from datetime import datetime
           
-          print(f"Mode: {mode}, Time: {simulate_time}")
+          def main():
+              mode = os.getenv('PODCAST_MODE', 'tw')
+              simulate_time = os.getenv('SIMULATE_TIME', '20:02')
+              
+              print(f"Mode: {mode}, Time: {simulate_time}")
+              
+              os.makedirs("data", exist_ok=True)
+              
+              dates = pd.date_range('2024-01-01', periods=10, freq='D')
+              prices = [100 + i * 0.1 for i in range(10)]
+              df = pd.DataFrame({
+                  'Date': dates, 
+                  'Close': prices,
+                  'Mode': mode,
+                  'SimulateTime': simulate_time
+              })
+              
+              filename = f"data/daily_{mode}.csv"
+              df.to_csv(filename, index=False)
+              print(f"Data saved to: {filename}")
+              
+              os.makedirs("logs", exist_ok=True)
+              with open("logs/data_collector.log", "w") as f:
+                  f.write(f"{datetime.now()}: Completed for {mode}\n")
           
-          os.makedirs("data", exist_ok=True)
-          
-          dates = pd.date_range('2024-01-01', periods=10, freq='D')
-          prices = [100 + i * 0.1 for i in range(10)]
-          df = pd.DataFrame({
-              'Date': dates, 
-              'Close': prices,
-              'Mode': mode,
-              'SimulateTime': simulate_time
-          })
-          
-          filename = f"data/daily_{mode}.csv"
-          df.to_csv(filename, index=False)
-          print(f"Data saved to: {filename}")
-          
-          os.makedirs("logs", exist_ok=True)
-          with open("logs/data_collector.log", "w") as f:
-              f.write(f"{datetime.now()}: Completed for {mode}\n")
-      
-      if __name__ == "__main__":
-          main()
-      EOF
-      fi
-      python scripts/data_collector.py
+          if __name__ == "__main__":
+              main()
+          EOF
+          fi
+          python scripts/data_collector.py
 
-  - name: Verify Output
-    run: |
-      if [ -f "data/daily_${{ inputs.podcast_mode }}.csv" ]; then
-        echo "Success: Data file created"
-        head -3 "data/daily_${{ inputs.podcast_mode }}.csv"
-      else
-        echo "Error: Data file not found"
-        exit 1
-      fi
+      - name: Verify Output
+        run: |
+          if [ -f "data/daily_${{ inputs.podcast_mode }}.csv" ]; then
+            echo "Success: Data file created"
+            head -3 "data/daily_${{ inputs.podcast_mode }}.csv"
+          else
+            echo "Error: Data file not found"
+            exit 1
+          fi
 
-  - name: Upload Results
-    uses: actions/upload-artifact@v3
-    if: always()
-    with:
-      name: results-${{ inputs.podcast_mode }}
-      path: |
-        data/
-        logs/
-```
+      - name: Upload Results
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: results-${{ inputs.podcast_mode }}
+          path: |
+            data/
+            logs/
