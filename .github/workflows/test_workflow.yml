@@ -21,7 +21,7 @@ on:
       simulate_time:
         description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '18:45'  # 當前時間約 18:45 CST
+        default: '19:16'  # 當前時間約 19:16 CST
 
 # 定義作業環境
 jobs:
