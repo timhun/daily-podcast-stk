@@ -1,124 +1,43 @@
+# scripts/upload_manager.py
 import os
-import json
-from datetime import datetime, timedelta
 import logging
-from b2sdk.v2 import InMemoryAccountInfo, B2Api
-import zipfile
+from logging.handlers import RotatingFileHandler
+from datetime import datetime, timedelta
 
-# 設定日誌
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+LOG_DIR = "logs"
+os.makedirs(LOG_DIR, exist_ok=True)
 
-# 配置檔案和環境變數
-CONFIG_FILE = 'config.json'
+logger = logging.getLogger("upload_manager")
+logger.setLevel(logging.INFO)
+fh = RotatingFileHandler(os.path.join(LOG_DIR, "upload_manager.log"), maxBytes=1_000_000, backupCount=2, encoding="utf-8")
+fh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+logger.addHandler(fh)
+sh = logging.StreamHandler()
+sh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
+logger.addHandler(sh)
 
-def load_config():
-    """載入配置檔案 config.json"""
-    if not os.path.exists(CONFIG_FILE):
-        logger.error(f"缺少配置檔案: {CONFIG_FILE}")
-        raise FileNotFoundError(f"缺少配置檔案: {CONFIG_FILE}")
-    try:
-        with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
-            config = json.load(f)
-        return config.get('symbols', [])
-    except json.JSONDecodeError as e:
-        logger.error(f"配置檔案解析失敗: {e}")
-        raise ValueError(f"配置檔案解析失敗: {e}")
+def upload_and_prune(out_dir: str, hours_gate: bool = True) -> str:
+    """
+    hours_gate=True 時只允許 06:00/14:00 上傳（台北時間）。
+    現在為 stub：僅記錄動作與生成假連結。
+    """
+    now = datetime.utcnow() + timedelta(hours=8)
+    if hours_gate and now.hour not in (6, 14):
+        logger.info(f"非允許時段（{now.hour}），跳過上傳")
+        return ""
 
-def connect_to_b2():
-    """連接至 Backblaze B2"""
-    try:
-        key_id = os.environ.get("B2_KEY_ID", "請設置 B2_KEY_ID 環境變數")
-        application_key = os.environ.get("B2_APPLICATION_KEY", "請設置 B2_APPLICATION_KEY 環境變數")
-        bucket_name = os.environ.get("B2_BUCKET_NAME", "請設置 B2_BUCKET_NAME 環境變數")
-    except KeyError as e:
-        logger.error(f"⚠️ 缺少環境變數: {e}")
-        raise EnvironmentError(f"⚠️ 缺少環境變數: {e}")
+    # 找到音檔
+    candidates = [f for f in os.listdir(out_dir) if f.endswith((".mp3",".wav"))]
+    if not candidates:
+        logger.warning("找不到音訊檔，跳過上傳")
+        return ""
 
-    try:
-        info = InMemoryAccountInfo()
-        b2_api = B2Api(info)
-        b2_api.authorize_account("production", key_id, application_key)
-        bucket = b2_api.get_bucket_by_name(bucket_name)
-        logger.info(f"✅ 已連接至 B2 儲存桶: {bucket_name}")
-        return bucket
-    except Exception as e:
-        logger.error(f"⚠️ B2 連接失敗: {e}")
-        raise ConnectionError(f"⚠️ B2 連接失敗: {e}")
+    # 假連結
+    link = f"https://example.com/{os.path.basename(out_dir)}/{candidates[0]}"
+    with open(os.path.join(out_dir, "archive_audio_url.txt"), "w", encoding="utf-8") as f:
+        f.write(link)
+    logger.info(f"上傳完成（stub），連結：{link}")
 
-def upload_file(bucket, local_path, identifier, content_type):
-    """上傳單一檔案到 B2，支援壓縮"""
-    try:
-        with zipfile.ZipFile(f"{identifier}.zip", 'w', zipfile.ZIP_DEFLATED) as zipf:
-            zipf.write(local_path, os.path.basename(local_path))
-        bucket.upload_local_file(local_file=f"{identifier}.zip", file_name=f"{identifier}.zip", content_type=content_type)
-        logger.info(f"✅ 已壓縮並上傳 {identifier}.zip 至 B2")
-        return f"{identifier}.zip"
-    except Exception as e:
-        logger.error(f"⚠️ 上傳 {local_path} 失敗: {e}")
-        raise RuntimeError(f"⚠️ 上傳失敗: {e}")
-
-def generate_download_url(bucket_name, file_name):
-    """生成 B2 下載連結"""
-    return f"https://{bucket_name}.s3.us-east-005.backblazeb2.com/{file_name}"
-
-def save_upload_url(output_dir, url):
-    """保存 B2 上傳後的公開連結"""
-    url_path = os.path.join(output_dir, 'archive_audio_url.txt')
-    try:
-        os.makedirs(output_dir, exist_ok=True)
-        with open(url_path, 'w', encoding='utf-8') as f:
-            f.write(url)
-        logger.info(f"✅ 下載連結保存至 {url_path}")
-    except Exception as e:
-        logger.error(f"⚠️ 儲存下載連結失敗: {e}")
-        raise IOError(f"⚠️ 儲存下載連結失敗: {e}")
-
-def cleanup_old_files(base_dir='docs/podcast', retain_days=14):
-    """刪除 14 天前的檔案"""
-    now = datetime.now()
-    for root, dirs, files in os.walk(base_dir):
-        for file in files:
-            file_path = os.path.join(root, file)
-            file_date_str = os.path.basename(root).split('_')[0]  # 假設目錄名如 20250817_tw
-            try:
-                file_date = datetime.strptime(file_date_str, "%Y%m%d")
-                if (now - file_date).days > retain_days:
-                    os.remove(file_path)
-                    logger.info(f"✅ 刪除過期檔案: {file_path}")
-            except ValueError:
-                logger.warning(f"無法解析日期格式: {file_date_str}, 跳過 {file_path}")
-
-def main():
-    """主函數，執行雲端上傳"""
-    current_hour = datetime.now().hour
-    if current_hour not in [6, 14]:  # 僅 6am 和 2pm 上傳
-        logger.info(f"當前時間 {current_hour}:00 CST 不在上傳時段，跳過")
-        return
-
-    mode = 'us' if current_hour == 6 else 'tw'
-    date_str = datetime.now().strftime("%Y%m%d")
-    podcast_dir = os.path.join('docs', 'podcast', f"{date_str}_{mode}")
-    identifier = f"daily-podcast-stk-{date_str}_{mode}"
-
-    # 連接 B2
-    bucket = connect_to_b2()
-
-    # 批量上傳檔案
-    files_to_upload = [
-        {'path': os.path.join(podcast_dir, 'audio.mp3'), 'type': 'audio/mpeg'},
-        {'path': os.path.join(podcast_dir, 'script.txt'), 'type': 'text/plain'}
-    ]
-
-    for file_info in files_to_upload:
-        file_path = file_info['path']
-        if os.path.exists(file_path):
-            uploaded_file_name = upload_file(bucket, file_path, identifier, file_info['type'])
-            if uploaded_file_name:
-                url = generate_download_url(bucket.name, uploaded_file_name)
-                save_upload_url(podcast_dir, url)
-        else:
-            logger.warning(f"⚠️ 檔案不存在，跳過上傳: {file_path}")
-
-    # 清理舊檔案
-    cleanup_old_files()
+    # 清除 14 天前的本地檔案（僅示意）
+    # 真正 B2 刪除：可用 b2sdk 在這裡實作
+    return link
