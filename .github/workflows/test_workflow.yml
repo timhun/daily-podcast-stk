@@ -40,9 +40,9 @@ data-collection:
         if [ ! -f "scripts/data_collector.py" ]; then
           echo "⚠️ 創建模擬腳本"
           cat > scripts/data_collector.py << 'EOF'
-import os
-import pandas as pd
-from datetime import datetime
+      import os
+      import pandas as pd
+      from datetime import datetime
 
 def main():
   mode = os.getenv('PODCAST_MODE', '${{ inputs.podcast_mode }}')
