@@ -14,7 +14,7 @@ on:
       simulate_time:
         description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '20:51'  # 當前時間約 20:51 CST
+        default: '20:54'  # 當前時間約 20:54 CST
 
 jobs:
   data-collection:
@@ -31,7 +31,7 @@ jobs:
       - name: Install Dependencies
         working-directory: repo
         run: |
-          pip install pandas
+          pip install pandas yfinance
       - name: Run Data Collector
         working-directory: repo
         run: |
