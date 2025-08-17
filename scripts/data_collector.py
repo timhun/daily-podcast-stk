@@ -1,184 +1,66 @@
-# scripts/data_collector.py
 import os
-import re
 import json
-import time
-import math
-import logging
-from logging.handlers import RotatingFileHandler
-from datetime import datetime, timedelta
-from typing import Dict, List, Tuple
-
-import pandas as pd
-import numpy as np
 import yfinance as yf
+import pandas as pd
+import logging
+from datetime import datetime, timedelta
 
-DATA_DIR = "data"
-LOG_DIR = "logs"
-os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs(LOG_DIR, exist_ok=True)
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
 
-logger = logging.getLogger("data_collector")
-logger.setLevel(logging.INFO)
-fh = RotatingFileHandler(os.path.join(LOG_DIR, "data_collector.log"), maxBytes=2_000_000, backupCount=3, encoding="utf-8")
-fh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-logger.addHandler(fh)
-sh = logging.StreamHandler()
-sh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-logger.addHandler(sh)
-
-# ---------- Helpers ----------
-def _safe_filename(symbol: str) -> str:
-    # 把 ^ 轉成 INDEX_，避免檔名怪字元
-    name = symbol.replace("^", "INDEX_")
-    return re.sub(r"[^A-Za-z0-9._\-]", "_", name)
-
-def _retry_download(symbol: str, start: datetime, end: datetime, interval: str, auto_adjust=False, tries=3, sleep=2):
-    last_err = None
-    for i in range(tries):
-        try:
-            df = yf.download(
-                symbol,
-                start=start,
-                end=end,
-                interval=interval,
-                auto_adjust=auto_adjust,
-                progress=False,
-                threads=True,
-            )
-            if df is not None and not df.empty:
-                return df
-            last_err = RuntimeError("Empty dataframe")
-        except Exception as e:
-            last_err = e
-        time.sleep(sleep)
-    raise last_err or RuntimeError("yfinance unknown error")
-
-def _coerce_numeric(df: pd.DataFrame) -> pd.DataFrame:
-    for col in ["Open", "High", "Low", "Close", "Adj Close", "Volume"]:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-    return df
-
-def _pct_checks(df: pd.DataFrame, symbol: str) -> List[str]:
-    msgs = []
-    if df.empty: 
-        return msgs
-    if "Close" not in df.columns:
-        msgs.append(f"{symbol}: 缺少 Close 欄位")
-        return msgs
-    close = df["Close"].astype(float)
-    pct = close.pct_change() * 100
-    if (pct.abs() > 20).any():
-        count = int((pct.abs() > 20).sum())
-        msgs.append(f"{symbol}: 發現 {count} 筆漲跌幅超過 ±20% (資料或除權息異常?)")
-    # 跳躍檢查：相鄰 K |Δ| > 15% 且非 0/NaN
-    jump = close.pct_change().abs() > 0.15
-    if jump.any():
-        msgs.append(f"{symbol}: 發現相鄰價格跳躍 {int(jump.sum())} 筆（>15%）")
-    return msgs
-
-def _direction_consistency(main_df: pd.DataFrame, bench_df: pd.DataFrame, label: str) -> str:
+# ====== 工具函式 ======
+def normalize_symbol(symbol: str) -> str:
     """
-    粗略一致性檢查：近 N(=20) 期，方向一致比例 (sign)，低於 40% 警告
+    將股票代號正規化成檔案可用名稱
+    - ^TWII -> INDEX_TWII
+    - ^GSPC -> INDEX_GSPC
+    - 0050.TW -> 0050.TW (不變)
     """
+    if symbol.startswith("^"):
+        return "INDEX_" + symbol[1:]
+    return symbol
+
+def _today_str():
+    return datetime.utcnow().strftime("%Y-%m-%d")
+
+# ====== 抓資料 ======
+def collect_symbol(symbol: str, use_hourly: bool = True, lookback_days: int = 90):
+    interval = "1h" if use_hourly else "1d"
+    start = datetime.utcnow() - timedelta(days=lookback_days)
+    logger.info(f"下載 {symbol} 資料 interval={interval} start={start.date()}")
+
     try:
-        N = min(20, len(main_df), len(bench_df))
-        if N < 5: 
-            return ""
-        m = main_df["Close"].astype(float).tail(N).pct_change().dropna()
-        b = bench_df["Close"].astype(float).tail(N).pct_change().dropna()
-        idx = m.index.intersection(b.index)
-        if len(idx) < 5:
-            return ""
-        agree = (np.sign(m.loc[idx]) == np.sign(b.loc[idx])).mean()
-        if agree < 0.4:
-            return f"{label}: 近{len(idx)}期與基準方向一致率 {agree:.2f}，偏低（可能脫鉤或資料異常）。"
-        return ""
+        df = yf.download(symbol, start=start, interval=interval, progress=False)
+        if df.empty:
+            logger.warning(f"{symbol} 無資料")
+            return None
     except Exception as e:
-        return f"{label}: 一致性檢查失敗 {e}"
+        logger.error(f"{symbol} 抓取失敗: {e}")
+        return None
 
-# ---------- Core ----------
-def _download_one(symbol: str, start: datetime, end: datetime, interval: str, keep_rows: int) -> pd.DataFrame:
-    df = _retry_download(symbol, start, end, interval=interval, auto_adjust=False)
-    if df.empty:
-        return df
-    df["Symbol"] = symbol
-    if "Adj Close" not in df.columns:
-        df["Adj Close"] = df["Close"]
-    df = df[["Open", "High", "Low", "Close", "Adj Close", "Volume", "Symbol"]].copy()
     df.reset_index(inplace=True)
-    df.rename(columns={"index": "Date"}, inplace=True)
-    df = _coerce_numeric(df)
-    # 保留最近 keep_rows（對日線），或最近 14 天（對小時線用 date 篩）
-    if interval == "1d":
-        df = df.tail(keep_rows)
-    else:
-        cutoff = end - timedelta(days=14)
-        df = df[pd.to_datetime(df["Date"]) >= cutoff]
-    return df
+    fname = f"data/{'hourly' if use_hourly else 'daily'}_{normalize_symbol(symbol)}.csv"
+    os.makedirs("data", exist_ok=True)
+    df.to_csv(fname, index=False)
+    logger.info(f"{symbol} 已存檔 -> {fname} 共 {len(df)} 筆")
+    return fname
 
-def collect_from_config(config_path: str = "config.json") -> Dict[str, Dict[str, str]]:
-    """
-    config.json 範例：
-    {
-      "symbols": ["0050.TW", "QQQ", "^GSPC"],
-      "benchmarks": {"0050.TW": "^TWII", "QQQ": "^NDX"},
-      "hourly_symbols": ["0050.TW", "QQQ"]
-    }
-    """
+# ====== 從 config.json 讀取 ======
+def collect_from_config(config_path="config.json"):
     if not os.path.exists(config_path):
-        # 預設：0050 + QQQ + SP500
-        cfg = {
-            "symbols": ["0050.TW", "QQQ", "^GSPC"],
-            "benchmarks": {"0050.TW": "^TWII", "QQQ": "^NDX", "^GSPC": "^GSPC"},
-            "hourly_symbols": ["0050.TW", "QQQ"]
-        }
-    else:
-        with open(config_path, "r", encoding="utf-8") as f:
-            cfg = json.load(f)
+        logger.error(f"找不到設定檔 {config_path}")
+        return []
 
-    now = datetime.utcnow()
-    start_daily = now - timedelta(days=365)    # 日線 1 年足夠
-    start_hourly = now - timedelta(days=14)    # 小時線 14 天
+    with open(config_path, "r", encoding="utf-8") as f:
+        config = json.load(f)
 
-    summary = {}
-    for sym in cfg.get("symbols", []):
-        # 日線
-        try:
-            df_d = _download_one(sym, start_daily, now, "1d", keep_rows=300)
-            fn = os.path.join(DATA_DIR, f"daily_{_safe_filename(sym)}.csv")
-            df_d.to_csv(fn, index=False, encoding="utf-8")
-            logger.info(f"[Daily] {sym} -> {fn}, rows={len(df_d)}")
-            # 驗證
-            warns = _pct_checks(df_d, sym)
-            for w in warns: logger.warning(w)
-            # 與基準一致性
-            bench = cfg.get("benchmarks", {}).get(sym)
-            if bench:
-                try:
-                    df_b = _download_one(bench, start_daily, now, "1d", keep_rows=300)
-                    msg = _direction_consistency(df_d, df_b, f"{sym} vs {bench}")
-                    if msg: logger.warning(msg)
-                except Exception as e:
-                    logger.warning(f"{sym} 基準 {bench} 下載失敗: {e}")
-        except Exception as e:
-            logger.error(f"{sym} 日線下載失敗: {e}")
+    symbols = config.get("symbols", [])
+    if not symbols:
+        logger.warning("config.json 中沒有 symbols 設定")
+        return []
 
-    # 小時線
-    for sym in cfg.get("hourly_symbols", []):
-        try:
-            df_h = _download_one(sym, start_hourly, now, "1h", keep_rows=100000)
-            fn = os.path.join(DATA_DIR, f"hourly_{_safe_filename(sym)}.csv")
-            df_h.to_csv(fn, index=False, encoding="utf-8")
-            logger.info(f"[Hourly] {sym} -> {fn}, rows={len(df_h)}")
-            warns = _pct_checks(df_h, sym)
-            for w in warns: logger.warning(w)
-        except Exception as e:
-            logger.error(f"{sym} 小時線下載失敗: {e}")
-
-    summary["generated_at"] = datetime.utcnow().isoformat() + "Z"
-    return summary
-
-if __name__ == "__main__":
-    collect_from_config()
+    results = []
+    for s in symbols:
+        results.append(collect_symbol(s, use_hourly=True, lookback_days=120))
+        results.append(collect_symbol(s, use_hourly=False, lookback_days=365))
+    return [r for r in results if r]
