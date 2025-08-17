@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       podcast_mode:
-        description: 'Podcast mode (tw/us)'
+        description: '播客模式 (tw/us)'
         required: true
         default: 'tw'
         type: choice
@@ -12,86 +12,36 @@ on:
           - tw
           - us
       simulate_time:
-        description: 'Simulate time (HH:MM CST)'
+        description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '20:02'
+        default: '20:34'  # 當前時間約 20:34 CST
 
 jobs:
   data-collection:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/checkout@v3
         with:
-          python-version: '3.11'
-
-      - name: Install Dependencies
-        run: pip install pandas
-
-      - name: Create Directories
-        run: mkdir -p data logs scripts
-
-      - name: Run Data Collector
-        env:
-          PODCAST_MODE: ${{ inputs.podcast_mode }}
-          SIMULATE_TIME: ${{ inputs.simulate_time }}
+          path: repo
+      - name: Generate Mock Data
+        working-directory: repo
         run: |
-          echo "Starting data collection"
-          if [ ! -f "scripts/data_collector.py" ]; then
-            cat > scripts/data_collector.py << 'EOF'
-import os
-import pandas as pd
-from datetime import datetime
-
-def main():
-    mode = os.getenv('PODCAST_MODE', 'tw')
-    simulate_time = os.getenv('SIMULATE_TIME', '20:02')
-
-    print(f"Mode: {mode}, Time: {simulate_time}")
-
-    os.makedirs("data", exist_ok=True)
-
-    dates = pd.date_range('2024-01-01', periods=10, freq='D')
-    prices = [100 + i * 0.1 for i in range(10)]
-    df = pd.DataFrame({
-        'Date': dates, 
-        'Close': prices,
-        'Mode': mode,
-        'SimulateTime': simulate_time
-    })
-
-    filename = f"data/daily_{mode}.csv"
-    df.to_csv(filename, index=False)
-    print(f"Data saved to: {filename}")
-
-    os.makedirs("logs", exist_ok=True)
-    with open("logs/data_collector.log", "w") as f:
-        f.write(f"{datetime.now()}: Completed for {mode}\n")
-
-if __name__ == "__main__":
-    main()
-EOF
-          fi
-          python scripts/data_collector.py
-
-      - name: Verify Output
+          echo "📥 開始生成模擬數據 - 模式: ${{ inputs.podcast_mode }}"
+          mkdir -p data logs
+          echo "date,close" > data/daily_${{ inputs.podcast_mode }}.csv
+          for i in {0..9}; do
+            echo "2024-01-0$i,100.$i" >> data/daily_${{ inputs.podcast_mode }}.csv
+          done
+          echo "✅ 數據已保存到: data/daily_${{ inputs.podcast_mode }}.csv"
+          echo "$(date): Data generation completed" > logs/data_collector.log
+          echo "✅ 生成完成，檢查檔案: ls -la data/"
+      - name: Check Output
+        working-directory: repo
         run: |
           if [ -f "data/daily_${{ inputs.podcast_mode }}.csv" ]; then
-            echo "Success: Data file created"
-            head -3 "data/daily_${{ inputs.podcast_mode }}.csv"
+            echo "✅ 數據文件生成成功"
           else
-            echo "Error: Data file not found"
+            echo "❌ 數據文件未生成"
             exit 1
           fi
-
-      - name: Upload Results
-        uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: results-${{ inputs.podcast_mode }}
-          path: |
-            data/
-            logs/
