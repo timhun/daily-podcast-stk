@@ -21,7 +21,7 @@ on:
       simulate_time:
         description: '模擬時間 (HH:MM CST, 例如 06:00 或 14:00)'
         required: false
-        default: '18:40'  # 當前時間約 18:40 CST
+        default: '18:45'  # 當前時間約 18:45 CST
 
 # 定義作業環境
 jobs:
@@ -36,15 +36,15 @@ jobs:
         working-directory: repo
         run: |
           echo "📋 驗證倉庫結構"
-          pwd  # 顯示當前工作目錄
-          ls -la  # 列出所有檔案和目錄
+          pwd
+          ls -la
           for dir in scripts data logs; do
-            if [ ! -d "$dir" ]; then 
-              echo "⚠️  創建缺少的目錄: $dir"
+            if [ ! -d "$dir" ]; then
+              echo "⚠️ 創建缺少的目錄: $dir"
               mkdir -p "$dir"
             fi
           done
-          ls -la scripts/ || echo "⚠️  scripts 目錄為空"
+          ls -la scripts/ || echo "⚠️ scripts 目錄為空"
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
@@ -84,11 +84,11 @@ jobs:
         working-directory: repo
         run: |
           echo "📥 開始執行資料收集員 (Data Collector) - 模式: $PODCAST_MODE"
-          pwd  # 顯示當前工作目錄
-          ls -la scripts/  # 檢查 scripts 目錄內容
+          pwd
+          ls -la scripts/
           mkdir -p logs
           if [ ! -f "scripts/data_collector.py" ]; then
-            echo "⚠️  data_collector.py 不存在，創建模擬腳本"
+            echo "⚠️ data_collector.py 不存在，創建模擬腳本"
             cat > scripts/data_collector.py << 'EOF'
 import os
 import pandas as pd
