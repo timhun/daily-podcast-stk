@@ -7,7 +7,7 @@
   },
   "rss_url": "https://tw.stock.yahoo.com/rss?category=news",
   "grok_api_url": "https://api.grok.xai.com/v1/improve_strategy",
-  "slack_webhook_url": "your-slack-webhook-url",
+  "slack_webhook_url": "https://bbm-a1u4547.slack.com/archives/D09AGLZ7JMA",
   "b2_bucket_name": "your-b2-bucket-name",
   "retain_daily": 300,
   "retain_hourly": 14
