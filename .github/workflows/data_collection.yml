@@ -29,4 +29,4 @@ jobs:
           echo "📥 執行資料收集員 at $(date '+%Y-%m-%d %H:%M:%S CST')"
           python scripts/data_collector.py
         env:
-          PYTHONUNBUFFERED: 1  # 確保日誌即時輸出
+          PYTHONUNBUFFERED: 1
