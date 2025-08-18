@@ -36,7 +36,7 @@ logger = logging.getLogger(__name__)
 
 # 配置 Grok API
 GROK_API_KEY = os.getenv('GROK_API_KEY')
-GROK_API_URL = "https://api.grok.xai.com/v1/improve_strategy"  # 假設的 API 端點
+GROK_API_URL = os.getenv('GROK_API_URL')  # 假設的 API 端點
 
 def load_config():
     """載入配置檔案 config.json"""
