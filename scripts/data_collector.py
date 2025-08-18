@@ -1,213 +1,110 @@
 # scripts/data_collector.py
-import os
-import re
-import json
-import time
-import logging
-from logging.handlers import RotatingFileHandler
-from datetime import datetime, timedelta
-from typing import Dict, List
-
-import pandas as pd
-import numpy as np
 import yfinance as yf
+import pandas as pd
+import json
+import os
+from datetime import datetime, timedelta
+import logging
+import asyncio
 
-# ---------- Paths ----------
-DATA_DIR = "data"
-LOG_DIR = "logs"
-os.makedirs(DATA_DIR, exist_ok=True)
-os.makedirs(LOG_DIR, exist_ok=True)
+logging.basicConfig(filename='logs/data_collector.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-# ---------- Logger ----------
-logger = logging.getLogger("data_collector")
-logger.setLevel(logging.INFO)
-
-fh = RotatingFileHandler(
-    os.path.join(LOG_DIR, "data_collector.log"),
-    maxBytes=2_000_000,
-    backupCount=3,
-    encoding="utf-8"
-)
-fh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-logger.addHandler(fh)
-
-sh = logging.StreamHandler()
-sh.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(message)s"))
-logger.addHandler(sh)
-
-
-# ---------- Helpers ----------
-def _safe_filename(symbol: str) -> str:
-    """避免檔名出現 ^ 或奇怪字元"""
-    name = symbol.replace("^", "INDEX_")
-    return re.sub(r"[^A-Za-z0-9._\-]", "_", name)
-
-
-def _retry_download(symbol: str, start: datetime, end: datetime,
-                    interval: str, auto_adjust=False, tries=3, sleep=2):
-    """重試下載，避免 yfinance 偶爾失敗"""
-    last_err = None
-    for i in range(tries):
-        try:
-            df = yf.download(
-                symbol,
-                start=start,
-                end=end,
-                interval=interval,
-                auto_adjust=auto_adjust,
-                progress=False,
-                threads=True,
-            )
-            if df is not None and not df.empty:
-                return df
-            last_err = RuntimeError("Empty dataframe")
-        except Exception as e:
-            last_err = e
-        time.sleep(sleep)
-    raise last_err or RuntimeError("yfinance unknown error")
-
-
-def _coerce_numeric(df: pd.DataFrame) -> pd.DataFrame:
-    """強制轉數字，避免 object dtype"""
-    for col in ["Open", "High", "Low", "Close", "Adj Close", "Volume"]:
-        if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
-    return df
-
-
-def _pct_checks(df: pd.DataFrame, symbol: str) -> List[str]:
-    """檢查異常漲跌幅 / 跳空"""
-    msgs = []
-    if df.empty:
-        return msgs
-    if "Close" not in df.columns:
-        msgs.append(f"{symbol}: 缺少 Close 欄位")
-        return msgs
-
-    close = df["Close"].astype(float)
-    pct = close.pct_change() * 100
-
-    if (pct.abs() > 20).any():
-        count = int((pct.abs() > 20).sum())
-        msgs.append(f"{symbol}: 發現 {count} 筆漲跌幅超過 ±20% (資料或除權息異常?)")
-
-    jump = close.pct_change().abs() > 0.15
-    if jump.any():
-        msgs.append(f"{symbol}: 發現相鄰價格跳躍 {int(jump.sum())} 筆（>15%）")
-
-    return msgs
-
-
-def _direction_consistency(main_df: pd.DataFrame, bench_df: pd.DataFrame, label: str) -> str:
-    """
-    粗略一致性檢查：近 N 期，方向一致比例 (sign)，低於 40% 警告
-    """
+def load_config():
+    config_file = 'config.json'
+    if not os.path.exists(config_file):
+        logger.error(f"缺少配置檔案: {config_file}")
+        raise FileNotFoundError(f"缺少配置檔案: {config_file}")
     try:
-        N = min(20, len(main_df), len(bench_df))
-        if N < 5:
-            return ""
-        m = main_df["Close"].astype(float).tail(N).pct_change().dropna()
-        b = bench_df["Close"].astype(float).tail(N).pct_change().dropna()
-        idx = m.index.intersection(b.index)
-        if len(idx) < 5:
-            return ""
-        agree = (np.sign(m.loc[idx]) == np.sign(b.loc[idx])).mean()
-        if agree < 0.4:
-            return f"{label}: 近{len(idx)}期與基準方向一致率 {agree:.2f}，偏低（可能脫鉤或資料異常）。"
-        return ""
-    except Exception as e:
-        return f"{label}: 一致性檢查失敗 {e}"
+        with open(config_file, 'r', encoding='utf-8') as f:
+            config = json.load(f)
+        return config.get('symbols', []), config.get('data_sources', {'yfinance': {'enabled': True}}), config.get('retain_daily', 300), config.get('retain_hourly', 14)
+    except json.JSONDecodeError as e:
+        logger.error(f"配置檔案解析失敗: {e}")
+        raise ValueError(f"配置檔案解析失敗: {e}")
 
+def clean_old_data(data_dir='data', retain_daily=300, retain_hourly=14):
+    now = datetime.now()
+    for file in os.listdir(data_dir):
+        if file.startswith('daily_') and file.endswith('.csv'):
+            df = pd.read_csv(os.path.join(data_dir, file))
+            df['Date'] = pd.to_datetime(df['Date'])
+            df = df[df['Date'] >= now - timedelta(days=retain_daily)]
+            df.to_csv(os.path.join(data_dir, file), index=False, encoding='utf-8', float_format='%.2f')
+            logger.info(f"清理 {file}，保留最近 {retain_daily} 天數據")
+        elif file.startswith('hourly_') and file.endswith('.csv'):
+            df = pd.read_csv(os.path.join(data_dir, file))
+            df['Date'] = pd.to_datetime(df['Date'])
+            df = df[df['Date'] >= now - timedelta(days=retain_hourly)]
+            df.to_csv(os.path.join(data_dir, file), index=False, encoding='utf-8', float_format='%.2f')
+            logger.info(f"清理 {file}，保留最近 {retain_hourly} 天數據")
 
-# ---------- Core ----------
-def _download_one(symbol: str, start: datetime, end: datetime,
-                  interval: str, keep_rows: int) -> pd.DataFrame:
-    df = _retry_download(symbol, start, end, interval=interval, auto_adjust=False)
+def validate_data(df, symbol):
     if df.empty:
-        return df
+        logger.warning(f"{symbol} 數據為空")
+        return False
+    if len(df) < 2:
+        logger.warning(f"{symbol} 數據不足,無法計算漲跌")
+        return False
+    df['Close'] = pd.to_numeric(df['Close'], errors='coerce')
+    df = df.dropna(subset=['Close'])
+    df['Pct_Change'] = df['Close'].pct_change() * 100
+    abnormal = df[(df['Pct_Change'] > 20) | (df['Pct_Change'] < -20)]
+    if not abnormal.empty:
+        logger.warning(f"{symbol} 漲跌異常: {abnormal[['Date', 'Pct_Change']].to_dict('records')}")
+    continuous_same = df['Close'].eq(df['Close'].shift()).sum() > len(df) * 0.1
+    if continuous_same:
+        logger.warning(f"{symbol} 連續數據一致性問題，可能有重複")
+    return True
 
-    df["Symbol"] = symbol
-    if "Adj Close" not in df.columns:
-        df["Adj Close"] = df["Close"]
+def validate_trend_consistency(df, benchmark_df, symbol):
+    if not benchmark_df.empty:
+        df_change = df['Close'].pct_change().iloc[-1]
+        benchmark_change = benchmark_df['Close'].pct_change().iloc[-1]
+        if (df_change > 0) != (benchmark_change > 0) and abs(df_change) > 5:
+            logger.warning(f"{symbol} 趨勢與大盤不一致: {df_change:.2f}% vs {benchmark_change:.2f}%")
 
-    df = df[["Open", "High", "Low", "Close", "Adj Close", "Volume", "Symbol"]].copy()
-    df.reset_index(inplace=True)
-    df.rename(columns={"index": "Date"}, inplace=True)
-    df = _coerce_numeric(df)
+async def fetch_and_save(symbol, interval, start_date, end_date, data_type):
+    try:
+        df = yf.download(symbol, start=start_date, end=end_date, interval=interval, auto_adjust=False, progress=False)
+        if not df.empty:
+            df['Symbol'] = symbol
+            if 'Adj Close' not in df.columns:
+                df['Adj Close'] = df['Close']
+            df = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
+            df.reset_index(inplace=True)
+            if 'Date' not in df.columns:
+                df['Date'] = df.index
+                df['Date'] = pd.to_datetime(df['Date'])
+            df.rename(columns={'index': 'Date'}, inplace=True)
+            for col in ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']:
+                if col in df.columns:
+                    df[col] = pd.to_numeric(df[col], errors='coerce')
+            if validate_data(df, symbol):
+                path = os.path.join('data', f'{data_type}_{symbol}.csv')
+                df.to_csv(path, index=False, encoding='utf-8', float_format='%.2f')
+                logger.info(f"成功抓取 {symbol} 的 {len(df)} 筆{data_type}數據，保存至 {path}")
+                return df
+            else:
+                logger.error(f"{symbol} 數據驗證失敗，不保存")
+                return None
+        else:
+            logger.warning(f"{symbol} 未返回{data_type}數據")
+            return None
+    except Exception as e:
+        logger.error(f"抓取 {symbol} {data_type}數據失敗: {e}")
+        return None
 
-    if interval == "1d":
-        df = df.tail(keep_rows)
-    else:
-        cutoff = end - timedelta(days=14)
-        df = df[pd.to_datetime(df["Date"]) >= cutoff]
+async def main():
+    symbols, data_sources, retain_daily, retain_hourly = load_config()
+    end_date = datetime.now()
+    start_date_daily = end_date - timedelta(days=retain_daily + 1)
+    start_date_hourly = end_date - timedelta(days=retain_hourly + 1)
 
-    return df
+    tasks = [fetch_and_save(symbol, '1d', start_date_daily, end_date, 'daily') for symbol in symbols] + [fetch_and_save(symbol, '1h', start_date_hourly, end_date, 'hourly') for symbol in symbols]
+    await asyncio.gather(*tasks)
 
+    clean_old_data()
 
-def collect_from_config(config_path: str = "config.json") -> Dict[str, str]:
-    """
-    config.json 範例：
-    {
-      "symbols": ["0050.TW", "QQQ", "^GSPC"],
-      "benchmarks": {"0050.TW": "^TWII", "QQQ": "^NDX"},
-      "hourly_symbols": ["0050.TW", "QQQ"]
-    }
-    """
-    if not os.path.exists(config_path):
-        cfg = {
-            "symbols": ["0050.TW", "QQQ", "^GSPC"],
-            "benchmarks": {"0050.TW": "^TWII", "QQQ": "^NDX", "^GSPC": "^GSPC"},
-            "hourly_symbols": ["0050.TW", "QQQ"]
-        }
-    else:
-        with open(config_path, "r", encoding="utf-8") as f:
-            cfg = json.load(f)
-
-    now = datetime.utcnow()
-    start_daily = now - timedelta(days=365)
-    start_hourly = now - timedelta(days=14)
-
-    summary = {}
-
-    # === 日線 ===
-    for sym in cfg.get("symbols", []):
-        try:
-            df_d = _download_one(sym, start_daily, now, "1d", keep_rows=300)
-            fn = os.path.join(DATA_DIR, f"daily_{_safe_filename(sym)}.csv")
-            df_d.to_csv(fn, index=False, encoding="utf-8")
-            logger.info(f"[Daily] {sym} -> {fn}, rows={len(df_d)}")
-
-            for w in _pct_checks(df_d, sym):
-                logger.warning(w)
-
-            bench = cfg.get("benchmarks", {}).get(sym)
-            if bench:
-                try:
-                    df_b = _download_one(bench, start_daily, now, "1d", keep_rows=300)
-                    msg = _direction_consistency(df_d, df_b, f"{sym} vs {bench}")
-                    if msg:
-                        logger.warning(msg)
-                except Exception as e:
-                    logger.warning(f"{sym} 基準 {bench} 下載失敗: {e}")
-        except Exception as e:
-            logger.error(f"{sym} 日線下載失敗: {e}")
-
-    # === 小時線 ===
-    for sym in cfg.get("hourly_symbols", []):
-        try:
-            df_h = _download_one(sym, start_hourly, now, "1h", keep_rows=100000)
-            fn = os.path.join(DATA_DIR, f"hourly_{_safe_filename(sym)}.csv")
-            df_h.to_csv(fn, index=False, encoding="utf-8")
-            logger.info(f"[Hourly] {sym} -> {fn}, rows={len(df_h)}")
-
-            for w in _pct_checks(df_h, sym):
-                logger.warning(w)
-        except Exception as e:
-            logger.error(f"{sym} 小時線下載失敗: {e}")
-
-    summary["generated_at"] = datetime.utcnow().isoformat() + "Z"
-    return summary
-
-
-if __name__ == "__main__":
-    collect_from_config()
+if __name__ == '__main__':
+    asyncio.run(main())
