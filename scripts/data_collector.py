@@ -1,4 +1,3 @@
-# scripts/data_collector.py
 import yfinance as yf
 import pandas as pd
 import json
@@ -117,19 +116,20 @@ async def main():
     start_date_daily = end_date - timedelta(days=retain_daily + 1)
     start_date_hourly = end_date - timedelta(days=retain_hourly + 1)
 
-    # 獲取基準數據（如 ^TWII）
+    # 獲取基準數據（^TWII）
     benchmark_symbol = '^TWII'
     benchmark_task = fetch_and_save(benchmark_symbol, '1d', start_date_daily, end_date, 'daily')
     benchmark_df = await benchmark_task if benchmark_task else pd.DataFrame()
 
     tasks = []
     for symbol in symbols:
-        tasks.append(fetch_and_save(symbol, '1d', start_date_daily, end_date, 'daily'))
-        tasks.append(fetch_and_save(symbol, '1h', start_date_hourly, end_date, 'hourly'))
+        daily_task = fetch_and_save(symbol, '1d', start_date_daily, end_date, 'daily')
+        hourly_task = fetch_and_save(symbol, '1h', start_date_hourly, end_date, 'hourly')
+        tasks.extend([daily_task, hourly_task])
         if symbol != benchmark_symbol and not benchmark_df.empty:
-            df = await fetch_and_save(symbol, '1d', start_date_daily, end_date, 'daily')
-            if df is not None:
-                validate_trend_consistency(df, benchmark_df, symbol)
+            daily_df = await daily_task if daily_task else None
+            if daily_df is not None:
+                validate_trend_consistency(daily_df, benchmark_df, symbol)
 
     await asyncio.gather(*tasks)
 
