@@ -4,16 +4,16 @@
   "strategies": {
     "VolumeBreakout": {"volume_multiplier": 1.5},
     "MLStrategy": {"model_type": "rf"}
-   "voices": {
+  },
+  "voices": {
     "tw": "zh-TW-YunJheNeural",
     "us": "en-US-GuyNeural"
-    },
-   "rate": "+0%",
-   "volume": "+0%"
   },
+  "rate": "+0%",
+  "volume": "+0%",
   "b2": {
-    "key_id": "",
-    "application_key": "",
+    "key_id": "your_b2_key_id",
+    "application_key": "your_b2_application_key",
     "bucket_name": "podcast-bucket"
   },
   "s3": {
@@ -30,7 +30,6 @@
   "rss_url": "https://tw.stock.yahoo.com/rss?category=news",
   "grok_api_url": "https://api.grok.xai.com/v1/improve_strategy",
   "slack_webhook_url": "https://bbm-a1u4547.slack.com/archives/D09AGLZ7JMA",
-  "b2_bucket_name": "your-b2-bucket-name",
   "retain_daily": 300,
   "retain_hourly": 14
 }
