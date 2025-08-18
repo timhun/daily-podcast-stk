@@ -1,1 +1,315 @@
 
+📊 執行資料收集員 at 2025-08-19 07:13:22 CST
+2025-08-19 07:13:22,834 - INFO - 🚀 Data Collector 開始執行
+2025-08-19 07:13:22,834 - INFO - 🚀 Data Collector 開始執行
+2025-08-19 07:13:22,834 - INFO - 📥 處理 0050.TW
+2025-08-19 07:13:22,834 - INFO - 📥 處理 0050.TW
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:23,521 - WARNING - ⚠️ 第 1/3 次嘗試抓取 0050.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:23,521 - WARNING - ⚠️ 第 1/3 次嘗試抓取 0050.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:23,690 - WARNING - ⚠️ 第 2/3 次嘗試抓取 0050.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:23,690 - WARNING - ⚠️ 第 2/3 次嘗試抓取 0050.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:23,952 - WARNING - ⚠️ 第 3/3 次嘗試抓取 0050.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:23,952 - WARNING - ⚠️ 第 3/3 次嘗試抓取 0050.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:23,952 - ERROR - ❌ 抓取 0050.TW (1d) 最終失敗
+2025-08-19 07:13:23,952 - ERROR - ❌ 抓取 0050.TW (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:24,130 - INFO - ✅ 已更新 data/hourly_0050.TW.csv (98 筆) | 最後一筆: Ticker
+   2025-08-18 13:00:00+08:00
+Name: 104, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+0050.TW    53.299999
+Name: 104, dtype: object
+2025-08-19 07:13:24,130 - INFO - ✅ 已更新 data/hourly_0050.TW.csv (98 筆) | 最後一筆: Ticker
+   2025-08-18 13:00:00+08:00
+Name: 104, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+0050.TW    53.299999
+Name: 104, dtype: object
+2025-08-19 07:13:24,130 - INFO - 📥 處理 QQQ
+2025-08-19 07:13:24,130 - INFO - 📥 處理 QQQ
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:24,543 - WARNING - ⚠️ 第 1/3 次嘗試抓取 QQQ (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:24,543 - WARNING - ⚠️ 第 1/3 次嘗試抓取 QQQ (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:24,725 - WARNING - ⚠️ 第 2/3 次嘗試抓取 QQQ (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:24,725 - WARNING - ⚠️ 第 2/3 次嘗試抓取 QQQ (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:24,983 - WARNING - ⚠️ 第 3/3 次嘗試抓取 QQQ (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:24,983 - WARNING - ⚠️ 第 3/3 次嘗試抓取 QQQ (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:24,983 - ERROR - ❌ 抓取 QQQ (1d) 最終失敗
+2025-08-19 07:13:24,983 - ERROR - ❌ 抓取 QQQ (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:25,196 - INFO - ✅ 已更新 data/hourly_QQQ.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+QQQ    577.099976
+Name: 146, dtype: object
+2025-08-19 07:13:25,196 - INFO - 📥 處理 ^TWII
+2025-08-19 07:13:25,196 - INFO - ✅ 已更新 data/hourly_QQQ.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+QQQ    577.099976
+Name: 146, dtype: object
+2025-08-19 07:13:25,196 - INFO - 📥 處理 ^TWII
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:25,442 - WARNING - ⚠️ 第 1/3 次嘗試抓取 ^TWII (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:25,442 - WARNING - ⚠️ 第 1/3 次嘗試抓取 ^TWII (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:25,670 - WARNING - ⚠️ 第 2/3 次嘗試抓取 ^TWII (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:25,670 - WARNING - ⚠️ 第 2/3 次嘗試抓取 ^TWII (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:25,868 - WARNING - ⚠️ 第 3/3 次嘗試抓取 ^TWII (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:25,868 - ERROR - ❌ 抓取 ^TWII (1d) 最終失敗
+2025-08-19 07:13:25,868 - WARNING - ⚠️ 第 3/3 次嘗試抓取 ^TWII (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:25,868 - ERROR - ❌ 抓取 ^TWII (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:26,037 - INFO - ✅ 已更新 data/hourly_^TWII.csv (98 筆) | 最後一筆: Ticker
+   2025-08-18 13:00:00+08:00
+Name: 104, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+^TWII    24471.240234
+Name: 104, dtype: object
+2025-08-19 07:13:26,037 - INFO - ✅ 已更新 data/hourly_^TWII.csv (98 筆) | 最後一筆: Ticker
+   2025-08-18 13:00:00+08:00
+Name: 104, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+^TWII    24471.240234
+Name: 104, dtype: object
+2025-08-19 07:13:26,037 - INFO - 📥 處理 BTC-USD
+2025-08-19 07:13:26,037 - INFO - 📥 處理 BTC-USD
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:26,297 - WARNING - ⚠️ 第 1/3 次嘗試抓取 BTC-USD (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:26,297 - WARNING - ⚠️ 第 1/3 次嘗試抓取 BTC-USD (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:26,519 - WARNING - ⚠️ 第 2/3 次嘗試抓取 BTC-USD (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:26,519 - WARNING - ⚠️ 第 2/3 次嘗試抓取 BTC-USD (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:26,624 - WARNING - ⚠️ 第 3/3 次嘗試抓取 BTC-USD (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:26,624 - WARNING - ⚠️ 第 3/3 次嘗試抓取 BTC-USD (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:26,624 - ERROR - ❌ 抓取 BTC-USD (1d) 最終失敗
+2025-08-19 07:13:26,624 - ERROR - ❌ 抓取 BTC-USD (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:26,964 - INFO - ✅ 已更新 data/hourly_BTC-USD.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 07:00:00+08:00
+Name: 719, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+BTC-USD    116506.945312
+Name: 719, dtype: object
+2025-08-19 07:13:26,964 - INFO - ✅ 已更新 data/hourly_BTC-USD.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 07:00:00+08:00
+Name: 719, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+BTC-USD    116506.945312
+Name: 719, dtype: object
+2025-08-19 07:13:26,964 - INFO - 📥 處理 ^DJI
+2025-08-19 07:13:26,964 - INFO - 📥 處理 ^DJI
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:27,247 - WARNING - ⚠️ 第 1/3 次嘗試抓取 ^DJI (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:27,247 - WARNING - ⚠️ 第 1/3 次嘗試抓取 ^DJI (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:27,414 - WARNING - ⚠️ 第 2/3 次嘗試抓取 ^DJI (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:27,414 - WARNING - ⚠️ 第 2/3 次嘗試抓取 ^DJI (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:27,607 - WARNING - ⚠️ 第 3/3 次嘗試抓取 ^DJI (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:27,607 - WARNING - ⚠️ 第 3/3 次嘗試抓取 ^DJI (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:27,607 - ERROR - ❌ 抓取 ^DJI (1d) 最終失敗
+2025-08-19 07:13:27,607 - ERROR - ❌ 抓取 ^DJI (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:27,827 - INFO - ✅ 已更新 data/hourly_^DJI.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+^DJI    44909.949219
+Name: 146, dtype: object
+2025-08-19 07:13:27,827 - INFO - ✅ 已更新 data/hourly_^DJI.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+^DJI    44909.949219
+Name: 146, dtype: object
+2025-08-19 07:13:27,828 - INFO - 📥 處理 GC=F
+2025-08-19 07:13:27,828 - INFO - 📥 處理 GC=F
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:28,054 - WARNING - ⚠️ 第 1/3 次嘗試抓取 GC=F (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:28,054 - WARNING - ⚠️ 第 1/3 次嘗試抓取 GC=F (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:28,250 - WARNING - ⚠️ 第 2/3 次嘗試抓取 GC=F (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:28,250 - WARNING - ⚠️ 第 2/3 次嘗試抓取 GC=F (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:28,427 - WARNING - ⚠️ 第 3/3 次嘗試抓取 GC=F (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:28,427 - WARNING - ⚠️ 第 3/3 次嘗試抓取 GC=F (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:28,428 - ERROR - ❌ 抓取 GC=F (1d) 最終失敗
+2025-08-19 07:13:28,428 - ERROR - ❌ 抓取 GC=F (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:28,613 - INFO - ✅ 已更新 data/hourly_GC=F.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 07:00:00+08:00
+Name: 483, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+GC=F    3379.399902
+Name: 483, dtype: object
+2025-08-19 07:13:28,613 - INFO - ✅ 已更新 data/hourly_GC=F.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 07:00:00+08:00
+Name: 483, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+GC=F    3379.399902
+Name: 483, dtype: object
+2025-08-19 07:13:28,613 - INFO - 📥 處理 ^GSPC
+2025-08-19 07:13:28,613 - INFO - 📥 處理 ^GSPC
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:28,843 - WARNING - ⚠️ 第 1/3 次嘗試抓取 ^GSPC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:28,843 - WARNING - ⚠️ 第 1/3 次嘗試抓取 ^GSPC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:29,002 - WARNING - ⚠️ 第 2/3 次嘗試抓取 ^GSPC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:29,002 - WARNING - ⚠️ 第 2/3 次嘗試抓取 ^GSPC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:29,161 - WARNING - ⚠️ 第 3/3 次嘗試抓取 ^GSPC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:29,161 - ERROR - ❌ 抓取 ^GSPC (1d) 最終失敗
+2025-08-19 07:13:29,161 - WARNING - ⚠️ 第 3/3 次嘗試抓取 ^GSPC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:29,161 - ERROR - ❌ 抓取 ^GSPC (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:29,384 - INFO - ✅ 已更新 data/hourly_^GSPC.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+^GSPC    6449.240234
+Name: 146, dtype: object
+2025-08-19 07:13:29,384 - INFO - ✅ 已更新 data/hourly_^GSPC.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+^GSPC    6449.240234
+Name: 146, dtype: object
+2025-08-19 07:13:29,384 - INFO - 📥 處理 ^IXIC
+2025-08-19 07:13:29,384 - INFO - 📥 處理 ^IXIC
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:29,722 - WARNING - ⚠️ 第 1/3 次嘗試抓取 ^IXIC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:29,722 - WARNING - ⚠️ 第 1/3 次嘗試抓取 ^IXIC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:29,878 - WARNING - ⚠️ 第 2/3 次嘗試抓取 ^IXIC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:29,878 - WARNING - ⚠️ 第 2/3 次嘗試抓取 ^IXIC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:30,033 - WARNING - ⚠️ 第 3/3 次嘗試抓取 ^IXIC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:30,034 - ERROR - ❌ 抓取 ^IXIC (1d) 最終失敗
+2025-08-19 07:13:30,033 - WARNING - ⚠️ 第 3/3 次嘗試抓取 ^IXIC (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:30,034 - ERROR - ❌ 抓取 ^IXIC (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:30,209 - INFO - ✅ 已更新 data/hourly_^IXIC.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+^IXIC    21643.261719
+Name: 146, dtype: object
+2025-08-19 07:13:30,209 - INFO - ✅ 已更新 data/hourly_^IXIC.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+^IXIC    21643.261719
+Name: 146, dtype: object
+2025-08-19 07:13:30,209 - INFO - 📥 處理 SPY
+2025-08-19 07:13:30,209 - INFO - 📥 處理 SPY
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:30,728 - WARNING - ⚠️ 第 1/3 次嘗試抓取 SPY (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:30,728 - WARNING - ⚠️ 第 1/3 次嘗試抓取 SPY (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:31,022 - WARNING - ⚠️ 第 2/3 次嘗試抓取 SPY (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:31,022 - WARNING - ⚠️ 第 2/3 次嘗試抓取 SPY (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:31,405 - WARNING - ⚠️ 第 3/3 次嘗試抓取 SPY (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:31,405 - WARNING - ⚠️ 第 3/3 次嘗試抓取 SPY (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:31,406 - ERROR - ❌ 抓取 SPY (1d) 最終失敗
+2025-08-19 07:13:31,406 - ERROR - ❌ 抓取 SPY (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:31,635 - INFO - ✅ 已更新 data/hourly_SPY.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+SPY    643.280029
+Name: 146, dtype: object
+2025-08-19 07:13:31,635 - INFO - 📥 處理 TSM
+2025-08-19 07:13:31,635 - INFO - ✅ 已更新 data/hourly_SPY.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+SPY    643.280029
+Name: 146, dtype: object
+2025-08-19 07:13:31,635 - INFO - 📥 處理 TSM
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:32,084 - WARNING - ⚠️ 第 1/3 次嘗試抓取 TSM (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:32,084 - WARNING - ⚠️ 第 1/3 次嘗試抓取 TSM (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:32,265 - WARNING - ⚠️ 第 2/3 次嘗試抓取 TSM (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:32,265 - WARNING - ⚠️ 第 2/3 次嘗試抓取 TSM (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:32,439 - WARNING - ⚠️ 第 3/3 次嘗試抓取 TSM (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:32,439 - WARNING - ⚠️ 第 3/3 次嘗試抓取 TSM (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:32,439 - ERROR - ❌ 抓取 TSM (1d) 最終失敗
+2025-08-19 07:13:32,439 - ERROR - ❌ 抓取 TSM (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:32,719 - INFO - ✅ 已更新 data/hourly_TSM.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+TSM    241.389999
+Name: 146, dtype: object
+2025-08-19 07:13:32,719 - INFO - ✅ 已更新 data/hourly_TSM.csv (98 筆) | 最後一筆: Ticker
+   2025-08-19 03:30:00+08:00
+Name: 146, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+TSM    241.389999
+Name: 146, dtype: object
+2025-08-19 07:13:32,720 - INFO - 📥 處理 2330.TW
+2025-08-19 07:13:32,720 - INFO - 📥 處理 2330.TW
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:33,001 - WARNING - ⚠️ 第 1/3 次嘗試抓取 2330.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:33,001 - WARNING - ⚠️ 第 1/3 次嘗試抓取 2330.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:33,191 - WARNING - ⚠️ 第 2/3 次嘗試抓取 2330.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:33,191 - WARNING - ⚠️ 第 2/3 次嘗試抓取 2330.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:33,394 - WARNING - ⚠️ 第 3/3 次嘗試抓取 2330.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:33,394 - WARNING - ⚠️ 第 3/3 次嘗試抓取 2330.TW (1d) 失敗: Cannot convert tz-naive timestamps, use tz_localize to localize
+2025-08-19 07:13:33,394 - ERROR - ❌ 抓取 2330.TW (1d) 最終失敗
+2025-08-19 07:13:33,394 - ERROR - ❌ 抓取 2330.TW (1d) 最終失敗
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:63: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-19 07:13:33,561 - INFO - ✅ 已更新 data/hourly_2330.TW.csv (98 筆) | 最後一筆: Ticker
+   2025-08-18 13:00:00+08:00
+Name: 104, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+2330.TW    1180.0
+Name: 104, dtype: object
+2025-08-19 07:13:33,561 - INFO - ✅ 已更新 data/hourly_2330.TW.csv (98 筆) | 最後一筆: Ticker
+   2025-08-18 13:00:00+08:00
+Name: 104, dtype: datetime64[ns, Asia/Taipei] Close=Ticker
+2330.TW    1180.0
+Name: 104, dtype: object
+2025-08-19 07:13:33,562 - INFO - 🏁 Data Collector 結束
+2025-08-19 07:13:33,562 - INFO - 🏁 Data Collector 結束
+✅ 完成 at 2025-08-19 07:13:33 CST
