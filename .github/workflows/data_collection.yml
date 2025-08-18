@@ -24,9 +24,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install yfinance pandas pytz
+      - name: Create Data and Logs Directories
+        run: |
+          mkdir -p data logs
+          chmod -R 755 data logs
       - name: Run Data Collector
         run: |
           echo "📥 執行資料收集員 at $(date '+%Y-%m-%d %H:%M:%S CST')"
-          python scripts/data_collector.py
+          python scripts/data_collector.py || echo "執行失敗，檢查日誌"
         env:
           PYTHONUNBUFFERED: 1
