@@ -1,0 +1,7 @@
+{
+  "strategies": [
+    {"name": "VolumeBreakout", "params": {"volume_multiplier": 1.5}},
+    {"name": "MLStrategy", "params": {"model_type": "rf"}},
+    {"name": "MLStrategy", "params": {"model_type": "lstm"}}
+  ]
+}
