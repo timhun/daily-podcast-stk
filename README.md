@@ -45,3 +45,56 @@ daily-podcast-stk/
 ├── requirements.txt                   # Python 套件清單
 ├── README.md
 └── .env.template                      # 範例環境變數
+
+專案整體目錄架構（優化版）
+daily-podcast-stk/
+├── .github/
+│   └── workflows/
+│       ├── podcast_workflow.yml       # 主工作流管道
+│       ├── data_collection.yml        # 獨立資料收集排程
+│       ├── strategy_management.yml    # 獨立策略管理排程
+│       ├── market_analysis.yml        # 獨立市場分析排程
+│       ├── script_editing.yml         # 獨立文字編輯排程
+│       ├── podcast_production.yml     # 獨立播報排程
+│       ├── upload_management.yml      # 獨立上傳排程
+│       └── feed_publishing.yml        # 獨立推播排程
+├── scripts/
+│   ├── data_collector.py              # 資料收集員腳本
+│   ├── strategy_manager.py            # 策略管理師腳本
+│   ├── market_analyst.py              # 市場分析師腳本
+│   ├── script_editor.py               # 文字編輯師腳本
+│   ├── podcast_producer.py            # 播報員腳本
+│   ├── upload_manager.py              # 雲端上傳員腳本
+│   └── feed_publisher.py              # 推播員腳本
+├── data/
+│   ├── daily_*.csv                    # 日線數據
+│   ├── hourly_*.csv                   # 小時線數據
+│   ├── strategy_best_*.json           # 最佳策略結果
+│   ├── market_analysis_*.json         # 市場分析結果
+│   └── backup/                        # 數據備份（可擴充）
+├── docs/
+│   ├── podcast/
+│   │   ├── YYYYMMDD_tw/               # 台股播報
+│   │   │   ├── script.txt
+│   │   │   ├── audio.mp3
+│   │   │   └── archive_audio_url.txt
+│   │   └── YYYYMMDD_us/               # 美股播報
+│   │       ├── script.txt
+│   │       ├── audio.mp3
+│   │       └── archive_audio_url.txt
+│   └── rss/
+│       ├── podcast_tw.xml             # 台股 RSS
+│       ├── podcast_us.xml             # 美股 RSS
+│       └── podcast.xml                # 總 RSS
+├── logs/
+│   ├── data_collector.log             # 資料收集日誌
+│   ├── strategy_manager.log           # 策略管理日誌
+│   ├── market_analyst.log             # 市場分析日誌
+│   ├── script_editor.log              # 文字編輯日誌
+│   ├── podcast_producer.log           # 播報日誌
+│   ├── upload_manager.log             # 上傳日誌
+│   └── feed_publisher.log             # 推播日誌
+├── config.json                        # 全域配置（符號、時間範圍）
+├── strategies.json                    # 策略配置（僅供策略管理師）
+├── README.md                          # 專案說明
+└── .gitignore                         # 忽略文件
