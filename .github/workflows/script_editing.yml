@@ -1,0 +1,28 @@
+name: Script Editing
+
+on:
+  schedule:
+    - cron: '0 22 * * *'  # 6:00 AM CST
+    - cron: '0 6 * * *'   # 2:00 PM CST
+  workflow_dispatch:
+
+jobs:
+  script-editing:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas requests feedparser
+      - name: Run Script Editor
+        run: |
+          echo "✍️ 執行文字編輯師"
+          python scripts/script_editor.py
+        env:
+          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
