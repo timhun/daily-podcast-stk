@@ -22,6 +22,11 @@
     "secret_key": "",
     "bucket_name": ""
   },
+  "platforms": {
+    "spotify": {"enabled": true},
+    "apple": {"enabled": true},
+    "google": {"enabled": false, "api_key": ""}
+  },
   "rss_url": "https://tw.stock.yahoo.com/rss?category=news",
   "grok_api_url": "https://api.grok.xai.com/v1/improve_strategy",
   "slack_webhook_url": "https://bbm-a1u4547.slack.com/archives/D09AGLZ7JMA",
