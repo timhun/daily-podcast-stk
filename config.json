@@ -4,6 +4,12 @@
   "strategies": {
     "VolumeBreakout": {"volume_multiplier": 1.5},
     "MLStrategy": {"model_type": "rf"}
+   "voices": {
+    "tw": "zh-TW-YunJheNeural",
+    "us": "en-US-GuyNeural"
+    },
+   "rate": "+0%",
+   "volume": "+0%"
   },
   "rss_url": "https://tw.stock.yahoo.com/rss?category=news",
   "grok_api_url": "https://api.grok.xai.com/v1/improve_strategy",
