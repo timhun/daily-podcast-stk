@@ -1,24 +1,38 @@
 # scripts/utils.py
+import json
+import os
 import logging
 import pytz
 from datetime import datetime
 
-# 台灣時區
-TW_TZ = pytz.timezone("Asia/Taipei")
+logger = logging.getLogger("utils")
 
-# symbol -> benchmark 對照
-BENCHMARK_MAP = {
-    "0050.TW": "^TWII",   # 台股
-    "QQQ": "^IXIC"        # 美股 (NASDAQ Composite)
-}
+# 預設路徑
+CONFIG_PATH = os.path.join(os.path.dirname(__file__), "..", "config.json")
 
-def now_tw_str(fmt="%Y-%m-%d %H:%M:%S"):
-    """取得台灣時間字串"""
-    return datetime.now(TW_TZ).strftime(fmt)
+def load_config(config_path: str = CONFIG_PATH) -> dict:
+    """讀取 config.json，失敗則拋出例外"""
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"找不到設定檔 {config_path}")
+    with open(config_path, "r", encoding="utf-8") as f:
+        config = json.load(f)
+    return config
 
-def setup_logger(name):
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(levelname)s - %(message)s",
-    )
-    return logging.getLogger(name)
+def get_symbols(config: dict) -> list:
+    """回傳所有要追蹤的 symbols"""
+    return config.get("symbols", [])
+
+def get_benchmark(symbol: str, config: dict) -> str:
+    """根據 symbol 找 benchmark"""
+    bm_map = config.get("settings", {}).get("benchmark_map", {})
+    return bm_map.get(symbol)
+
+def get_timezone(config: dict):
+    """回傳設定的時區物件"""
+    tz_name = config.get("settings", {}).get("time_zone", "Asia/Taipei")
+    return pytz.timezone(tz_name)
+
+def now_local(config: dict) -> datetime:
+    """取得當地時間"""
+    tz = get_timezone(config)
+    return datetime.now(tz)
