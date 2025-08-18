@@ -2,12 +2,11 @@ name: Data Collection
 
 on:
   schedule:
-    # 台灣時間 (CST+8)，這裡 cron 仍需填 UTC
     - cron: '0 21 * * *'   # 05:00 CST
     - cron: '45 5 * * *'   # 13:45 CST
     - cron: '0 10 * * *'   # 18:00 CST
     - cron: '0 14 * * *'   # 22:00 CST
-  workflow_dispatch:       # 手動觸發
+  workflow_dispatch:
 
 jobs:
   data-collection:
@@ -38,17 +37,18 @@ jobs:
 
       - name: ▶️ Run Data Collector
         run: |
-          echo "📊 執行資料收集員 at $(date '+%Y-%m-%d %H:%M:%S CST')"
-          python scripts/data_collector.py || echo "⚠️ 執行失敗，請檢查日誌"
+          echo "📊 執行資料收集員 at $(date '+%Y-%m-%d %H:%M:%S CST')" | tee -a logs/data_collector.log
+          python scripts/data_collector.py 2>&1 | tee -a logs/data_collector.log
+          echo "✅ 完成 at $(date '+%Y-%m-%d %H:%M:%S CST')" | tee -a logs/data_collector.log
         env:
           PYTHONUNBUFFERED: 1
 
-      - name: 💾 Commit and Push CSV Files
+      - name: 💾 Commit and Push CSV & Logs
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/*.csv
-          git commit -m "Update CSV files with latest market data [$(date '+%Y-%m-%d %H:%M:%S CST')]" || echo "ℹ️ No changes to commit"
+          git add data/*.csv logs/data_collector.log
+          git commit -m "Update data & logs [$(date '+%Y-%m-%d %H:%M:%S CST')]" || echo "ℹ️ No changes to commit"
           git push
         env:
           PYTHONUNBUFFERED: 1
