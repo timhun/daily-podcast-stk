@@ -1,13 +1,14 @@
 {
-    "symbols": ["0050.TW", "QQQ", "^TWII", "BTC-USD", "^DJI", "GC=F", "^GSPC", "^IXIC", "SPY", "TSM", "2330.TW"],
-    "benchmarks": {
-    "0050.TW": "^TWII",
-    "QQQ": "^NDX",
-    "^GSPC": "^GSPC"
-    },
-    "hourly_symbols": ["0050.TW", "QQQ"]
-    "strategies": {
+  "symbols": ["0050.TW", "QQQ", "^TWII", "BTC-USD", "^DJI", "GC=F", "^GSPC", "^IXIC", "SPY", "TSM", "2330.TW"],
+  "data_sources": {"yfinance": {"enabled": true}},
+  "strategies": {
     "VolumeBreakout": {"volume_multiplier": 1.5},
-    "MLStrategy": {}
-    }
+    "MLStrategy": {"model_type": "rf"}
+  },
+  "rss_url": "https://tw.stock.yahoo.com/rss?category=news",
+  "grok_api_url": "https://api.grok.xai.com/v1/improve_strategy",
+  "slack_webhook_url": "your-slack-webhook-url",
+  "b2_bucket_name": "your-b2-bucket-name",
+  "retain_daily": 300,
+  "retain_hourly": 14
 }
