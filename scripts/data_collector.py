@@ -4,7 +4,6 @@ import json
 import os
 from datetime import datetime, timedelta
 import logging
-import asyncio
 from pytz import timezone
 
 # 設定日誌，確保台灣時區
@@ -51,7 +50,7 @@ def clean_old_data(data_dir='data', retain_daily=300, retain_hourly=14):
                 logger.info(f"清理 {file}，保留最近 {retain_hourly} 天數據")
 
 def validate_data(df, symbol):
-    """驗證數據品質，包括漲跌計算檢查"""
+    """驗證數據品質，包括漲跌異常檢查"""
     if df.empty:
         logger.warning(f"{symbol} 數據為空")
         return False
@@ -64,79 +63,52 @@ def validate_data(df, symbol):
     abnormal = df[(df['Pct_Change'] > 20) | (df['Pct_Change'] < -20)]
     if not abnormal.empty:
         logger.warning(f"{symbol} 漲跌異常: {abnormal[['Date', 'Pct_Change']].to_dict('records')}")
-    continuous_same = df['Close'].eq(df['Close'].shift()).sum() > len(df) * 0.1
-    if continuous_same:
-        logger.warning(f"{symbol} 連續數據一致性問題，可能有重複")
     return True
 
-def validate_trend_consistency(df, benchmark_df, symbol):
-    """驗證趨勢與大盤一致性"""
-    if not benchmark_df.empty:
-        df_change = df['Close'].pct_change().iloc[-1] * 100
-        benchmark_change = benchmark_df['Close'].pct_change().iloc[-1] * 100
-        if (df_change > 0) != (benchmark_change > 0) and abs(df_change) > 5:
-            logger.warning(f"{symbol} 趨勢與大盤不一致: {df_change:.2f}% vs {benchmark_change:.2f}%")
-
-async def fetch_and_save(symbol, interval, start_date, end_date, data_type):
-    """異步抓取並保存數據"""
-    try:
-        df = yf.download(symbol, start=start_date, end=end_date, interval=interval, auto_adjust=False, progress=False)
-        if not df.empty:
-            df['Symbol'] = symbol
-            if 'Adj Close' not in df.columns:
-                df['Adj Close'] = df['Close']
-            df = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
-            df.reset_index(inplace=True)
-            if 'Date' not in df.columns:
-                df['Date'] = df.index
-            df['Date'] = pd.to_datetime(df['Date'], utc=True).dt.tz_convert('Asia/Taipei')
-            df.rename(columns={'index': 'Date'}, inplace=True)
-            for col in ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']:
-                if col in df.columns:
-                    df[col] = pd.to_numeric(df[col], errors='coerce')
-            if validate_data(df, symbol):
-                path = os.path.join('data', f'{data_type}_{symbol}.csv')
-                df.to_csv(path, index=False, encoding='utf-8', float_format='%.2f')
-                logger.info(f"成功抓取 {symbol} 的 {len(df)} 筆{data_type}數據，保存至 {path}")
-                return df
+def fetch_and_save(symbol, interval, start_date, end_date, data_type, max_retries=3):
+    """抓取並保存數據，支援錯誤重試"""
+    for attempt in range(max_retries):
+        try:
+            df = yf.download(symbol, start=start_date, end=end_date, interval=interval, auto_adjust=False, progress=False)
+            if not df.empty:
+                df['Symbol'] = symbol
+                if 'Adj Close' not in df.columns:
+                    df['Adj Close'] = df['Close']
+                df = df[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume', 'Symbol']].copy()
+                df.reset_index(inplace=True)
+                if 'Date' not in df.columns:
+                    df['Date'] = df.index
+                df['Date'] = pd.to_datetime(df['Date'], utc=True).dt.tz_convert('Asia/Taipei')
+                df.rename(columns={'index': 'Date'}, inplace=True)
+                for col in ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']:
+                    if col in df.columns:
+                        df[col] = pd.to_numeric(df[col], errors='coerce')
+                if validate_data(df, symbol):
+                    path = os.path.join('data', f'{data_type}_{symbol}.csv')
+                    df.to_csv(path, index=False, encoding='utf-8', float_format='%.2f')
+                    logger.info(f"成功抓取 {symbol} 的 {len(df)} 筆{data_type}數據，保存至 {path}")
+                    return
             else:
-                logger.error(f"{symbol} 數據驗證失敗，不保存")
-                return None
-        else:
-            logger.warning(f"{symbol} 未返回{data_type}數據")
-            return None
-    except Exception as e:
-        logger.error(f"抓取 {symbol} {data_type}數據失敗: {e}")
-        return None
+                logger.warning(f"{symbol} 未返回{data_type}數據")
+                return
+        except Exception as e:
+            logger.error(f"嘗試 {attempt + 1}/{max_retries} 抓取 {symbol} {data_type}數據失敗: {e}")
+            if attempt < max_retries - 1:
+                continue
+            logger.error(f"{symbol} {data_type}數據抓取失敗，超過重試次數")
 
-async def main():
+def main():
     """主函數，執行資料收集"""
     symbols, data_sources, retain_daily, retain_hourly = load_config()
     end_date = datetime.now(tz)
     start_date_daily = end_date - timedelta(days=retain_daily + 1)
     start_date_hourly = end_date - timedelta(days=retain_hourly + 1)
 
-    # 確保基準數據在循環前完成
-    benchmark_symbol = '^TWII'
-    benchmark_task = fetch_and_save(benchmark_symbol, '1d', start_date_daily, end_date, 'daily')
-    benchmark_df = await benchmark_task if benchmark_task else pd.DataFrame()
-
-    tasks = []
     for symbol in symbols:
-        daily_task = fetch_and_save(symbol, '1d', start_date_daily, end_date, 'daily')
-        hourly_task = fetch_and_save(symbol, '1h', start_date_hourly, end_date, 'hourly')
-        tasks.extend([daily_task, hourly_task])
-        # 只有當基準數據有效時才驗證趨勢
-        if symbol != benchmark_symbol and not benchmark_df.empty:
-            daily_df = await daily_task if daily_task else None
-            if daily_df is not None:
-                validate_trend_consistency(daily_df, benchmark_df, symbol)
-
-    # 等待所有任務完成
-    if tasks:
-        await asyncio.gather(*tasks)
+        fetch_and_save(symbol, '1d', start_date_daily, end_date, 'daily')
+        fetch_and_save(symbol, '1h', start_date_hourly, end_date, 'hourly')
 
     clean_old_data()
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    main()
