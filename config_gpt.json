@@ -1,0 +1,14 @@
+{
+  "symbols": [
+    "0050.TW",
+    "QQQ"
+  ],
+  "settings": {
+    "data_dir": "data",
+    "benchmark_map": {
+      "0050.TW": "^TWII",
+      "QQQ": "^IXIC"
+    },
+    "time_zone": "Asia/Taipei"
+  }
+}
