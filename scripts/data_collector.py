@@ -6,11 +6,20 @@ import os
 from datetime import datetime, timedelta
 import logging
 import asyncio
+from pytz import timezone
 
-logging.basicConfig(filename='logs/data_collector.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# 設定日誌，確保台灣時區
+tz = timezone('Asia/Taipei')
+logging.basicConfig(
+    filename='logs/data_collector.log',
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S CST'
+)
 logger = logging.getLogger(__name__)
 
 def load_config():
+    """載入 config.json 配置文件"""
     config_file = 'config.json'
     if not os.path.exists(config_file):
         logger.error(f"缺少配置檔案: {config_file}")
@@ -24,22 +33,26 @@ def load_config():
         raise ValueError(f"配置檔案解析失敗: {e}")
 
 def clean_old_data(data_dir='data', retain_daily=300, retain_hourly=14):
-    now = datetime.now()
+    """清理舊數據，保留指定天數"""
+    now = datetime.now(tz)
     for file in os.listdir(data_dir):
-        if file.startswith('daily_') and file.endswith('.csv'):
-            df = pd.read_csv(os.path.join(data_dir, file))
-            df['Date'] = pd.to_datetime(df['Date'])
-            df = df[df['Date'] >= now - timedelta(days=retain_daily)]
-            df.to_csv(os.path.join(data_dir, file), index=False, encoding='utf-8', float_format='%.2f')
-            logger.info(f"清理 {file}，保留最近 {retain_daily} 天數據")
-        elif file.startswith('hourly_') and file.endswith('.csv'):
-            df = pd.read_csv(os.path.join(data_dir, file))
-            df['Date'] = pd.to_datetime(df['Date'])
-            df = df[df['Date'] >= now - timedelta(days=retain_hourly)]
-            df.to_csv(os.path.join(data_dir, file), index=False, encoding='utf-8', float_format='%.2f')
-            logger.info(f"清理 {file}，保留最近 {retain_hourly} 天數據")
+        file_path = os.path.join(data_dir, file)
+        if os.path.exists(file_path):
+            if file.startswith('daily_') and file.endswith('.csv'):
+                df = pd.read_csv(file_path)
+                df['Date'] = pd.to_datetime(df['Date'], utc=True).dt.tz_convert('Asia/Taipei')
+                df = df[df['Date'] >= now - timedelta(days=retain_daily)]
+                df.to_csv(file_path, index=False, encoding='utf-8', float_format='%.2f')
+                logger.info(f"清理 {file}，保留最近 {retain_daily} 天數據")
+            elif file.startswith('hourly_') and file.endswith('.csv'):
+                df = pd.read_csv(file_path)
+                df['Date'] = pd.to_datetime(df['Date'], utc=True).dt.tz_convert('Asia/Taipei')
+                df = df[df['Date'] >= now - timedelta(days=retain_hourly)]
+                df.to_csv(file_path, index=False, encoding='utf-8', float_format='%.2f')
+                logger.info(f"清理 {file}，保留最近 {retain_hourly} 天數據")
 
 def validate_data(df, symbol):
+    """驗證數據品質，包括漲跌計算檢查"""
     if df.empty:
         logger.warning(f"{symbol} 數據為空")
         return False
@@ -58,13 +71,15 @@ def validate_data(df, symbol):
     return True
 
 def validate_trend_consistency(df, benchmark_df, symbol):
+    """驗證趨勢與大盤一致性"""
     if not benchmark_df.empty:
-        df_change = df['Close'].pct_change().iloc[-1]
-        benchmark_change = benchmark_df['Close'].pct_change().iloc[-1]
+        df_change = df['Close'].pct_change().iloc[-1] * 100
+        benchmark_change = benchmark_df['Close'].pct_change().iloc[-1] * 100
         if (df_change > 0) != (benchmark_change > 0) and abs(df_change) > 5:
             logger.warning(f"{symbol} 趨勢與大盤不一致: {df_change:.2f}% vs {benchmark_change:.2f}%")
 
 async def fetch_and_save(symbol, interval, start_date, end_date, data_type):
+    """異步抓取並保存數據"""
     try:
         df = yf.download(symbol, start=start_date, end=end_date, interval=interval, auto_adjust=False, progress=False)
         if not df.empty:
@@ -75,7 +90,7 @@ async def fetch_and_save(symbol, interval, start_date, end_date, data_type):
             df.reset_index(inplace=True)
             if 'Date' not in df.columns:
                 df['Date'] = df.index
-                df['Date'] = pd.to_datetime(df['Date'])
+            df['Date'] = pd.to_datetime(df['Date'], utc=True).dt.tz_convert('Asia/Taipei')
             df.rename(columns={'index': 'Date'}, inplace=True)
             for col in ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']:
                 if col in df.columns:
@@ -96,12 +111,26 @@ async def fetch_and_save(symbol, interval, start_date, end_date, data_type):
         return None
 
 async def main():
+    """主函數，執行資料收集"""
     symbols, data_sources, retain_daily, retain_hourly = load_config()
-    end_date = datetime.now()
+    end_date = datetime.now(tz)
     start_date_daily = end_date - timedelta(days=retain_daily + 1)
     start_date_hourly = end_date - timedelta(days=retain_hourly + 1)
 
-    tasks = [fetch_and_save(symbol, '1d', start_date_daily, end_date, 'daily') for symbol in symbols] + [fetch_and_save(symbol, '1h', start_date_hourly, end_date, 'hourly') for symbol in symbols]
+    # 獲取基準數據（如 ^TWII）
+    benchmark_symbol = '^TWII'
+    benchmark_task = fetch_and_save(benchmark_symbol, '1d', start_date_daily, end_date, 'daily')
+    benchmark_df = await benchmark_task if benchmark_task else pd.DataFrame()
+
+    tasks = []
+    for symbol in symbols:
+        tasks.append(fetch_and_save(symbol, '1d', start_date_daily, end_date, 'daily'))
+        tasks.append(fetch_and_save(symbol, '1h', start_date_hourly, end_date, 'hourly'))
+        if symbol != benchmark_symbol and not benchmark_df.empty:
+            df = await fetch_and_save(symbol, '1d', start_date_daily, end_date, 'daily')
+            if df is not None:
+                validate_trend_consistency(df, benchmark_df, symbol)
+
     await asyncio.gather(*tasks)
 
     clean_old_data()
