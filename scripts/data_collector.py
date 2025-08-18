@@ -6,47 +6,36 @@ from datetime import datetime, timedelta
 
 import yfinance as yf
 import pandas as pd
-import pytz
-
-# === 台灣時區 ===
-TW_TZ = pytz.timezone("Asia/Taipei")
 
 # === 建立 logger ===
 def setup_logger(name, log_file, level=logging.INFO):
-    """建立 logger，可同時輸出到檔案與 console"""
     logger = logging.getLogger(name)
     logger.setLevel(level)
-
     formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 
-    # File handler (全部 log)
     fh = logging.FileHandler(log_file, encoding="utf-8")
     fh.setFormatter(formatter)
     fh.setLevel(level)
 
-    # Error handler (只存錯誤)
     eh = logging.FileHandler("logs/error.log", encoding="utf-8")
     eh.setFormatter(formatter)
     eh.setLevel(logging.ERROR)
 
-    # Console handler
     ch = logging.StreamHandler()
     ch.setFormatter(formatter)
     ch.setLevel(level)
 
-    if not logger.handlers:  # 避免重複加 handler
+    if not logger.handlers:
         logger.addHandler(fh)
         logger.addHandler(eh)
         logger.addHandler(ch)
 
     return logger
 
-
 logger = setup_logger("data_collector", "logs/data_collector.log")
 
-# === 工具 ===
+# === 工具函式 ===
 def load_config(config_path="config.json"):
-    """載入 config.json"""
     try:
         with open(config_path, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -54,12 +43,11 @@ def load_config(config_path="config.json"):
         logger.error(f"載入 config.json 失敗: {e}")
         return {}
 
-
 def fetch_data(symbol, interval, lookback_days):
     """下載 Yahoo Finance 資料，重試 3 次"""
     for attempt in range(3):
         try:
-            start_date = (datetime.now(TW_TZ) - timedelta(days=lookback_days)).strftime("%Y-%m-%d")
+            start_date = (datetime.now() - timedelta(days=lookback_days)).strftime("%Y-%m-%d")
             df = yf.download(symbol, start=start_date, interval=interval, progress=False)
 
             if df is None or df.empty:
@@ -69,15 +57,14 @@ def fetch_data(symbol, interval, lookback_days):
             if "Datetime" in df.columns:
                 df.rename(columns={"Datetime": "Date"}, inplace=True)
 
-            # 加上台灣時間
-            df["Date"] = pd.to_datetime(df["Date"]).dt.tz_convert(TW_TZ)
+            # 不轉時區，保留原始時間
+            df["Date"] = pd.to_datetime(df["Date"])
 
             return df
         except Exception as e:
-            logger.warning(f"⚠️ 第 {attempt+1}/3 次嘗試抓取 {symbol} ({interval}) 失敗: {e}")
+            logger.warning(f"⚠️ 第 {attempt+1}/3 次抓取 {symbol} ({interval}) 失敗: {e}")
     logger.error(f"❌ 抓取 {symbol} ({interval}) 最終失敗")
     return None
-
 
 def save_data(df, filepath, max_rows):
     """保存 CSV，只保留指定筆數"""
@@ -87,7 +74,6 @@ def save_data(df, filepath, max_rows):
         logger.info(f"✅ 已更新 {filepath} ({len(df)} 筆) | 最後一筆: {df.iloc[-1]['Date']} Close={df.iloc[-1]['Close']}")
     except Exception as e:
         logger.error(f"❌ 保存 {filepath} 失敗: {e}")
-
 
 # === 主程式 ===
 def main():
@@ -107,11 +93,10 @@ def main():
         if daily is not None:
             save_data(daily, f"data/daily_{symbol}.csv", 300)
 
-        # 小時線，保留 14 天
+        # 小時線，保留最近 14 天資料
         hourly = fetch_data(symbol, "60m", 30)
         if hourly is not None:
             save_data(hourly, f"data/hourly_{symbol}.csv", 14 * 7)  # 一天約7筆交易小時
-
 
 if __name__ == "__main__":
     logger.info("🚀 Data Collector 開始執行")
