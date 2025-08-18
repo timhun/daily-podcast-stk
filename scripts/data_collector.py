@@ -116,7 +116,7 @@ async def main():
     start_date_daily = end_date - timedelta(days=retain_daily + 1)
     start_date_hourly = end_date - timedelta(days=retain_hourly + 1)
 
-    # 獲取基準數據（^TWII）
+    # 確保基準數據在循環前完成
     benchmark_symbol = '^TWII'
     benchmark_task = fetch_and_save(benchmark_symbol, '1d', start_date_daily, end_date, 'daily')
     benchmark_df = await benchmark_task if benchmark_task else pd.DataFrame()
@@ -126,12 +126,15 @@ async def main():
         daily_task = fetch_and_save(symbol, '1d', start_date_daily, end_date, 'daily')
         hourly_task = fetch_and_save(symbol, '1h', start_date_hourly, end_date, 'hourly')
         tasks.extend([daily_task, hourly_task])
+        # 只有當基準數據有效時才驗證趨勢
         if symbol != benchmark_symbol and not benchmark_df.empty:
             daily_df = await daily_task if daily_task else None
             if daily_df is not None:
                 validate_trend_consistency(daily_df, benchmark_df, symbol)
 
-    await asyncio.gather(*tasks)
+    # 等待所有任務完成
+    if tasks:
+        await asyncio.gather(*tasks)
 
     clean_old_data()
 
