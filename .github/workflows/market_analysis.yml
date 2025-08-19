@@ -50,6 +50,8 @@ jobs:
               echo "symbol=^TWII" >> $GITHUB_OUTPUT
             else
               echo "symbol=^IXIC" >> $GITHUB_OUTPUT
+            fi
+          fi
 
       - name: Run Market Analyst
         if: steps.set_symbol.outputs.symbol != ''
