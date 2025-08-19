@@ -32,23 +32,24 @@ jobs:
           python -m pip install --upgrade pip
           pip install edge-tts
 
-      - name: Run Podcast Producer
+      - name: Decide Mode
+        id: set_mode
         run: |
-          # 判斷排程時間自動選 mode
-          if [ "${{ github.event.schedule }}" != "" ]; then
-            HOUR=$(date -u +%H)
-            MINUTE=$(date -u +%M)
-            if [ "$HOUR" = "21" ] && [ "$MINUTE" = "30" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            cron_expr="${{ github.event.schedule }}"
+            if [ "$cron_expr" = "30 21 * * *" ]; then
               MODE="us"
-            elif [ "$HOUR" = "06" ] && [ "$MINUTE" = "10" ]; then
+            elif [ "$cron_expr" = "10 6 * * *" ]; then
               MODE="tw"
-            else
-              MODE="${{ github.event.inputs.mode }}"
             fi
           else
             MODE="${{ github.event.inputs.mode }}"
           fi
+          echo "MODE=$MODE" >> $GITHUB_ENV
           echo "🎙️ 執行播報員模式: $MODE"
+
+      - name: Run Podcast Producer
+        run: |
           python scripts/podcast_producer.py --mode $MODE
 
       - name: Commit and Push Audio
