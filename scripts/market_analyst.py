@@ -1,148 +1,128 @@
 import pandas as pd
+import numpy as np
 import json
 import os
-from datetime import datetime
 import logging
+from datetime import datetime
+import sys
 
-# 設定日誌
-os.makedirs('logs', exist_ok=True)
+# === 設定日誌 ===
+LOG_DIR = "logs"
+os.makedirs(LOG_DIR, exist_ok=True)
 logging.basicConfig(
-    filename='logs/market_analyst.log',
+    filename=os.path.join(LOG_DIR, "market_analyst.log"),
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
+# === 載入配置 ===
 def load_config():
-    """載入 config.json 配置文件"""
-    config_file = 'config.json'
+    config_file = "config.json"
     if not os.path.exists(config_file):
-        logger.error(f"缺少配置檔案: {config_file}")
         raise FileNotFoundError(f"缺少配置檔案: {config_file}")
-    try:
-        with open(config_file, 'r', encoding='utf-8') as f:
-            config = json.load(f)
-        indicators = config.get('indicators', {
-            'MACD': {'fast': 12, 'slow': 26, 'signal': 9},
-            'RSI': {'period': 14}
-        })
-        return config.get('symbols', []), indicators
-    except json.JSONDecodeError as e:
-        logger.error(f"配置檔案解析失敗: {e}")
-        raise ValueError(f"配置檔案解析失敗: {e}")
+    with open(config_file, "r", encoding="utf-8") as f:
+        cfg = json.load(f)
+    symbols = cfg.get("symbols", [])
+    indicators = cfg.get("indicators", {"MACD":{"fast":12,"slow":26,"signal":9},"RSI":{"period":14}})
+    return symbols, indicators
 
+# === 載入資料與策略 ===
 def load_data(symbol):
-    """載入每日數據和最佳策略結果"""
-    data_path = os.path.join('data', f'daily_{symbol}.csv')
-    strategy_path = os.path.join('data', f'strategy_best_{symbol}.json')
-    if not os.path.exists(data_path) or not os.path.exists(strategy_path):
-        logger.error(f"缺少 {data_path} 或 {strategy_path}")
+    df_path = os.path.join("data", f"daily_{symbol}.csv")
+    strat_path = os.path.join("data", f"strategy_best_{symbol}.json")
+    if not os.path.exists(df_path) or not os.path.exists(strat_path):
+        logger.warning(f"{symbol} 缺少數據或策略檔案")
         return None, None
-    try:
-        df = pd.read_csv(data_path)
-        df['Date'] = pd.to_datetime(df['Date'])
-        # 強制轉數值欄位
-        for col in ['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']:
-            if col in df.columns:
-                df[col] = pd.to_numeric(df[col], errors='coerce')
-        df = df.dropna(subset=['Close'])
-        with open(strategy_path, 'r', encoding='utf-8') as f:
-            strategy = json.load(f)
-        return df, strategy
-    except Exception as e:
-        logger.error(f"載入 {symbol} 數據或策略失敗: {e}")
-        return None, None
+    df = pd.read_csv(df_path)
+    df["Date"] = pd.to_datetime(df["Date"], errors="coerce")
+    for col in ["Open","High","Low","Close","Volume"]:
+        df[col] = pd.to_numeric(df[col], errors="coerce")
+    df = df.dropna(subset=["Date","Open","High","Low","Close","Volume"]).sort_values("Date")
+    with open(strat_path, "r", encoding="utf-8") as f:
+        strat = json.load(f)
+    return df, strat
 
-def calculate_macd(df, fast=12, slow=26, signal=9):
-    """計算 MACD 指標"""
-    exp1 = df['Close'].ewm(span=fast, adjust=False).mean()
-    exp2 = df['Close'].ewm(span=slow, adjust=False).mean()
+# === 指標計算 ===
+def calc_macd(df, fast=12, slow=26, signal=9):
+    exp1 = df["Close"].ewm(span=fast, adjust=False).mean()
+    exp2 = df["Close"].ewm(span=slow, adjust=False).mean()
     macd = exp1 - exp2
-    signal_line = macd.ewm(span=signal, adjust=False).mean()
-    return macd.iloc[-1], signal_line.iloc[-1]
+    sig = macd.ewm(span=signal, adjust=False).mean()
+    return macd.iloc[-1], sig.iloc[-1]
 
-def calculate_rsi(df, period=14):
-    """計算 RSI 指標"""
-    delta = df['Close'].diff()
-    gain = (delta.where(delta > 0, 0)).rolling(window=period).mean()
-    loss = (-delta.where(delta < 0, 0)).rolling(window=period).mean()
-    rs = gain / loss.replace(0, 1)  # 避免除以 0
-    rsi = 100 - (100 / (1 + rs))
-    return rsi.iloc[-1] if not rsi.empty else 0
+def calc_rsi(df, period=14):
+    delta = df["Close"].diff()
+    gain = delta.where(delta>0,0).rolling(period).mean()
+    loss = (-delta.where(delta<0,0)).rolling(period).mean()
+    rs = gain / loss.replace(0,np.nan)
+    rsi = 100 - 100/(1+rs)
+    return rsi.iloc[-1] if not rsi.empty else 50
 
+# === 市場分析 ===
 def analyze_market(symbol, df, strategy, indicators):
-    """分析市場趨勢並提供建議"""
     if df is None or strategy is None:
-        logger.warning("數據或策略缺失，返回預設建議")
         return {
-            'symbol': symbol,
-            'recommendation': '持倉',
-            'position_size': 0.0,
-            'target_price': None,
-            'stop_loss': None,
-            'risk_note': '數據不足，建議檢查'
+            "symbol": symbol,
+            "recommendation": "持倉",
+            "position_size": 0.0,
+            "target_price": None,
+            "stop_loss": None,
+            "risk_note": "數據不足"
         }
-
     latest = df.iloc[-1]
-    prev = df.iloc[-2] if len(df) > 1 else latest
+    prev = df.iloc[-2] if len(df)>1 else latest
+    pct_change = ((latest["Close"]-prev["Close"])/prev["Close"]*100)
+    volume_change = (latest["Volume"]/prev["Volume"]) if prev["Volume"] else 1.0
+    macd, sig = calc_macd(df, **indicators.get("MACD", {}))
+    rsi = calc_rsi(df, **indicators.get("RSI", {}))
+    trend_5d = df["Close"].pct_change(5).iloc[-1]*100 if len(df)>=5 else 0.0
 
-    pct_change = ((latest['Close'] - prev['Close']) / prev['Close'] * 100) if prev['Close'] else 0.0
-    volume_change = (latest['Volume'] / prev['Volume']) if prev['Volume'] else 1.0
-    macd, signal = calculate_macd(df, **indicators.get('MACD', {}))
-    rsi = calculate_rsi(df, **indicators.get('RSI', {}))
-    trend_5d = df['Close'].pct_change(periods=5).iloc[-1] * 100 if len(df) >= 5 else 0.0
+    logger.info(f"{symbol} - 漲跌 {pct_change:.2f}%, 成交量 {volume_change:.2f}x, MACD {macd:.2f}/{sig:.2f}, RSI {rsi:.2f}, 5日趨勢 {trend_5d:.2f}%")
 
-    logger.info(f"{symbol}: 當日漲跌 {pct_change:.2f}%, 成交量變化 {volume_change:.2f}x, MACD {macd:.2f}/{signal:.2f}, RSI {rsi:.2f}, 5日趨勢 {trend_5d:.2f}%")
+    # 決策
+    rec = "持倉"
+    pos_size = strategy.get("position_size",0.0)
+    if pct_change>1.0 and volume_change>1.2 and macd>sig and rsi>50 and trend_5d>0:
+        rec="買入"
+        pos_size=min(0.5,0.1+strategy.get("return_pct",0)/20)
+    elif pct_change<-1.0 or volume_change<0.8 or macd<sig or rsi<30 or trend_5d<0:
+        rec="賣出"
+        pos_size=0.0
 
-    is_trend_up = trend_5d > 0
-    is_recent_up = pct_change > 0
+    target = latest["Close"]*1.02 if rec=="買入" else None
+    stop = latest["Close"]*0.98 if rec in ["買入","持倉"] else None
+    risk_note=f"漲跌 {pct_change:.2f}%, 成交量 {volume_change:.2f}x, MACD {macd:.2f}/{sig:.2f}, RSI {rsi:.2f}, 5日趨勢 {trend_5d:.2f}%"
 
-    if pct_change > 1.0 and volume_change > 1.2 and macd > signal and rsi > 50 and (is_trend_up or is_recent_up):
-        recommendation = '買入'
-        position_size = min(0.5, 0.1 + (strategy.get('return_pct', 0) / 20))
-    elif pct_change < -1.0 or volume_change < 0.8 or macd < signal or rsi < 30 or (not is_trend_up and not is_recent_up):
-        recommendation = '賣出'
-        position_size = 0.0
-    else:
-        recommendation = '持倉'
-        position_size = strategy.get('position_size', 0.0)
-
-    target_price = latest['Close'] * 1.02 if recommendation == '買入' else None
-    stop_loss = latest['Close'] * 0.98 if recommendation in ['買入', '持倉'] else None
-
-    risk_note = f"漲跌: {pct_change:.2f}%, 成交量變化: {volume_change:.2f}x, MACD: {macd:.2f}/{signal:.2f}, RSI: {rsi:.2f}, 5日趨勢: {trend_5d:.2f}%"
+    logger.info(f"{symbol} - 建議 {rec}, 倉位 {pos_size:.2f}, 目標價 {target}, 停損 {stop}, 風險 {risk_note}")
 
     return {
-        'symbol': symbol,
-        'recommendation': recommendation,
-        'position_size': position_size,
-        'target_price': target_price,
-        'stop_loss': stop_loss,
-        'risk_note': risk_note
+        "symbol": symbol,
+        "recommendation": rec,
+        "position_size": pos_size,
+        "target_price": target,
+        "stop_loss": stop,
+        "risk_note": risk_note
     }
 
-def save_analysis(analysis, symbol):
-    output_path = os.path.join('data', f'market_analysis_{symbol}.json')
-    try:
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(analysis, f, ensure_ascii=False, indent=2)
-        logger.info(f"分析結果保存至 {output_path}")
-    except Exception as e:
-        logger.error(f"保存 {symbol} 分析結果失敗: {e}")
+# === 儲存結果 ===
+def save_analysis(analysis):
+    path = os.path.join("data", f"market_analysis_{analysis['symbol']}.json")
+    os.makedirs("data", exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(analysis,f,ensure_ascii=False,indent=2)
+    logger.info(f"{analysis['symbol']} 分析結果已保存至 {path}")
 
+# === 主流程 ===
 def main(run_symbols=None):
-    symbols, indicators = load_config()
-    if run_symbols:
-        symbols = run_symbols
+    cfg_symbols, indicators = load_config()
+    symbols = run_symbols if run_symbols else cfg_symbols
     for symbol in symbols:
-        df, strategy = load_data(symbol)
-        if df is not None and strategy is not None:
-            analysis = analyze_market(symbol, df, strategy, indicators)
-            save_analysis(analysis, symbol)
-        else:
-            logger.warning(f"跳過 {symbol} 分析，因數據或策略缺失")
+        df, strat = load_data(symbol)
+        analysis = analyze_market(symbol, df, strat, indicators)
+        save_analysis(analysis)
 
-if __name__ == '__main__':
-    import sys
-    run_symbols = [sys.argv[1]] if len(sys.argv) > 1 else None
-    main(run_symbols)
+# 支援命令列單一符號
+if __name__=="__main__":
+    run_syms = sys.argv[1:] if len(sys.argv)>1 else None
+    main(run_syms)
