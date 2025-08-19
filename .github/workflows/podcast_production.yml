@@ -16,6 +16,8 @@ on:
 jobs:
   podcast-production:
     runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Taipei   # ✅ 強制時區
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
