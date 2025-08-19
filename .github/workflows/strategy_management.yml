@@ -3,7 +3,7 @@ name: Strategy Manager
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 0 * * *"  # 每天 03:00 UTC 執行
+    - cron: "0 * * * *"  # 每天 03:00 UTC 執行
 
 jobs:
   run-strategy-manager:
