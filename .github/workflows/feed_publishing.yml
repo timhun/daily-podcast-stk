@@ -2,27 +2,53 @@ name: Feed Publishing
 
 on:
   schedule:
-    - cron: '0 22 * * *'  # 6:00 AM CST
-    - cron: '0 6 * * *'   # 2:00 PM CST
+    # 台灣 06:00 → UTC 22:00 前一天
+    - cron: '10 22 * * *'
+    # 台灣 14:00 → UTC 06:00
+    - cron: '20 6 * * *'
   workflow_dispatch:
+    inputs:
+      mode:
+        description: '播客模式 tw/us'
+        required: false
+        default: 'tw'
 
 jobs:
   feed-publishing:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: "3.10"
+
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install requests mutagen
+
+      - name: Determine Mode
+        id: set_mode
+        run: |
+          MODE="${{ github.event.inputs.mode }}"
+          if [ "${{ github.event.schedule }}" != "" ]; then
+            HOUR=$(date -u +%H)
+            MINUTE=$(date -u +%M)
+            if [ "$HOUR" = "22" ] && [ "$MINUTE" = "10" ]; then
+              MODE="us"
+            elif [ "$HOUR" = "06" ] && [ "$MINUTE" = "20" ]; then
+              MODE="tw"
+            fi
+          fi
+          echo "mode=$MODE" >> $GITHUB_OUTPUT
+          echo "📌 Feed Publishing Mode: $MODE"
+
       - name: Run Feed Publisher
         run: |
-          echo "📡 執行推播員"
-          python scripts/feed_publisher.py
+          echo "📡 執行推播員 (mode=${{ steps.set_mode.outputs.mode }})"
+          python scripts/feed_publisher.py --mode ${{ steps.set_mode.outputs.mode }}
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
