@@ -39,7 +39,7 @@ jobs:
         id: set_mode
         run: |
           if [ "${{ github.event.inputs.mode }}" != "" ]; then
-            echo "mode=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
+            echo "mode=${{ github.event.inputs.mode}}" >> $GITHUB_OUTPUT
           else
             HOUR=$(date -u +%H)
             if [ $HOUR -eq 21 ]; then
@@ -49,6 +49,7 @@ jobs:
             else
               echo "mode=us" >> $GITHUB_OUTPUT
             fi
+          fi   # ← 這裡補上
 
       - name: Run Script Editor
         run: |
