@@ -12,6 +12,10 @@ on:
         description: '指定模式 (us / tw)'
         required: false
         default: 'us'
+      debug:
+        description: '是否啟用 debug 模式'
+        required: false
+        default: 'true'
 
 jobs:
   script-editor:
@@ -39,7 +43,7 @@ jobs:
         id: set_mode
         run: |
           if [ "${{ github.event.inputs.mode }}" != "" ]; then
-            echo "mode=${{ github.event.inputs.mode}}" >> $GITHUB_OUTPUT
+            echo "mode=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
           else
             HOUR=$(date -u +%H)
             if [ $HOUR -eq 21 ]; then
@@ -49,12 +53,16 @@ jobs:
             else
               echo "mode=us" >> $GITHUB_OUTPUT
             fi
-          fi   # ← 這裡補上
+          fi
 
       - name: Run Script Editor
         run: |
-          echo "📝 執行文字編輯師 for ${{ steps.set_mode.outputs.mode }}"
-          python scripts/script_editor.py --mode "${{ steps.set_mode.outputs.mode }}"
+          DEBUG_ARG=""
+          if [ "${{ github.event.inputs.debug }}" == "true" ]; then
+            DEBUG_ARG="--debug"
+          fi
+          echo "📝 執行文字編輯師 for ${{ steps.set_mode.outputs.mode }} (debug=${{ github.event.inputs.debug }})"
+          python scripts/script_editor.py --mode "${{ steps.set_mode.outputs.mode }}" $DEBUG_ARG
           echo "✅ 生成完成 at $(date '+%Y-%m-%d %H:%M:%S')"
 
       - name: Commit and Push Scripts
