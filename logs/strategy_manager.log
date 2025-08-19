@@ -262,3 +262,49 @@ TypeError: unsupported operand type(s) for /: 'str' and 'str'
 2025-08-19 06:29:48,566 - INFO - [2330.TW] 策略 MLStrategy 回測報酬：5.88%（Baseline 0.34%）
 2025-08-19 06:29:48,567 - INFO - [2330.TW] ✅ 最佳策略：MLStrategy | Return 5.88% > Baseline 0.34% → 已輸出 data/strategy_best_2330.TW.json
 2025-08-19 06:29:48,567 - INFO - 策略管理師執行結束
+2025-08-19 11:13:47,209 - INFO - 策略管理師開始執行
+2025-08-19 11:13:47,221 - INFO - [0050.TW] Baseline(日均 %) = 0.3093
+2025-08-19 11:13:47,475 - INFO - [0050.TW] 策略 VolumeBreakout 回測報酬：0.06%（Baseline 0.31%）
+2025-08-19 11:13:49,247 - INFO - [0050.TW] 策略 MLStrategy 回測報酬：0.28%（Baseline 0.31%）
+2025-08-19 11:13:49,248 - INFO - [0050.TW] 無策略勝過 Baseline（或正報酬）
+2025-08-19 11:13:49,258 - INFO - [QQQ] Baseline(日均 %) = 0.2013
+2025-08-19 11:13:49,514 - INFO - [QQQ] 策略 VolumeBreakout 回測報酬：0.03%（Baseline 0.20%）
+2025-08-19 11:13:51,317 - INFO - [QQQ] 策略 MLStrategy 回測報酬：3.65%（Baseline 0.20%）
+2025-08-19 11:13:51,317 - INFO - [QQQ] ✅ 最佳策略：MLStrategy | Return 3.65% > Baseline 0.20% → 已輸出 data/strategy_best_QQQ.json
+2025-08-19 11:13:51,327 - INFO - [^TWII] Baseline(日均 %) = 0.2287
+2025-08-19 11:13:51,574 - INFO - [^TWII] 策略 VolumeBreakout 回測報酬：0.00%（Baseline 0.23%）
+2025-08-19 11:13:53,281 - INFO - [^TWII] 策略 MLStrategy 回測報酬：0.00%（Baseline 0.23%）
+2025-08-19 11:13:53,281 - INFO - [^TWII] 無策略勝過 Baseline（或正報酬）
+2025-08-19 11:13:53,292 - INFO - [BTC-USD] Baseline(日均 %) = 0.2177
+2025-08-19 11:13:53,569 - INFO - [BTC-USD] 策略 VolumeBreakout 回測報酬：0.00%（Baseline 0.22%）
+2025-08-19 11:13:55,711 - INFO - [BTC-USD] 策略 MLStrategy 回測報酬：0.00%（Baseline 0.22%）
+2025-08-19 11:13:55,711 - INFO - [BTC-USD] 無策略勝過 Baseline（或正報酬）
+2025-08-19 11:13:55,722 - INFO - [^DJI] Baseline(日均 %) = 0.1217
+2025-08-19 11:13:55,973 - INFO - [^DJI] 策略 VolumeBreakout 回測報酬：0.00%（Baseline 0.12%）
+2025-08-19 11:13:57,747 - INFO - [^DJI] 策略 MLStrategy 回測報酬：0.00%（Baseline 0.12%）
+2025-08-19 11:13:57,747 - INFO - [^DJI] 無策略勝過 Baseline（或正報酬）
+2025-08-19 11:13:57,758 - INFO - [GC=F] Baseline(日均 %) = 0.0488
+2025-08-19 11:13:58,017 - INFO - [GC=F] 策略 VolumeBreakout 回測報酬：2.63%（Baseline 0.05%）
+2025-08-19 11:13:59,884 - INFO - [GC=F] 策略 MLStrategy 回測報酬：24.95%（Baseline 0.05%）
+2025-08-19 11:13:59,885 - INFO - [GC=F] ✅ 最佳策略：MLStrategy | Return 24.95% > Baseline 0.05% → 已輸出 data/strategy_best_GC=F.json
+2025-08-19 11:13:59,895 - INFO - [^GSPC] Baseline(日均 %) = 0.1697
+2025-08-19 11:14:00,145 - INFO - [^GSPC] 策略 VolumeBreakout 回測報酬：0.22%（Baseline 0.17%）
+2025-08-19 11:14:01,943 - INFO - [^GSPC] 策略 MLStrategy 回測報酬：33.99%（Baseline 0.17%）
+2025-08-19 11:14:01,943 - INFO - [^GSPC] ✅ 最佳策略：MLStrategy | Return 33.99% > Baseline 0.17% → 已輸出 data/strategy_best_^GSPC.json
+2025-08-19 11:14:01,954 - INFO - [^IXIC] Baseline(日均 %) = 0.2299
+2025-08-19 11:14:02,204 - INFO - [^IXIC] 策略 VolumeBreakout 回測報酬：0.00%（Baseline 0.23%）
+2025-08-19 11:14:04,015 - INFO - [^IXIC] 策略 MLStrategy 回測報酬：0.00%（Baseline 0.23%）
+2025-08-19 11:14:04,015 - INFO - [^IXIC] 無策略勝過 Baseline（或正報酬）
+2025-08-19 11:14:04,026 - INFO - [SPY] Baseline(日均 %) = 0.1737
+2025-08-19 11:14:04,274 - INFO - [SPY] 策略 VolumeBreakout 回測報酬：0.00%（Baseline 0.17%）
+2025-08-19 11:14:06,086 - INFO - [SPY] 策略 MLStrategy 回測報酬：2.98%（Baseline 0.17%）
+2025-08-19 11:14:06,086 - INFO - [SPY] ✅ 最佳策略：MLStrategy | Return 2.98% > Baseline 0.17% → 已輸出 data/strategy_best_SPY.json
+2025-08-19 11:14:06,096 - INFO - [TSM] Baseline(日均 %) = 0.3740
+2025-08-19 11:14:06,349 - INFO - [TSM] 策略 VolumeBreakout 回測報酬：-0.30%（Baseline 0.37%）
+2025-08-19 11:14:08,164 - INFO - [TSM] 策略 MLStrategy 回測報酬：2.73%（Baseline 0.37%）
+2025-08-19 11:14:08,165 - INFO - [TSM] ✅ 最佳策略：MLStrategy | Return 2.73% > Baseline 0.37% → 已輸出 data/strategy_best_TSM.json
+2025-08-19 11:14:08,175 - INFO - [2330.TW] Baseline(日均 %) = 0.3494
+2025-08-19 11:14:08,424 - INFO - [2330.TW] 策略 VolumeBreakout 回測報酬：-0.05%（Baseline 0.35%）
+2025-08-19 11:14:10,177 - INFO - [2330.TW] 策略 MLStrategy 回測報酬：5.92%（Baseline 0.35%）
+2025-08-19 11:14:10,177 - INFO - [2330.TW] ✅ 最佳策略：MLStrategy | Return 5.92% > Baseline 0.35% → 已輸出 data/strategy_best_2330.TW.json
+2025-08-19 11:14:10,177 - INFO - 策略管理師執行結束
