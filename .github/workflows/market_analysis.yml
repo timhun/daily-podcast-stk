@@ -11,7 +11,7 @@ on:
       symbol:
         description: '指定單一分析符號 (可選)'
         required: false
-        default: ''
+        default: '^IXIC'  # 手動跑預設 ^IXIC
 
 jobs:
   market-analysis:
@@ -32,8 +32,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install pandas numpy
 
-      - name: Ensure Logs Directory
-        run: mkdir -p logs
+      - name: Ensure Folders
+        run: |
+          mkdir -p logs
+          mkdir -p data
 
       - name: Determine Symbol
         id: set_symbol
@@ -47,7 +49,7 @@ jobs:
             elif [ $HOUR -eq 6 ]; then
               echo "symbol=^TWII" >> $GITHUB_OUTPUT
             else
-              echo "symbol=" >> $GITHUB_OUTPUT
+              echo "symbol=^IXIC" >> $GITHUB_OUTPUT
 
       - name: Run Market Analyst
         if: steps.set_symbol.outputs.symbol != ''
@@ -60,6 +62,7 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git pull --rebase || echo "No remote changes"
           git add data/market_analysis_*.json || true
           git commit -m "🔄 Update market analysis [skip ci]" || echo "No changes to commit"
           git push
