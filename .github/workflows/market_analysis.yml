@@ -43,9 +43,9 @@ jobs:
           else
             HOUR=$(date -u +%H)
             if [ $HOUR -eq 21 ]; then
-              echo "symbol=QQQ" >> $GITHUB_OUTPUT
+              echo "symbol=^IXIC" >> $GITHUB_OUTPUT
             elif [ $HOUR -eq 6 ]; then
-              echo "symbol=0050.TW" >> $GITHUB_OUTPUT
+              echo "symbol=^TWII" >> $GITHUB_OUTPUT
             else
               echo "symbol=" >> $GITHUB_OUTPUT
 
