@@ -1,139 +1,115 @@
 import os
-import json
-from datetime import datetime
+import datetime
+import pytz
+from mutagen.mp3 import MP3
+from feedgen.feed import FeedGenerator
 import logging
-import requests
-from mutagen.easyid3 import EasyID3
-from argparse import ArgumentParser
 
 # 設定日誌
-logging.basicConfig(filename='logs/feed_publisher.log', level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def load_config(mode=None):
-    """載入 config.json 配置文件"""
-    config_file = 'config.json'
-    if not os.path.exists(config_file):
-        logger.error(f"缺少配置檔案: {config_file}")
-        raise FileNotFoundError(f"缺少配置檔案: {config_file}")
+# ===== 基本常數設定 =====
+SITE_URL = "https://timhun.github.io/daily-podcast-stk"
+B2_BASE = "https://f005.backblazeb2.com/file/daily-podcast-stk"
+COVER_URL = f"{SITE_URL}/img/cover.jpg"
+
+PODCAST_MODE = os.getenv("PODCAST_MODE", "tw").lower()
+RSS_FILE = f"docs/rss/podcast_{PODCAST_MODE}.xml"
+
+FIXED_DESCRIPTION = """(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+\n\n讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
+提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。\n\n
+提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
+\n\n
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！\n\n
+📮 主持人：幫幫忙"""
+
+def generate_rss():
+    # ===== 初始化 Feed =====
+    fg = FeedGenerator()
+    fg.load_extension("podcast")
+    fg.id(SITE_URL)
+    fg.title("幫幫忙說AI.投資")
+    fg.author({"name": "幫幫忙AI投資腦", "email": "tim.oneway@gmail.com"})
+    fg.link(href=SITE_URL, rel="alternate")
+    fg.language("zh-TW")
+    fg.description("掌握美股台股、科技、AI 與投資機會，每日兩集！")
+    fg.logo(COVER_URL)
+    fg.link(href=f"{SITE_URL}/rss/podcast_{PODCAST_MODE}.xml", rel="self")
+    fg.podcast.itunes_category("Business", "Investing")
+    fg.podcast.itunes_image(COVER_URL)
+    fg.podcast.itunes_explicit("no")
+    fg.podcast.itunes_author("幫幫忙AI投資腦")  # Spotify 驗證需要
+    fg.podcast.itunes_owner(name="幫幫忙AI投資腦", email="tim.oneway@gmail.com")
+
+    # ===== 找出符合模式的最新資料夾 =====
+    episodes_dir = "docs/podcast"
+    matching_folders = sorted([
+        f for f in os.listdir(episodes_dir)
+        if os.path.isdir(os.path.join(episodes_dir, f)) and f.endswith(f"_{PODCAST_MODE}")
+    ], reverse=True)
+
+    if not matching_folders:
+        logger.error(f"⚠️ 找不到符合模式 '{PODCAST_MODE}' 的 podcast 資料夾，RSS 未產生")
+        raise FileNotFoundError(f"⚠️ 找不到符合模式 '{PODCAST_MODE}' 的 podcast 資料夾")
+
+    latest_folder = matching_folders[0]
+    base_path = os.path.join(episodes_dir, latest_folder)
+    audio = os.path.join(base_path, "audio.mp3")
+    archive_url_file = os.path.join(base_path, "archive_audio_url.txt")
+
+    if not os.path.exists(audio):
+        logger.error(f"⚠️ 找不到 audio.mp3：{audio}")
+        raise FileNotFoundError(f"⚠️ 找不到 audio.mp3：{audio}")
+    if not os.path.exists(archive_url_file):
+        logger.error(f"⚠️ 找不到 archive_audio_url.txt：{archive_url_file}")
+        raise FileNotFoundError(f"⚠️ 找不到 archive_audio_url.txt：{archive_url_file}")
+
+    with open(archive_url_file, "r", encoding="utf-8") as f:
+        audio_url = f.read().strip()
+
     try:
-        with open(config_file, 'r', encoding='utf-8') as f:
-            config = json.load(f)
-        platforms = config.get('platforms', {
-            'spotify': {'enabled': True},
-            'apple': {'enabled': True},
-            'google': {'enabled': False, 'api_key': ''}
-        })
-        slack_webhook = os.getenv('SLACK_WEBHOOK_URL', config.get('slack_webhook_url', ''))
-        return platforms, slack_webhook
-    except json.JSONDecodeError as e:
-        logger.error(f"配置檔案解析失敗: {e}")
-        raise ValueError(f"配置檔案解析失敗: {e}")
-
-def load_inputs(mode):
-    """載入分析結果和音頻檔案資訊"""
-    date_str = datetime.now().strftime("%Y%m%d")
-    analysis_path = os.path.join('data', f'market_analysis_0050.TW.json' if mode == 'tw' else f'market_analysis_QQQ.json')
-    audio_path = os.path.join('docs', 'podcast', f"{date_str}_{mode}", 'audio.mp3')
-    url_path = os.path.join('docs', 'podcast', f"{date_str}_{mode}", 'archive_audio_url.txt')
-
-    if not os.path.exists(analysis_path) or not os.path.exists(audio_path) or not os.path.exists(url_path):
-        logger.error(f"缺少輸入文件: {analysis_path}, {audio_path}, 或 {url_path}")
-        return None, None, None
-
-    try:
-        with open(analysis_path, 'r', encoding='utf-8') as f:
-            analysis = json.load(f)
-        with open(url_path, 'r', encoding='utf-8') as f:
-            download_url = f.read().strip()
-        audio = EasyID3(audio_path) if os.path.exists(audio_path) else {'length': '0'}
-        logger.info(f"載入輸入: 分析 {analysis.get('recommendation', 'N/A')}, URL {download_url}, 音頻長度 {audio.get('length', '0')}")
-        return analysis, download_url, audio
+        mp3 = MP3(audio)
+        duration = int(mp3.info.length)
     except Exception as e:
-        logger.error(f"載入輸入失敗: {e}")
-        return None, None, None
+        logger.warning(f"⚠️ 讀取 mp3 時長失敗：{e}")
+        duration = None
 
-def generate_rss_xml(analysis, download_url, mode):
-    """生成 RSS XML 內容"""
-    date_str = datetime.now().strftime("%Y-%m-%d")
-    title = f"{datetime.now().strftime('%H:%M')} {'台股' if mode == 'tw' else '美股'} 市場播客"
-    description = f"市場建議: {analysis.get('recommendation', 'N/A')}\n風險評估: {analysis.get('risk_note', '無')}"
-    duration = analysis.get('duration', '0:00')  # 假設從音頻元數據獲取
+    tz = pytz.timezone("Asia/Taipei")
+    pub_date = tz.localize(datetime.datetime.strptime(latest_folder.split("_")[0], "%Y%m%d"))
+    title = f"幫幫忙每日投資快報 - {'台股' if PODCAST_MODE == 'tw' else '美股'}（{latest_folder}）"
 
-    rss = f"""<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd">
-  <channel>
-    <title>{title}</title>
-    <link>https://example.com/podcast</link>
-    <description>每日市場分析播客</description>
-    <pubDate>{datetime.utcnow().strftime('%a, %d %b %Y %H:%M:%S +0000')}</pubDate>
-    <item>
-      <title>{title}</title>
-      <description>{description}</description>
-      <pubDate>{date_str}</pubDate>
-      <enclosure url="{download_url}" length="1024" type="audio/mpeg"/>
-      <itunes:duration>{duration}</itunes:duration>
-      <guid>{download_url}</guid>
-    </item>
-  </channel>
-</rss>"""
-    logger.info(f"生成 RSS XML: 長度 {len(rss)} 字元")
-    return rss
+    # === 摘要處理區塊 ===
+    summary_path = os.path.join(base_path, "summary.txt")
+    if os.path.exists(summary_path):
+        with open(summary_path, "r", encoding="utf-8") as f:
+            summary_text = f.read().strip()
+        full_description = f"{FIXED_DESCRIPTION}\n\n🎯 今日摘要：{summary_text}"
+    else:
+        logger.info("⚠️ 找不到 summary.txt，使用預設描述")
+        full_description = FIXED_DESCRIPTION
 
-def push_to_platforms(rss, platforms):
-    """推播至 Spotify/Apple Podcast（模擬）"""
-    success = []
-    for platform, config in platforms.items():
-        if config.get('enabled', False):
-            # 這裡模擬推播，實際需使用 API（如 Spotify Web API 或 Apple Podcast Connect）
-            logger.info(f"模擬推播至 {platform}: 成功")
-            success.append(platform)
-    return success
+    # === Feed Entry ===
+    fe = fg.add_entry()
+    fe.id(audio_url)
+    fe.title(title)
+    fe.description(full_description)
+    fe.content(full_description, type="CDATA")
+    fe.enclosure(audio_url, str(os.path.getsize(audio)), "audio/mpeg")
+    fe.pubDate(pub_date)
+    if duration:
+        fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
 
-def send_slack_notification(analysis, download_url, platforms):
-    """發送 Slack 通知"""
-    slack_webhook = platforms.get('slack_webhook', '')
-    if not slack_webhook:
-        logger.warning("缺少 Slack Webhook URL，跳過通知")
-        return
-
-    message = {
-        "text": f"播客更新 - {datetime.now().strftime('%Y-%m-%d %H:%M')}:\n"
-                f"建議: {analysis.get('recommendation', 'N/A')}\n"
-                f"下載連結: {download_url}\n"
-                f"推播平台: {', '.join(platforms)}"
-    }
+    # 輸出 RSS
     try:
-        response = requests.post(slack_webhook, json=message, timeout=10)
-        response.raise_for_status()
-        logger.info(f"Slack 通知成功: {response.text}")
+        os.makedirs(os.path.dirname(RSS_FILE), exist_ok=True)
+        fg.rss_file(RSS_FILE)
+        logger.info(f"✅ 已產生 RSS Feed：{RSS_FILE}")
     except Exception as e:
-        logger.error(f"Slack 通知失敗: {e}")
+        logger.error(f"⚠️ 產生 RSS 檔案失敗: {e}")
+        raise IOError(f"⚠️ 產生 RSS 檔案失敗: {e}")
 
-def save_rss(rss, mode):
-    """保存 RSS XML 檔案"""
-    output_dir = os.path.join('docs', 'rss')
-    os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, f'podcast_{mode}.xml')
-    try:
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(rss)
-        logger.info(f"RSS 保存至 {output_path}")
-    except Exception as e:
-        logger.error(f"保存 RSS 失敗: {e}")
-
-def main(mode='tw'):
-    """主函數，執行推播發佈"""
-    platforms, slack_webhook = load_config(mode)
-    analysis, download_url, audio = load_inputs(mode)
-    if analysis and download_url and audio:
-        rss = generate_rss_xml(analysis, download_url, mode)
-        save_rss(rss, mode)
-        pushed_platforms = push_to_platforms(rss, platforms)
-        send_slack_notification(analysis, download_url, pushed_platforms)
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='推播員腳本')
-    parser.add_argument('--mode', default='tw', choices=['tw', 'us'], help='播客模式 (tw/us)')
-    args = parser.parse_args()
-    main(args.mode)
+if __name__ == "__main__":
+    generate_rss()
