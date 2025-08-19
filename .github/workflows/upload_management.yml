@@ -2,11 +2,10 @@ name: Upload Podcast
 
 on:
   schedule:
-    # UTC 時間換算 (台灣時間 = UTC +8)
-    # 台灣 06:20 CST -> UTC 22:20 前一天
-    - cron: '20 22 * * *'  # 上傳美股
-    # 台灣 14:30 CST -> UTC 06:30
-    - cron: '30 6 * * *'   # 上傳台股
+    # 台灣 06:20 CST -> UTC 22:20 前一天 → 上傳美股
+    - cron: '0 22 * * *'
+    # 台灣 14:30 CST -> UTC 06:30 → 上傳台股
+    - cron: '30 6 * * *'
   workflow_dispatch:
     inputs:
       mode:
@@ -39,10 +38,9 @@ jobs:
       - name: Run Upload Manager
         run: |
           if [ "${{ github.event.schedule }}" != "" ]; then
-            # 判斷 cron 執行的是哪個時間段
             HOUR=$(date -u +%H)
             MINUTE=$(date -u +%M)
-            if [ "$HOUR" = "22" ] && [ "$MINUTE" = "20" ]; then
+            if [ "$HOUR" = "22" ] && [ "$MINUTE" = "0" ]; then
               MODE="us"
             elif [ "$HOUR" = "06" ] && [ "$MINUTE" = "30" ]; then
               MODE="tw"
