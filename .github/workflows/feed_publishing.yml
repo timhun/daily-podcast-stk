@@ -28,7 +28,7 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install requests mutagen pytz
+          pip install requests mutagen pytz feedgen
 
       - name: Determine Mode
         id: set_mode
