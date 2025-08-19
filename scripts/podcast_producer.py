@@ -20,7 +20,7 @@ def load_config(mode='tw'):
     try:
         with open(config_file, 'r', encoding='utf-8') as f:
             config = json.load(f)
-        voices = config.get('voices', {'tw': 'zh-TW-YunJheNeural', 'us': 'en-US-GuyNeural'})
+        voices = config.get('voices', {'tw': 'zh-TW-YunJheNeural', 'us': 'zh-TW-YunJheNeural'})
         return voices.get(mode, voices.get('tw')), config.get('rate', '+0%'), config.get('volume', '+0%')
     except json.JSONDecodeError as e:
         logger.error(f"配置檔案解析失敗: {e}")
