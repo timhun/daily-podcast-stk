@@ -1,0 +1,10 @@
+{
+  "symbol": "GC=F",
+  "best_strategy": "MLStrategy",
+  "params": {
+    "model_type": "rf"
+  },
+  "return_pct": 25.441,
+  "baseline_pct": 0.015,
+  "timestamp": "2025-08-19 06:08:58"
+}

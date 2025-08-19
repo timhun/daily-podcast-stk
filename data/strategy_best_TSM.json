@@ -1,0 +1,10 @@
+{
+  "symbol": "TSM",
+  "best_strategy": "MLStrategy",
+  "params": {
+    "model_type": "rf"
+  },
+  "return_pct": 2.7276,
+  "baseline_pct": 0.374,
+  "timestamp": "2025-08-19 06:09:06"
+}

@@ -1,0 +1,10 @@
+{
+  "symbol": "^GSPC",
+  "best_strategy": "MLStrategy",
+  "params": {
+    "model_type": "rf"
+  },
+  "return_pct": 33.9863,
+  "baseline_pct": 0.1697,
+  "timestamp": "2025-08-19 06:09:00"
+}

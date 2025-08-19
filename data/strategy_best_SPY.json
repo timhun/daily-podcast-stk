@@ -1,0 +1,10 @@
+{
+  "symbol": "SPY",
+  "best_strategy": "MLStrategy",
+  "params": {
+    "model_type": "rf"
+  },
+  "return_pct": 2.9807,
+  "baseline_pct": 0.1737,
+  "timestamp": "2025-08-19 06:09:04"
+}
