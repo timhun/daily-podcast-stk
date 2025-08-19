@@ -58,8 +58,8 @@ def fetch_data(symbol, interval, lookback_days):
                 df.rename(columns={"Datetime": "Date"}, inplace=True)
 
             # 不轉時區，保留原始時間
-            df["Date"] = pd.to_datetime(df["Date"])
-
+            #df["Date"] = pd.to_datetime(df["Date"])
+            df["Date"] = pd.to_datetime(df["Date"]).dt.strftime("%Y-%m-%d %H:%M:%S")
             return df
         except Exception as e:
             logger.warning(f"⚠️ 第 {attempt+1}/3 次抓取 {symbol} ({interval}) 失敗: {e}")
