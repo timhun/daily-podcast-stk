@@ -7,7 +7,6 @@ import logging
 import requests
 from feedparser import parse
 import argparse
-import random
 
 # ===== 設定日誌 =====
 logging.basicConfig(
@@ -17,193 +16,156 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# ===== 配置 Grok API =====
+# ===== Grok API =====
 GROK_API_KEY = os.getenv('GROK_API_KEY')
-GROK_API_URL = os.getenv('GROK_API_URL')  # 假設的 API 端點
+GROK_API_URL = os.getenv('GROK_API_URL')
 
-# ===== 載入配置 =====
+# ===== 載入 config =====
 def load_config():
     config_file = 'config.json'
     if not os.path.exists(config_file):
         raise FileNotFoundError(f"缺少配置檔案: {config_file}")
     with open(config_file, 'r', encoding='utf-8') as f:
-        config = json.load(f)
-    rss_url = config.get('rss_url', 'https://tw.stock.yahoo.com/rss?category=news')
-    return config, rss_url
-
-# ===== 從 CSV 取得最新收盤數據 =====
-def load_market_data(symbol):
-    csv_path = os.path.join('data', f'{symbol}.csv')
-    if not os.path.exists(csv_path):
-        logger.warning(f"缺少 {csv_path}")
-        return None
-    df = pd.read_csv(csv_path)
-    if df.empty:
-        return None
-    latest = df.iloc[-1]
-    prev = df.iloc[-2] if len(df) > 1 else latest
-    close = latest['Close']
-    change_pct = ((latest['Close'] - prev['Close']) / prev['Close'] * 100) if prev['Close'] else 0.0
-    return {
-        'symbol': symbol,
-        'close': close,
-        'change_pct': round(change_pct, 2)
-    }
-
-# ===== 載入策略分析與市場分析 =====
-def load_strategy(symbol):
-    path = os.path.join('data', f'strategy_best_{symbol}.json')
-    if not os.path.exists(path):
-        return {}
-    with open(path, 'r', encoding='utf-8') as f:
         return json.load(f)
 
-def load_market_analysis(symbol):
-    path = os.path.join('data', f'market_analysis_{symbol}.json')
-    if not os.path.exists(path):
-        return {}
-    with open(path, 'r', encoding='utf-8') as f:
-        return json.load(f)
+# ===== 讀取市場 CSV =====
+def load_market_csv(mode='tw'):
+    market_data = {}
+    tickers = ['^DJI','^IXIC','^GSPC','QQQ','SPY','BTC-USD','GC=F'] if mode=='us' else ['^TWII','0050.TW']
+    for ticker in tickers:
+        csv_file = os.path.join('data', f'{ticker}.csv')
+        if os.path.exists(csv_file):
+            try:
+                df = pd.read_csv(csv_file)
+                last = df.iloc[-1]
+                close = last.get('Close', None)
+                open_price = last.get('Open', close)
+                change_pct = round(((close - open_price)/open_price)*100, 2) if close and open_price else 0.0
+                market_data[ticker] = {'Close': round(close,2), 'ChangePct': change_pct}
+            except Exception as e:
+                logger.error(f"讀取 {csv_file} 失敗: {e}")
+                market_data[ticker] = {'Close': None, 'ChangePct': 0.0}
+        else:
+            logger.warning(f"缺少 CSV 檔案: {csv_file}")
+            market_data[ticker] = {'Close': None, 'ChangePct': 0.0}
+    return market_data
 
-# ===== 抓取新聞 =====
-def fetch_news(rss_url, keywords, max_news=3):
+# ===== 讀取策略與市場分析結果 =====
+def load_analysis(symbol):
+    strategy_file = os.path.join('data', f'strategy_best_{symbol}.json')
+    market_file = os.path.join('data', f'market_analysis_{symbol}.json')
+    strategy, market = {}, {}
+    if os.path.exists(strategy_file):
+        with open(strategy_file, 'r', encoding='utf-8') as f:
+            strategy = json.load(f)
+    if os.path.exists(market_file):
+        with open(market_file, 'r', encoding='utf-8') as f:
+            market = json.load(f)
+    return strategy, market
+
+# ===== RSS 抓新聞 =====
+def fetch_rss_news(rss_url, keywords, max_news=3):
     try:
-        resp = requests.get(rss_url, timeout=10)
-        feed = parse(resp.text)
+        response = requests.get(rss_url, timeout=10)
+        response.raise_for_status()
+        feed = parse(response.text)
         news = []
         for entry in feed.entries:
             if any(k in entry.title for k in keywords):
                 news.append({
                     'title': entry.title,
                     'link': entry.link,
-                    'published': entry.published
+                    'published': entry.get('published', '')
                 })
-            if len(news) >= max_news:
+            if len(news)>=max_news:
                 break
-        news.sort(key=lambda x: x['published'], reverse=True)
         return news
     except Exception as e:
         logger.error(f"RSS 抓取失敗: {e}")
         return []
 
-# ===== 生成 AI 投資機會 =====
-def generate_ai_opportunities(mode):
-    ai_topics = [
-        "AI 智能交易平台",
-        "生成式 AI 內容公司",
-        "AI 芯片與硬體加速",
-        "人工智慧雲端服務",
-        "自動駕駛與 AI 感測器"
-    ]
-    count = 2 if mode == 'tw' else 3
-    return random.sample(ai_topics, count)
-
-# ===== 生成文字稿 =====
-def generate_script(mode, config):
-    today = datetime.now().strftime("%Y-%m-%d")
-    rss_url = config.get('rss_url')
-    keywords = ['經濟','半導體'] if mode == 'tw' else ['economy','semiconductor']
-    main_symbol = '0050.TW' if mode == 'tw' else 'QQQ'
-    
-    # 市場資料
-    market_symbols = [main_symbol]
-    if mode == 'tw':
-        market_symbols.append('^TWII')
-    else:
-        market_symbols += ['^DJI','^IXIC','^GSPC','SPY','BTC-USD','GC=F']
-    market_data = {s: load_market_data(s) for s in market_symbols}
-
-    # 策略與分析
-    strategy = load_strategy(main_symbol)
-    analysis = load_market_analysis(main_symbol)
-
-    # 新聞
-    news = fetch_news(rss_url, keywords)
-
-    # AI 投資機會
-    ai_opps = generate_ai_opportunities(mode)
-
-    # 生成稿件
-    script_lines = [f"大家好，這裡是《幫幫忙說台股》" if mode=='tw' else "大家好，這裡是《幫幫忙說美股》", f"日期：{today}\n"]
-
-    # 市場數據播報
-    if mode=='tw':
-        twii = market_data.get('^TWII')
-        if twii:
-            script_lines.append(f"台股加權指數收盤 {twii['close']} 點，漲跌幅 {twii['change_pct']}%。")
-        main = market_data.get('0050.TW')
-        if main:
-            script_lines.append(f"0050 今日收盤 {main['close']} 元。")
-    else:
-        for s in ['^DJI','^IXIC','^GSPC','QQQ','SPY','BTC-USD','GC=F']:
-            data = market_data.get(s)
-            if data:
-                script_lines.append(f"{s} 收盤 {data['close']}，漲跌 {data['change_pct']}%。")
-
-    # 策略與分析播報
-    if strategy and analysis:
-        script_lines.append(f"\n策略分析師建議使用策略：{strategy.get('best_strategy','N/A')}，參數：{strategy.get('params',{})}。")
-        script_lines.append(f"市場分析師建議：{analysis.get('recommendation','N/A')}，倉位 {analysis.get('position_size',0.0)}。")
-        if analysis.get('risk_note'):
-            script_lines.append(f"風險提醒：{analysis.get('risk_note')}")
-
-    # 新聞摘要
-    if news:
-        script_lines.append("\n新聞摘要：")
-        for n in news:
-            script_lines.append(f"- {n['title']} ({n['published']}) {n['link']}")
-
-    # AI 投資機會
-    script_lines.append("\nAI 投資機會：")
-    for opp in ai_opps:
-        script_lines.append(f"- {opp}")
-
-    # 鼓勵語
-    quotes = [
-        "投資成功的關鍵是耐心。",
-        "股市短期波動，長期才是致勝。",
-        "風險與報酬永遠並存。"
-    ]
-    script_lines.append(f"\n記住 Kostolany 說過：『{random.choice(quotes)}』")
-
-    return "\n".join(script_lines)
-
-# ===== Grok API 優化 =====
-def improve_script_grok(script):
+# ===== Grok 優化文字稿 =====
+def improve_with_grok(script):
     if not GROK_API_KEY or not GROK_API_URL:
-        logger.warning("Grok API 金鑰或 URL 未設定，跳過優化")
+        logger.warning("缺少 GROK API，跳過優化")
         return script
     try:
-        resp = requests.post(
-            GROK_API_URL,
-            json={"script": script},
-            headers={"Authorization": f"Bearer {GROK_API_KEY}"}
-        )
-        resp.raise_for_status()
-        improved = resp.json().get('improved_script', script)
-        return improved
+        response = requests.post(GROK_API_URL,
+                                 json={'script': script},
+                                 headers={'Authorization': f'Bearer {GROK_API_KEY}'},
+                                 timeout=15)
+        response.raise_for_status()
+        return response.json().get('improved_script', script)
     except Exception as e:
         logger.error(f"Grok API 優化失敗: {e}")
         return script
 
-# ===== 儲存文字稿 =====
+# ===== 生成文字稿 =====
+def generate_script(mode='tw', debug=False):
+    config = load_config()
+    rss_url = config.get('rss_url')
+    keywords = ['經濟','半導體'] if mode=='tw' else ['AI','科技']
+    symbol = '0050.TW' if mode=='tw' else 'QQQ'
+
+    # 讀市場數據
+    market_data = load_market_csv(mode)
+    strategy, market = load_analysis(symbol)
+    news = fetch_rss_news(rss_url, keywords, max_news=3)
+
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    script = f"大家好，這裡是《幫幫忙說{'台股' if mode=='tw' else '美股'}》\n日期：{date_str}\n\n"
+
+    # 市場概況
+    for k,v in market_data.items():
+        script += f"{k} 收盤 {v['Close']}，漲跌 {v['ChangePct']}%。\n"
+
+    script += "\n焦點標的分析：\n"
+    script += f"策略分析師建議使用策略：{strategy.get('best_strategy','N/A')}，參數：{strategy.get('params',{})}\n"
+    script += f"市場分析師建議：{market.get('recommendation','N/A')}，倉位 {market.get('position_size',0.0)}。\n"
+    if market.get('risk_note'):
+        script += f"風險提醒：{market.get('risk_note')}\n"
+
+    # 新聞摘要
+    script += "\n新聞摘要:\n"
+    for n in news:
+        script += f"- {n['title']} ({n['published']}) {n['link']}\n"
+
+    # AI 投資機會
+    script += "\nAI 投資機會:\n"
+    if mode=='us':
+        script += "- 人工智慧雲端服務\n- AI 芯片與硬體加速\n- AI 智能交易平台\n"
+    else:
+        script += "- 台灣 AI 新創公司\n- AI ETF 或半導體應用\n"
+
+    script += "\n記住 Kostolany 說過：『股市短期波動，長期才是致勝。』\n"
+
+    if debug:
+        logger.info("==== DEBUG ====")
+        logger.info("市場數據: %s", market_data)
+        logger.info("策略: %s", strategy)
+        logger.info("市場分析師: %s", market)
+        logger.info("新聞: %s", news)
+
+    # Grok 優化
+    script = improve_with_grok(script)
+    return script
+
+# ===== 保存文字稿 =====
 def save_script(script, mode):
     date_str = datetime.now().strftime("%Y%m%d")
-    output_dir = os.path.join('docs', 'podcast', f"{date_str}_{mode}")
+    output_dir = os.path.join('docs','podcast', f"{date_str}_{mode}")
     os.makedirs(output_dir, exist_ok=True)
-    path = os.path.join(output_dir, 'script.txt')
-    with open(path, 'w', encoding='utf-8') as f:
+    output_path = os.path.join(output_dir,'script.txt')
+    with open(output_path, 'w', encoding='utf-8') as f:
         f.write(script)
-    logger.info(f"文字稿已保存: {path}")
+    logger.info(f"文字稿保存至 {output_path}")
 
-# ===== 主程式 =====
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='文字編輯師腳本')
-    parser.add_argument('--mode', default='tw', choices=['tw','us'], help='播客模式 (tw/us)')
+# ===== 主函數 =====
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mode', default='tw', choices=['tw','us'], help='播客模式 tw/us')
+    parser.add_argument('--debug', action='store_true', help='啟用 debug 模式')
     args = parser.parse_args()
-
-    config, rss_url = load_config()
-    raw_script = generate_script(args.mode, config)
-    final_script = improve_script_grok(raw_script)
-    save_script(final_script, args.mode)
-    print(f"🎙️ 文字稿生成完成 for {args.mode}")
+    script = generate_script(args.mode, debug=args.debug)
+    save_script(script, args.mode)
+    print("✅ 文字稿生成完成")
