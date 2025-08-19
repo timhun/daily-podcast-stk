@@ -2,14 +2,17 @@ name: Podcast Production
 
 on:
   schedule:
-    - cron: '10 22 * * *'  # 6:00 AM CST
-    - cron: '15 6 * * *'   # 2:00 PM CST
+    # 台灣 05:30 CST → UTC 21:30 前一天 → 美股
+    - cron: '30 21 * * *'
+    # 台灣 14:10 CST → UTC 06:10 → 台股
+    - cron: '10 6 * * *'
   workflow_dispatch:
     inputs:
       mode:
         description: '播客模式 tw/us'
         required: false
         default: 'tw'
+
 jobs:
   podcast-production:
     runs-on: ubuntu-latest
@@ -29,9 +32,23 @@ jobs:
 
       - name: Run Podcast Producer
         run: |
-          echo "🎙️ 執行播報員"
-          python scripts/podcast_producer.py --mode tw
-     
+          # 判斷排程時間自動選 mode
+          if [ "${{ github.event.schedule }}" != "" ]; then
+            HOUR=$(date -u +%H)
+            MINUTE=$(date -u +%M)
+            if [ "$HOUR" = "21" ] && [ "$MINUTE" = "30" ]; then
+              MODE="us"
+            elif [ "$HOUR" = "06" ] && [ "$MINUTE" = "10" ]; then
+              MODE="tw"
+            else
+              MODE="${{ github.event.inputs.mode }}"
+            fi
+          else
+            MODE="${{ github.event.inputs.mode }}"
+          fi
+          echo "🎙️ 執行播報員模式: $MODE"
+          python scripts/podcast_producer.py --mode $MODE
+
       - name: Commit and Push Audio
         run: |
           git config --global user.name "github-actions[bot]"
