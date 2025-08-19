@@ -1,62 +1,45 @@
-name: Upload Podcast
+name: Upload Manager
 
 on:
   schedule:
-    # 台灣 06:20 CST -> UTC 22:20 前一天 → 上傳美股
-    - cron: '0 22 * * *'
-    # 台灣 14:30 CST -> UTC 06:30 → 上傳台股
-    - cron: '30 6 * * *'
+    - cron: '0 22 * * *'  # 6:20 AM CST → 上傳美股
+    - cron: '30 6 * * *'   # 2:30 PM CST → 上傳台股
   workflow_dispatch:
-    inputs:
-      mode:
-        description: '播客模式 tw/us'
-        required: false
-        default: 'tw'
 
 jobs:
-  upload-podcast:
+  upload:
     runs-on: ubuntu-latest
-    env:
-      B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-      B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
-      B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
-      B2_BASE: "https://f005.backblazeb2.com/file/daily-podcast-stk"
+
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: '3.9'
 
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install b2sdk
 
-      - name: Run Upload Manager
+      - name: Upload US Podcast
+        if: github.event.schedule == '0 22 * * *'
         run: |
-          if [ "${{ github.event.schedule }}" != "" ]; then
-            HOUR=$(date -u +%H)
-            MINUTE=$(date -u +%M)
-            if [ "$HOUR" = "22" ] && [ "$MINUTE" = "0" ]; then
-              MODE="us"
-            elif [ "$HOUR" = "06" ] && [ "$MINUTE" = "30" ]; then
-              MODE="tw"
-            else
-              MODE="${{ github.event.inputs.mode }}"
-            fi
-          else
-            MODE="${{ github.event.inputs.mode }}"
-          fi
-          echo "📤 上傳模式: $MODE"
-          python scripts/upload_manager.py --mode $MODE
+          echo "🚀 上傳美股 Podcast"
+          python scripts/upload_manager.py --mode us
+        env:
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
 
-      - name: Commit and Push Upload Links
+      - name: Upload TW Podcast
+        if: github.event.schedule == '30 6 * * *'
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/podcast/*/archive_audio_url.txt || true
-          git commit -m "🔄 Upload podcast links [skip ci]" || echo "No changes to commit"
-          git push
+          echo "🚀 上傳台股 Podcast"
+          python scripts/upload_manager.py --mode tw
+        env:
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
