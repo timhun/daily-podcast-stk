@@ -2,9 +2,9 @@ name: Feed Publishing
 
 on:
   schedule:
-    # 台灣 06:00 → UTC 22:00 前一天
+    # 台灣 06:00 → UTC 22:10 前一天
     - cron: '10 22 * * *'
-    # 台灣 14:00 → UTC 06:00
+    # 台灣 14:00 → UTC 06:20
     - cron: '20 6 * * *'
   workflow_dispatch:
     inputs:
@@ -33,15 +33,17 @@ jobs:
       - name: Determine Mode
         id: set_mode
         run: |
-          MODE="${{ github.event.inputs.mode }}"
-          if [ "${{ github.event.schedule }}" != "" ]; then
-            HOUR=$(date -u +%H)
-            MINUTE=$(date -u +%M)
-            if [ "$HOUR" = "22" ] && [ "$MINUTE" = "10" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            cron_expr="${{ github.event.schedule }}" || true
+            if [ "$cron_expr" = "10 22 * * *" ]; then
               MODE="us"
-            elif [ "$HOUR" = "06" ] && [ "$MINUTE" = "20" ]; then
+            elif [ "$cron_expr" = "20 6 * * *" ]; then
+              MODE="tw"
+            else
               MODE="tw"
             fi
+          else
+            MODE="${{ github.event.inputs.mode }}"
           fi
           echo "mode=$MODE" >> $GITHUB_OUTPUT
           echo "📌 Feed Publishing Mode: $MODE"
