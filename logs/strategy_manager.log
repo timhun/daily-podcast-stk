@@ -2,3 +2,41 @@ Traceback (most recent call last):
   File "/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/strategy_manager.py", line 7, in <module>
     import pandas as pd
 ModuleNotFoundError: No module named 'pandas'
+2025-08-19 03:56:24,463 - INFO - 策略管理師開始執行
+2025-08-19 03:56:24,469 - ERROR - 策略管理師執行失敗: unsupported operand type(s) for /: 'str' and 'str'
+Traceback (most recent call last):
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/ops/array_ops.py", line 218, in _na_arithmetic_op
+    result = func(left, right)
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/computation/expressions.py", line 242, in evaluate
+    return _evaluate(op, op_str, a, b)  # type: ignore[misc]
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/computation/expressions.py", line 73, in _evaluate_standard
+    return op(a, b)
+TypeError: unsupported operand type(s) for /: 'str' and 'NoneType'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/strategy_manager.py", line 185, in <module>
+    main()
+  File "/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/strategy_manager.py", line 144, in main
+    baseline_return = get_market_baseline(df)
+  File "/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/strategy_manager.py", line 109, in get_market_baseline
+    daily_change = df['Close'].pct_change().iloc[-1] * 100
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/generic.py", line 12180, in pct_change
+    rs = data / shifted - 1  # type: ignore[operator]
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/ops/common.py", line 76, in new_method
+    return method(self, other)
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/arraylike.py", line 210, in __truediv__
+    return self._arith_method(other, operator.truediv)
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/series.py", line 6146, in _arith_method
+    return base.IndexOpsMixin._arith_method(self, other, op)
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/base.py", line 1391, in _arith_method
+    result = ops.arithmetic_op(lvalues, rvalues, op)
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/ops/array_ops.py", line 283, in arithmetic_op
+    res_values = _na_arithmetic_op(left, right, op)  # type: ignore[arg-type]
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/ops/array_ops.py", line 227, in _na_arithmetic_op
+    result = _masked_arith_op(left, right, op)
+  File "/opt/hostedtoolcache/Python/3.10.18/x64/lib/python3.10/site-packages/pandas/core/ops/array_ops.py", line 163, in _masked_arith_op
+    result[mask] = op(xrav[mask], yrav[mask])
+TypeError: unsupported operand type(s) for /: 'str' and 'str'
+2025-08-19 03:56:24,472 - INFO - 策略管理師執行結束
