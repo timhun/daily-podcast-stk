@@ -2,53 +2,62 @@ name: Upload Manager
 
 on:
   schedule:
-    - cron: '0 22 * * *'   # UTC 22:00 → CST 06:00 → 上傳美股
-    - cron: '30 6 * * *'   # UTC 06:30 → CST 14:30 → 上傳台股
-  workflow_dispatch:
-    inputs:
-      mode:
-        description: '上傳模式 (tw/us)'
-        required: false
-        default: 'tw'
+    # 每天 06:20 上傳美股檔案
+    - cron: "20 22 * * *"  # UTC → 06:20 TPE
+    # 每天 14:30 上傳台股檔案
+    - cron: "30 6 * * *"   # UTC → 14:30 TPE
+    # 每天 06:35 發佈美股 RSS Feed
+    - cron: "35 22 * * *"  # UTC → 06:35 TPE
+    # 每天 14:40 發佈台股 RSS Feed
+    - cron: "40 6 * * *"   # UTC → 14:40 TPE
 
 jobs:
   upload:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: "3.11"
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install b2sdk
+          pip install -r requirements.txt
 
-      - name: Determine Mode
-        id: set_mode
+      - name: Run Upload Manager
         run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            case "${{ github.event.schedule }}" in
-              "0 22 * * *") MODE="us" ;;
-              "30 6 * * *") MODE="tw" ;;
-              *) MODE="tw" ;;
-            esac
-          else
-            MODE="${{ github.event.inputs.mode }}"
+          python scripts/upload_manager.py
+
+  publish-feed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Publish Feed
+        run: |
+          if [ "$(date +'%H%M' -u)" == "2235" ]; then
+            echo "📡 執行推播員 (mode=us)"
+            PODCAST_MODE=us python scripts/feed_publisher.py
+          elif [ "$(date +'%H%M' -u)" == "0640" ]; then
+            echo "📡 執行推播員 (mode=tw)"
+            PODCAST_MODE=tw python scripts/feed_publisher.py
           fi
-          echo "mode=$MODE" >> $GITHUB_OUTPUT
-          echo "📌 Upload Mode: $MODE"
 
-      - name: Upload Podcast
+      - name: Commit and Push
         run: |
-          echo "🚀 上傳 Podcast (mode=${{ steps.set_mode.outputs.mode }})"
-          python scripts/upload_manager.py --mode ${{ steps.set_mode.outputs.mode }}
-        env:
-          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
-          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/rss/
+          git commit -m "更新 Podcast RSS Feed"
+          git push
