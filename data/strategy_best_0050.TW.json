@@ -1,0 +1,10 @@
+{
+  "symbol": "0050.TW",
+  "best_strategy": "MLStrategy",
+  "params": {
+    "model_type": "rf"
+  },
+  "return_pct": 0.2873,
+  "baseline_pct": 0.2587,
+  "timestamp": "2025-08-20 06:29:20"
+}
