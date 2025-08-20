@@ -18,13 +18,10 @@ PODCAST_MODE = os.getenv("PODCAST_MODE", "tw").lower()
 RSS_FILE = f"docs/rss/podcast_{PODCAST_MODE}.xml"
 
 FIXED_DESCRIPTION = """(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
-每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
-\n\n讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
-提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。\n\n
-提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
-\n\n
-🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！\n\n
-📮 主持人：幫幫忙"""
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略。
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。
+📮 主持人：幫幫忙
+"""
 
 def generate_rss():
     # ===== 初始化 Feed =====
@@ -37,11 +34,11 @@ def generate_rss():
     fg.language("zh-TW")
     fg.description("掌握美股台股、科技、AI 與投資機會，每日兩集！")
     fg.logo(COVER_URL)
-    fg.link(href=f"{SITE_URL}/rss/podcast_{PODCAST_MODE}.xml", rel="self")
+    fg.link(href=RSS_FILE, rel="self")
     fg.podcast.itunes_category("Business", "Investing")
     fg.podcast.itunes_image(COVER_URL)
     fg.podcast.itunes_explicit("no")
-    fg.podcast.itunes_author("幫幫忙AI投資腦")  # Spotify 驗證需要
+    fg.podcast.itunes_author("幫幫忙AI投資腦")
     fg.podcast.itunes_owner(name="幫幫忙AI投資腦", email="tim.oneway@gmail.com")
 
     # ===== 找出符合模式的最新資料夾 =====
@@ -52,8 +49,8 @@ def generate_rss():
     ], reverse=True)
 
     if not matching_folders:
-        logger.error(f"⚠️ 找不到符合模式 '{PODCAST_MODE}' 的 podcast 資料夾，RSS 未產生")
-        raise FileNotFoundError(f"⚠️ 找不到符合模式 '{PODCAST_MODE}' 的 podcast 資料夾")
+        logger.warning(f"⚠️ 找不到符合模式 '{PODCAST_MODE}' 的 podcast 資料夾，RSS 將跳過")
+        return
 
     latest_folder = matching_folders[0]
     base_path = os.path.join(episodes_dir, latest_folder)
@@ -61,11 +58,11 @@ def generate_rss():
     archive_url_file = os.path.join(base_path, "archive_audio_url.txt")
 
     if not os.path.exists(audio):
-        logger.error(f"⚠️ 找不到 audio.mp3：{audio}")
-        raise FileNotFoundError(f"⚠️ 找不到 audio.mp3：{audio}")
+        logger.warning(f"⚠️ 找不到 audio.mp3：{audio}，RSS 將跳過此集")
+        return
     if not os.path.exists(archive_url_file):
-        logger.error(f"⚠️ 找不到 archive_audio_url.txt：{archive_url_file}")
-        raise FileNotFoundError(f"⚠️ 找不到 archive_audio_url.txt：{archive_url_file}")
+        logger.warning(f"⚠️ 找不到 archive_audio_url.txt：{archive_url_file}，RSS 將跳過此集")
+        return
 
     with open(archive_url_file, "r", encoding="utf-8") as f:
         audio_url = f.read().strip()
