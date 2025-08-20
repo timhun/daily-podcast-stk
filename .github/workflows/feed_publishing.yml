@@ -1,63 +1,45 @@
-name: Upload Manager
+name: Feed Generator
 
 on:
   schedule:
-    # 每天 06:20 上傳美股檔案
-    - cron: "20 22 * * *"  # UTC → 06:20 TPE
-    # 每天 14:30 上傳台股檔案
-    - cron: "30 6 * * *"   # UTC → 14:30 TPE
-    # 每天 06:35 發佈美股 RSS Feed
-    - cron: "35 22 * * *"  # UTC → 06:35 TPE
-    # 每天 14:40 發佈台股 RSS Feed
-    - cron: "40 6 * * *"   # UTC → 14:40 TPE
+    - cron: '35 22 * * *'  # 06:35 CST → 生成美股 RSS
+    - cron: '40 6 * * *'   # 14:40 CST → 生成台股 RSS
+  workflow_dispatch:
 
 jobs:
-  upload:
+  feed:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.11"
+          python-version: '3.9'
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
-          pip install -r requirements.txt
+          python -m pip install --upgrade pip
+          pip install feedgen
 
-      - name: Run Upload Manager
+      - name: Generate US Feed
+        if: github.event.schedule == '35 22 * * *'
         run: |
-          python scripts/upload_manager.py
+          echo "📡 執行推播員 (mode=us)"
+          python scripts/feed_publisher.py --mode us
 
-  publish-feed:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
+      - name: Generate TW Feed
+        if: github.event.schedule == '40 6 * * *'
         run: |
-          pip install -r requirements.txt
+          echo "📡 執行推播員 (mode=tw)"
+          python scripts/feed_publisher.py --mode tw
 
-      - name: Publish Feed
-        run: |
-          if [ "$(date +'%H%M' -u)" == "2235" ]; then
-            echo "📡 執行推播員 (mode=us)"
-            PODCAST_MODE=us python scripts/feed_publisher.py
-          elif [ "$(date +'%H%M' -u)" == "0640" ]; then
-            echo "📡 執行推播員 (mode=tw)"
-            PODCAST_MODE=tw python scripts/feed_publisher.py
-          fi
-
-      - name: Commit and Push
+      - name: Commit and Push RSS
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/rss/
-          git commit -m "更新 Podcast RSS Feed"
+          git add docs/rss/*.xml
+          git commit -m "🔄 更新 RSS Feed ($(date '+%Y-%m-%d %H:%M'))" || echo "No changes to commit"
           git push
