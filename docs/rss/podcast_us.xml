@@ -1,32 +1,22 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link></image><language>zh-TW</language><lastBuildDate>Sun, 17 Aug 2025 02:34:33 +0000</lastBuildDate><itunes:author>幫幫忙AI投資腦</itunes:author><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><itunes:owner><itunes:name>幫幫忙AI投資腦</itunes:name><itunes:email>tim.oneway@gmail.com</itunes:email></itunes:owner><item><title>幫幫忙每日投資快報 - 美股（20250817_us）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><atom:link href="https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI.投資</title><link>https://timhun.github.io/daily-podcast-stk/rss/podcast_us.xml</link></image><language>zh-TW</language><lastBuildDate>Wed, 20 Aug 2025 22:35:12 +0000</lastBuildDate><itunes:author>幫幫忙AI投資腦</itunes:author><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><itunes:owner><itunes:name>幫幫忙AI投資腦</itunes:name><itunes:email>tim.oneway@gmail.com</itunes:email></itunes:owner><item><title>幫幫忙每日投資快報 - 美股（20250821）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
-
 
 讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
 提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
 
-
 提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
 
-
-
 🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
-
 
 📮 主持人：幫幫忙</description><content:encoded><![CDATA[(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 
-
 讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
 提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
 
-
 提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
-
-
 
 🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
 
-
-📮 主持人：幫幫忙]]></content:encoded><guid isPermaLink="false">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250817_us.mp3</guid><enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250817_us.mp3" length="542016" type="audio/mpeg"/><pubDate>Sun, 17 Aug 2025 00:00:00 +0800</pubDate><itunes:duration>0:01:30</itunes:duration></item></channel></rss>
+📮 主持人：幫幫忙]]></content:encoded><guid isPermaLink="false">https://timhun.github.io/daily-podcast-stk/podcast/20250821_us/audio.mp3</guid><enclosure url="https://timhun.github.io/daily-podcast-stk/podcast/20250821_us/audio.mp3" length="131" type="audio/mpeg"/><pubDate>Thu, 21 Aug 2025 00:00:00 +0800</pubDate></item></channel></rss>
