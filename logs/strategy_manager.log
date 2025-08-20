@@ -492,3 +492,49 @@ TypeError: unsupported operand type(s) for /: 'str' and 'str'
 2025-08-20 11:14:21,563 - INFO - [2330.TW] 策略 MLStrategy 回測報酬：5.71%（Baseline 0.30%）
 2025-08-20 11:14:21,564 - INFO - [2330.TW] ✅ 最佳策略：MLStrategy | Return 5.71% > Baseline 0.30% → 已輸出 data/strategy_best_2330.TW.json
 2025-08-20 11:14:21,564 - INFO - 策略管理師執行結束
+2025-08-20 22:14:21,462 - INFO - 策略管理師開始執行
+2025-08-20 22:14:21,474 - INFO - [0050.TW] Baseline(日均 %) = 0.2587
+2025-08-20 22:14:21,721 - INFO - [0050.TW] 策略 VolumeBreakout 回測報酬：0.05%（Baseline 0.26%）
+2025-08-20 22:14:23,410 - INFO - [0050.TW] 策略 MLStrategy 回測報酬：0.28%（Baseline 0.26%）
+2025-08-20 22:14:23,411 - INFO - [0050.TW] ✅ 最佳策略：MLStrategy | Return 0.28% > Baseline 0.26% → 已輸出 data/strategy_best_0050.TW.json
+2025-08-20 22:14:23,422 - INFO - [QQQ] Baseline(日均 %) = 0.1441
+2025-08-20 22:14:23,669 - INFO - [QQQ] 策略 VolumeBreakout 回測報酬：0.03%（Baseline 0.14%）
+2025-08-20 22:14:25,425 - INFO - [QQQ] 策略 MLStrategy 回測報酬：3.62%（Baseline 0.14%）
+2025-08-20 22:14:25,426 - INFO - [QQQ] ✅ 最佳策略：MLStrategy | Return 3.62% > Baseline 0.14% → 已輸出 data/strategy_best_QQQ.json
+2025-08-20 22:14:25,436 - INFO - [^TWII] Baseline(日均 %) = 0.1764
+2025-08-20 22:14:25,679 - INFO - [^TWII] 策略 VolumeBreakout 回測報酬：0.00%（Baseline 0.18%）
+2025-08-20 22:14:27,353 - INFO - [^TWII] 策略 MLStrategy 回測報酬：0.00%（Baseline 0.18%）
+2025-08-20 22:14:27,353 - INFO - [^TWII] 無策略勝過 Baseline（或正報酬）
+2025-08-20 22:14:27,364 - INFO - [BTC-USD] Baseline(日均 %) = 0.2231
+2025-08-20 22:14:27,638 - INFO - [BTC-USD] 策略 VolumeBreakout 回測報酬：0.00%（Baseline 0.22%）
+2025-08-20 22:14:29,739 - INFO - [BTC-USD] 策略 MLStrategy 回測報酬：0.00%（Baseline 0.22%）
+2025-08-20 22:14:29,739 - INFO - [BTC-USD] 無策略勝過 Baseline（或正報酬）
+2025-08-20 22:14:29,750 - INFO - [^DJI] Baseline(日均 %) = 0.1029
+2025-08-20 22:14:29,998 - INFO - [^DJI] 策略 VolumeBreakout 回測報酬：0.00%（Baseline 0.10%）
+2025-08-20 22:14:31,720 - INFO - [^DJI] 策略 MLStrategy 回測報酬：0.00%（Baseline 0.10%）
+2025-08-20 22:14:31,720 - INFO - [^DJI] 無策略勝過 Baseline（或正報酬）
+2025-08-20 22:14:31,731 - INFO - [GC=F] Baseline(日均 %) = 0.0546
+2025-08-20 22:14:31,985 - INFO - [GC=F] 策略 VolumeBreakout 回測報酬：2.64%（Baseline 0.05%）
+2025-08-20 22:14:33,792 - INFO - [GC=F] 策略 MLStrategy 回測報酬：25.17%（Baseline 0.05%）
+2025-08-20 22:14:33,792 - INFO - [GC=F] ✅ 最佳策略：MLStrategy | Return 25.17% > Baseline 0.05% → 已輸出 data/strategy_best_GC=F.json
+2025-08-20 22:14:33,802 - INFO - [^GSPC] Baseline(日均 %) = 0.1323
+2025-08-20 22:14:34,048 - INFO - [^GSPC] 策略 VolumeBreakout 回測報酬：0.22%（Baseline 0.13%）
+2025-08-20 22:14:35,773 - INFO - [^GSPC] 策略 MLStrategy 回測報酬：33.75%（Baseline 0.13%）
+2025-08-20 22:14:35,773 - INFO - [^GSPC] ✅ 最佳策略：MLStrategy | Return 33.75% > Baseline 0.13% → 已輸出 data/strategy_best_^GSPC.json
+2025-08-20 22:14:35,783 - INFO - [^IXIC] Baseline(日均 %) = 0.1690
+2025-08-20 22:14:36,028 - INFO - [^IXIC] 策略 VolumeBreakout 回測報酬：0.00%（Baseline 0.17%）
+2025-08-20 22:14:37,742 - INFO - [^IXIC] 策略 MLStrategy 回測報酬：0.00%（Baseline 0.17%）
+2025-08-20 22:14:37,742 - INFO - [^IXIC] 無策略勝過 Baseline（或正報酬）
+2025-08-20 22:14:37,752 - INFO - [SPY] Baseline(日均 %) = 0.1364
+2025-08-20 22:14:37,999 - INFO - [SPY] 策略 VolumeBreakout 回測報酬：0.00%（Baseline 0.14%）
+2025-08-20 22:14:39,733 - INFO - [SPY] 策略 MLStrategy 回測報酬：2.96%（Baseline 0.14%）
+2025-08-20 22:14:39,733 - INFO - [SPY] ✅ 最佳策略：MLStrategy | Return 2.96% > Baseline 0.14% → 已輸出 data/strategy_best_SPY.json
+2025-08-20 22:14:39,743 - INFO - [TSM] Baseline(日均 %) = 0.2691
+2025-08-20 22:14:39,993 - INFO - [TSM] 策略 VolumeBreakout 回測報酬：-0.30%（Baseline 0.27%）
+2025-08-20 22:14:41,718 - INFO - [TSM] 策略 MLStrategy 回測報酬：2.71%（Baseline 0.27%）
+2025-08-20 22:14:41,719 - INFO - [TSM] ✅ 最佳策略：MLStrategy | Return 2.71% > Baseline 0.27% → 已輸出 data/strategy_best_TSM.json
+2025-08-20 22:14:41,729 - INFO - [2330.TW] Baseline(日均 %) = 0.2970
+2025-08-20 22:14:41,973 - INFO - [2330.TW] 策略 VolumeBreakout 回測報酬：-0.55%（Baseline 0.30%）
+2025-08-20 22:14:43,647 - INFO - [2330.TW] 策略 MLStrategy 回測報酬：5.71%（Baseline 0.30%）
+2025-08-20 22:14:43,647 - INFO - [2330.TW] ✅ 最佳策略：MLStrategy | Return 5.71% > Baseline 0.30% → 已輸出 data/strategy_best_2330.TW.json
+2025-08-20 22:14:43,647 - INFO - 策略管理師執行結束
