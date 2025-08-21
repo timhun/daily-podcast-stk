@@ -19,7 +19,7 @@ jobs:
       - run: python src/model.py
       - run: python src/signal.py
       - name: Upload Signal
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: signal
           path: signal.json
