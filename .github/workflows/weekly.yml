@@ -1,0 +1,20 @@
+name: Weekly Backtest
+
+on:
+  schedule:
+    - cron: "0 10 * * 6"  # 每週六 UTC 10:00
+  workflow_dispatch:
+
+jobs:
+  weekly:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - run: pip install -r requirements.txt
+      - run: python src/data.py
+      - run: python src/features.py
+      - run: python src/model.py
+      - run: python src/backtest.py
