@@ -1,20 +1,30 @@
-name: Weekly Backtest
+name: Weekly Strategy Update
 
 on:
   schedule:
-    - cron: "0 10 * * 6"  # 每週六 UTC 10:00
+    - cron: "0 12 * * 6"  # 每週六 UTC 中午 (美股收盤後週末再跑)
   workflow_dispatch:
 
 jobs:
   weekly:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: "3.11"
+
       - run: pip install -r requirements.txt
-      - run: python src/data.py
-      - run: python src/features.py
-      - run: python src/model.py
-      - run: python src/backtest.py
+
+      - run: python run_pipeline.py
+        env:
+          JOB_MODE: weekly
+          NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB: ${{ secrets.NOTION_DB }}
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: backtest-metrics
+          path: strategy_out.py
