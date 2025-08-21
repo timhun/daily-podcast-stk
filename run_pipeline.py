@@ -1,53 +1,78 @@
 #!/usr/bin/env python3
 # run_pipeline.py
 import os
-import datetime
+import json
+import importlib.util
+from datetime import datetime
+
+# === src 引用 ===
 from src.data_fetch import fetch_ohlcv
 from src.daily_sim import run_daily_sim
 from src.backtest import run_backtest
 from src.notify import send_to_notion, send_to_slack
 
-SYMBOL = "QQQ"
+STRAT_CAND = "strategy_candidate.py"
 STRAT_OUT = "strategy_out.py"
-CASH = 1_000_000
 
 
+# === 每日任務 ===
 def daily_pipeline():
-    print("=== [Daily Job] 模擬交易 ===")
-    df = fetch_ohlcv(SYMBOL, years=1)
-    res = run_daily_sim(SYMBOL, strategy_path="strategy_candidate.py", cash=CASH)
+    print("=== 每日模擬 ===")
+    df = fetch_ohlcv("QQQ", years=1)
+    res = run_daily_sim("QQQ", STRAT_CAND, cash=1_000_000)
 
-    msg = f"📊 Daily Sim {datetime.date.today()} | PnL={res['pnl']:.2f} | Pos={res['position']}"
-    print(msg)
+    signal = {
+        "symbol": "QQQ",
+        "date": str(df.index[-1].date()),
+        "metrics": res,
+    }
 
-    # 存檔
     with open("signal.json", "w") as f:
-        f.write(str(res))
+        json.dump(signal, f, indent=2, ensure_ascii=False)
+    print("✅ 信號已存成 signal.json")
 
-    # 通知
-    send_to_notion(res, db_id=os.getenv("NOTION_DB"), token=os.getenv("NOTION_TOKEN"))
-    send_to_slack(msg, webhook=os.getenv("SLACK_WEBHOOK"))
-    return res
+    if os.getenv("NOTION_TOKEN") and os.getenv("NOTION_DB"):
+        send_to_notion(signal)
+    if os.getenv("SLACK_WEBHOOK"):
+        send_to_slack(f"📊 每日交易信號: {json.dumps(signal, ensure_ascii=False)}")
+
+    return signal
 
 
+# === 每週任務 ===
 def weekly_pipeline():
-    print("=== [Weekly Job] 回測 + 更新策略 ===")
-    df = fetch_ohlcv(SYMBOL, years=5)
-    metrics = run_backtest(df, strategy_path=STRAT_OUT, cash=CASH)
+    print("=== 每週回測 ===")
+    df = fetch_ohlcv("QQQ", years=5)
+    metrics = run_backtest(
+        df, strategy_path=STRAT_CAND, cash=1_000_000, out_path=STRAT_OUT
+    )
 
-    msg = f"📈 Weekly Backtest done. Sharpe={metrics['sharpe']:.2f}, MaxDD={metrics['maxdd']:.2%}"
-    print(msg)
+    result = {
+        "symbol": "QQQ",
+        "timestamp": datetime.utcnow().isoformat(),
+        "metrics": metrics,
+    }
 
-    send_to_notion(metrics, db_id=os.getenv("NOTION_DB"), token=os.getenv("NOTION_TOKEN"))
-    send_to_slack(msg, webhook=os.getenv("SLACK_WEBHOOK"))
-    return metrics
+    with open("backtest.json", "w") as f:
+        json.dump(result, f, indent=2, ensure_ascii=False)
+    print("✅ 回測結果已存成 backtest.json")
+    print("✅ 策略已更新為 strategy_out.py")
+
+    if os.getenv("NOTION_TOKEN") and os.getenv("NOTION_DB"):
+        send_to_notion(result)
+    if os.getenv("SLACK_WEBHOOK"):
+        send_to_slack(f"📈 每週回測結果: {json.dumps(result, ensure_ascii=False)}")
+
+    return result
 
 
+# === 主程式入口 ===
 if __name__ == "__main__":
-    mode = os.getenv("JOB_MODE", "daily")  # 預設 daily，可由 Actions 傳入 weekly
+    mode = os.getenv("JOB_MODE", "daily")
+
     if mode == "daily":
         daily_pipeline()
     elif mode == "weekly":
         weekly_pipeline()
     else:
-        raise ValueError(f"Unknown JOB_MODE={mode}")
+        print(f"⚠️ 未知模式: {mode}，請設置 JOB_MODE=daily 或 weekly")
