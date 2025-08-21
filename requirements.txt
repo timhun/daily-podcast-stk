@@ -14,7 +14,6 @@ pandas==2.2.2
 workalendar>=17.0.0
 holidays
 boto3
-#vectorbt
 twstock
 numba==0.58.1
 lxml
@@ -28,3 +27,5 @@ jq
 scikit-learn
 tensorflow
 feedparser
+backtesting
+joblib
