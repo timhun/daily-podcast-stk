@@ -3233,3 +3233,295 @@ Name: 114, dtype: object
 2025-08-21 13:50:20,515 - INFO - 🏁 Data Collector 結束
 2025-08-21 13:50:20,515 - INFO - 🏁 Data Collector 結束
 ✅ 完成 at 2025-08-21 13:50:20 CST
+📊 執行資料收集員 at 2025-08-21 18:16:58 CST
+2025-08-21 18:16:59,844 - INFO - 🚀 Data Collector 開始執行
+2025-08-21 18:16:59,844 - INFO - 🚀 Data Collector 開始執行
+2025-08-21 18:16:59,844 - INFO - 📥 處理 0050.TW
+2025-08-21 18:16:59,844 - INFO - 📥 處理 0050.TW
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:06,634 - INFO - ✅ 已更新 data/daily_0050.TW.csv (244 筆) | 最後一筆: Ticker
+   2025-08-21
+Name: 243, dtype: datetime64[ns] Close=Ticker
+0050.TW    52.0
+Name: 243, dtype: object
+2025-08-21 18:17:06,634 - INFO - ✅ 已更新 data/daily_0050.TW.csv (244 筆) | 最後一筆: Ticker
+   2025-08-21
+Name: 243, dtype: datetime64[ns] Close=Ticker
+0050.TW    52.0
+Name: 243, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:06,797 - INFO - ✅ 已更新 data/hourly_0050.TW.csv (98 筆) | 最後一筆: Ticker
+   2025-08-21 05:00:00+00:00
+Name: 114, dtype: datetime64[ns, UTC] Close=Ticker
+0050.TW    52.0
+Name: 114, dtype: object
+2025-08-21 18:17:06,797 - INFO - ✅ 已更新 data/hourly_0050.TW.csv (98 筆) | 最後一筆: Ticker
+   2025-08-21 05:00:00+00:00
+Name: 114, dtype: datetime64[ns, UTC] Close=Ticker
+0050.TW    52.0
+Name: 114, dtype: object
+2025-08-21 18:17:06,797 - INFO - 📥 處理 QQQ
+2025-08-21 18:17:06,797 - INFO - 📥 處理 QQQ
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:07,142 - INFO - ✅ 已更新 data/daily_QQQ.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+QQQ    565.900024
+Name: 249, dtype: object
+2025-08-21 18:17:07,142 - INFO - ✅ 已更新 data/daily_QQQ.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+QQQ    565.900024
+Name: 249, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:07,316 - INFO - ✅ 已更新 data/hourly_QQQ.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+QQQ    565.859985
+Name: 153, dtype: object
+2025-08-21 18:17:07,316 - INFO - ✅ 已更新 data/hourly_QQQ.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+QQQ    565.859985
+Name: 153, dtype: object
+2025-08-21 18:17:07,316 - INFO - 📥 處理 ^TWII
+2025-08-21 18:17:07,316 - INFO - 📥 處理 ^TWII
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:07,650 - INFO - ✅ 已更新 data/daily_^TWII.csv (244 筆) | 最後一筆: Ticker
+   2025-08-21
+Name: 243, dtype: datetime64[ns] Close=Ticker
+^TWII    23962.130859
+Name: 243, dtype: object
+2025-08-21 18:17:07,650 - INFO - ✅ 已更新 data/daily_^TWII.csv (244 筆) | 最後一筆: Ticker
+   2025-08-21
+Name: 243, dtype: datetime64[ns] Close=Ticker
+^TWII    23962.130859
+Name: 243, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:07,870 - INFO - ✅ 已更新 data/hourly_^TWII.csv (98 筆) | 最後一筆: Ticker
+   2025-08-21 05:00:00+00:00
+Name: 114, dtype: datetime64[ns, UTC] Close=Ticker
+^TWII    24003.640625
+Name: 114, dtype: object
+2025-08-21 18:17:07,870 - INFO - ✅ 已更新 data/hourly_^TWII.csv (98 筆) | 最後一筆: Ticker
+   2025-08-21 05:00:00+00:00
+Name: 114, dtype: datetime64[ns, UTC] Close=Ticker
+^TWII    24003.640625
+Name: 114, dtype: object
+2025-08-21 18:17:07,870 - INFO - 📥 處理 BTC-USD
+2025-08-21 18:17:07,870 - INFO - 📥 處理 BTC-USD
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:08,208 - INFO - ✅ 已更新 data/daily_BTC-USD.csv (300 筆) | 最後一筆: Ticker
+   2025-08-21
+Name: 365, dtype: datetime64[ns] Close=Ticker
+BTC-USD    113396.039062
+Name: 365, dtype: object
+2025-08-21 18:17:08,208 - INFO - ✅ 已更新 data/daily_BTC-USD.csv (300 筆) | 最後一筆: Ticker
+   2025-08-21
+Name: 365, dtype: datetime64[ns] Close=Ticker
+BTC-USD    113396.039062
+Name: 365, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:08,394 - INFO - ✅ 已更新 data/hourly_BTC-USD.csv (98 筆) | 最後一筆: Ticker
+   2025-08-21 10:00:00+00:00
+Name: 730, dtype: datetime64[ns, UTC] Close=Ticker
+BTC-USD    113396.039062
+Name: 730, dtype: object
+2025-08-21 18:17:08,394 - INFO - ✅ 已更新 data/hourly_BTC-USD.csv (98 筆) | 最後一筆: Ticker
+   2025-08-21 10:00:00+00:00
+Name: 730, dtype: datetime64[ns, UTC] Close=Ticker
+BTC-USD    113396.039062
+Name: 730, dtype: object
+2025-08-21 18:17:08,394 - INFO - 📥 處理 ^DJI
+2025-08-21 18:17:08,394 - INFO - 📥 處理 ^DJI
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:08,732 - INFO - ✅ 已更新 data/daily_^DJI.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+^DJI    44938.308594
+Name: 249, dtype: object
+2025-08-21 18:17:08,732 - INFO - ✅ 已更新 data/daily_^DJI.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+^DJI    44938.308594
+Name: 249, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:08,929 - INFO - ✅ 已更新 data/hourly_^DJI.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+^DJI    44923.75
+Name: 153, dtype: object
+2025-08-21 18:17:08,929 - INFO - ✅ 已更新 data/hourly_^DJI.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+^DJI    44923.75
+Name: 153, dtype: object
+2025-08-21 18:17:08,929 - INFO - 📥 處理 GC=F
+2025-08-21 18:17:08,929 - INFO - 📥 處理 GC=F
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:09,199 - INFO - ✅ 已更新 data/daily_GC=F.csv (253 筆) | 最後一筆: Ticker
+   2025-08-21
+Name: 252, dtype: datetime64[ns] Close=Ticker
+GC=F    3382.899902
+Name: 252, dtype: object
+2025-08-21 18:17:09,199 - INFO - ✅ 已更新 data/daily_GC=F.csv (253 筆) | 最後一筆: Ticker
+   2025-08-21
+Name: 252, dtype: datetime64[ns] Close=Ticker
+GC=F    3382.899902
+Name: 252, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:09,351 - INFO - ✅ 已更新 data/hourly_GC=F.csv (98 筆) | 最後一筆: Ticker
+   2025-08-21 10:00:00+00:00
+Name: 511, dtype: datetime64[ns, UTC] Close=Ticker
+GC=F    3382.899902
+Name: 511, dtype: object
+2025-08-21 18:17:09,351 - INFO - ✅ 已更新 data/hourly_GC=F.csv (98 筆) | 最後一筆: Ticker
+   2025-08-21 10:00:00+00:00
+Name: 511, dtype: datetime64[ns, UTC] Close=Ticker
+GC=F    3382.899902
+Name: 511, dtype: object
+2025-08-21 18:17:09,351 - INFO - 📥 處理 ^GSPC
+2025-08-21 18:17:09,351 - INFO - 📥 處理 ^GSPC
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:09,571 - INFO - ✅ 已更新 data/daily_^GSPC.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+^GSPC    6395.779785
+Name: 249, dtype: object
+2025-08-21 18:17:09,571 - INFO - ✅ 已更新 data/daily_^GSPC.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+^GSPC    6395.779785
+Name: 249, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:09,720 - INFO - ✅ 已更新 data/hourly_^GSPC.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+^GSPC    6394.879883
+Name: 153, dtype: object
+2025-08-21 18:17:09,720 - INFO - ✅ 已更新 data/hourly_^GSPC.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+^GSPC    6394.879883
+Name: 153, dtype: object
+2025-08-21 18:17:09,720 - INFO - 📥 處理 ^IXIC
+2025-08-21 18:17:09,720 - INFO - 📥 處理 ^IXIC
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:10,053 - INFO - ✅ 已更新 data/daily_^IXIC.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+^IXIC    21172.859375
+Name: 249, dtype: object
+2025-08-21 18:17:10,053 - INFO - ✅ 已更新 data/daily_^IXIC.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+^IXIC    21172.859375
+Name: 249, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:10,301 - INFO - ✅ 已更新 data/hourly_^IXIC.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+^IXIC    21170.191406
+Name: 153, dtype: object
+2025-08-21 18:17:10,301 - INFO - ✅ 已更新 data/hourly_^IXIC.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+^IXIC    21170.191406
+Name: 153, dtype: object
+2025-08-21 18:17:10,301 - INFO - 📥 處理 SPY
+2025-08-21 18:17:10,301 - INFO - 📥 處理 SPY
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:10,752 - INFO - ✅ 已更新 data/daily_SPY.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+SPY    638.109985
+Name: 249, dtype: object
+2025-08-21 18:17:10,752 - INFO - ✅ 已更新 data/daily_SPY.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+SPY    638.109985
+Name: 249, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:11,018 - INFO - ✅ 已更新 data/hourly_SPY.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+SPY    638.039978
+Name: 153, dtype: object
+2025-08-21 18:17:11,018 - INFO - ✅ 已更新 data/hourly_SPY.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+SPY    638.039978
+Name: 153, dtype: object
+2025-08-21 18:17:11,019 - INFO - 📥 處理 TSM
+2025-08-21 18:17:11,019 - INFO - 📥 處理 TSM
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:11,393 - INFO - ✅ 已更新 data/daily_TSM.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+TSM    228.600006
+Name: 249, dtype: object
+2025-08-21 18:17:11,393 - INFO - ✅ 已更新 data/daily_TSM.csv (250 筆) | 最後一筆: Ticker
+   2025-08-20
+Name: 249, dtype: datetime64[ns] Close=Ticker
+TSM    228.600006
+Name: 249, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:11,576 - INFO - ✅ 已更新 data/hourly_TSM.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+TSM    228.600006
+Name: 153, dtype: object
+2025-08-21 18:17:11,576 - INFO - ✅ 已更新 data/hourly_TSM.csv (98 筆) | 最後一筆: Ticker
+   2025-08-20 19:30:00+00:00
+Name: 153, dtype: datetime64[ns, UTC] Close=Ticker
+TSM    228.600006
+Name: 153, dtype: object
+2025-08-21 18:17:11,576 - INFO - 📥 處理 2330.TW
+2025-08-21 18:17:11,576 - INFO - 📥 處理 2330.TW
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:12,023 - INFO - ✅ 已更新 data/daily_2330.TW.csv (243 筆) | 最後一筆: Ticker
+   2025-08-21
+Name: 242, dtype: datetime64[ns] Close=Ticker
+2330.TW    1150.0
+Name: 242, dtype: object
+2025-08-21 18:17:12,023 - INFO - ✅ 已更新 data/daily_2330.TW.csv (243 筆) | 最後一筆: Ticker
+   2025-08-21
+Name: 242, dtype: datetime64[ns] Close=Ticker
+2330.TW    1150.0
+Name: 242, dtype: object
+/home/runner/work/daily-podcast-stk/daily-podcast-stk/scripts/data_collector.py:51: FutureWarning: YF.download() has changed argument auto_adjust default to True
+  df = yf.download(symbol, start=start_date, interval=interval, progress=False)
+2025-08-21 18:17:12,185 - INFO - ✅ 已更新 data/hourly_2330.TW.csv (98 筆) | 最後一筆: Ticker
+   2025-08-21 05:00:00+00:00
+Name: 114, dtype: datetime64[ns, UTC] Close=Ticker
+2330.TW    1155.0
+Name: 114, dtype: object
+2025-08-21 18:17:12,185 - INFO - ✅ 已更新 data/hourly_2330.TW.csv (98 筆) | 最後一筆: Ticker
+   2025-08-21 05:00:00+00:00
+Name: 114, dtype: datetime64[ns, UTC] Close=Ticker
+2330.TW    1155.0
+Name: 114, dtype: object
+2025-08-21 18:17:12,185 - INFO - 🏁 Data Collector 結束
+2025-08-21 18:17:12,185 - INFO - 🏁 Data Collector 結束
+✅ 完成 at 2025-08-21 18:17:12 CST
