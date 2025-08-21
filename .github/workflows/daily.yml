@@ -1,0 +1,25 @@
+name: Daily Run
+
+on:
+  schedule:
+    - cron: "0 9 * * *"  # 每日 UTC 09:00 → 台北 17:00
+  workflow_dispatch:
+
+jobs:
+  daily:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v4
+        with:
+          python-version: 3.11
+      - run: pip install -r requirements.txt
+      - run: python src/data.py
+      - run: python src/features.py
+      - run: python src/model.py
+      - run: python src/signal.py
+      - name: Upload Signal
+        uses: actions/upload-artifact@v3
+        with:
+          name: signal
+          path: signal.json
