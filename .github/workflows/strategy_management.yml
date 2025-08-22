@@ -1,43 +1,26 @@
-name: Strategy Manager
+name: Strategy Management
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0 22 * * *'  # 台灣時間 06:00 (UTC 22:00 前一天)
-    - cron: '0 6 * * *'   # 台灣時間 14:00 (UTC 06:00)
-    - cron: '0 11 * * *'  # 台灣時間 19:00 (UTC 11:00)
+    - cron: "30 */4 * * *"   # 每 4 小時 (比 data_collection 晚 30 分)
+  workflow_dispatch:
 
 jobs:
-  run-strategy-manager:
+  strategy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.11"
 
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install \
-            pandas \
-            matplotlib \
-            backtrader \
-            numpy \
-            scikit-learn \
-            tensorflow \
-            requests \
-            aiohttp
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-      - name: Run Strategy Manager
-        run: |
-          echo "🤖 執行策略管理師 at $(date '+%Y-%m-%d %H:%M:%S')"
-          python scripts/strategy_manager.py
-          echo "✅ 完成 at $(date '+%Y-%m-%d %H:%M:%S')"
+      - name: Run strategy management
+        run: python scripts/2_strategy_management.py
 
       - name: 💾 Commit and Push Generated Data
         run: |
