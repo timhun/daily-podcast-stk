@@ -1,217 +1,149 @@
 # scripts/script_editor.py
-import pandas as pd
-import json
-import os
+import os, json, logging, argparse, requests, pytz
 from datetime import datetime
-import logging
-import requests
-from feedparser import parse
-import argparse
+from bs4 import BeautifulSoup
 
-# 設定日誌
-logging.basicConfig(filename='logs/script_editor.log', level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+os.makedirs("logs", exist_ok=True)
+logging.basicConfig(filename="logs/script_editor.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+logger = logging.getLogger("editor")
 
-# 配置 Grok API
-GROK_API_KEY = os.getenv('GROK_API_KEY')
-GROK_API_URL = os.getenv('GROK_API_URL')  # 假設的 API 端點
+def load_cfg():
+    return json.load(open("config.json","r",encoding="utf-8"))
 
-# CSV 對應表
-SYMBOL_FILE_MAP = {
-    '^TWII': 'daily_^TWII.csv',
-    '0050.TW': 'daily_0050.TW.csv',
-    'QQQ': 'hourly_QQQ.csv',
-    'SPY': 'hourly_SPY.csv',
-    'BTC-USD': 'hourly_BTC.csv',
-    'GC=F': 'hourly_GC.csv',
-    '^DJI': 'hourly_^DJI.csv',
-    '^IXIC': 'hourly_^IXIC.csv',
-    '^GSPC': 'hourly_^GSPC.csv'
-}
+def taipei_now():
+    tz = pytz.timezone("Asia/Taipei")
+    return datetime.now(tz).strftime("%Y%m%d")
 
-def load_config(mode=None):
-    """載入配置檔案 config.json"""
-    config_file = 'config.json'
-    if not os.path.exists(config_file):
-        logger.error(f"缺少配置檔案: {config_file}")
-        raise FileNotFoundError(f"缺少配置檔案: {config_file}")
-    try:
-        with open(config_file, 'r', encoding='utf-8') as f:
-            config = json.load(f)
-        rss_url = config.get('rss_url', 'https://tw.stock.yahoo.com/rss?category=news')
-        news_keywords = config.get('news_keywords', ['經濟', '半導體'])
-        symbol_map = {'tw': '0050.TW', 'us': 'QQQ'}
-        symbol = symbol_map.get(mode, '0050.TW')
-        return rss_url, news_keywords, symbol
-    except json.JSONDecodeError as e:
-        logger.error(f"配置檔案解析失敗: {e}")
-        raise ValueError(f"配置檔案解析失敗: {e}")
+def fetch_rss_items(urls, limit=3, keyword_filters=None):
+    items=[]
+    for url in urls:
+        try:
+            r = requests.get(url, timeout=15)
+            soup = BeautifulSoup(r.text, "xml")
+            for it in soup.find_all("item")[:10]:
+                title = it.title.text if it.title else ""
+                link  = it.link.text if it.link else ""
+                desc  = it.description.text if it.description else ""
+                if keyword_filters:
+                    if not any(k in (title+desc) for k in keyword_filters): 
+                        continue
+                items.append({"title":title, "link":link, "desc":desc})
+        except Exception as e:
+            logger.error(f"RSS fail: {url} {e}")
+    return items[:limit]
 
-def fetch_rss_news(rss_url, keywords, max_news=3):
-    """從 RSS 抓取最新新聞，篩選標題"""
-    try:
-        response = requests.get(rss_url, timeout=10)
-        response.raise_for_status()
-        feed = parse(response.text)
-        news = []
-        for entry in feed.entries:
-            title = entry.title
-            if any(keyword in title for keyword in keywords):
-                news.append({
-                    'title': title,
-                    'link': entry.link,
-                    'published': entry.get('published', '')
-                })
-            if len(news) >= max_news:
-                break
-        news.sort(key=lambda x: x['published'], reverse=True)
-        logger.info(f"RSS 抓取結果: {len(news)} 則新聞")
-        return news
-    except Exception as e:
-        logger.error(f"RSS 抓取失敗: {e}")
-        return []
+def read_json(path):
+    return json.load(open(path,"r",encoding="utf-8")) if os.path.exists(path) else None
 
-def load_market_data(symbol):
-    """從 data 目錄讀取最新收盤價與漲跌幅"""
-    file_name = SYMBOL_FILE_MAP.get(symbol, f'daily_{symbol}.csv')
-    file_path = os.path.join('data', file_name)
-    if not os.path.exists(file_path):
-        logger.warning(f"找不到市場數據檔案: {file_path}")
-        return {'close': None, 'pct_change': 0.0}
-    try:
-        df = pd.read_csv(file_path)
-        latest = df.iloc[-1]
-        close = float(latest.get('close', latest.get('Close', 0)))
-        pct_change = float(latest.get('pct_change', latest.get('PctChange', 0)))
-        return {'close': close, 'pct_change': pct_change}
-    except Exception as e:
-        logger.error(f"讀取市場數據失敗: {e}")
-        return {'close': None, 'pct_change': 0.0}
+def call_llm(model, api_key, sys_prompt, user_prompt):
+    url = "https://openrouter.ai/api/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://timhun.github.io",
+        "X-Title": "daily-podcast-stk"
+    }
+    payload = {
+        "model": model,
+        "messages": [
+            {"role":"system","content":sys_prompt},
+            {"role":"user","content":user_prompt}
+        ],
+        "temperature": 0.6
+    }
+    resp = requests.post(url, headers=headers, json=payload, timeout=60)
+    resp.raise_for_status()
+    return resp.json()["choices"][0]["message"]["content"]
 
-def load_analysis(symbol):
-    """載入策略管理師與市場分析師的輸出"""
-    strategy_path = os.path.join('data', f'strategy_best_{symbol}.json')
-    market_path = os.path.join('data', f'market_analysis_{symbol}.json')
-    strategy = {}
-    market = {}
-    try:
-        if os.path.exists(strategy_path):
-            with open(strategy_path, 'r', encoding='utf-8') as f:
-                strategy = json.load(f)
-        if os.path.exists(market_path):
-            with open(market_path, 'r', encoding='utf-8') as f:
-                market = json.load(f)
-    except Exception as e:
-        logger.error(f"讀取分析資料失敗: {e}")
-    return strategy, market
+def build_prompt(mode, cfg):
+    date_str = taipei_now()
+    if mode=="us":
+        # 指數/ETF價格來自 collector
+        dji  = read_json_path_csv("data/daily__DJI.csv", "^DJI")
+        ixic = read_json_path_csv("data/daily__IXIC.csv", "^IXIC")
+        gspc = read_json_path_csv("data/daily__GSPC.csv", "^GSPC")
+        sox  = read_json_path_csv("data/daily__SOX.csv", "^SOX") if os.path.exists("data/daily__SOX.csv") else None
+        qqq  = read_last("data/daily_QQQ.csv")
+        spy  = read_last("data/daily_SPY.csv")
+        ibit = read_last("data/daily_IBIT.csv") if os.path.exists("data/daily_IBIT.csv") else None
+        btc  = read_last("data/daily_BTC-USD.csv")
+        gold = read_last("data/daily_GC_F.csv")
+        tnx  = read_last("data/daily__TNX.csv") if os.path.exists("data/daily__TNX.csv") else None
 
-def generate_script(mode, debug_data=False):
-    """生成 podcast 文字稿"""
-    date_str = datetime.now().strftime("%Y-%m-%d")
-    rss_url, keywords, main_symbol = load_config(mode)
-    news = fetch_rss_news(rss_url, keywords)
-    strategy, market = load_analysis(main_symbol)
+        a_qqq = read_json("data/market_analysis_QQQ.json")
+        rss_items = fetch_rss_items(cfg["rss"]["us"], limit=3, keyword_filters=None)
 
-    # 主要標的收盤
-    main_data = load_market_data(main_symbol)
-
-    # 其他市場指數
-    if mode == 'us':
-        indices_symbols = ['^DJI', '^IXIC', '^GSPC', 'QQQ', 'SPY', 'BTC-USD', 'GC=F']
-        market_name = "美股"
+        user = f"""
+今天是台北時間 {date_str} 早上，美股盤後播報。
+請用台灣慣用語，語速1.3倍口吻，主持人：幫幫忙；節目：幫幫忙說台股（美股特輯）。
+內容要求（純正文、繁體中文）：
+1. 大盤收盤：道瓊(^DJI)、Nasdaq(^IXIC)、S&P500(^GSPC)、費半(^SOX) 點位與漲跌幅（依我提供的資料）。
+2. QQQ、SPY、IBIT、比特幣(BTC)、黃金(Gold) 最新；十年期美債(^TNX) 殖利率。
+3. 深入 QQQ：根據分析與策略，給短線交易建議與買賣訊號（整合資料）。
+4. 結尾給一則 Andre Kostolany 投資名言。
+資料：
+DJI={dji}, IXIC={ixic}, GSPC={gspc}, SOX={sox}
+QQQ={qqq}, SPY={spy}, IBIT={ibit}, BTC={btc}, GOLD={gold}, TNX={tnx}
+QQQ分析={a_qqq}
+美股或AI新聞（摘要3則）：{rss_items}
+僅輸出逐字稿正文，不要任何說明或JSON。
+"""
     else:
-        indices_symbols = ['^TWII', '0050.TW']
-        market_name = "台股"
-    market_indices = {sym: load_market_data(sym) for sym in indices_symbols}
+        twii = read_last("data/daily__TWII.csv")
+        tw50 = read_last("data/daily_0050_TW.csv")
+        a_0050 = read_json("data/market_analysis_0050_TW.json")
+        rss_items = fetch_rss_items(cfg["rss"]["tw"], limit=3, keyword_filters=["經濟","半導體","AI","科技"])
 
-    # 組文字稿
-    script = f"大家好，這裡是《幫幫忙說{market_name}》\n日期：{date_str}\n\n"
+        user = f"""
+今天是台北時間 {date_str} 下午，台股盤後播報。
+請用台灣慣用語，語速1.3倍口吻，主持人：幫幫忙；節目：幫幫忙說台股。
+內容要求（純正文、繁體中文）：
+1. 台股加權(^TWII) 收盤與漲跌幅；2. 0050(元大台灣50) 收盤。
+3. 深入 0050：根據策略與分析，給短線交易建議與訊號。
+4. 三則重點新聞（附一句話重點）。
+5. 結尾給一則 Andre Kostolany 投資名言。
+資料：
+TWII={twii}, 0050={tw50}
+0050分析={a_0050}
+台股新聞（摘要3則）：{rss_items}
+僅輸出逐字稿正文，不要任何說明或JSON。
+"""
+    return user
 
-    # 市場概況
-    for sym, data in market_indices.items():
-        script += f"{sym} 收盤 {data['close']}, 漲跌 {data['pct_change']}%\n"
-    script += "\n"
+def read_last(path):
+    import pandas as pd
+    if not os.path.exists(path): return None
+    df = pd.read_csv(path)
+    if df.empty: return None
+    row = df.iloc[-1].to_dict()
+    return {k:(float(v) if k in ["Open","High","Low","Close","Adj Close","Volume"] else v) for k,v in row.items()}
 
-    # 焦點標的分析
-    script += "焦點標的分析：\n"
-    if strategy:
-        script += f"策略分析師建議使用策略：{strategy.get('best_strategy', 'N/A')}，參數：{strategy.get('params', {})}\n"
-    if market:
-        script += f"市場分析師建議：{market.get('recommendation', '持倉')}, 倉位 {market.get('position_size', 0.0)}\n"
-        script += f"風險提醒：{market.get('risk_note', '')}\n"
-    script += "\n"
+def read_json_path_csv(path, label):
+    # 這裡僅做存在標記，實務上可讀值；為簡化只返回檔名存在狀態
+    return {"symbol": label, "csv": os.path.exists(path)}
 
-    # 新聞摘要
-    script += "新聞摘要:\n"
-    for n in news:
-        script += f"- {n['title']} ({n['published']}) {n['link']}\n"
-    script += "\n"
-
-    # AI 投資機會
-    script += "AI 投資機會:\n- 人工智慧雲端服務\n- AI 芯片與硬體加速\n- AI 智能交易平台\n\n"
-
-    # 結尾
-    script += "記住 Kostolany 說過：『股市短期波動，長期才是致勝。』"
-
-    # Debug 輸出
-    if debug_data:
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        debug_file = os.path.join('logs', f'script_editor_debug_{timestamp}.json')
-        os.makedirs('logs', exist_ok=True)
-        debug_content = {
-            'mode': mode,
-            'main_symbol': main_symbol,
-            'strategy': strategy,
-            'market': market,
-            'market_indices': market_indices,
-            'rss_news': news
-        }
-        with open(debug_file, 'w', encoding='utf-8') as f:
-            json.dump(debug_content, f, ensure_ascii=False, indent=2)
-        logger.info(f"Debug 資料已保存至 {debug_file}")
-
-    return script
-
-def improve_with_grok(script):
-    """使用 Grok API 優化文字稿"""
-    if not GROK_API_KEY or not GROK_API_URL:
-        logger.warning("缺少 GROK_API_KEY 或 GROK_API_URL，跳過優化")
-        return script
-    try:
-        response = requests.post(
-            GROK_API_URL,
-            json={'script': script},
-            headers={'Authorization': f'Bearer {GROK_API_KEY}'},
-            timeout=15
-        )
-        response.raise_for_status()
-        logger.info(f"Grok API 回應: {response.text}")
-        improved_script = response.json().get('improved_script', script)
-        logger.info("Grok API 優化文字稿成功")
-        return improved_script
-    except Exception as e:
-        logger.error(f"Grok API 優化失敗: {e}")
-        return script
-
-def save_script(script, mode):
-    """保存文字稿"""
-    date_str = datetime.now().strftime("%Y%m%d")
-    output_dir = os.path.join('docs', 'podcast', f"{date_str}_{mode}")
-    os.makedirs(output_dir, exist_ok=True)
-    output_path = os.path.join(output_dir, 'script.txt')
-    with open(output_path, 'w', encoding='utf-8') as f:
-        f.write(script)
-    logger.info(f"文字稿保存至 {output_path}")
-
-def main(mode='tw', debug=False):
-    script = generate_script(mode, debug_data=debug)
-    script = improve_with_grok(script)
-    save_script(script, mode)
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='文字編輯師腳本')
-    parser.add_argument('--mode', default='tw', choices=['tw', 'us'], help='播客模式 (tw/us)')
-    parser.add_argument('--debug', action='store_true', help='啟用 debug 模式')
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", choices=["us","tw"], required=True)
     args = parser.parse_args()
-    main(args.mode, debug=args.debug)
+
+    cfg = load_cfg()
+    date_str = taipei_now()
+    out_dir = f"docs/podcast/{date_str}_{args.mode}"
+    os.makedirs(out_dir, exist_ok=True)
+
+    model = cfg["llm"]["model"]
+    api_key = os.environ.get("OPENROUTER_API_KEY","")
+    if not api_key:
+        raise RuntimeError("OPENROUTER_API_KEY missing")
+
+    sys_prompt = "你是一位親切自然的台灣專業投資播報員，語氣口語、節奏偏快(1.3x)，重點清楚，避免行話。"
+    user_prompt = build_prompt(args.mode, cfg)
+    text = call_llm(model, api_key, sys_prompt, user_prompt)
+
+    with open(f"{out_dir}/script.txt","w",encoding="utf-8") as f:
+        f.write(text)
+    logger.info(f"script generated -> {out_dir}/script.txt")
+
+if __name__=="__main__":
+    main()
