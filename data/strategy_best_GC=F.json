@@ -4,7 +4,7 @@
   "params": {
     "model_type": "rf"
   },
-  "return_pct": 25.0484,
-  "baseline_pct": 0.0465,
-  "timestamp": "2025-08-22 06:29:01"
+  "return_pct": 25.0594,
+  "baseline_pct": 0.047,
+  "timestamp": "2025-08-22 11:13:49"
 }
