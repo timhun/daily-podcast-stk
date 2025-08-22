@@ -1,5 +1,12 @@
 {
-  "symbols": ["0050.TW", "QQQ", "^TWII", "BTC-USD", "^DJI", "GC=F", "^GSPC", "^IXIC", "SPY", "TSM", "2330.TW"],
+  "timezone": "Asia/Taipei",
+  "site_base": "https://timhun.github.io/daily-podcast-stk",
+  "symbols": {
+    "us_daily": ["^DJI", "^IXIC", "^GSPC", "^SOX", "QQQ", "SPY", "IBIT", "GC=F", "^TNX", "BTC-USD"],
+    "tw_daily": ["^TWII", "0050.TW"],
+    "us_hourly": ["QQQ", "SPY"],
+    "tw_hourly": ["0050.TW"]
+  },
   "data_sources": {"yfinance": {"enabled": true}},
   "strategies": {
     "VolumeBreakout": {"volume_multiplier": 1.5},
@@ -9,8 +16,20 @@
     "tw": "zh-TW-YunJheNeural",
     "us": "en-US-GuyNeural"
   },
-  "rate": "+0%",
-  "volume": "+0%",
+  "rate": "+20%",
+  "volume": "+30%",
+  "tts": {
+    "voice": "zh-TW-YunJheNeural",
+    "rate": "+20%",
+    "volume": "+30%"
+  },
+  "llm": {
+    "provider": "openrouter",
+    "model": "openai/gpt-4o-mini", 
+    "temperature": 0.6,
+    "max_tokens": 2200
+  },
+  "cleanup_days": 14,
   "b2": {
     "key_id": "your_b2_key_id",
     "application_key": "your_b2_application_key",
@@ -27,7 +46,14 @@
     "apple": {"enabled": true},
     "google": {"enabled": false, "api_key": ""}
   },
-  "rss_url": "https://tw.stock.yahoo.com/rss?category=news",
+  "history": {
+    "days_daily": 300,
+    "days_hourly": 14
+  },
+  "rss": {
+    "tw": ["https://tw.stock.yahoo.com/rss?category=news"],
+    "us": ["https://news.google.com/rss/search?q=site:reuters.com+AI+OR+economy&hl=en-US&gl=US&ceid=US:en"]
+  },
   "grok_api_url": "https://api.grok.xai.com/v1/improve_strategy",
   "slack_webhook_url": "https://bbm-a1u4547.slack.com/archives/D09AGLZ7JMA",
   "retain_daily": 300,
