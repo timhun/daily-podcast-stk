@@ -2,63 +2,25 @@ name: Market Analysis
 
 on:
   schedule:
-    # 台灣時間 05:00 分析 QQQ (UTC 21:00)
-    - cron: '0 21 * * *'
-    # 台灣時間 14:00 分析 0050.TW (UTC 06:00)
-    - cron: '0 6 * * *'
+    - cron: "15 */6 * * *"   # 每 6 小時
   workflow_dispatch:
-    inputs:
-      symbol:
-        description: '指定單一分析符號 (可選)'
-        required: false
-        default: '^IXIC'  # 手動跑預設 ^IXIC
 
 jobs:
-  market-analysis:
+  analysis:
     runs-on: ubuntu-latest
-    env:
-      CI_TEST: 0  # 設 1 代表 CI 模式，只跑少量資料快速測試
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.11"
 
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install pandas numpy
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-      - name: Ensure Folders
-        run: |
-          mkdir -p logs
-          mkdir -p data
-
-      - name: Determine Symbol
-        id: set_symbol
-        run: |
-          if [ "${{ github.event.inputs.symbol }}" != "" ]; then
-            echo "symbol=${{ github.event.inputs.symbol }}" >> $GITHUB_OUTPUT
-          else
-            HOUR=$(date -u +%H)
-            if [ $HOUR -eq 21 ]; then
-              echo "symbol=^IXIC" >> $GITHUB_OUTPUT
-            elif [ $HOUR -eq 6 ]; then
-              echo "symbol=^TWII" >> $GITHUB_OUTPUT
-            else
-              echo "symbol=^IXIC" >> $GITHUB_OUTPUT
-            fi
-          fi
-
-      - name: Run Market Analyst
-        if: steps.set_symbol.outputs.symbol != ''
-        run: |
-          echo "📊 執行市場分析師 for ${{ steps.set_symbol.outputs.symbol }}"
-          python scripts/market_analyst.py "${{ steps.set_symbol.outputs.symbol }}"
-          echo "✅ 分析完成 at $(date '+%Y-%m-%d %H:%M:%S')"
+      - name: Run market analysis
+        run: python scripts/3_market_analysis.py
 
       - name: Commit and Push Analysis Results
         run: |
