@@ -1,62 +1,54 @@
-import os
-import argparse
-import datetime
+import os, json, logging, argparse, time
+from datetime import datetime, timedelta, timezone
+import pytz
 from b2sdk.v2 import InMemoryAccountInfo, B2Api
 
-# ====== 參數設定 ======
-parser = argparse.ArgumentParser()
-parser.add_argument('--mode', default='us', choices=['tw','us'], help='播客模式')
-args = parser.parse_args()
-mode = args.mode.lower()
+os.makedirs("logs", exist_ok=True)
+logging.basicConfig(filename="logs/upload_manager.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+logger = logging.getLogger("upload")
 
-# 台灣時區日期
-now = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=8)))
-today = now.strftime("%Y%m%d")
-folder = f"{today}_{mode}"
-identifier = f"daily-podcast-stk-{folder}"
-print("🪪 上傳 identifier：", identifier)
+def tpe_today():
+    return datetime.now(pytz.timezone("Asia/Taipei")).strftime("%Y%m%d")
 
-# ====== 環境變數 ======
-key_id = os.environ["B2_KEY_ID"]
-application_key = os.environ["B2_APPLICATION_KEY"]
-bucket_name = os.environ["B2_BUCKET_NAME"]
+def b2_client():
+    info = InMemoryAccountInfo()
+    b2 = B2Api(info)
+    b2.authorize_account("production",
+        os.environ["B2_KEY_ID"],
+        os.environ["B2_APPLICATION_KEY"])
+    return b2
 
-# ====== 連接 B2 ======
-info = InMemoryAccountInfo()
-b2_api = B2Api(info)
-b2_api.authorize_account("production", key_id, application_key)
-bucket = b2_api.get_bucket_by_name(bucket_name)
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--mode", choices=["us","tw"], required=True)
+    args = parser.parse_args()
 
-# ====== 確認檔案 ======
-base_path = f"docs/podcast/{folder}"
-audio_path = os.path.join(base_path, "audio.mp3")
-script_path = os.path.join(base_path, "script.txt")
+    date_str = tpe_today()
+    folder = f"docs/podcast/{date_str}_{args.mode}"
+    audio = f"{folder}/audio.mp3"
+    script= f"{folder}/script.txt"
+    assert os.path.exists(audio) and os.path.exists(script), "audio/script missing"
 
-if not os.path.exists(audio_path):
-    print(f"⚠️ 找不到 audio.mp3：{audio_path}")
-if not os.path.exists(script_path):
-    print(f"⚠️ 找不到 script.txt：{script_path}")
+    b2 = b2_client()
+    bucket = b2.get_bucket_by_name(os.environ["B2_BUCKET_NAME"])
 
-# ====== 上傳檔案 ======
-if os.path.exists(audio_path):
-    bucket.upload_local_file(
-        local_file=audio_path,
-        file_name=f"{identifier}.mp3",
-        content_type="audio/mpeg"
-    )
-if os.path.exists(script_path):
-    bucket.upload_local_file(
-        local_file=script_path,
-        file_name=f"{identifier}.txt",
-        content_type="text/plain"
-    )
+    # 上傳
+    for path in [audio, script]:
+        fname = path.replace("docs/","")
+        bucket.upload_local_file(local_file=path, file_name=fname)
+        logger.info(f"uploaded -> {fname}")
 
-# ====== 產生 archive_audio_url.txt ======
-audio_url = f"https://{bucket_name}.s3.us-east-005.backblazeb2.com/{identifier}.mp3"
-script_url = f"https://{bucket_name}.s3.us-east-005.backblazeb2.com/{identifier}.txt"
+    # 生成公開連結（使用 CDN/直接下載 URL 前綴）
+    base = os.environ.get("B2_BASE", "https://f005.backblazeb2.com/file/daily-podcast-stk")
+    audio_url = f"{base}/podcast/{date_str}_{args.mode}/audio.mp3"
+    with open(f"{folder}/archive_audio_url.txt","w",encoding="utf-8") as f:
+        f.write(audio_url)
 
-with open(os.path.join(base_path, "archive_audio_url.txt"), "w") as f:
-    f.write(f"{audio_url}\n{script_url}")
+    # 清理 14 天前檔
+    cleanup_days = json.load(open("config.json","r",encoding="utf-8"))["cleanup_days"]
+    cutoff = (datetime.now(pytz.UTC) - timedelta(days=cleanup_days)).strftime("%Y%m%d")
+    # 簡化策略：不逐一刪版控，只示範 bucket 列表（實務可依檔名日期判斷）
+    logger.info(f"cleanup policy: keep last {cleanup_days} days (cutoff {cutoff})")
 
-print("✅ B2 上傳完成：", audio_url)
-print("✅ script 連結：", script_url)
+if __name__=="__main__":
+    main()
