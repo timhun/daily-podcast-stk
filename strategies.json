@@ -1,7 +1,9 @@
 {
+  "universe": ["0050.TW", "QQQ"],
+  "baseline": "buy_and_hold",
   "strategies": [
-    {"name": "VolumeBreakout", "params": {"volume_multiplier": 1.5}},
-    {"name": "MLStrategy", "params": {"model_type": "rf"}},
-    {"name": "MLStrategy", "params": {"model_type": "lstm"}}
+    {"name": "sma_crossover", "params": {"short": [5, 10], "long": [20, 50]}},
+    {"name": "rsi_meanrev", "params": {"period": [14], "low": [30], "high": [70]}},
+    {"name": "rf_classifier", "params": {"n_estimators": [100], "max_depth": [3, 5]}}
   ]
 }
