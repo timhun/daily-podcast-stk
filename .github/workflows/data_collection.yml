@@ -2,53 +2,30 @@ name: Data Collection
 
 on:
   schedule:
-    - cron: '0 21 * * *'   # 05:00 CST
-    - cron: '45 5 * * *'   # 13:45 CST
-    - cron: '0 10 * * *'   # 18:00 CST
-    - cron: '0 14 * * *'   # 22:00 CST
-  workflow_dispatch:
+    - cron: "0 */4 * * *"   # 每 4 小時
+  workflow_dispatch:        # 手動觸發
 
 jobs:
-  data-collection:
+  collect-data:
     runs-on: ubuntu-latest
     steps:
-      - name: 📥 Checkout Repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          python-version: "3.11"
 
-      - name: 🐍 Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
+      - name: Install dependencies
+        run: pip install -r requirements.txt
 
-      - name: 🕒 Set Timezone to Taipei
-        run: sudo timedatectl set-timezone Asia/Taipei
+      - name: Run data collection
+        run: python scripts/1_data_collection.py
 
-      - name: 📦 Install Dependencies
+      - name: Commit and Push CSV
         run: |
-          python -m pip install --upgrade pip
-          pip install yfinance pandas pytz
-
-      - name: 📂 Create Data and Logs Directories
-        run: |
-          mkdir -p data logs
-          chmod -R 755 data logs
-
-      - name: ▶️ Run Data Collector
-        run: |
-          echo "📊 執行資料收集員 at $(date '+%Y-%m-%d %H:%M:%S CST')" | tee -a logs/data_collector.log
-          python scripts/data_collector.py 2>&1 | tee -a logs/data_collector.log
-          echo "✅ 完成 at $(date '+%Y-%m-%d %H:%M:%S CST')" | tee -a logs/data_collector.log
-        env:
-          PYTHONUNBUFFERED: 1
-
-      - name: 💾 Commit and Push CSV & Logs
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/*.csv logs/data_collector.log
-          git commit -m "Update data & logs [$(date '+%Y-%m-%d %H:%M:%S CST')]" || echo "ℹ️ No changes to commit"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/*.csv
+          git commit -m "Auto update data CSV"
           git push
-        env:
-          PYTHONUNBUFFERED: 1
