@@ -1,6 +1,7 @@
 name: TW Podcast
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 6 * * *'  # UTC 06:00 = TW 14:00
 
