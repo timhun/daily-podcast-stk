@@ -1,42 +1,48 @@
 #podcast_producer.py
-import os, json, logging, argparse, asyncio
-import edge_tts
+import os
+import logging
+import subprocess
 from datetime import datetime
 import pytz
 
-os.makedirs("logs", exist_ok=True)
-logging.basicConfig(filename="logs/podcast_producer.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-logger = logging.getLogger("tts")
+logging.basicConfig(filename='logs/podcast_producer.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
-def load_cfg():
-    return json.load(open("config.json","r",encoding="utf-8"))
+def main(mode_input=None):
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+    
+    tw_tz = pytz.timezone('Asia/Taipei')
+    now = datetime.now(tw_tz)
+    today_str = now.strftime('%Y%m%d')
+    
+    if mode_input:
+        mode = mode_input
+    else:
+        mode = 'us' if now.hour < 12 else 'tw'
+    
+    dir_path = f"docs/podcast/{today_str}_{mode}"
+    script_file = f"{dir_path}/script.txt"
+    audio_file = f"{dir_path}/audio.mp3"
+    
+    if not os.path.exists(script_file):
+        logging.error(f"Missing script for {mode}")
+        return
+    
+    # Use edge-tts via subprocess (assume installed)
+    cmd = [
+        "edge-tts",
+        "--voice", config['voice'],
+        "--text", open(script_file, 'r', encoding='utf-8').read(),
+        "--write-media", audio_file
+    ]
+    try:
+        subprocess.run(cmd, check=True)
+        file_size = os.path.getsize(audio_file)
+        logging.info(f"Generated audio: {audio_file}, size: {file_size} bytes")
+    except Exception as e:
+        logging.error(f"TTS error: {e}")
 
-def today_tpe():
-    return datetime.now(pytz.timezone("Asia/Taipei")).strftime("%Y%m%d")
-
-async def tts(text, voice, rate, volume, out):
-    com = edge_tts.Communicate(text, voice=voice, rate=rate, volume=volume)
-    await com.save(out)
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=["us","tw"], required=True)
-    args = parser.parse_args()
-
-    cfg = load_cfg()
-    date_str = today_tpe()
-    folder = f"docs/podcast/{date_str}_{args.mode}"
-    script_path = f"{folder}/script.txt"
-    audio_path = f"{folder}/audio.mp3"
-    assert os.path.exists(script_path), "script.txt not found"
-
-    text = open(script_path,"r",encoding="utf-8").read()
-    voice = cfg["tts"]["voice"]
-    rate  = cfg["tts"]["rate"]
-    volume= cfg["tts"]["volume"]
-
-    asyncio.run(tts(text, voice, rate, volume, audio_path))
-    logger.info(f"TTS saved -> {audio_path}")
-
-if __name__=="__main__":
-    main()
+if __name__ == "__main__":
+    import sys
+    mode = sys.argv[1] if len(sys.argv) > 1 else None
+    main(mode)
