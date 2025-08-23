@@ -1,9 +1,0 @@
-今日是 {current_date}，歡迎收聽幫幫忙每日投資快報 - 美股版！以下是市場概況：
-
-{market_data}
-
-根據我們的量價策略，今日訊號為：{SIG}，參考價格為 {PRICE}，量增率 {VOLUME_RATE}%，部位規模 {SIZE}%。  
-回測表現：Sharpe Ratio {OOS_SHARPE}，最大回撤 {OOS_MDD}。  
-歷史策略回顧：{LATEST_HISTORY}
-
-感謝收聽！請訂閱以獲取每日更新！
