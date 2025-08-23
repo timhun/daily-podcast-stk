@@ -20,7 +20,7 @@ os.makedirs(BASE_DIR, exist_ok=True)
 # 檔案路徑
 MARKET_DATA_FILE = f"{BASE_DIR}/market_data_tw.json"
 SIGNAL_FILE = f"{BASE_DIR}/bullish_signal_tw.txt"
-AI_TOPIC_FILE = "ai_topic.txt"
+#AI_TOPIC_FILE = "ai_topic.txt"
 OUTPUT_SCRIPT = f"{BASE_DIR}/script.txt"
 
 def load_text_file(filepath: str) -> str:
@@ -52,7 +52,7 @@ def main():
         raise FileNotFoundError(f"❌ 找不到 JSON 資料：{MARKET_DATA_FILE}") from e
 
     bullish_signal = load_text_file(SIGNAL_FILE)
-    ai_topic = load_text_file(AI_TOPIC_FILE)
+    #ai_topic = load_text_file(AI_TOPIC_FILE)
 
     # 格式化 prompt
     today_display = datetime.now(pytz.timezone("Asia/Taipei")).strftime("%Y年%m月%d日")
@@ -62,7 +62,6 @@ def main():
         date=today_display,
         market_data=market_data_str,
         bullish_signal=bullish_signal,
-        ai_topic=ai_topic,
     )
 
     print("📨 傳送合成後 prompt 給 Grok...")
