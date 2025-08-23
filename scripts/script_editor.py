@@ -1,131 +1,78 @@
 # scripts/script_editor.py
-import feedparser
+import pandas as pd
 import json
 import os
-import logging
-from openai import OpenAI
-from datetime import datetime, timedelta
-import pytz
-import pandas as pd
-import random
+import sys
+from sklearn.ensemble import RandomForestClassifier
+from xgboost import XGBClassifier
+from statsmodels.tsa.arima.model import ARIMA
+from utils import setup_json_logger, get_grok_client, slack_alert
+import numpy as np
+from sklearn.metrics import accuracy_score
 
-logging.basicConfig(filename='logs/script_editor.log', level=logging.INFO, format='%(asctime)s - %(message)s')
+logger = setup_json_logger('strategy_manager')
 
-def get_latest_news(rss_url, categories, limit):
-    feed = feedparser.parse(rss_url)
-    news = []
-    now = datetime.now(pytz.utc)
-    for entry in feed.entries:
-        pub_date = datetime(*entry.published_parsed[:6], tzinfo=pytz.utc)
-        if (now - pub_date) <= timedelta(hours=24):
-            if any(cat in entry.title or cat in entry.summary for cat in categories):
-                news.append({"title": entry.title, "summary": entry.summary, "link": entry.link})
-        if len(news) >= limit:
-            break
-    return news
+def optimize_params(strategy_name, params, performance):
+    client = get_grok_client()
+    prompt = f"Optimize params for {strategy_name} for short-term trading (1-3 days). Performance: {performance}. Current: {params}."
+    response = client.chat.completions.create(model="grok-4-mini", messages=[{"role": "user", "content": prompt}])
+    return json.loads(response.choices[0].message.content)  # Assume JSON response
 
-def generate_script(mode, config, analysis, data, news):
-    client = OpenAI(base_url="https://api.x.ai/v1", api_key=os.environ['GROK_API_KEY'])
-    
-    if mode == 'tw':
-        twii_close = data['^TWII']['Close']
-        twii_change = data['^TWII']['Change']
-        etf_close = data['0050.TW']['Close']
-        
-        prompt = f"""
-        生成繁體中文播客逐字稿，節目名稱：{config['podcast_title_tw']}，主持人：{config['host_name']}。
-        結構：
-        1. 今日台股加權指數收盤：{twii_close}點，漲跌幅：{twii_change:.2%}。
-        2. 0050收盤價：{etf_close}。
-        3. 針對0050短線策略：{analysis}。
-        4. 三則新聞：{news}，每則加重點說明。
-        5. 結尾：{random.choice(config['kosto_quotes'])}。
-        注意：繁體中文、台灣用語、<3000字、僅輸出正文。
-        """
-    
-    elif mode == 'us':
-        dji_close = data['^DJI']['Close']
-        dji_change = data['^DJI']['Change']
-        nasdaq_close = data['^IXIC']['Close']
-        nasdaq_change = data['^IXIC']['Change']
-        sp_close = data['^GSPC']['Close']
-        sp_change = data['^GSPC']['Change']
-        qqq_close = data['QQQ']['Close']
-        spy_close = data['SPY']['Close']
-        btc_close = data['BTC-USD']['Close']
-        gc_close = data['GC=F']['Close']
-        
-        prompt = f"""
-        生成繁體中文播客逐字稿，節目名稱：{config['podcast_title_us']}，主持人：{config['host_name']}。
-        結構：
-        1. 美股大盤：道瓊{dji_close}點({dji_change:.2%})，Nasdaq {nasdaq_close}點({nasdaq_change:.2%})，S&P500 {sp_close}點({sp_change:.2%})。
-        2. QQQ：{qqq_close}，SPY：{spy_close}，BTC：{btc_close}，黃金：{gc_close}。
-        3. 針對QQQ短線策略：{analysis}。
-        4. 結尾：{random.choice(config['kosto_quotes'])}。
-        注意：繁體中文、台灣用語、<3000字、僅輸出正文。
-        """
-    
-    response = client.chat.completions.create(
-        model=config['grok_model'],
-        messages=[{"role": "user", "content": prompt}]
-    )
-    script = response.choices[0].message.content.strip()
-    logging.info(f"Generated script length: {len(script)}")
-    return script
-
-def get_latest_data(mode):
-    data = {}
-    symbols = json.load(open('config.json'))['symbols'][mode]
-    for sym in symbols:
-        file = f"data/daily_{sym.replace('.', '_').replace('^', '')}.csv"
-        if os.path.exists(file):
-            df = pd.read_csv(file, index_col='Date', parse_dates=True)
-            latest = df.iloc[-1]
-            change = (latest['Close'] - latest['Open']) / latest['Open']
-            data[sym] = {'Close': latest['Close'], 'Change': change}
-    return data
-
-def main(mode_input=None):
+def main(mode=None):
     with open('config.json', 'r') as f:
         config = json.load(f)
+    with open('strategies.json', 'r') as f:
+        strategies = json.load(f)
     
-    tw_tz = pytz.timezone('Asia/Taipei')
-    now = datetime.now(tw_tz)
-    today_str = now.strftime('%Y%m%d')
+    focus_symbol = 'QQQ' if mode == 'us' else '0050.TW'
+    clean_symbol = focus_symbol.replace('.', '').replace('^', '')
     
-    if mode_input:
-        mode = mode_input
-    else:
-        mode = 'us' if now.hour < 12 else 'tw'
-    
-    focus_sym = '0050TW' if mode == 'tw' else 'QQQ'
-    analysis_file = f"data/market_analysis_{focus_sym}.json"
-    if not os.path.exists(analysis_file):
-        logging.error(f"Missing analysis for {focus_sym}")
+    daily_file = f"data/daily_{clean_symbol}.csv"
+    if not os.path.exists(daily_file):
+        slack_alert(f"Missing data for {focus_symbol}")
         return
     
-    with open(analysis_file, 'r') as f:
-        analysis = json.dumps(json.load(f))
+    df = pd.read_csv(daily_file, index_col='Date', parse_dates=True)
+    df['Return'] = df['Close'].pct_change()
+    df['Label'] = np.where(df['Return'] > 0, 1, 0)
+    df.dropna(inplace=True)
     
-    data = get_latest_data(mode)
+    # ARIMA baseline
+    arima_model = ARIMA(df['Close'], order=(1,1,1)).fit()
+    arima_preds = (arima_model.predict(start=len(df)-len(df)//5, end=len(df)-1) > df['Close'].shift(1)).astype(int)
+    baseline_acc = accuracy_score(df['Label'][-len(arima_preds):], arima_preds)
     
-    news = []
-    if mode == 'tw':
-        news = get_latest_news(config['rss_url'], config['news_categories'], config['news_limit'])
-        news_str = json.dumps(news)
+    best_strategy = None
+    best_win_rate = 0
+    best_params = {}
+    
+    for strat in strategies['strategies']:
+        if strat['name'] in ['RandomForest', 'XGBoost']:
+            X = df[['Open', 'High', 'Low', 'Volume']].values[:-1]
+            y = df['Label'].values[1:]
+            model = RandomForestClassifier(**strat['params']) if strat['name'] == 'RandomForest' else XGBClassifier(**strat['params'])
+            model.fit(X[:int(0.8*len(X))], y[:int(0.8*len(X))])
+            preds = model.predict(X[int(0.8*len(X)):])
+            acc = accuracy_score(y[int(0.8*len(X)):], preds)
+        
+        # Add LSTM (similar to previous)
+        
+        logger.info(json.dumps({"symbol": focus_symbol, "strategy": strat['name'], "win_rate": acc}))
+        if acc > baseline_acc + 0.05 and acc > best_win_rate:
+            best_win_rate = acc
+            best_strategy = strat['name']
+            best_params = strat['params']
+    
+    if best_strategy and best_win_rate > 0.55:
+        optimized = optimize_params(best_strategy, best_params, f"Win rate: {best_win_rate}")
+        output = {"strategy": best_strategy, "params": optimized, "win_rate": best_win_rate, "baseline": baseline_acc}
+        json_file = f"data/strategy_best_{clean_symbol}.json"
+        with open(json_file, 'w') as f:
+            json.dump(output, f)
+        logger.info(json.dumps({"symbol": focus_symbol, "output": output}))
     else:
-        news_str = ""  # US no news in remark
-    
-    script = generate_script(mode, config, analysis, data, news_str)
-    
-    dir_path = f"docs/podcast/{today_str}_{mode}"
-    os.makedirs(dir_path, exist_ok=True)
-    script_file = f"{dir_path}/script.txt"
-    with open(script_file, 'w', encoding='utf-8') as f:
-        f.write(script)
-    logging.info(f"Saved script to {script_file}")
+        slack_alert(f"No strategy for {focus_symbol} exceeds threshold (win_rate: {best_win_rate})")
 
 if __name__ == "__main__":
-    import sys
-    mode = sys.argv[1] if len(sys.argv) > 1 else None
+    mode = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1] in ['us', 'tw'] else None
     main(mode)
