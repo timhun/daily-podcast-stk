@@ -1,12 +1,20 @@
-name: Market Analysis
+name: Podcast Production to Feed
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # Every 6 hours (UTC)
+    - cron: '0 22 * * *'  # UTC 22:00 ~ TW 06:00 (US mode)
+    - cron: '0 6 * * *'   # UTC 06:00 ~ TW 14:00 (TW mode)
 
 jobs:
-  analyze:
+  produce:
     runs-on: ubuntu-latest
+    env:
+      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+      B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+      B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+      B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -14,13 +22,20 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install dependencies
-        run: pip install pandas numpy pytz
-      - name: Run market analyst
-        run: python scripts/market_analyst.py
+        run: |
+          pip install feedparser openai pandas pytz edge-tts b2sdk slack-sdk
+      - name: Generate script
+        run: python scripts/script_editor.py
+      - name: Produce audio
+        run: python scripts/podcast_producer.py
+      - name: Upload to B2
+        run: python scripts/upload_manager.py
+      - name: Publish feed and notify
+        run: python scripts/feed_publisher.py
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add data/market_analysis_*
-          git commit -m "Update market analysis" || echo "No changes to commit"
+          git add docs/
+          git commit -m "Update podcast files and RSS" || echo "No changes to commit"
           git push
