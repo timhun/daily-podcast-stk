@@ -2,30 +2,27 @@ name: Strategy Management
 
 on:
   schedule:
-    - cron: "30 */4 * * *"   # 每 4 小時 (比 data_collection 晚 30 分)
-  workflow_dispatch:
+    - cron: '0 */4 * * *'  # Every 4 hours (UTC)
 
 jobs:
-  strategy:
+  manage:
     runs-on: ubuntu-latest
+    env:
+      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-
+          python-version: '3.12'
       - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run strategy management
-        run: python scripts/2_strategy_management.py
-
-      - name: 💾 Commit and Push Generated Data
+        run: pip install pandas scikit-learn torch openai numpy
+      - name: Run strategy manager
+        run: python scripts/strategy_manager.py
+      - name: Commit changes
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add logs/*.log data/strategy_best_*.json || true
-          git commit -m "🔄 Update logs & strategy JSON [skip ci]" || echo "No changes to commit"
-          git push origin main --force
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/strategy_best_*
+          git commit -m "Update strategy results" || echo "No changes to commit"
+          git push
