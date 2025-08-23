@@ -1,49 +1,52 @@
 # scripts/data_collector.py
-import os, json, time, logging, argparse
-from datetime import datetime, timedelta, timezone
-import pandas as pd
 import yfinance as yf
+import pandas as pd
+import os
+import json
+from datetime import datetime, timedelta
+import time
+import logging
+import pytz
 
-os.makedirs("data", exist_ok=True)
-logging.basicConfig(filename="logs/data_collector.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-logger = logging.getLogger("collector")
-
-RETRY = 3
-DELAY = 3  # seconds
-
-def load_config():
-    with open("config.json","r",encoding="utf-8") as f:
-        return json.load(f)
-
-def fetch_and_save(ticker: str, period: str, interval: str, out_prefix: str):
-    for i in range(RETRY):
-        try:
-            df = yf.download(ticker, period=period, interval=interval, auto_adjust=False, progress=False)
-            if df is None or df.empty:
-                raise ValueError("empty frame")
-            df = df.reset_index()
-            out = f"data/{out_prefix}_{ticker.replace('=','').replace('^','').replace('.','_')}.csv"
-            df.to_csv(out, index=False)
-            logger.info(f"{ticker} {interval} saved -> {out} rows={len(df)}")
-            return True
-        except Exception as e:
-            logger.error(f"[{i+1}/{RETRY}] {ticker} {interval} fail: {e}")
-            time.sleep(DELAY)
-    return False
+logging.basicConfig(filename='logs/data_collector.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
 def main():
-    os.makedirs("logs", exist_ok=True)
-    cfg = load_config()
-    days_daily = cfg["history"]["days_daily"]
-    days_hourly = cfg["history"]["days_hourly"]
-
-    # daily
-    for t in cfg["symbols"]["us_daily"] + cfg["symbols"]["tw_daily"]:
-        fetch_and_save(t, f"{days_daily}d", "1d", "daily")
-
-    # hourly
-    for t in cfg["symbols"]["us_hourly"] + cfg["symbols"]["tw_hourly"]:
-        fetch_and_save(t, f"{days_hourly}d", "60m", "hourly")
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+    
+    tw_tz = pytz.timezone('Asia/Taipei')
+    today = datetime.now(tw_tz)
+    
+    os.makedirs('data', exist_ok=True)
+    
+    all_symbols = config['symbols']['tw'] + config['symbols']['us']
+    
+    for symbol in all_symbols:
+        for attempt in range(config['retry_times'] + 1):
+            try:
+                # Daily data (last 300 days)
+                daily_data = yf.download(symbol, period=f"{config['data_retention_days']}d", interval="1d")
+                if daily_data.empty:
+                    raise ValueError("Empty data")
+                daily_file = f"data/daily_{symbol.replace('.', '_').replace('^', '')}.csv"
+                daily_data.to_csv(daily_file)
+                logging.info(f"Downloaded daily data for {symbol}: {daily_data.shape}")
+                
+                # Hourly data (last 14 days)
+                hourly_data = yf.download(symbol, period=f"{config['hourly_retention_days']}d", interval="1h")
+                if hourly_data.empty:
+                    raise ValueError("Empty data")
+                hourly_file = f"data/hourly_{symbol.replace('.', '_').replace('^', '')}.csv"
+                hourly_data.to_csv(hourly_file)
+                logging.info(f"Downloaded hourly data for {symbol}: {hourly_data.shape}")
+                
+                time.sleep(config['delay_sec'])
+                break
+            except Exception as e:
+                logging.error(f"Error for {symbol} (attempt {attempt}): {e}")
+                if attempt == config['retry_times']:
+                    raise
+                time.sleep(config['delay_sec'])
 
 if __name__ == "__main__":
     main()
