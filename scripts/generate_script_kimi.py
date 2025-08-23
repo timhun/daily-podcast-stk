@@ -58,7 +58,7 @@ with open(prompt_file, "r", encoding="utf-8") as f:
 # === 組合完整 prompt ===
 prompt = prompt_template.format(
     date=today_display,
-    market_data=market_data_str,
+    market_data=market_data,
     bullish_signal=bullish_signal,
 )
 
