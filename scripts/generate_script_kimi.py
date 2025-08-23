@@ -59,7 +59,7 @@ with open(prompt_file, "r", encoding="utf-8") as f:
 prompt = prompt_template.format(
     date=today_display,
     market_data=market_data,
-    bullish_signal=bullish_signal
+    bullish_signal=bullish_signal,
 )
 
 # === 優先順序：Grok → Kimi → OpenRouter ===
