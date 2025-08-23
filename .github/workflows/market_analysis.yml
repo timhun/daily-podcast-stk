@@ -1,32 +1,28 @@
-name: Market Analysis
+name: Strategy Management
 
 on:
   schedule:
-    - cron: "15 */6 * * *"   # 每 6 小時
-  workflow_dispatch:
+    - cron: '0 */4 * * *'  # Every 4 hours (UTC)
 
 jobs:
-  analysis:
+  manage:
     runs-on: ubuntu-latest
+    env:
+      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
-
+          python-version: '3.12'
       - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Run market analysis
-        run: python scripts/3_market_analysis.py
-
-      - name: Commit and Push Analysis Results
+        run: pip install pandas scikit-learn torch openai numpy
+      - name: Run strategy manager
+        run: python scripts/strategy_manager.py
+      - name: Commit changes
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git pull --rebase || echo "No remote changes"
-          git add data/market_analysis_*.json || true
-          git commit -m "🔄 Update market analysis [skip ci]" || echo "No changes to commit"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/strategy_best_*
+          git commit -m "Update strategy results" || echo "No changes to commit"
           git push
