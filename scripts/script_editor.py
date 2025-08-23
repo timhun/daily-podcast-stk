@@ -1,149 +1,131 @@
 # scripts/script_editor.py
-import os, json, logging, argparse, requests, pytz
-from datetime import datetime
-from bs4 import BeautifulSoup
+import feedparser
+import json
+import os
+import logging
+from openai import OpenAI
+from datetime import datetime, timedelta
+import pytz
+import pandas as pd
+import random
 
-os.makedirs("logs", exist_ok=True)
-logging.basicConfig(filename="logs/script_editor.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-logger = logging.getLogger("editor")
+logging.basicConfig(filename='logs/script_editor.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
-def load_cfg():
-    return json.load(open("config.json","r",encoding="utf-8"))
+def get_latest_news(rss_url, categories, limit):
+    feed = feedparser.parse(rss_url)
+    news = []
+    now = datetime.now(pytz.utc)
+    for entry in feed.entries:
+        pub_date = datetime(*entry.published_parsed[:6], tzinfo=pytz.utc)
+        if (now - pub_date) <= timedelta(hours=24):
+            if any(cat in entry.title or cat in entry.summary for cat in categories):
+                news.append({"title": entry.title, "summary": entry.summary, "link": entry.link})
+        if len(news) >= limit:
+            break
+    return news
 
-def taipei_now():
-    tz = pytz.timezone("Asia/Taipei")
-    return datetime.now(tz).strftime("%Y%m%d")
+def generate_script(mode, config, analysis, data, news):
+    client = OpenAI(base_url="https://api.x.ai/v1", api_key=os.environ['GROK_API_KEY'])
+    
+    if mode == 'tw':
+        twii_close = data['^TWII']['Close']
+        twii_change = data['^TWII']['Change']
+        etf_close = data['0050.TW']['Close']
+        
+        prompt = f"""
+        生成繁體中文播客逐字稿，節目名稱：{config['podcast_title_tw']}，主持人：{config['host_name']}。
+        結構：
+        1. 今日台股加權指數收盤：{twii_close}點，漲跌幅：{twii_change:.2%}。
+        2. 0050收盤價：{etf_close}。
+        3. 針對0050短線策略：{analysis}。
+        4. 三則新聞：{news}，每則加重點說明。
+        5. 結尾：{random.choice(config['kosto_quotes'])}。
+        注意：繁體中文、台灣用語、<3000字、僅輸出正文。
+        """
+    
+    elif mode == 'us':
+        dji_close = data['^DJI']['Close']
+        dji_change = data['^DJI']['Change']
+        nasdaq_close = data['^IXIC']['Close']
+        nasdaq_change = data['^IXIC']['Change']
+        sp_close = data['^GSPC']['Close']
+        sp_change = data['^GSPC']['Change']
+        qqq_close = data['QQQ']['Close']
+        spy_close = data['SPY']['Close']
+        btc_close = data['BTC-USD']['Close']
+        gc_close = data['GC=F']['Close']
+        
+        prompt = f"""
+        生成繁體中文播客逐字稿，節目名稱：{config['podcast_title_us']}，主持人：{config['host_name']}。
+        結構：
+        1. 美股大盤：道瓊{dji_close}點({dji_change:.2%})，Nasdaq {nasdaq_close}點({nasdaq_change:.2%})，S&P500 {sp_close}點({sp_change:.2%})。
+        2. QQQ：{qqq_close}，SPY：{spy_close}，BTC：{btc_close}，黃金：{gc_close}。
+        3. 針對QQQ短線策略：{analysis}。
+        4. 結尾：{random.choice(config['kosto_quotes'])}。
+        注意：繁體中文、台灣用語、<3000字、僅輸出正文。
+        """
+    
+    response = client.chat.completions.create(
+        model=config['grok_model'],
+        messages=[{"role": "user", "content": prompt}]
+    )
+    script = response.choices[0].message.content.strip()
+    logging.info(f"Generated script length: {len(script)}")
+    return script
 
-def fetch_rss_items(urls, limit=3, keyword_filters=None):
-    items=[]
-    for url in urls:
-        try:
-            r = requests.get(url, timeout=15)
-            soup = BeautifulSoup(r.text, "xml")
-            for it in soup.find_all("item")[:10]:
-                title = it.title.text if it.title else ""
-                link  = it.link.text if it.link else ""
-                desc  = it.description.text if it.description else ""
-                if keyword_filters:
-                    if not any(k in (title+desc) for k in keyword_filters): 
-                        continue
-                items.append({"title":title, "link":link, "desc":desc})
-        except Exception as e:
-            logger.error(f"RSS fail: {url} {e}")
-    return items[:limit]
+def get_latest_data(mode):
+    data = {}
+    symbols = json.load(open('config.json'))['symbols'][mode]
+    for sym in symbols:
+        file = f"data/daily_{sym.replace('.', '_').replace('^', '')}.csv"
+        if os.path.exists(file):
+            df = pd.read_csv(file, index_col='Date', parse_dates=True)
+            latest = df.iloc[-1]
+            change = (latest['Close'] - latest['Open']) / latest['Open']
+            data[sym] = {'Close': latest['Close'], 'Change': change}
+    return data
 
-def read_json(path):
-    return json.load(open(path,"r",encoding="utf-8")) if os.path.exists(path) else None
-
-def call_llm(model, api_key, sys_prompt, user_prompt):
-    url = "https://openrouter.ai/api/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://timhun.github.io",
-        "X-Title": "daily-podcast-stk"
-    }
-    payload = {
-        "model": model,
-        "messages": [
-            {"role":"system","content":sys_prompt},
-            {"role":"user","content":user_prompt}
-        ],
-        "temperature": 0.6
-    }
-    resp = requests.post(url, headers=headers, json=payload, timeout=60)
-    resp.raise_for_status()
-    return resp.json()["choices"][0]["message"]["content"]
-
-def build_prompt(mode, cfg):
-    date_str = taipei_now()
-    if mode=="us":
-        # 指數/ETF價格來自 collector
-        dji  = read_json_path_csv("data/daily__DJI.csv", "^DJI")
-        ixic = read_json_path_csv("data/daily__IXIC.csv", "^IXIC")
-        gspc = read_json_path_csv("data/daily__GSPC.csv", "^GSPC")
-        sox  = read_json_path_csv("data/daily__SOX.csv", "^SOX") if os.path.exists("data/daily__SOX.csv") else None
-        qqq  = read_last("data/daily_QQQ.csv")
-        spy  = read_last("data/daily_SPY.csv")
-        ibit = read_last("data/daily_IBIT.csv") if os.path.exists("data/daily_IBIT.csv") else None
-        btc  = read_last("data/daily_BTC-USD.csv")
-        gold = read_last("data/daily_GC_F.csv")
-        tnx  = read_last("data/daily__TNX.csv") if os.path.exists("data/daily__TNX.csv") else None
-
-        a_qqq = read_json("data/market_analysis_QQQ.json")
-        rss_items = fetch_rss_items(cfg["rss"]["us"], limit=3, keyword_filters=None)
-
-        user = f"""
-今天是台北時間 {date_str} 早上，美股盤後播報。
-請用台灣慣用語，語速1.3倍口吻，主持人：幫幫忙；節目：幫幫忙說台股（美股特輯）。
-內容要求（純正文、繁體中文）：
-1. 大盤收盤：道瓊(^DJI)、Nasdaq(^IXIC)、S&P500(^GSPC)、費半(^SOX) 點位與漲跌幅（依我提供的資料）。
-2. QQQ、SPY、IBIT、比特幣(BTC)、黃金(Gold) 最新；十年期美債(^TNX) 殖利率。
-3. 深入 QQQ：根據分析與策略，給短線交易建議與買賣訊號（整合資料）。
-4. 結尾給一則 Andre Kostolany 投資名言。
-資料：
-DJI={dji}, IXIC={ixic}, GSPC={gspc}, SOX={sox}
-QQQ={qqq}, SPY={spy}, IBIT={ibit}, BTC={btc}, GOLD={gold}, TNX={tnx}
-QQQ分析={a_qqq}
-美股或AI新聞（摘要3則）：{rss_items}
-僅輸出逐字稿正文，不要任何說明或JSON。
-"""
+def main(mode_input=None):
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+    
+    tw_tz = pytz.timezone('Asia/Taipei')
+    now = datetime.now(tw_tz)
+    today_str = now.strftime('%Y%m%d')
+    
+    if mode_input:
+        mode = mode_input
     else:
-        twii = read_last("data/daily__TWII.csv")
-        tw50 = read_last("data/daily_0050_TW.csv")
-        a_0050 = read_json("data/market_analysis_0050_TW.json")
-        rss_items = fetch_rss_items(cfg["rss"]["tw"], limit=3, keyword_filters=["經濟","半導體","AI","科技"])
+        mode = 'us' if now.hour < 12 else 'tw'
+    
+    focus_sym = '0050TW' if mode == 'tw' else 'QQQ'
+    analysis_file = f"data/market_analysis_{focus_sym}.json"
+    if not os.path.exists(analysis_file):
+        logging.error(f"Missing analysis for {focus_sym}")
+        return
+    
+    with open(analysis_file, 'r') as f:
+        analysis = json.dumps(json.load(f))
+    
+    data = get_latest_data(mode)
+    
+    news = []
+    if mode == 'tw':
+        news = get_latest_news(config['rss_url'], config['news_categories'], config['news_limit'])
+        news_str = json.dumps(news)
+    else:
+        news_str = ""  # US no news in remark
+    
+    script = generate_script(mode, config, analysis, data, news_str)
+    
+    dir_path = f"docs/podcast/{today_str}_{mode}"
+    os.makedirs(dir_path, exist_ok=True)
+    script_file = f"{dir_path}/script.txt"
+    with open(script_file, 'w', encoding='utf-8') as f:
+        f.write(script)
+    logging.info(f"Saved script to {script_file}")
 
-        user = f"""
-今天是台北時間 {date_str} 下午，台股盤後播報。
-請用台灣慣用語，語速1.3倍口吻，主持人：幫幫忙；節目：幫幫忙說台股。
-內容要求（純正文、繁體中文）：
-1. 台股加權(^TWII) 收盤與漲跌幅；2. 0050(元大台灣50) 收盤。
-3. 深入 0050：根據策略與分析，給短線交易建議與訊號。
-4. 三則重點新聞（附一句話重點）。
-5. 結尾給一則 Andre Kostolany 投資名言。
-資料：
-TWII={twii}, 0050={tw50}
-0050分析={a_0050}
-台股新聞（摘要3則）：{rss_items}
-僅輸出逐字稿正文，不要任何說明或JSON。
-"""
-    return user
-
-def read_last(path):
-    import pandas as pd
-    if not os.path.exists(path): return None
-    df = pd.read_csv(path)
-    if df.empty: return None
-    row = df.iloc[-1].to_dict()
-    return {k:(float(v) if k in ["Open","High","Low","Close","Adj Close","Volume"] else v) for k,v in row.items()}
-
-def read_json_path_csv(path, label):
-    # 這裡僅做存在標記，實務上可讀值；為簡化只返回檔名存在狀態
-    return {"symbol": label, "csv": os.path.exists(path)}
-
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=["us","tw"], required=True)
-    args = parser.parse_args()
-
-    cfg = load_cfg()
-    date_str = taipei_now()
-    out_dir = f"docs/podcast/{date_str}_{args.mode}"
-    os.makedirs(out_dir, exist_ok=True)
-
-    model = cfg["llm"]["model"]
-    api_key = os.environ.get("OPENROUTER_API_KEY","")
-    if not api_key:
-        raise RuntimeError("OPENROUTER_API_KEY missing")
-
-    sys_prompt = "你是一位親切自然的台灣專業投資播報員，語氣口語、節奏偏快(1.3x)，重點清楚，避免行話。"
-    user_prompt = build_prompt(args.mode, cfg)
-    text = call_llm(model, api_key, sys_prompt, user_prompt)
-
-    with open(f"{out_dir}/script.txt","w",encoding="utf-8") as f:
-        f.write(text)
-    logger.info(f"script generated -> {out_dir}/script.txt")
-
-if __name__=="__main__":
-    main()
+if __name__ == "__main__":
+    import sys
+    mode = sys.argv[1] if len(sys.argv) > 1 else None
+    main(mode)
