@@ -1,6 +1,7 @@
 name: Podcast Production to Feed
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: '0 22 * * *'  # UTC 22:00 ~ TW 06:00 (US mode)
     - cron: '0 6 * * *'   # UTC 06:00 ~ TW 14:00 (TW mode)
