@@ -4,7 +4,7 @@ import datetime
 import requests
 
 from fetch_market_data import get_market_summary
-from fetch_ai_topic import get_ai_topic_text
+#from fetch_ai_topic import get_ai_topic_text
 from generate_script_grok import generate_script_from_grok
 #from generate_script_openrouter import generate_script_from_openrouter
 from utils_podcast import (
@@ -28,7 +28,7 @@ summary_path = os.path.join(output_dir, "summary.txt")
 
 # 取得行情摘要與 AI 主題
 market_data = get_market_summary(PODCAST_MODE)
-ai_topic = get_ai_topic_text(PODCAST_MODE)
+#ai_topic = get_ai_topic_text(PODCAST_MODE)
 
 # 多空判斷（僅台股支援）
 bullish_signal = ""
