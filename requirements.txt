@@ -46,3 +46,4 @@ black
 flake8
 pre-commit
 workalendar>=17.0.0
+mutagen
