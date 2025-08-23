@@ -1,9 +1,19 @@
 {
-  "universe": ["0050.TW", "QQQ"],
-  "baseline": "buy_and_hold",
   "strategies": [
-    {"name": "sma_crossover", "params": {"short": [5, 10], "long": [20, 50]}},
-    {"name": "rsi_meanrev", "params": {"period": [14], "low": [30], "high": [70]}},
-    {"name": "rf_classifier", "params": {"n_estimators": [100], "max_depth": [3, 5]}}
+    {
+      "name": "RandomForest",
+      "params": {
+        "n_estimators": 100,
+        "max_depth": 10
+      }
+    },
+    {
+      "name": "LSTM",
+      "params": {
+        "units": 50,
+        "epochs": 10,
+        "batch_size": 32
+      }
+    }
   ]
 }
