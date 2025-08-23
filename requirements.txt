@@ -29,3 +29,4 @@ tensorflow
 feedparser
 backtesting
 joblib
+transformers
