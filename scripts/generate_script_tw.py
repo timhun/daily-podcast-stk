@@ -1,94 +1,78 @@
-#generate_script_tw.py
-import json
 import os
+import json
 from datetime import datetime
 import pytz
-import logging
 
-from grok_api import ask_grok
+from utils_podcast_tw import (
+    get_today_tw_ymd_str,
+    is_weekend_tw,
+    is_tw_holiday,
+    load_prompt_template
+)
+from grok_api import ask_grok  # ✅ 導入 Grok API 呼叫函式
 
-# 設置日誌
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+# 今日資訊
+TODAY = get_today_tw_ymd_str()
+MODE = "tw"
+BASE_DIR = f"docs/podcast/{TODAY}_{MODE}"
+os.makedirs(BASE_DIR, exist_ok=True)
 
-def load_template(file_path: str) -> str:
-    with open(file_path, "r", encoding="utf-8") as f:
-        return f.read()
+# 檔案路徑
+MARKET_DATA_FILE = f"{BASE_DIR}/market_data_tw.json"
+SIGNAL_FILE = f"{BASE_DIR}/bullish_signal_tw.txt"
+AI_TOPIC_FILE = "ai_topic.txt"
+OUTPUT_SCRIPT = f"{BASE_DIR}/script.txt"
 
-def get_fallback_transcript(market_data: dict, today_display: str) -> str:
-    """生成回退逐字稿"""
-    return f"""
-大家好，我是幫幫忙，歡迎收聽《幫幫忙說台股》！今天是{today_display}，由於技術問題，無法獲取最新市場分析，以下為簡訊播報。
+def load_text_file(filepath: str) -> str:
+    if os.path.exists(filepath):
+        with open(filepath, "r", encoding="utf-8") as f:
+            return f.read().strip()
+    return ""
 
-1. **台股概況**：加權指數收盤 {market_data['taiex']['close']} 點，漲跌幅 {market_data['taiex']['change_percent']}%，成交量 {market_data['volume']} 億元。支撐位約 {market_data['moving_averages']['ma5']-200:.2f} 點，壓力位約 {market_data['moving_averages']['ma5']+200:.2f} 點。
-2. **0050 ETF**：收盤價約 85.00 元，支撐位 83.00 元，壓力位 88.00 元。
-3. **交易策略**：短線偏多，建議逢低布局，止損設在 82.00 元。
-4. **三大法人**：外資買超 {market_data['institutions']['foreign']} 億元，投信賣超 {market_data['institutions']['investment']} 億元，自營商買超 {market_data['institutions']['dealer']} 億元。
-5. **期貨動向**：外資期貨淨多單約 2 萬口。
-6. **AI 新聞**：台積電持續推進 CPO 技術，預計 2026 年放量，利好 AI 供應鏈。
-7. **投資金句**：穩中求進，台股未來在你手中！
-
-感謝收聽，我們明天見！
-"""
+def select_prompt_file() -> str:
+    if is_tw_holiday():
+        print("📅 今天是台灣國定假日，使用 tw_holiday.txt 模板")
+        return "prompt/tw_holiday.txt"
+    elif is_weekend_tw():
+        print("📅 今天是週末，使用 tw_weekend.txt 模板")
+        return "prompt/tw_weekend.txt"
+    else:
+        print("📅 今天為平日交易日，使用 tw.txt 模板")
+        return "prompt/tw.txt"
 
 def main():
-    # 設置台灣時區
-    TW_TZ = pytz.timezone("Asia/Taipei")
-    TODAY = datetime.now(TW_TZ)
-    today_display = TODAY.strftime("%Y-%m-%d")
-    today_str = TODAY.strftime("%Y%m%d")
+    # 載入 prompt 與資料
+    prompt_file = select_prompt_file()
+    prompt_template = load_prompt_template(prompt_file)
 
-    # 讀取市場數據
-    market_data_file = f"docs/podcast/{today_str}_tw/market_data_tw.json"
     try:
-        with open(market_data_file, "r", encoding="utf-8") as f:
+        with open(MARKET_DATA_FILE, "r", encoding="utf-8") as f:
             market_data = json.load(f)
-        market_data_str = json.dumps(market_data, ensure_ascii=False, indent=2)
-    except FileNotFoundError:
-        logger.error(f"找不到市場數據檔案：{market_data_file}")
-        market_data = {
-            "date": today_display,
-            "taiex": {"close": 23201.52, "change_percent": -0.9},
-            "volume": 3500,
-            "institutions": {"foreign": 50.0, "investment": -10.0, "dealer": 5.0},
-            "moving_averages": {"ma5": 22800.0, "ma10": 22500.0}
-        }
-        market_data_str = json.dumps(market_data, ensure_ascii=False, indent=2)
+    except Exception as e:
+        raise FileNotFoundError(f"❌ 找不到 JSON 資料：{MARKET_DATA_FILE}") from e
 
-    # 設置參數
-    bullish_signal = "MACD金叉"  # 應從實際來源獲取
-    ai_topic = "台積電CPO技術進展"  # 應從實際來源獲取
-    theme = "台股與AI科技趨勢"
+    bullish_signal = load_text_file(SIGNAL_FILE)
+    ai_topic = load_text_file(AI_TOPIC_FILE)
 
-    # 載入模板
-    prompt_template = load_template("prompt/tw.txt")
+    # 格式化 prompt
+    today_display = datetime.now(pytz.timezone("Asia/Taipei")).strftime("%Y年%m月%d日")
+    market_data_str = json.dumps(market_data, ensure_ascii=False, indent=2)
 
-    # 生成完整提示詞
     full_prompt = prompt_template.format(
         date=today_display,
         market_data=market_data_str,
         bullish_signal=bullish_signal,
         ai_topic=ai_topic,
-        theme=theme
     )
 
-    # 調用 Grok 生成逐字稿
-    output_dir = f"docs/podcast/{today_str}_tw"
-    os.makedirs(output_dir, exist_ok=True)
-    output_file = f"{output_dir}/script_tw.txt"
-    try:
-        script = ask_grok(full_prompt)
-        logger.info("成功生成逐字稿")
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(script)
-        logger.info(f"已儲存逐字稿至 {output_file}")
-    except Exception as e:
-        logger.error(f"生成逐字稿失敗：{e}")
-        # 使用回退逐字稿
-        script = get_fallback_transcript(market_data, today_display)
-        with open(output_file, "w", encoding="utf-8") as f:
-            f.write(script)
-        logger.info(f"已儲存回退逐字稿至 {output_file}")
+    print("📨 傳送合成後 prompt 給 Grok...")
+    script_text = ask_grok(full_prompt)
+
+    with open(OUTPUT_SCRIPT, "w", encoding="utf-8") as f:
+        f.write(script_text)
+
+    print(f"✅ 已產出逐字稿：{OUTPUT_SCRIPT}")
+
 
 if __name__ == "__main__":
     main()
