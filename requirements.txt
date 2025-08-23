@@ -30,6 +30,7 @@ slack-sdk
 
 # RSS/Feed
 feedgen
+feedparser
 python-dateutil
 
 # 工具套件
