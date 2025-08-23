@@ -6,7 +6,7 @@ import requests
 from fetch_market_data import get_market_summary
 #from fetch_ai_topic import get_ai_topic_text
 from generate_script_grok import generate_script_from_grok
-#from generate_script_openrouter import generate_script_from_openrouter
+from generate_script_openrouter import generate_script_from_openrouter
 from utils_podcast import (
     get_podcast_mode,
     get_today_display,
@@ -59,7 +59,6 @@ with open(prompt_file, "r", encoding="utf-8") as f:
 prompt = prompt_template.format(
     date=today_display,
     market_data=market_data,
-    theme=theme_text,
     bullish_signal=bullish_signal
 )
 
