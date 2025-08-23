@@ -1,54 +1,65 @@
-import os, json, logging, argparse, time
-from datetime import datetime, timedelta, timezone
-import pytz
+import os
+import logging
 from b2sdk.v2 import InMemoryAccountInfo, B2Api
+from datetime import datetime, timedelta
+import pytz
 
-os.makedirs("logs", exist_ok=True)
-logging.basicConfig(filename="logs/upload_manager.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-logger = logging.getLogger("upload")
+logging.basicConfig(filename='logs/upload_manager.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
-def tpe_today():
-    return datetime.now(pytz.timezone("Asia/Taipei")).strftime("%Y%m%d")
+def cleanup_old_files(b2_api, bucket, days=14):
+    now = datetime.now(pytz.utc)
+    for version in bucket.ls(recursive=True):
+        file_info = version[0]
+        upload_time = datetime.fromtimestamp(file_info.upload_timestamp / 1000, tz=pytz.utc)
+        if (now - upload_time) > timedelta(days=days):
+            b2_api.delete_file_version(file_info.id_, file_info.file_name)
+            logging.info(f"Deleted old file: {file_info.file_name}")
 
-def b2_client():
+def main(mode_input=None):
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+    
     info = InMemoryAccountInfo()
-    b2 = B2Api(info)
-    b2.authorize_account("production",
-        os.environ["B2_KEY_ID"],
-        os.environ["B2_APPLICATION_KEY"])
-    return b2
+    b2_api = B2Api(info)
+    b2_api.authorize_account("production", os.environ['B2_KEY_ID'], os.environ['B2_APPLICATION_KEY'])
+    bucket = b2_api.get_bucket_by_name(os.environ['B2_BUCKET_NAME'])
+    
+    tw_tz = pytz.timezone('Asia/Taipei')
+    now = datetime.now(tw_tz)
+    today_str = now.strftime('%Y%m%d')
+    
+    if mode_input:
+        mode = mode_input
+    else:
+        mode = 'us' if now.hour < 12 else 'tw'
+    
+    dir_path = f"docs/podcast/{today_str}_{mode}"
+    script_file = f"{dir_path}/script.txt"
+    audio_file = f"{dir_path}/audio.mp3"
+    url_file = f"{dir_path}/archive_audio_url.txt"
+    
+    if not os.path.exists(audio_file) or not os.path.exists(script_file):
+        logging.error(f"Missing files for {mode}")
+        return
+    
+    # Upload audio
+    remote_audio = f"{today_str}_{mode}/audio.mp3"
+    bucket.upload_local_file(local_file=audio_file, file_name=remote_audio)
+    audio_url = f"{config['b2_base_url']}/{remote_audio}"
+    
+    # Upload script
+    remote_script = f"{today_str}_{mode}/script.txt"
+    bucket.upload_local_file(local_file=script_file, file_name=remote_script)
+    script_url = f"{config['b2_base_url']}/{remote_script}"
+    
+    with open(url_file, 'w') as f:
+        f.write(audio_url + '\n' + script_url)
+    logging.info(f"Uploaded: {audio_url}, {script_url}")
+    
+    # Cleanup
+    cleanup_old_files(b2_api, bucket)
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--mode", choices=["us","tw"], required=True)
-    args = parser.parse_args()
-
-    date_str = tpe_today()
-    folder = f"docs/podcast/{date_str}_{args.mode}"
-    audio = f"{folder}/audio.mp3"
-    script= f"{folder}/script.txt"
-    assert os.path.exists(audio) and os.path.exists(script), "audio/script missing"
-
-    b2 = b2_client()
-    bucket = b2.get_bucket_by_name(os.environ["B2_BUCKET_NAME"])
-
-    # 上傳
-    for path in [audio, script]:
-        fname = path.replace("docs/","")
-        bucket.upload_local_file(local_file=path, file_name=fname)
-        logger.info(f"uploaded -> {fname}")
-
-    # 生成公開連結（使用 CDN/直接下載 URL 前綴）
-    base = os.environ.get("B2_BASE", "https://f005.backblazeb2.com/file/daily-podcast-stk")
-    audio_url = f"{base}/podcast/{date_str}_{args.mode}/audio.mp3"
-    with open(f"{folder}/archive_audio_url.txt","w",encoding="utf-8") as f:
-        f.write(audio_url)
-
-    # 清理 14 天前檔
-    cleanup_days = json.load(open("config.json","r",encoding="utf-8"))["cleanup_days"]
-    cutoff = (datetime.now(pytz.UTC) - timedelta(days=cleanup_days)).strftime("%Y%m%d")
-    # 簡化策略：不逐一刪版控，只示範 bucket 列表（實務可依檔名日期判斷）
-    logger.info(f"cleanup policy: keep last {cleanup_days} days (cutoff {cutoff})")
-
-if __name__=="__main__":
-    main()
+if __name__ == "__main__":
+    import sys
+    mode = sys.argv[1] if len(sys.argv) > 1 else None
+    main(mode)
