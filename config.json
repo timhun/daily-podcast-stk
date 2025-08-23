@@ -58,4 +58,18 @@
   "slack_webhook_url": "https://bbm-a1u4547.slack.com/archives/D09AGLZ7JMA",
   "retain_daily": 300,
   "retain_hourly": 14
+  "news_categories": ["經濟", "半導體"],
+  "news_limit": 3,
+  "grok_model": "grok-3-mini",
+  "retry_times": 3,
+  "delay_sec": 3,
+  "data_retention_days": 300,
+  "hourly_retention_days": 14,
+  "b2_base_url": "<https://f005.backblazeb2.com/file/daily-podcast-stk>",
+  "podcast_title_tw": "幫幫忙說台股",
+  "podcast_title_us": "幫幫忙說美股",
+  "host_name": "幫幫忙",
+  "kosto_quotes": [
+    "股市就像女人一樣，永遠捉摸不透，但耐心總有回報。",
+    "投資不是賭博，而是智慧的遊戲。"
 }
