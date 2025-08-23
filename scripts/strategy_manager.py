@@ -1,107 +1,142 @@
 # scripts/strategy_manager.py
-import os, json, logging, argparse
-import numpy as np
 import pandas as pd
-from itertools import product
+import json
+import os
+import logging
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import torch
+import torch.nn as nn
+from torch.utils.data import Dataset, DataLoader
+from openai import OpenAI  # 兼容Grok API
+from datetime import datetime
+import pytz
+import numpy as np
 
-os.makedirs("logs", exist_ok=True)
-logging.basicConfig(filename="logs/strategy_manager.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-logger = logging.getLogger("strategy")
+logging.basicConfig(filename='logs/strategy_manager.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
-def load_json(p): 
-    with open(p,"r",encoding="utf-8") as f: return json.load(f)
+class LSTMDataset(Dataset):
+    def __init__(self, X, y):
+        self.X = torch.tensor(X, dtype=torch.float32)
+        self.y = torch.tensor(y, dtype=torch.float32)
+    
+    def __len__(self):
+        return len(self.y)
+    
+    def __getitem__(self, idx):
+        return self.X[idx], self.y[idx]
 
-def load_csv_for_symbol(sym):
-    path = f"data/daily_{sym.replace('=','').replace('^','').replace('.','_')}.csv"
-    return pd.read_csv(path, parse_dates=["Date"])
+class LSTMModel(nn.Module):
+    def __init__(self, input_size, hidden_size):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, hidden_size, batch_first=True)
+        self.fc = nn.Linear(hidden_size, 1)
+        self.sigmoid = nn.Sigmoid()
+    
+    def forward(self, x):
+        _, (h, _) = self.lstm(x)
+        out = self.fc(h.squeeze(0))
+        return self.sigmoid(out)
 
-def buy_and_hold_ret(df):
-    close = df["Close"].astype(float)
-    return (close.iloc[-1]/close.iloc[0]) - 1.0
+def optimize_params_with_grok(strategy_name, current_params, performance):
+    client = OpenAI(base_url="https://api.x.ai/v1", api_key=os.environ['GROK_API_KEY'])
+    prompt = f"Optimize parameters for {strategy_name} based on performance: {performance}. Current params: {current_params}. Suggest improved params."
+    response = client.chat.completions.create(
+        model="grok-3-mini",
+        messages=[{"role": "user", "content": prompt}]
+    )
+    return response.choices[0].message.content  # Parse to dict in production
 
-def sma_strategy(df, short, long):
-    px = df["Close"].astype(float)
-    s = px.rolling(short).mean()
-    l = px.rolling(long).mean()
-    sig = (s > l).astype(int).shift(1).fillna(0)  # 明日持倉
-    ret = px.pct_change().fillna(0)
-    eq = (sig * ret + (1-sig)*0).add(1).cumprod()
-    return eq.iloc[-1] - 1.0
+def main(symbol=None):
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+    with open('strategies.json', 'r') as f:
+        strategies = json.load(f)['strategies']
+    
+    focus_symbols = ['0050TW', 'QQQ']  # Cleaned for file
+    if symbol:
+        focus_symbols = [symbol.replace('.', '').replace('^', '')]
+    
+    for sym in focus_symbols:
+        daily_file = f"data/daily_{sym}.csv"
+        if not os.path.exists(daily_file):
+            logging.error(f"Data file missing for {sym}")
+            continue
+        
+        df = pd.read_csv(daily_file, index_col='Date', parse_dates=True)
+        df['Return'] = df['Close'].pct_change()
+        df['Label'] = np.where(df['Return'] > 0, 1, 0)  # Baseline: up/down
+        df.dropna(inplace=True)
+        
+        baseline_acc = max(df['Label'].mean(), 1 - df['Label'].mean())  # Baseline win rate
+        
+        best_strategy = None
+        best_win_rate = 0
+        best_params = {}
+        
+        for strat in strategies:
+            if strat['name'] == 'RandomForest':
+                X = df[['Open', 'High', 'Low', 'Volume']].values
+                y = df['Label'].values
+                X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+                model = RandomForestClassifier(**strat['params'])
+                model.fit(X_train, y_train)
+                preds = model.predict(X_test)
+                acc = accuracy_score(y_test, preds)
+            
+            elif strat['name'] == 'LSTM':
+                seq_len = 10
+                X = []
+                y = []
+                for i in range(len(df) - seq_len):
+                    X.append(df[['Open', 'High', 'Low', 'Close', 'Volume']].iloc[i:i+seq_len].values)
+                    y.append(df['Label'].iloc[i+seq_len])
+                X = np.array(X)
+                y = np.array(y)
+                train_size = int(0.8 * len(X))
+                X_train, X_test = X[:train_size], X[train_size:]
+                y_train, y_test = y[:train_size], y[train_size:]
+                
+                dataset_train = LSTMDataset(X_train, y_train)
+                loader = DataLoader(dataset_train, batch_size=strat['params']['batch_size'])
+                
+                model = LSTMModel(input_size=5, hidden_size=strat['params']['units'])
+                criterion = nn.BCELoss()
+                optimizer = torch.optim.Adam(model.parameters())
+                
+                for epoch in range(strat['params']['epochs']):
+                    for batch_x, batch_y in loader:
+                        optimizer.zero_grad()
+                        out = model(batch_x)
+                        loss = criterion(out.squeeze(), batch_y)
+                        loss.backward()
+                        optimizer.step()
+                
+                with torch.no_grad():
+                    preds = model(torch.tensor(X_test, dtype=torch.float32)).squeeze().numpy() > 0.5
+                    acc = accuracy_score(y_test, preds.astype(int))
+            
+            logging.info(f"{strat['name']} for {sym}: Win rate {acc}")
+            
+            if acc > baseline_acc and acc > best_win_rate:
+                best_win_rate = acc
+                best_strategy = strat['name']
+                best_params = strat['params']
+        
+        if best_strategy:
+            # Optimize with Grok API
+            perf = f"Win rate: {best_win_rate}"
+            optimized = optimize_params_with_grok(best_strategy, best_params, perf)
+            logging.info(f"Grok optimized: {optimized}")
+            # Parse optimized to dict, here assume same
+            output = {"strategy": best_strategy, "params": best_params, "win_rate": best_win_rate}
+            json_file = f"data/strategy_best_{sym}.json"
+            with open(json_file, 'w') as f:
+                json.dump(output, f)
+            logging.info(f"Best strategy for {sym}: {output}")
 
-def rsi(series, period=14):
-    delta = series.diff()
-    up = delta.clip(lower=0).rolling(period).mean()
-    down = (-delta.clip(upper=0)).rolling(period).mean()
-    rs = up / (down + 1e-9)
-    return 100 - (100 /(1+rs))
-
-def rsi_meanrev(df, period=14, low=30, high=70):
-    px = df["Close"].astype(float)
-    r = rsi(px, period)
-    # 低於low買入，高於high賣出；持倉 1/0
-    sig = (r < low).astype(int).shift(1).fillna(0)
-    ret = px.pct_change().fillna(0)
-    eq = (sig * ret).add(1).cumprod()
-    return eq.iloc[-1] - 1.0
-
-def rf_classifier(df, n_estimators=100, max_depth=5):
-    px = df["Close"].astype(float)
-    feat = pd.DataFrame({
-        "ret1": px.pct_change(),
-        "ret5": px.pct_change(5),
-        "sma5": px.rolling(5).mean()/px-1,
-        "sma20": px.rolling(20).mean()/px-1,
-        "vol5": px.pct_change().rolling(5).std()
-    }).dropna()
-    y = (px.shift(-1).loc[feat.index] > px.loc[feat.index]).astype(int)  # 明天漲=1
-    if len(feat) < 200: 
-        return -1e9  # 資料太短不評
-    clf = RandomForestClassifier(n_estimators=n_estimators, max_depth=max_depth, random_state=42)
-    split = int(len(feat)*0.7)
-    clf.fit(feat.iloc[:split], y.iloc[:split])
-    pred = clf.predict_proba(feat.iloc[split:])[:,1]
-    # 以0.55為進場門檻
-    sig = (pred > 0.55).astype(int)
-    ret = pd.Series(px.pct_change().loc[feat.index]).iloc[split:].fillna(0)
-    eq = (sig*ret + 0).add(1).cumprod()
-    return eq.iloc[-1] - 1.0
-
-def pk_for_symbol(sym, cfg, stratcfg):
-    df = load_csv_for_symbol(sym)
-    base = buy_and_hold_ret(df)
-
-    best = {"name":"baseline", "params":{}, "return": base}
-    # SMA
-    for s,l in product(stratcfg["strategies"][0]["params"]["short"], stratcfg["strategies"][0]["params"]["long"]):
-        if s>=l: continue
-        r = sma_strategy(df, s,l)
-        if r>best["return"] and r>base:
-            best = {"name":"sma_crossover","params":{"short":s,"long":l},"return":r}
-    # RSI
-    for p in stratcfg["strategies"][1]["params"]["period"]:
-        r = rsi_meanrev(df, period=p)
-        if r>best["return"] and r>base:
-            best = {"name":"rsi_meanrev","params":{"period":p},"return":r}
-    # RF
-    for ne in stratcfg["strategies"][2]["params"]["n_estimators"]:
-        for md in stratcfg["strategies"][2]["params"]["max_depth"]:
-            r = rf_classifier(df, n_estimators=ne, max_depth=md)
-            if r>best["return"] and r>base:
-                best = {"name":"rf_classifier","params":{"n_estimators":ne,"max_depth":md},"return":r}
-
-    out = f"data/strategy_best_{sym.replace('.','_')}.json"
-    with open(out,"w",encoding="utf-8") as f: json.dump(best,f,ensure_ascii=False,indent=2)
-    logger.info(f"{sym} best -> {best} (baseline={base:.4f})")
-
-def main():
-    cfg = load_json("config.json")
-    stratcfg = load_json("strategies.json")
-    os.makedirs("data", exist_ok=True)
-
-    for sym in stratcfg["universe"]:
-        pk_for_symbol(sym, cfg, stratcfg)
-
-if __name__=="__main__":
-    main()
-
+if __name__ == "__main__":
+    import sys
+    symbol = sys.argv[1] if len(sys.argv) > 1 else None
+    main(symbol)
