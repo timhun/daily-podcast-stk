@@ -1,48 +1,74 @@
-import os, json, logging
 import pandas as pd
+import json
+import os
+import logging
 import numpy as np
+from datetime import datetime
+import pytz
 
-os.makedirs("logs", exist_ok=True)
-logging.basicConfig(filename="logs/market_analyst.log", level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-logger = logging.getLogger("analyst")
+logging.basicConfig(filename='logs/market_analyst.log', level=logging.INFO, format='%(asctime)s - %(message)s')
 
-def macd(px, fast=12, slow=26, sig=9):
-    ema_fast = px.ewm(span=fast, adjust=False).mean()
-    ema_slow = px.ewm(span=slow, adjust=False).mean()
-    macd_line = ema_fast - ema_slow
-    signal = macd_line.ewm(span=sig, adjust=False).mean()
-    hist = macd_line - signal
-    return macd_line, signal, hist
+def calculate_macd(df):
+    exp1 = df['Close'].ewm(span=12, adjust=False).mean()
+    exp2 = df['Close'].ewm(span=26, adjust=False).mean()
+    macd = exp1 - exp2
+    signal = macd.ewm(span=9, adjust=False).mean()
+    return macd, signal
 
-def analyze(sym):
-    df = pd.read_csv(f"data/daily_{sym.replace('=','').replace('^','').replace('.','_')}.csv", parse_dates=["Date"])
-    px = df["Close"].astype(float)
-    macd_l, sig, hist = macd(px)
-    trend = "上升" if macd_l.iloc[-1] > sig.iloc[-1] else "下降"
+def main(symbol=None):
+    with open('config.json', 'r') as f:
+        config = json.load(f)
+    
+    focus_symbols = ['0050TW', 'QQQ']
+    if symbol:
+        focus_symbols = [symbol.replace('.', '').replace('^', '')]
+    
+    for sym in focus_symbols:
+        daily_file = f"data/daily_{sym}.csv"
+        strategy_file = f"data/strategy_best_{sym}.json"
+        
+        if not os.path.exists(daily_file) or not os.path.exists(strategy_file):
+            logging.error(f"Missing files for {sym}")
+            continue
+        
+        df = pd.read_csv(daily_file, index_col='Date', parse_dates=True)
+        with open(strategy_file, 'r') as f:
+            strategy = json.load(f)
+        
+        # Indicators
+        macd, signal = calculate_macd(df)
+        df['MACD'] = macd
+        df['Signal'] = signal
+        
+        latest = df.iloc[-1]
+        trend = "up" if latest['Close'] > df['Close'].mean() else "down"
+        signal_buy = latest['MACD'] > latest['Signal']  # Simple crossover
+        
+        # Risk assessment (volatility)
+        volatility = df['Close'].pct_change().std() * np.sqrt(252)  # Annualized
+        
+        # Suggestion based on strategy
+        if strategy['win_rate'] > 0.5:
+            suggestion = "Buy" if signal_buy else "Sell"
+            position = "Increase" if trend == "up" else "Reduce"
+        else:
+            suggestion = "Hold"
+            position = "Neutral"
+        
+        output = {
+            "trend": trend,
+            "suggestion": suggestion,
+            "position_adjust": position,
+            "risk": f"Volatility: {volatility:.2%}",
+            "indicators": {"MACD": latest['MACD'], "Signal": latest['Signal']}
+        }
+        
+        json_file = f"data/market_analysis_{sym}.json"
+        with open(json_file, 'w') as f:
+            json.dump(output, f)
+        logging.info(f"Analysis for {sym}: {output}")
 
-    best_path = f"data/strategy_best_{sym.replace('.','_')}.json"
-    best = json.load(open(best_path,"r",encoding="utf-8")) if os.path.exists(best_path) else {"name":"baseline","return":0}
-
-    advice = "偏多格局，逢回分批" if trend=="上升" else "偏保守，觀察支撐壓力"
-    risk = []
-    if hist.iloc[-1] < 0 and trend=="下降": risk.append("動能轉弱")
-    if df["Volume"].iloc[-1] > df["Volume"].rolling(20).mean().iloc[-1]*1.5: risk.append("量能異常")
-    result = {
-        "symbol": sym,
-        "last_close": float(px.iloc[-1]),
-        "trend": trend,
-        "best_strategy": best,
-        "advice": advice,
-        "risk_flags": risk[-3:],
-    }
-    out = f"data/market_analysis_{sym.replace('.','_')}.json"
-    json.dump(result, open(out,"w",encoding="utf-8"), ensure_ascii=False, indent=2)
-    logger.info(f"{sym} analysis saved -> {out}")
-
-def main():
-    # 針對 0050、QQQ 基本盤
-    for sym in ["0050.TW","QQQ"]:
-        analyze(sym)
-
-if __name__=="__main__":
-    main()
+if __name__ == "__main__":
+    import sys
+    symbol = sys.argv[1] if len(sys.argv) > 1 else None
+    main(symbol)
