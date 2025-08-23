@@ -1,4 +1,4 @@
-name: Generate US Podcast
+name: 📡Generate US Podcast
 
 on:
   workflow_dispatch:
