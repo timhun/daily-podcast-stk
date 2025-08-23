@@ -28,7 +28,6 @@ summary_path = os.path.join(output_dir, "summary.txt")
 
 # 取得行情摘要與 AI 主題
 market_data = get_market_summary(PODCAST_MODE)
-#ai_topic = get_ai_topic_text(PODCAST_MODE)
 
 # 多空判斷（僅台股支援）
 bullish_signal = ""
@@ -60,7 +59,6 @@ with open(prompt_file, "r", encoding="utf-8") as f:
 prompt = prompt_template.format(
     date=today_display,
     market_data=market_data,
-    ai_topic=ai_topic,
     theme=theme_text,
     bullish_signal=bullish_signal
 )
