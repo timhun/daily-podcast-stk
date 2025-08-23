@@ -1,27 +1,81 @@
-name: Data Collection
+name: Data Collection Pipeline
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: '0 */4 * * *'  # Every 4 hours (UTC)
+    # 每4小時執行一次 (UTC時間)
+    - cron: '0 */4 * * *'
+  workflow_dispatch:
+    inputs:
+      market:
+        description: 'Market to collect data from'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - taiwan
+        - us
+        - crypto
+      cleanup:
+        description: 'Run cleanup of old data'
+        required: false
+        default: false
+        type: boolean
 
 jobs:
-  collect:
+  collect_data:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-      - name: Install dependencies
-        run: pip install yfinance pandas pytz
-      - name: Run data collector
-        run: python scripts/data_collector.py
-      - name: Commit changes
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add data/
-          git commit -m "Update daily/hourly data" || echo "No changes to commit"
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Python Environment
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+        
+    - name: Install Dependencies
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Create Required Directories
+      run: |
+        mkdir -p data/market
+        mkdir -p data/news
+        mkdir -p logs
+        
+    - name: Run Data Collection
+      env:
+        # 如果之後需要 API 金鑰，在這裡添加
+        PYTHONPATH: ${{ github.workspace }}
+      run: |
+        cd scripts
+        python data_collector.py --market ${{ github.event.inputs.market || 'all' }} ${{ github.event.inputs.cleanup == 'true' && '--cleanup' || '' }}
+        
+    - name: Upload Data Artifacts
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: collected-data-${{ github.run_number }}
+        path: |
+          data/
+          logs/
+        retention-days: 7
+        
+    - name: Commit and Push Changes
+      if: success()
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add data/ logs/
+        
+        # 只有在有變更時才提交
+        if ! git diff --cached --quiet; then
+          git commit -m "📊 Data collection update - $(date +'%Y-%m-%d %H:%M')"
           git push
+        else
+          echo "No changes to commit"
+        fi
