@@ -1,77 +1,84 @@
 # scripts/script_editor.py
-import pandas as pd
+import feedparser
 import json
 import os
 import sys
-from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
-from statsmodels.tsa.arima.model import ARIMA
-from utils import setup_json_logger, get_grok_client, slack_alert
-import numpy as np
-from sklearn.metrics import accuracy_score
+from utils import setup_json_logger, get_grok_client, get_taiwan_time, slack_alert
+import pandas as pd
+import random
 
-logger = setup_json_logger('strategy_manager')
+logger = setup_json_logger('script_editor')
 
-def optimize_params(strategy_name, params, performance):
-    client = get_grok_client()
-    prompt = f"Optimize params for {strategy_name} for short-term trading (1-3 days). Performance: {performance}. Current: {params}."
+def translate_news(news, client):
+    prompt = f"Translate to Traditional Chinese with Taiwanese terms: {json.dumps(news)}"
     response = client.chat.completions.create(model="grok-4-mini", messages=[{"role": "user", "content": prompt}])
-    return json.loads(response.choices[0].message.content)  # Assume JSON response
+    return json.loads(response.choices[0].message.content)
 
 def main(mode=None):
     with open('config.json', 'r') as f:
         config = json.load(f)
-    with open('strategies.json', 'r') as f:
-        strategies = json.load(f)
     
+    if not mode:
+        slack_alert("Mode not specified")
+        return
+    
+    today_str = get_taiwan_time().strftime('%Y%m%d')
     focus_symbol = 'QQQ' if mode == 'us' else '0050.TW'
     clean_symbol = focus_symbol.replace('.', '').replace('^', '')
     
-    daily_file = f"data/daily_{clean_symbol}.csv"
-    if not os.path.exists(daily_file):
-        slack_alert(f"Missing data for {focus_symbol}")
+    analysis_file = f"data/market_analysis_{clean_symbol}.json"
+    if not os.path.exists(analysis_file):
+        slack_alert(f"Missing analysis for {focus_symbol}")
         return
     
-    df = pd.read_csv(daily_file, index_col='Date', parse_dates=True)
-    df['Return'] = df['Close'].pct_change()
-    df['Label'] = np.where(df['Return'] > 0, 1, 0)
-    df.dropna(inplace=True)
+    with open(analysis_file, 'r') as f:
+        analysis = json.load(f)
     
-    # ARIMA baseline
-    arima_model = ARIMA(df['Close'], order=(1,1,1)).fit()
-    arima_preds = (arima_model.predict(start=len(df)-len(df)//5, end=len(df)-1) > df['Close'].shift(1)).astype(int)
-    baseline_acc = accuracy_score(df['Label'][-len(arima_preds):], arima_preds)
+    data = {}
+    for sym in config['symbols'][mode]:
+        file = f"data/daily_{sym.replace('.', '_').replace('^', '')}.csv"
+        if os.path.exists(file):
+            df = pd.read_csv(file, index_col='Date', parse_dates=True)
+            latest = df.iloc[-1]
+            data[sym] = {'Close': latest['Close'], 'Change': (latest['Close'] - latest['Open']) / latest['Open']}
     
-    best_strategy = None
-    best_win_rate = 0
-    best_params = {}
+    client = get_grok_client()
+    news = []
+    rss_url = config['rss_url_us' if mode == 'us' else 'rss_url_tw']
+    feed = feedparser.parse(rss_url)
+    for entry in feed.entries:
+        if len(news) >= config['news_limit']:
+            break
+        if any(cat in entry.title or cat in entry.summary for cat in config['news_categories']):
+            news_item = {"title": entry.title, "summary": entry.summary}
+            if mode == 'us':
+                news_item = translate_news(news_item, client)
+            news.append(news_item)
     
-    for strat in strategies['strategies']:
-        if strat['name'] in ['RandomForest', 'XGBoost']:
-            X = df[['Open', 'High', 'Low', 'Volume']].values[:-1]
-            y = df['Label'].values[1:]
-            model = RandomForestClassifier(**strat['params']) if strat['name'] == 'RandomForest' else XGBClassifier(**strat['params'])
-            model.fit(X[:int(0.8*len(X))], y[:int(0.8*len(X))])
-            preds = model.predict(X[int(0.8*len(X)):])
-            acc = accuracy_score(y[int(0.8*len(X)):], preds)
-        
-        # Add LSTM (similar to previous)
-        
-        logger.info(json.dumps({"symbol": focus_symbol, "strategy": strat['name'], "win_rate": acc}))
-        if acc > baseline_acc + 0.05 and acc > best_win_rate:
-            best_win_rate = acc
-            best_strategy = strat['name']
-            best_params = strat['params']
+    prompt = f"""
+    Generate a Traditional Chinese podcast script for {config['podcast_title_' + mode]}.
+    Host: {config['host_name']}. Structure:
+    {'1. TWII: {data["^TWII"]["Close"]} ({data["^TWII"]["Change"]:.2%})
+2. 0050: {data["0050.TW"]["Close"]}
+3. 0050 Strategy: {json.dumps(analysis)}
+4. News: {json.dumps(news)}
+5. Quote: Random from {config["kosto_quotes"]}' if mode == 'tw' else
+    '1. DJI: {data["^DJI"]["Close"]} ({data["^DJI"]["Change"]:.2%}), IXIC: {data["^IXIC"]["Close"]} ({data["^IXIC"]["Change"]:.2%}), GSPC: {data["^GSPC"]["Close"]} ({data["^GSPC"]["Change"]:.2%})
+2. QQQ: {data["QQQ"]["Close"]}, SPY: {data["SPY"]["Close"]}, BTC: {data["BTC-USD"]["Close"]}, GC: {data["GC=F"]["Close"]}
+3. QQQ Strategy: {json.dumps(analysis)}
+4. News: {json.dumps(news)}
+5. Quote: Random from {config["kosto_quotes"]}'} 
+    Rules: TW Chinese, <2300 words, Taiwanese terms, AI terms in English, content only.
+    """
     
-    if best_strategy and best_win_rate > 0.55:
-        optimized = optimize_params(best_strategy, best_params, f"Win rate: {best_win_rate}")
-        output = {"strategy": best_strategy, "params": optimized, "win_rate": best_win_rate, "baseline": baseline_acc}
-        json_file = f"data/strategy_best_{clean_symbol}.json"
-        with open(json_file, 'w') as f:
-            json.dump(output, f)
-        logger.info(json.dumps({"symbol": focus_symbol, "output": output}))
-    else:
-        slack_alert(f"No strategy for {focus_symbol} exceeds threshold (win_rate: {best_win_rate})")
+    response = client.chat.completions.create(model=config['grok_model'], messages=[{"role": "user", "content": prompt}])
+    script = response.choices[0].message.content.strip()
+    
+    dir_path = f"docs/podcast/{today_str}_{mode}"
+    os.makedirs(dir_path, exist_ok=True)
+    with open(f"{dir_path}/script.txt", 'w', encoding='utf-8') as f:
+        f.write(script)
+    logger.info(json.dumps({"mode": mode, "word_count": len(script)}))
 
 if __name__ == "__main__":
     mode = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1] in ['us', 'tw'] else None
