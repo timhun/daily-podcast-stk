@@ -1,0 +1,45 @@
+name: TW Podcast
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # UTC 06:00 = TW 14:00
+
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    env:
+      GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+      B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+      B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+      B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: pip install yfinance pandas xgboost statsmodels feedparser openai edge-tts b2sdk slack-sdk
+      - name: Collect data
+        run: python scripts/data_collector.py tw
+      - name: Run strategy manager
+        run: python scripts/strategy_manager.py tw
+      - name: Run market analyst
+        run: python scripts/market_analyst.py tw
+      - name: Generate script
+        run: python scripts/script_editor.py tw
+      - name: Produce audio
+        run: python scripts/podcast_producer.py tw
+      - name: Upload to B2
+        run: python scripts/upload_manager.py tw
+      - name: Publish feed
+        run: python scripts/feed_publisher.py tw
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data/ docs/
+          git commit -m "Update TW podcast files" || echo "No changes to commit"
+          git push
