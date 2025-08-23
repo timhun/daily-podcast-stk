@@ -3,7 +3,7 @@ import os
 import datetime
 from utils_podcast import get_podcast_mode, TW_TZ
 from generate_script_grok import generate_script_from_grok
-#from generate_script_openrouter import generate_script_from_openrouter
+from generate_script_openrouter import generate_script_from_openrouter
 
 def get_ai_topic_text(mode: str = "us") -> str:
     now = datetime.datetime.now(TW_TZ)
