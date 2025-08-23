@@ -17,8 +17,8 @@ torch
 transformers
 
 # 技術分析
-ta
-talib-binary
+ta==0.10.2
+TA-Lib
 
 # 語音處理
 edge-tts
