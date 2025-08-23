@@ -14,4 +14,3 @@
 🎧 本節目由幫幫忙主持，每日兩集，陪你掌握全球財經脈動與未來趨勢。記得訂閱 Apple Podcasts 與 Spotify，我們明天見！
 
 {market_data}
-{ai_topic}
