@@ -1,1 +1,62 @@
-
+{
+    "available_strategies": {
+      "technical_analysis": {
+        "name": "技術分析策略",
+        "enabled": true,
+        "parameters": {
+          "sma_short": 20,
+          "sma_long": 50,
+          "rsi_period": 14,
+          "rsi_overbought": 70,
+          "rsi_oversold": 30,
+          "macd_fast": 12,
+          "macd_slow": 26,
+          "macd_signal": 9
+        },
+        "weight": 0.25
+      },
+      "ml_random_forest": {
+        "name": "隨機森林策略",
+        "enabled": true,
+        "parameters": {
+          "n_estimators": 100,
+          "max_depth": 10,
+          "min_samples_split": 5,
+          "feature_window": 20
+        },
+        "weight": 0.25
+      },
+      "lstm_deep_learning": {
+        "name": "LSTM深度學習",
+        "enabled": true,
+        "parameters": {
+          "sequence_length": 60,
+          "hidden_units": 50,
+          "dropout_rate": 0.2,
+          "epochs": 100,
+          "batch_size": 32
+        },
+        "weight": 0.25
+      },
+      "sentiment_analysis": {
+        "name": "情緒分析策略",
+        "enabled": true,
+        "parameters": {
+          "sentiment_threshold": 0.1,
+          "news_importance_weight": 0.3,
+          "social_weight": 0.7
+        },
+        "weight": 0.25
+      }
+    },
+    "risk_management": {
+      "max_position_size": 1.0,
+      "stop_loss_percentage": 0.05,
+      "take_profit_percentage": 0.10,
+      "max_drawdown_threshold": 0.15
+    },
+    "benchmarks": {
+      "taiwan": "^TWII",
+      "us": "^GSPC"
+    }
+  }
