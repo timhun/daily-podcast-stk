@@ -1,0 +1,78 @@
+{
+    "system": {
+      "timezone": "Asia/Taipei",
+      "log_level": "INFO",
+      "max_retries": 3,
+      "retry_delay": 3.0,
+      "backoff_factor": 2.0
+    },
+    "markets": {
+      "taiwan": {
+        "symbols": [
+          "^TWII",
+          "0050.TW",
+          "2330.TW",
+          "2454.TW",
+          "3008.TW"
+        ],
+        "trading_hours": {
+          "start": "09:00",
+          "end": "13:30"
+        },
+        "news_sources": [
+          "https://tw.stock.yahoo.com/rss?category=news"
+        ]
+      },
+      "us": {
+        "symbols": [
+          "^DJI",
+          "^IXIC",
+          "^GSPC",
+          "QQQ",
+          "SPY",
+          "NVDA",
+          "AAPL",
+          "MSFT",
+          "GOOGL"
+        ],
+        "trading_hours": {
+          "start": "22:30",
+          "end": "05:00"
+        },
+        "news_sources": [
+          "https://feeds.bloomberg.com/technology/news.rss"
+        ]
+      },
+      "crypto": {
+        "symbols": [
+          "BTC-USD",
+          "ETH-USD"
+        ]
+      },
+      "commodities": {
+        "symbols": [
+          "GC=F",
+          "CL=F"
+        ]
+      }
+    },
+    "data_collection": {
+      "daily_history_days": 300,
+      "hourly_history_days": 14,
+      "update_frequency_hours": 4,
+      "data_retention_days": 30
+    },
+    "podcast": {
+      "max_duration_minutes": 8,
+      "target_words": 3000,
+      "voice_settings": {
+        "voice": "zh-TW-HsiaoChenNeural",
+        "rate": "+5%",
+        "pitch": "+0Hz"
+      }
+    },
+    "storage": {
+      "retention_days": 14,
+      "compression_enabled": true
+    }
+  }
