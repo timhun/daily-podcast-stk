@@ -22,9 +22,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Install dependencies
+         
+      - name: Install Dependencies
         run: |
-          pip install feedparser openai pandas pytz edge-tts b2sdk slack-sdk
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
       - name: Generate script
         run: python scripts/script_editor.py
       - name: Produce audio
