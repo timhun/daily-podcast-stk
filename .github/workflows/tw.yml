@@ -47,23 +47,23 @@ jobs:
         run: python scripts/generate_script_tw.py
 
       - name: 🗣️ 合成語音（限非假日）
-        if: steps.holiday_check.outputs.is_holiday == 'false'
+        #if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/synthesize_audio.py
 
       - name: ☁️ 上傳音檔至 B2（限非假日）
-        if: steps.holiday_check.outputs.is_holiday == 'false'
+        #if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/upload_to_b2.py
 
       - name: 📰 產生 podcast_tw.xml（限非假日）
-        if: steps.holiday_check.outputs.is_holiday == 'false'
+        #if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/generate_rss.py
 
       - name: 🔁 合併主 podcast.xml（限非假日）
-        if: steps.holiday_check.outputs.is_holiday == 'false'
+        #if: steps.holiday_check.outputs.is_holiday == 'false'
         run: python scripts/merge_rss_feeds.py
 
       - name: ✅ 推送更新至 GitHub Pages（限非假日）
-        if: steps.holiday_check.outputs.is_holiday == 'false'
+        #if: steps.holiday_check.outputs.is_holiday == 'false'
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
