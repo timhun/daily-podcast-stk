@@ -10,7 +10,7 @@ import logging
 from typing import Dict, List, Tuple, Optional
 import warnings
 
-#warnings.filterwarnings('ignore')
+warnings.filterwarnings('ignore')
 
 # 配置日誌
 logging.basicConfig(level=logging.INFO)
