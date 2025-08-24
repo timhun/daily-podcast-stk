@@ -4693,3 +4693,154 @@ Name: 114, dtype: object
 2025-08-22 18:16:49,830 - INFO - 🏁 Data Collector 結束
 2025-08-22 18:16:49,830 - INFO - 🏁 Data Collector 結束
 ✅ 完成 at 2025-08-22 18:16:49 CST
+2025-08-24 12:43:46 | INFO     | __main__:main:512 | === 數據收集智士啟動 ===
+2025-08-24 12:43:46 | INFO     | __main__:collect_all_data:368 | 開始數據收集任務，市場範圍: all
+2025-08-24 12:43:46 | INFO     | __main__:collect_all_data:384 | 收集台股數據...
+2025-08-24 12:43:46 | INFO     | __main__:collect_taiwan_stocks:175 | 開始收集台股數據，共 5 支股票
+2025-08-24 12:43:46 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 ^TWII 的 1d 數據，範圍: 1y
+2025-08-24 12:43:46 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 ^TWII 數據，共 244 筆記錄
+2025-08-24 12:43:46 | INFO     | utils:validate_data_quality:291 | ^TWII 數據品質驗證通過，共 244 筆記錄
+2025-08-24 12:43:46 | SUCCESS  | __main__:save_market_data:165 | 已儲存 ^TWII daily 數據到 data/market/daily_TWII.csv (共 244 筆)
+2025-08-24 12:43:46 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 ^TWII 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:46 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 ^TWII 數據，共 115 筆記錄
+2025-08-24 12:43:46 | INFO     | utils:validate_data_quality:291 | ^TWII 數據品質驗證通過，共 115 筆記錄
+2025-08-24 12:43:46 | SUCCESS  | __main__:save_market_data:165 | 已儲存 ^TWII hourly 數據到 data/market/hourly_TWII.csv (共 115 筆)
+2025-08-24 12:43:46 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 0050.TW 的 1d 數據，範圍: 1y
+2025-08-24 12:43:46 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 0050.TW 數據，共 244 筆記錄
+2025-08-24 12:43:46 | INFO     | utils:validate_data_quality:291 | 0050.TW 數據品質驗證通過，共 244 筆記錄
+2025-08-24 12:43:46 | SUCCESS  | __main__:save_market_data:165 | 已儲存 0050.TW daily 數據到 data/market/daily_0050_TW.csv (共 244 筆)
+2025-08-24 12:43:46 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 0050.TW 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:47 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 0050.TW 數據，共 115 筆記錄
+2025-08-24 12:43:47 | INFO     | utils:validate_data_quality:291 | 0050.TW 數據品質驗證通過，共 115 筆記錄
+2025-08-24 12:43:47 | SUCCESS  | __main__:save_market_data:165 | 已儲存 0050.TW hourly 數據到 data/market/hourly_0050_TW.csv (共 115 筆)
+2025-08-24 12:43:47 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 2330.TW 的 1d 數據，範圍: 1y
+2025-08-24 12:43:47 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 2330.TW 數據，共 243 筆記錄
+2025-08-24 12:43:47 | INFO     | utils:validate_data_quality:291 | 2330.TW 數據品質驗證通過，共 243 筆記錄
+2025-08-24 12:43:47 | SUCCESS  | __main__:save_market_data:165 | 已儲存 2330.TW daily 數據到 data/market/daily_2330_TW.csv (共 243 筆)
+2025-08-24 12:43:47 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 2330.TW 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:47 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 2330.TW 數據，共 115 筆記錄
+2025-08-24 12:43:47 | INFO     | utils:validate_data_quality:291 | 2330.TW 數據品質驗證通過，共 115 筆記錄
+2025-08-24 12:43:47 | SUCCESS  | __main__:save_market_data:165 | 已儲存 2330.TW hourly 數據到 data/market/hourly_2330_TW.csv (共 115 筆)
+2025-08-24 12:43:47 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 2454.TW 的 1d 數據，範圍: 1y
+2025-08-24 12:43:47 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 2454.TW 數據，共 243 筆記錄
+2025-08-24 12:43:47 | INFO     | utils:validate_data_quality:291 | 2454.TW 數據品質驗證通過，共 243 筆記錄
+2025-08-24 12:43:47 | SUCCESS  | __main__:save_market_data:165 | 已儲存 2454.TW daily 數據到 data/market/daily_2454_TW.csv (共 243 筆)
+2025-08-24 12:43:47 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 2454.TW 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:47 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 2454.TW 數據，共 115 筆記錄
+2025-08-24 12:43:47 | INFO     | utils:validate_data_quality:291 | 2454.TW 數據品質驗證通過，共 115 筆記錄
+2025-08-24 12:43:47 | SUCCESS  | __main__:save_market_data:165 | 已儲存 2454.TW hourly 數據到 data/market/hourly_2454_TW.csv (共 115 筆)
+2025-08-24 12:43:47 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 3008.TW 的 1d 數據，範圍: 1y
+2025-08-24 12:43:48 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 3008.TW 數據，共 243 筆記錄
+2025-08-24 12:43:48 | INFO     | utils:validate_data_quality:291 | 3008.TW 數據品質驗證通過，共 243 筆記錄
+2025-08-24 12:43:48 | SUCCESS  | __main__:save_market_data:165 | 已儲存 3008.TW daily 數據到 data/market/daily_3008_TW.csv (共 243 筆)
+2025-08-24 12:43:48 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 3008.TW 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:48 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 3008.TW 數據，共 115 筆記錄
+2025-08-24 12:43:48 | INFO     | utils:validate_data_quality:291 | 3008.TW 數據品質驗證通過，共 115 筆記錄
+2025-08-24 12:43:48 | SUCCESS  | __main__:save_market_data:165 | 已儲存 3008.TW hourly 數據到 data/market/hourly_3008_TW.csv (共 115 筆)
+2025-08-24 12:43:48 | INFO     | __main__:collect_taiwan_stocks:198 | 台股數據收集完成 - 日線: 5, 小時線: 5, 錯誤: 0
+2025-08-24 12:43:48 | INFO     | __main__:collect_all_data:389 | 收集台股新聞...
+2025-08-24 12:43:48 | INFO     | __main__:fetch_rss_news:282 | 正在獲取 RSS 新聞: https://tw.stock.yahoo.com/rss?category=news
+2025-08-24 12:43:48 | SUCCESS  | __main__:fetch_rss_news:301 | 成功獲取 5 則新聞
+2025-08-24 12:43:48 | SUCCESS  | __main__:collect_taiwan_news:327 | 已儲存 5 則台股新聞到 data/news/2025-08-24/taiwan_news.json
+2025-08-24 12:43:48 | INFO     | __main__:collect_all_data:394 | 收集美股數據...
+2025-08-24 12:43:48 | INFO     | __main__:collect_us_stocks:204 | 開始收集美股數據，共 9 支股票
+2025-08-24 12:43:48 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 ^DJI 的 1d 數據，範圍: 1y
+2025-08-24 12:43:48 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 ^DJI 數據，共 250 筆記錄
+2025-08-24 12:43:48 | INFO     | utils:validate_data_quality:291 | ^DJI 數據品質驗證通過，共 250 筆記錄
+2025-08-24 12:43:48 | SUCCESS  | __main__:save_market_data:165 | 已儲存 ^DJI daily 數據到 data/market/daily_DJI.csv (共 250 筆)
+2025-08-24 12:43:48 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 ^DJI 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:48 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 ^DJI 數據，共 161 筆記錄
+2025-08-24 12:43:48 | INFO     | utils:validate_data_quality:291 | ^DJI 數據品質驗證通過，共 161 筆記錄
+2025-08-24 12:43:48 | SUCCESS  | __main__:save_market_data:165 | 已儲存 ^DJI hourly 數據到 data/market/hourly_DJI.csv (共 161 筆)
+2025-08-24 12:43:48 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 ^IXIC 的 1d 數據，範圍: 1y
+2025-08-24 12:43:48 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 ^IXIC 數據，共 250 筆記錄
+2025-08-24 12:43:48 | INFO     | utils:validate_data_quality:291 | ^IXIC 數據品質驗證通過，共 250 筆記錄
+2025-08-24 12:43:48 | SUCCESS  | __main__:save_market_data:165 | 已儲存 ^IXIC daily 數據到 data/market/daily_IXIC.csv (共 250 筆)
+2025-08-24 12:43:48 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 ^IXIC 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:48 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 ^IXIC 數據，共 161 筆記錄
+2025-08-24 12:43:48 | INFO     | utils:validate_data_quality:291 | ^IXIC 數據品質驗證通過，共 161 筆記錄
+2025-08-24 12:43:48 | SUCCESS  | __main__:save_market_data:165 | 已儲存 ^IXIC hourly 數據到 data/market/hourly_IXIC.csv (共 161 筆)
+2025-08-24 12:43:48 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 ^GSPC 的 1d 數據，範圍: 1y
+2025-08-24 12:43:48 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 ^GSPC 數據，共 250 筆記錄
+2025-08-24 12:43:48 | INFO     | utils:validate_data_quality:291 | ^GSPC 數據品質驗證通過，共 250 筆記錄
+2025-08-24 12:43:48 | SUCCESS  | __main__:save_market_data:165 | 已儲存 ^GSPC daily 數據到 data/market/daily_GSPC.csv (共 250 筆)
+2025-08-24 12:43:48 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 ^GSPC 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:48 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 ^GSPC 數據，共 161 筆記錄
+2025-08-24 12:43:48 | INFO     | utils:validate_data_quality:291 | ^GSPC 數據品質驗證通過，共 161 筆記錄
+2025-08-24 12:43:48 | SUCCESS  | __main__:save_market_data:165 | 已儲存 ^GSPC hourly 數據到 data/market/hourly_GSPC.csv (共 161 筆)
+2025-08-24 12:43:48 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 QQQ 的 1d 數據，範圍: 1y
+2025-08-24 12:43:49 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 QQQ 數據，共 250 筆記錄
+2025-08-24 12:43:49 | INFO     | utils:validate_data_quality:291 | QQQ 數據品質驗證通過，共 250 筆記錄
+2025-08-24 12:43:49 | SUCCESS  | __main__:save_market_data:165 | 已儲存 QQQ daily 數據到 data/market/daily_QQQ.csv (共 250 筆)
+2025-08-24 12:43:49 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 QQQ 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:49 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 QQQ 數據，共 161 筆記錄
+2025-08-24 12:43:49 | INFO     | utils:validate_data_quality:291 | QQQ 數據品質驗證通過，共 161 筆記錄
+2025-08-24 12:43:49 | SUCCESS  | __main__:save_market_data:165 | 已儲存 QQQ hourly 數據到 data/market/hourly_QQQ.csv (共 161 筆)
+2025-08-24 12:43:49 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 SPY 的 1d 數據，範圍: 1y
+2025-08-24 12:43:49 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 SPY 數據，共 250 筆記錄
+2025-08-24 12:43:49 | INFO     | utils:validate_data_quality:291 | SPY 數據品質驗證通過，共 250 筆記錄
+2025-08-24 12:43:49 | SUCCESS  | __main__:save_market_data:165 | 已儲存 SPY daily 數據到 data/market/daily_SPY.csv (共 250 筆)
+2025-08-24 12:43:49 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 SPY 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:49 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 SPY 數據，共 161 筆記錄
+2025-08-24 12:43:49 | INFO     | utils:validate_data_quality:291 | SPY 數據品質驗證通過，共 161 筆記錄
+2025-08-24 12:43:49 | SUCCESS  | __main__:save_market_data:165 | 已儲存 SPY hourly 數據到 data/market/hourly_SPY.csv (共 161 筆)
+2025-08-24 12:43:49 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 NVDA 的 1d 數據，範圍: 1y
+2025-08-24 12:43:49 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 NVDA 數據，共 250 筆記錄
+2025-08-24 12:43:49 | INFO     | utils:validate_data_quality:291 | NVDA 數據品質驗證通過，共 250 筆記錄
+2025-08-24 12:43:49 | SUCCESS  | __main__:save_market_data:165 | 已儲存 NVDA daily 數據到 data/market/daily_NVDA.csv (共 250 筆)
+2025-08-24 12:43:49 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 NVDA 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:49 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 NVDA 數據，共 161 筆記錄
+2025-08-24 12:43:49 | INFO     | utils:validate_data_quality:291 | NVDA 數據品質驗證通過，共 161 筆記錄
+2025-08-24 12:43:49 | SUCCESS  | __main__:save_market_data:165 | 已儲存 NVDA hourly 數據到 data/market/hourly_NVDA.csv (共 161 筆)
+2025-08-24 12:43:49 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 AAPL 的 1d 數據，範圍: 1y
+2025-08-24 12:43:49 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 AAPL 數據，共 250 筆記錄
+2025-08-24 12:43:49 | INFO     | utils:validate_data_quality:291 | AAPL 數據品質驗證通過，共 250 筆記錄
+2025-08-24 12:43:49 | SUCCESS  | __main__:save_market_data:165 | 已儲存 AAPL daily 數據到 data/market/daily_AAPL.csv (共 250 筆)
+2025-08-24 12:43:49 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 AAPL 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:49 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 AAPL 數據，共 161 筆記錄
+2025-08-24 12:43:49 | INFO     | utils:validate_data_quality:291 | AAPL 數據品質驗證通過，共 161 筆記錄
+2025-08-24 12:43:49 | SUCCESS  | __main__:save_market_data:165 | 已儲存 AAPL hourly 數據到 data/market/hourly_AAPL.csv (共 161 筆)
+2025-08-24 12:43:49 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 MSFT 的 1d 數據，範圍: 1y
+2025-08-24 12:43:50 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 MSFT 數據，共 250 筆記錄
+2025-08-24 12:43:50 | INFO     | utils:validate_data_quality:291 | MSFT 數據品質驗證通過，共 250 筆記錄
+2025-08-24 12:43:50 | SUCCESS  | __main__:save_market_data:165 | 已儲存 MSFT daily 數據到 data/market/daily_MSFT.csv (共 250 筆)
+2025-08-24 12:43:50 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 MSFT 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:50 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 MSFT 數據，共 161 筆記錄
+2025-08-24 12:43:50 | INFO     | utils:validate_data_quality:291 | MSFT 數據品質驗證通過，共 161 筆記錄
+2025-08-24 12:43:50 | SUCCESS  | __main__:save_market_data:165 | 已儲存 MSFT hourly 數據到 data/market/hourly_MSFT.csv (共 161 筆)
+2025-08-24 12:43:50 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 GOOGL 的 1d 數據，範圍: 1y
+2025-08-24 12:43:50 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 GOOGL 數據，共 250 筆記錄
+2025-08-24 12:43:50 | INFO     | utils:validate_data_quality:291 | GOOGL 數據品質驗證通過，共 250 筆記錄
+2025-08-24 12:43:50 | SUCCESS  | __main__:save_market_data:165 | 已儲存 GOOGL daily 數據到 data/market/daily_GOOGL.csv (共 250 筆)
+2025-08-24 12:43:50 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 GOOGL 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:50 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 GOOGL 數據，共 161 筆記錄
+2025-08-24 12:43:50 | INFO     | utils:validate_data_quality:291 | GOOGL 數據品質驗證通過，共 161 筆記錄
+2025-08-24 12:43:50 | SUCCESS  | __main__:save_market_data:165 | 已儲存 GOOGL hourly 數據到 data/market/hourly_GOOGL.csv (共 161 筆)
+2025-08-24 12:43:50 | INFO     | __main__:collect_us_stocks:227 | 美股數據收集完成 - 日線: 9, 小時線: 9, 錯誤: 0
+2025-08-24 12:43:50 | INFO     | __main__:collect_all_data:399 | 收集美股新聞...
+2025-08-24 12:43:50 | INFO     | __main__:fetch_rss_news:282 | 正在獲取 RSS 新聞: https://feeds.bloomberg.com/technology/news.rss
+2025-08-24 12:43:50 | SUCCESS  | __main__:fetch_rss_news:301 | 成功獲取 5 則新聞
+2025-08-24 12:43:50 | SUCCESS  | __main__:collect_us_news:349 | 已儲存 5 則美股新聞到 data/news/2025-08-24/us_news.json
+2025-08-24 12:43:50 | INFO     | __main__:collect_all_data:404 | 收集加密貨幣數據...
+2025-08-24 12:43:50 | INFO     | __main__:collect_crypto_data:233 | 開始收集加密貨幣數據，共 2 種
+2025-08-24 12:43:50 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 BTC-USD 的 1d 數據，範圍: 6mo
+2025-08-24 12:43:50 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 BTC-USD 數據，共 182 筆記錄
+2025-08-24 12:43:50 | INFO     | utils:validate_data_quality:291 | BTC-USD 數據品質驗證通過，共 182 筆記錄
+2025-08-24 12:43:50 | SUCCESS  | __main__:save_market_data:165 | 已儲存 BTC-USD daily 數據到 data/market/daily_BTC_USD.csv (共 182 筆)
+2025-08-24 12:43:50 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 BTC-USD 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:50 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 BTC-USD 數據，共 745 筆記錄
+2025-08-24 12:43:50 | INFO     | utils:validate_data_quality:291 | BTC-USD 數據品質驗證通過，共 745 筆記錄
+2025-08-24 12:43:50 | SUCCESS  | __main__:save_market_data:165 | 已儲存 BTC-USD hourly 數據到 data/market/hourly_BTC_USD.csv (共 745 筆)
+2025-08-24 12:43:50 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 ETH-USD 的 1d 數據，範圍: 6mo
+2025-08-24 12:43:50 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 ETH-USD 數據，共 182 筆記錄
+2025-08-24 12:43:50 | INFO     | utils:validate_data_quality:291 | ETH-USD 數據品質驗證通過，共 182 筆記錄
+2025-08-24 12:43:50 | SUCCESS  | __main__:save_market_data:165 | 已儲存 ETH-USD daily 數據到 data/market/daily_ETH_USD.csv (共 182 筆)
+2025-08-24 12:43:50 | INFO     | __main__:fetch_yahoo_data:65 | 正在獲取 ETH-USD 的 1h 數據，範圍: 1mo
+2025-08-24 12:43:50 | SUCCESS  | __main__:fetch_yahoo_data:105 | 成功獲取 ETH-USD 數據，共 745 筆記錄
+2025-08-24 12:43:50 | INFO     | utils:validate_data_quality:291 | ETH-USD 數據品質驗證通過，共 745 筆記錄
+2025-08-24 12:43:50 | SUCCESS  | __main__:save_market_data:165 | 已儲存 ETH-USD hourly 數據到 data/market/hourly_ETH_USD.csv (共 745 筆)
+2025-08-24 12:43:50 | INFO     | __main__:collect_crypto_data:256 | 加密貨幣數據收集完成 - 日線: 2, 小時線: 2, 錯誤: 0
+2025-08-24 12:43:50 | SUCCESS  | __main__:collect_all_data:416 | 數據收集完成，耗時 4.39 秒，共處理 32 個市場數據檔案
+2025-08-24 12:43:50 | SUCCESS  | __main__:main:543 | ✅ 數據收集任務完成！
+2025-08-24 12:43:50 | INFO     | __main__:main:545 | 📊 處理統計: {'total_market_files': 32}
+2025-08-24 12:43:50 | INFO     | __main__:main:550 | === 數據收集智士結束 ===
