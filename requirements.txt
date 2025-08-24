@@ -49,3 +49,4 @@ pre-commit
 workalendar>=17.0.0
 mutagen
 xgboost
+statsmodels
