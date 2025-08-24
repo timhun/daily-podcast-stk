@@ -19,22 +19,46 @@ class ConfigManager:
     """配置管理器"""
     
     def __init__(self, config_dir: str = "config"):
-        self.config_dir = Path(config_dir)
+        # 確保使用絕對路徑或從項目根目錄開始的相對路徑
+        current_dir = Path(__file__).parent
+        project_root = current_dir.parent  # 從 scripts 目錄回到項目根目錄
+        self.config_dir = project_root / config_dir
+        
+        logger.info(f"配置目錄路徑: {self.config_dir.absolute()}")
+        
         self.base_config = self.load_json("base_config.json")
         self.strategies_config = self.load_json("strategies.json")
         self.secrets = self.load_secrets()
+        
+        # 調試信息
+        logger.info(f"已載入配置 - base_config keys: {list(self.base_config.keys())}")
+        if "markets" in self.base_config:
+            taiwan_symbols = self.base_config.get("markets", {}).get("taiwan", {}).get("symbols", [])
+            logger.info(f"台股股票列表: {taiwan_symbols}")
     
     def load_json(self, filename: str) -> Dict[str, Any]:
         """載入 JSON 配置檔案"""
         file_path = self.config_dir / filename
         try:
+            logger.info(f"嘗試載入配置檔案: {file_path.absolute()}")
+            
+            if not file_path.exists():
+                logger.error(f"配置檔案不存在: {file_path.absolute()}")
+                return {}
+            
             with open(file_path, 'r', encoding='utf-8') as f:
-                return json.load(f)
+                config = json.load(f)
+                logger.success(f"成功載入配置檔案: {filename}")
+                return config
+                
         except FileNotFoundError:
             logger.error(f"配置檔案不存在: {file_path}")
             return {}
         except json.JSONDecodeError as e:
             logger.error(f"配置檔案格式錯誤: {file_path}, 錯誤: {e}")
+            return {}
+        except Exception as e:
+            logger.error(f"載入配置檔案時發生錯誤: {file_path}, 錯誤: {e}")
             return {}
     
     def load_secrets(self) -> Dict[str, Any]:
@@ -80,6 +104,7 @@ class ConfigManager:
             if isinstance(config, dict) and key in config:
                 config = config[key]
             else:
+                logger.debug(f"配置路徑 {path} 不存在，返回默認值: {default}")
                 return default
         
         return config
