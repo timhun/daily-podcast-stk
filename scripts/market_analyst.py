@@ -1,11 +1,4 @@
 #!/usr/bin/env python3
-“””
-市場解析師 (Market Intelligence Analyst)
-深度技術分析與市場洞察引擎
-
-Author: 幫幫忙 AI
-Version: 1.0.0
-“””
 
 import pandas as pd
 import numpy as np
