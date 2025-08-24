@@ -78,14 +78,29 @@ class MarketDataCollector:
             # 重設索引，將日期作為欄位
             data.reset_index(inplace=True)
             
+            # 檢查時間欄位名稱並統一為 'Datetime'
+            if 'Date' in data.columns:
+                data.rename(columns={'Date': 'Datetime'}, inplace=True)
+            
+            # 確保基本欄位存在
+            required_columns = ['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume']
+            missing_columns = [col for col in required_columns if col not in data.columns]
+            if missing_columns:
+                logger.error(f"{symbol} 缺少必要欄位: {missing_columns}")
+                raise ValueError(f"Missing required columns: {missing_columns}")
+            
             # 重新排序欄位，讓時間欄位在前面
             columns = ['Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume', 'Updated']
-            if 'Dividends' in data.columns:
-                columns.insert(-1, 'Dividends')
-            if 'Stock Splits' in data.columns:
-                columns.insert(-1, 'Stock Splits')
             
-            data = data[columns]
+            # 添加可選欄位（如果存在）
+            optional_columns = ['Dividends', 'Stock Splits']
+            for col in optional_columns:
+                if col in data.columns:
+                    columns.insert(-1, col)
+            
+            # 只選擇存在的欄位
+            available_columns = [col for col in columns if col in data.columns]
+            data = data[available_columns]
             
             logger.success(f"成功獲取 {symbol} 數據，共 {len(data)} 筆記錄")
             return data
@@ -112,8 +127,16 @@ class MarketDataCollector:
             if filename.exists():
                 try:
                     existing_data = pd.read_csv(filename)
-                    existing_data['Datetime'] = pd.to_datetime(existing_data['Datetime'])
-                    data['Datetime'] = pd.to_datetime(data['Datetime'])
+                    
+                    # 確保兩個 DataFrame 都有 Datetime 欄位且格式一致
+                    if 'Datetime' in existing_data.columns:
+                        existing_data['Datetime'] = pd.to_datetime(existing_data['Datetime'])
+                    
+                    if 'Datetime' in data.columns:
+                        data['Datetime'] = pd.to_datetime(data['Datetime'])
+                    else:
+                        logger.error(f"{symbol} 新數據缺少 Datetime 欄位")
+                        return False
                     
                     # 合併新舊數據，去重並排序
                     combined_data = pd.concat([existing_data, data]).drop_duplicates(
