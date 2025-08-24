@@ -16,8 +16,6 @@ jobs:
 
     env:
       PODCAST_MODE: tw
-    env:
-      PODCAST_MODE: us
       MOONSHOT_API_KEY: ${{ secrets.MOONSHOT_API_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
