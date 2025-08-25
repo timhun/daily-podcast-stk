@@ -11,6 +11,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from openai import OpenAI
+from datetime import datetime, timedelta
 
 logger = LoggerSetup.setup_logger('strategy_manager', config_manager.get("system.log_level", "INFO"))
 
@@ -43,16 +44,13 @@ def optimize_params(strategy_name, params, performance):
         """
         
         response = client.chat.completions.create(
-            model=config_manager.get('llm.grok_model', "grok-beta"),
+            model=config_manager.get('llm.grok_model', "grok-3-mini"),
             messages=[{"role": "user", "content": prompt}],
-            temperature=config_manager.get('llm.temperature', 0.7),
+            temperature=config_manager.get('llm.temperature', 0.6),
             max_tokens=config_manager.get('llm.max_tokens', 2200)
         )
         
-        # 嘗試解析JSON回應
         response_text = response.choices[0].message.content.strip()
-        
-        # 提取JSON部分（如果回應包含其他文字）
         import re
         json_match = re.search(r'\{.*\}', response_text, re.DOTALL)
         if json_match:
@@ -93,10 +91,68 @@ def load_strategies_config():
         logger.error(f"載入策略配置時發生錯誤: {e}")
         return []
 
+def load_news_sentiment(symbol: str, date: str) -> float:
+    """從新聞數據計算情緒分數（模擬）"""
+    try:
+        news_dir = Path("data/news") / date
+        if not news_dir.exists():
+            logger.warning(f"新聞目錄 {news_dir} 不存在")
+            return 0.0
+        
+        sentiment_scores = []
+        for news_file in news_dir.glob(f"news_taiwan_*.json"):
+            try:
+                with open(news_file, 'r', encoding='utf-8') as f:
+                    news = json.load(f)
+                # 模擬情緒分析（實際應使用 Grok API）
+                summary = news.get('summary', '')
+                client = get_grok_client()
+                prompt = f"分析以下新聞摘要的情緒（正向/負向，範圍 -1 到 1）：\n{summary}"
+                response = client.chat.completions.create(
+                    model=config_manager.get('llm.grok_model', "grok-3-mini"),
+                    messages=[{"role": "user", "content": prompt}],
+                    temperature=0.5,
+                    max_tokens=100
+                )
+                score = float(response.choices[0].message.content.strip()) if response.choices[0].message.content.strip().replace('.', '').isdigit() else 0.0
+                sentiment_scores.append(score)
+            except Exception as e:
+                logger.warning(f"處理新聞 {news_file} 時發生錯誤: {e}")
+        
+        return np.mean(sentiment_scores) if sentiment_scores else 0.0
+    
+    except Exception as e:
+        logger.error(f"計算 {symbol} 情緒分數失敗: {e}")
+        return 0.0
+
+def validate_data_quality(df, symbol: str, min_rows: int = 100) -> bool:
+    """驗證數據品質"""
+    if df is None or len(df) < min_rows:
+        logger.warning(f"{symbol} 數據行數不足: {len(df) if df is not None else 0}")
+        return False
+    
+    required_columns = ['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume']
+    missing_columns = [col for col in required_columns if col not in df.columns]
+    
+    if missing_columns:
+        logger.warning(f"{symbol} 缺少必要欄位: {missing_columns}")
+        return False
+    
+    null_percentage = df.isnull().sum().sum() / (len(df) * len(df.columns))
+    if null_percentage > 0.1:
+        logger.warning(f"{symbol} 空值比例過高: {null_percentage:.2%}")
+        return False
+    
+    if (df['Close'] <= 0).any():
+        logger.warning(f"{symbol} 存在異常價格數據")
+        return False
+    
+    logger.info(f"{symbol} 數據品質驗證通過，共 {len(df)} 筆記錄")
+    return True
+
 def main(mode=None):
     """主要執行函數"""
     try:
-        # 載入配置
         base_config = config_manager.base_config
         strategies = load_strategies_config()
         
@@ -104,7 +160,6 @@ def main(mode=None):
             slack_alert("無可用的策略配置", urgent=True)
             return
         
-        # 確定要分析的標的
         if mode == 'us':
             focus_symbol = 'QQQ'
             market_config = base_config.get('markets', {}).get('us', {})
@@ -114,7 +169,6 @@ def main(mode=None):
         
         clean_symbol = focus_symbol.replace('.', '_').replace('^', '')
         
-        # 檢查數據檔案
         project_root = Path(__file__).parent.parent
         daily_file = project_root / "data/market" / f"daily_{clean_symbol}.csv"
         
@@ -123,16 +177,15 @@ def main(mode=None):
             slack_alert(f"缺少 {focus_symbol} 的數據檔案: {daily_file}")
             return
         
-        # 載入和預處理數據
         logger.info(f"載入數據檔案: {daily_file}")
-        df = pd.read_csv(daily_file, index_col='Datetime', parse_dates=True)
+        df = pd.read_csv(daily_file, parse_dates=['Datetime'])
         
-        if len(df) < 100:
-            logger.warning(f"{focus_symbol} 數據量不足，僅有 {len(df)} 筆記錄")
-            slack_alert(f"{focus_symbol} 數據量不足")
+        if not validate_data_quality(df, focus_symbol):
+            slack_alert(f"{focus_symbol} 數據品質不合格")
             return
         
-        # 計算基本特徵
+        # 設置索引並計算特徵
+        df.set_index('Datetime', inplace=True)
         df['Return'] = df['Close'].pct_change()
         df['Label'] = np.where(df['Return'] > 0, 1, 0)
         df['SMA_5'] = df['Close'].rolling(window=5).mean()
@@ -141,11 +194,15 @@ def main(mode=None):
         df['Volume_MA'] = df['Volume'].rolling(window=20).mean()
         df['Volume_Ratio'] = df['Volume'] / df['Volume_MA']
         
-        # 移除空值
+        # 添加情緒分數
+        today = get_taiwan_time().strftime("%Y-%m-%d")
+        df['Sentiment'] = load_news_sentiment(focus_symbol, today)
+        
         df.dropna(inplace=True)
         
         if len(df) < 50:
             logger.warning(f"處理後數據量不足: {len(df)}")
+            slack_alert(f"{focus_symbol} 處理後數據量不足")
             return
         
         logger.info(f"{focus_symbol} 數據預處理完成，共 {len(df)} 筆記錄")
@@ -153,7 +210,7 @@ def main(mode=None):
         # ARIMA 基準模型
         try:
             arima_model = ARIMA(df['Close'], order=(1,1,1)).fit()
-            test_size = min(len(df) // 5, 50)  # 測試集大小
+            test_size = min(len(df) // 5, 50)
             arima_pred = arima_model.forecast(steps=test_size)
             arima_labels = np.where(arima_pred > df['Close'].iloc[-test_size:], 1, 0)
             actual_labels = df['Label'].iloc[-test_size:]
@@ -163,17 +220,15 @@ def main(mode=None):
             logger.warning(f"ARIMA 基準模型失敗: {e}, 使用隨機基準 0.5")
             baseline_acc = 0.5
         
-        # 準備特徵
-        features = ['SMA_5', 'SMA_20', 'RSI', 'Volume_Ratio']
+        # 準備特徵（包含情緒）
+        features = ['SMA_5', 'SMA_20', 'RSI', 'Volume_Ratio', 'Sentiment']
         X = df[features]
         y = df['Label']
         
-        # 分割訓練/測試集
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.2, shuffle=False
         )
         
-        # 評估每個策略
         strategy_results = {}
         best_win_rate = 0
         best_strategy = None
@@ -200,18 +255,14 @@ def main(mode=None):
                 acc = evaluate_lstm_strategy(df, params)
             
             elif name == "sentiment_analysis":
-                acc = evaluate_sentiment_strategy(df, params)  # 新增情緒策略評估
+                acc = evaluate_sentiment_strategy(df, params)
             
             else:
                 logger.warning(f"未知策略: {name}, 跳過")
                 continue
             
             performance = f"準確率: {acc:.3f}"
-            
-            # 優化參數
             optimized_params = optimize_params(name, params, performance)
-            
-            # 重新評估優化後準確率（簡化假設優化後提升5%）
             optimized_acc = acc * 1.05 if acc > 0.5 else acc
             
             strategy_results[name] = {
@@ -226,7 +277,6 @@ def main(mode=None):
                 best_strategy = name
                 best_params = optimized_params
         
-        # 綜合評估
         if best_win_rate > baseline_acc:
             output = {
                 "timestamp": get_taiwan_time().isoformat(),
@@ -239,7 +289,6 @@ def main(mode=None):
                 "all_strategies": strategy_results
             }
             
-            # 保存結果檔案
             output_dir = project_root / "data"
             output_dir.mkdir(exist_ok=True)
             json_file = output_dir / f"strategy_best_{clean_symbol}.json"
@@ -249,7 +298,6 @@ def main(mode=None):
             
             logger.info(f"策略結果已保存: {json_file}")
             
-            # 發送通知
             message = (
                 f"🎯 {focus_symbol} 最佳策略更新\n"
                 f"策略: {best_strategy}\n"
@@ -283,30 +331,18 @@ def evaluate_technical_strategy(df, params):
     rsi_overbought = params.get('rsi_overbought', 70)
     rsi_oversold = params.get('rsi_oversold', 30)
     
-    # 計算技術指標
     df['SMA_Short'] = df['Close'].rolling(window=sma_short).mean()
     df['SMA_Long'] = df['Close'].rolling(window=sma_long).mean()
     
-    # 生成信號
     signals = []
     for i in range(len(df)):
         if pd.isna(df['SMA_Short'].iloc[i]) or pd.isna(df['SMA_Long'].iloc[i]):
             signals.append(0)
             continue
             
-        # 移動平均策略
         ma_signal = 1 if df['SMA_Short'].iloc[i] > df['SMA_Long'].iloc[i] else 0
-        
-        # RSI策略
         rsi_value = df['RSI'].iloc[i] if 'RSI' in df.columns and not pd.isna(df['RSI'].iloc[i]) else 50
-        if rsi_value < rsi_oversold:
-            rsi_signal = 1  # 超賣，買入
-        elif rsi_value > rsi_overbought:
-            rsi_signal = 0  # 超買，賣出
-        else:
-            rsi_signal = ma_signal  # 使用移動平均信號
-        
-        # 綜合信號
+        rsi_signal = 1 if rsi_value < rsi_oversold else 0 if rsi_value > rsi_overbought else ma_signal
         final_signal = 1 if (ma_signal + rsi_signal) >= 1 else 0
         signals.append(final_signal)
     
@@ -315,30 +351,19 @@ def evaluate_technical_strategy(df, params):
 def evaluate_lstm_strategy(df, params):
     """評估LSTM策略（簡化版本）"""
     try:
-        # 由於LSTM需要較複雜的實現，這裡使用簡化的時間序列預測
         sequence_length = params.get('sequence_length', 60)
-        
-        # 使用簡單的趨勢預測作為LSTM的替代
         df['Price_Change'] = df['Close'].pct_change()
         df['Trend'] = df['Price_Change'].rolling(window=sequence_length//4).mean()
         
-        # 生成預測信號
         predictions = []
         for i in range(len(df)):
             if i < sequence_length:
                 predictions.append(0.5)
                 continue
-                
             recent_trend = df['Trend'].iloc[i-10:i].mean()
-            if not pd.isna(recent_trend):
-                # 基於趨勢的簡單預測
-                pred = 0.6 if recent_trend > 0.001 else 0.4
-            else:
-                pred = 0.5
-                
+            pred = 0.6 if recent_trend > 0.001 else 0.4 if not pd.isna(recent_trend) else 0.5
             predictions.append(pred)
         
-        # 轉換為分類結果並計算準確率
         binary_preds = [1 if p > 0.5 else 0 for p in predictions[sequence_length:]]
         actual = df['Label'].iloc[sequence_length:].values
         
@@ -355,16 +380,10 @@ def evaluate_lstm_strategy(df, params):
         return 0.5
 
 def evaluate_sentiment_strategy(df, params):
-    """評估情緒分析策略（簡化版本，使用隨機情緒分數）"""
+    """評估情緒分析策略"""
     try:
         sentiment_threshold = params.get('sentiment_threshold', 0.1)
-        
-        # 模擬情緒分數（實際應整合新聞情緒分析）
-        df['Sentiment'] = np.random.uniform(-1, 1, len(df))  # 模擬
-        
-        # 生成信號
         signals = np.where(df['Sentiment'] > sentiment_threshold, 1, 0)
-        
         acc = accuracy_score(df['Label'], signals)
         return acc
         
@@ -374,12 +393,11 @@ def evaluate_sentiment_strategy(df, params):
 
 if __name__ == "__main__":
     try:
-        # 從命令列參數獲取模式
         mode = None
         if len(sys.argv) > 1:
             if sys.argv[1].lower() in ['us', 'usa', 'american']:
                 mode = 'us'
-            elif sys.argv[1].lower() in ['tw', 'taiwan', 'tw']:
+            elif sys.argv[1].lower() in ['tw', 'taiwan']:
                 mode = 'tw'
         
         logger.info(f"策略管理器啟動，模式: {mode or 'default'}")
