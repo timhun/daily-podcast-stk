@@ -1,8 +1,3 @@
-"""
-工具函數模組
-提供日誌、配置管理、錯誤處理等基礎功能
-"""
-
 import json
 import os
 import sys
