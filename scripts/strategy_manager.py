@@ -13,6 +13,7 @@ from sklearn.model_selection import train_test_split
 from openai import OpenAI
 from datetime import datetime, timedelta
 from loguru import logger
+import logging
 
 logger = LoggerSetup.setup_logger('strategy_manager', config_manager.get("system.log_level", "INFO"))
 
