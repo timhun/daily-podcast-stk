@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 import asyncio
 import aiohttp
+import json  # 新增導入
 from typing import List, Dict, Optional, Tuple
 import argparse
 import sys
@@ -29,13 +30,11 @@ class MarketDataCollector:
     
     def __init__(self):
         self.config = config_manager
-        # 簡化數據目錄結構
         self.data_dir = Path("data/market")
         self.news_dir = Path("data/news")
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.news_dir.mkdir(parents=True, exist_ok=True)
         
-        # 創建今天的新聞目錄（新聞還是按日期分組）
         self.today = get_taiwan_time().strftime("%Y-%m-%d")
         self.today_news_dir = self.news_dir / self.today
         self.today_news_dir.mkdir(exist_ok=True)
@@ -49,15 +48,9 @@ class MarketDataCollector:
     ) -> Optional[pd.DataFrame]:
         """
         從 Yahoo Finance 獲取股票數據
-        
-        Args:
-            symbol: 股票代號
-            period: 時間範圍 (1d, 5d, 1mo, 3mo, 6mo, 1y, 2y, 5y, 10y, ytd, max)
-            interval: 數據間隔 (1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 1d, 5d, 1wk, 1mo, 3mo)
         """
         try:
             logger.info(f"正在獲取 {symbol} 的 {interval} 數據，範圍: {period}")
-            
             ticker = yf.Ticker(symbol)
             data = ticker.history(period=period, interval=interval)
             
@@ -65,34 +58,25 @@ class MarketDataCollector:
                 logger.warning(f"{symbol} 沒有獲取到數據")
                 return None
             
-            # 添加股票代號和更新時間欄位
             data['Symbol'] = symbol
             data['Updated'] = get_taiwan_time().isoformat()
-            
-            # 重設索引，將日期作為欄位
             data.reset_index(inplace=True)
             
-            # 檢查時間欄位名稱並統一為 'Datetime'
             if 'Date' in data.columns:
                 data.rename(columns={'Date': 'Datetime'}, inplace=True)
             
-            # 確保基本欄位存在
-            required_columns = ['Datetime', 'Open', 'High', 'Low', 'Close', 'Volume']
+            required_columns = ['Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume']
             missing_columns = [col for col in required_columns if col not in data.columns]
             if missing_columns:
                 logger.error(f"{symbol} 缺少必要欄位: {missing_columns}")
                 raise ValueError(f"Missing required columns: {missing_columns}")
             
-            # 重新排序欄位，讓時間欄位在前面
             columns = ['Datetime', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume', 'Updated']
-            
-            # 添加可選欄位（如果存在）
             optional_columns = ['Dividends', 'Stock Splits']
             for col in optional_columns:
                 if col in data.columns:
                     columns.insert(-1, col)
             
-            # 只選擇存在的欄位
             available_columns = [col for col in columns if col in data.columns]
             data = data[available_columns]
             
@@ -106,55 +90,33 @@ class MarketDataCollector:
     def save_market_data(self, data: pd.DataFrame, symbol: str, data_type: str) -> bool:
         """
         儲存市場數據到簡化的檔案結構
-        
-        Args:
-            data: DataFrame
-            symbol: 股票代號
-            data_type: "daily" 或 "hourly"
         """
         try:
-            # 清理符號名稱作為檔案名
             clean_symbol = symbol.replace('^', '').replace('.', '_').replace('=', '_').replace('-', '_')
             filename = self.data_dir / f"{data_type}_{clean_symbol}.csv"
             
-            # 如果檔案已存在，檢查是否需要更新
             if filename.exists():
                 try:
                     existing_data = pd.read_csv(filename)
-                    
-                    # 確保兩個 DataFrame 都有 Datetime 欄位且格式一致
-                    if 'Datetime' in existing_data.columns:
-                        existing_data['Datetime'] = pd.to_datetime(existing_data['Datetime'])
-                    
-                    if 'Datetime' in data.columns:
-                        data['Datetime'] = pd.to_datetime(data['Datetime'])
-                    else:
-                        logger.error(f"{symbol} 新數據缺少 Datetime 欄位")
-                        return False
-                    
-                    # 合併新舊數據，去重並排序
+                    existing_data['Datetime'] = pd.to_datetime(existing_data['Datetime'])
+                    data['Datetime'] = pd.to_datetime(data['Datetime'])
                     combined_data = pd.concat([existing_data, data]).drop_duplicates(
                         subset=['Datetime'], keep='last'
                     ).sort_values('Datetime').reset_index(drop=True)
                     
-                    # 根據數據類型保留適當的記錄數量
                     if data_type == "daily":
-                        # 保留最近300天
                         combined_data = combined_data.tail(300)
                     elif data_type == "hourly":
-                        # 保留最近14天的數據
                         cutoff_date = get_taiwan_time() - timedelta(days=14)
                         combined_data = combined_data[combined_data['Datetime'] >= cutoff_date]
                     
                     data_to_save = combined_data
-                    
                 except Exception as e:
                     logger.warning(f"合併 {symbol} 歷史數據時出錯，使用新數據: {str(e)}")
                     data_to_save = data
             else:
                 data_to_save = data
             
-            # 保存數據
             data_to_save.to_csv(filename, index=False)
             logger.info(f"成功儲存 {symbol} 的 {data_type} 數據到 {filename}")
             return True
@@ -166,7 +128,7 @@ class MarketDataCollector:
     async def fetch_news(self, url: str, category: str) -> List[Dict]:
         """異步抓取新聞 RSS"""
         try:
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=10)) as session:
                 async with session.get(url, timeout=10) as response:
                     text = await response.text()
                     feed = feedparser.parse(text)
@@ -186,56 +148,6 @@ class MarketDataCollector:
         except Exception as e:
             logger.error(f"抓取新聞 RSS 失敗 ({url}): {str(e)}")
             return []
-    
-    def collect_us_stocks(self) -> Dict:
-        """收集美股數據"""
-        results = {'daily': 0, 'hourly': 0}
-        symbols = self.config.get("markets.us.symbols.daily", [])
-        for symbol in symbols:
-            data = self.fetch_yahoo_data(symbol, period="1y", interval="1d")
-            if data is not None and validate_data_quality(data, symbol):
-                if self.save_market_data(data, symbol, "daily"):
-                    results['daily'] += 1
-        
-        hourly_symbols = self.config.get("markets.us.symbols.hourly", [])
-        for symbol in hourly_symbols:
-            data = self.fetch_yahoo_data(symbol, period="14d", interval="1h")
-            if data is not None and validate_data_quality(data, symbol):
-                if self.save_market_data(data, symbol, "hourly"):
-                    results['hourly'] += 1
-        
-        return results
-    
-    def collect_taiwan_stocks(self) -> Dict:
-        """收集台股數據"""
-        results = {'daily': 0, 'hourly': 0}
-        symbols = self.config.get("markets.taiwan.symbols.daily", [])
-        for symbol in symbols:
-            data = self.fetch_yahoo_data(symbol, period="1y", interval="1d")
-            if data is not None and validate_data_quality(data, symbol):
-                if self.save_market_data(data, symbol, "daily"):
-                    results['daily'] += 1
-        
-        hourly_symbols = self.config.get("markets.taiwan.symbols.hourly", [])
-        for symbol in hourly_symbols:
-            data = self.fetch_yahoo_data(symbol, period="14d", interval="1h")
-            if data is not None and validate_data_quality(data, symbol):
-                if self.save_market_data(data, symbol, "hourly"):
-                    results['hourly'] += 1
-        
-        return results
-    
-    def collect_crypto_data(self) -> Dict:
-        """收集加密貨幣數據"""
-        results = {'daily': 0, 'hourly': 0}
-        symbols = self.config.get("markets.crypto.symbols.daily", [])
-        for symbol in symbols:
-            data = self.fetch_yahoo_data(symbol, period="1y", interval="1d")
-            if data is not None and validate_data_quality(data, symbol):
-                if self.save_market_data(data, symbol, "daily"):
-                    results['daily'] += 1
-        
-        return results
 
 class NewsCollector:
     """新聞收集器"""
@@ -252,13 +164,18 @@ class NewsCollector:
         
         for url in news_urls:
             for category in categories:
-                news_items = await self.market_collector.fetch_news(url, category)
-                for item in news_items:
-                    filename = self.market_collector.today_news_dir / f"news_taiwan_{news_count}.json"
-                    with open(filename, 'w', encoding='utf-8') as f:
-                        json.dump(item, f, ensure_ascii=False, indent=2)
-                    news_count += 1
+                try:
+                    news_items = await self.market_collector.fetch_news(url, category)
+                    for item in news_items:
+                        filename = self.market_collector.today_news_dir / f"news_taiwan_{news_count}.json"
+                        with open(filename, 'w', encoding='utf-8') as f:
+                            json.dump(item, f, ensure_ascii=False, indent=2)
+                        news_count += 1
+                        logger.info(f"保存台股新聞: {filename}")
+                except Exception as e:
+                    logger.error(f"處理新聞 {url} (類別: {category}) 失敗: {str(e)}")
         
+        logger.info(f"共收集 {news_count} 篇台股新聞")
         return news_count
     
     async def collect_us_news(self) -> int:
@@ -269,13 +186,18 @@ class NewsCollector:
         
         for url in news_urls:
             for category in categories:
-                news_items = await self.market_collector.fetch_news(url, category)
-                for item in news_items:
-                    filename = self.market_collector.today_news_dir / f"news_us_{news_count}.json"
-                    with open(filename, 'w', encoding='utf-8') as f:
-                        json.dump(item, f, ensure_ascii=False, indent=2)
-                    news_count += 1
+                try:
+                    news_items = await self.market_collector.fetch_news(url, category)
+                    for item in news_items:
+                        filename = self.market_collector.today_news_dir / f"news_us_{news_count}.json"
+                        with open(filename, 'w', encoding='utf-8') as f:
+                            json.dump(item, f, ensure_ascii=False, indent=2)
+                        news_count += 1
+                        logger.info(f"保存美股新聞: {filename}")
+                except Exception as e:
+                    logger.error(f"處理新聞 {url} (類別: {category}) 失敗: {str(e)}")
         
+        logger.info(f"共收集 {news_count} 篇美股新聞")
         return news_count
 
 class DataCollector:
@@ -348,7 +270,6 @@ class DataCollector:
         cutoff_date = get_taiwan_time() - timedelta(days=retention_days)
         cutoff_str = cutoff_date.strftime("%Y-%m-%d")
         
-        # 只清理新聞數據（按日期分組）
         news_dir = Path("data/news")
         if news_dir.exists():
             cleaned_dirs = 0
@@ -390,7 +311,6 @@ class DataCollector:
         if news_dir.exists():
             status['news_dirs'] = len([d for d in news_dir.iterdir() if d.is_dir()])
         
-        # 找最新更新時間
         if data_dir.exists():
             csv_files = list(data_dir.glob("*.csv"))
             if csv_files:
@@ -444,7 +364,6 @@ def main():
     
     if args.test:
         logger.info("測試模式：只收集單一股票數據")
-        # 測試模式下只收集少量數據
         test_symbol = "^TWII" if args.market == "taiwan" else "^GSPC"
         data = collector.market_collector.fetch_yahoo_data(test_symbol)
         if data is not None:
@@ -453,7 +372,6 @@ def main():
             logger.error("測試失敗！")
             sys.exit(1)
     else:
-        # 正常模式
         results = asyncio.run(collector.collect_all_data(args.market))
         
         if results['status'] == 'success':
@@ -468,3 +386,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
