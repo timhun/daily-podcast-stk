@@ -1,78 +1,101 @@
 {
     "system": {
-      "timezone": "Asia/Taipei",
-      "log_level": "INFO",
-      "max_retries": 3,
-      "retry_delay": 3.0,
-      "backoff_factor": 2.0
+        "timezone": "Asia/Taipei",
+        "log_level": "INFO",
+        "max_retries": 3,
+        "retry_delay": 3.0,
+        "backoff_factor": 2.0
     },
     "markets": {
-      "taiwan": {
-        "symbols": [
-          "^TWII",
-          "0050.TW",
-          "2330.TW",
-          "2454.TW",
-          "3008.TW"
-        ],
-        "trading_hours": {
-          "start": "09:00",
-          "end": "13:30"
+        "taiwan": {
+            "symbols": {
+                "daily": ["^TWII", "0050.TW", "2330.TW", "2454.TW", "3008.TW"],
+                "hourly": ["0050.TW"]
+            },
+            "trading_hours": {
+                "start": "09:00",
+                "end": "13:30"
+            },
+            "news_sources": [
+                "https://tw.stock.yahoo.com/rss?category=news"
+            ]
         },
-        "news_sources": [
-          "https://tw.stock.yahoo.com/rss?category=news"
-        ]
-      },
-      "us": {
-        "symbols": [
-          "^DJI",
-          "^IXIC",
-          "^GSPC",
-          "QQQ",
-          "SPY",
-          "NVDA",
-          "AAPL",
-          "MSFT",
-          "GOOGL"
-        ],
-        "trading_hours": {
-          "start": "22:30",
-          "end": "05:00"
+        "us": {
+            "symbols": {
+                "daily": ["^DJI", "^IXIC", "^GSPC", "^SOX", "QQQ", "SPY", "IBIT", "GC=F", "^TNX", "BTC-USD"],
+                "hourly": ["QQQ", "SPY"]
+            },
+            "trading_hours": {
+                "start": "22:30",
+                "end": "05:00"
+            },
+            "news_sources": [
+                "https://feeds.bloomberg.com/technology/news.rss",
+                "https://news.google.com/rss/search?q=site:reuters.com+AI+OR+economy&hl=en-US&gl=US&ceid=US:en"
+            ]
         },
-        "news_sources": [
-          "https://feeds.bloomberg.com/technology/news.rss"
-        ]
-      },
-      "crypto": {
-        "symbols": [
-          "BTC-USD",
-          "ETH-USD"
-        ]
-      },
-      "commodities": {
-        "symbols": [
-          "GC=F",
-          "CL=F"
-        ]
-      }
+        "crypto": {
+            "symbols": {
+                "daily": ["BTC-USD", "ETH-USD"],
+                "hourly": []
+            }
+        },
+        "commodities": {
+            "symbols": {
+                "daily": ["GC=F", "CL=F"],
+                "hourly": []
+            }
+        }
     },
     "data_collection": {
-      "daily_history_days": 300,
-      "hourly_history_days": 14,
-      "update_frequency_hours": 4,
-      "data_retention_days": 30
+        "daily_history_days": 300,
+        "hourly_history_days": 14,
+        "update_frequency_hours": 4,
+        "data_retention_days": 30
     },
     "podcast": {
-      "max_duration_minutes": 8,
-      "target_words": 3000,
-      "voice_settings": {
-        "voice": "zh-TW-HsiaoChenNeural",
-        "rate": "+5%",
-        "pitch": "+0Hz"
-      }
+        "max_duration_minutes": 8,
+        "target_words": 3000,
+        "titles": {
+            "taiwan": "幫幫忙說台股",
+            "us": "幫幫忙說美股"
+        },
+        "host_name": "幫幫忙",
+        "kosto_quotes": [
+            "股市就像女人一樣，永遠捉摸不透，但耐心總有回報。",
+            "投資不是賭博，而是智慧的遊戲。"
+        ],
+        "voice_settings": {
+            "taiwan": "zh-TW-YunJheNeural",
+            "us": "en-US-GuyNeural",
+            "rate": "+20%",
+            "volume": "+30%"
+        }
     },
     "storage": {
-      "retention_days": 14,
-      "compression_enabled": true
+        "retention_days": 14,
+        "compression_enabled": true,
+        "b2": {
+            "key_id": "your_b2_key_id",
+            "application_key": "your_b2_application_key",
+            "bucket_name": "podcast-bucket",
+            "base_url": "https://f005.backblazeb2.com/file/daily-podcast-stk"
+        }
+    },
+    "llm": {
+        "provider": "openrouter",
+        "model": "openai/gpt-4o-mini",
+        "temperature": 0.6,
+        "max_tokens": 2200,
+        "grok_api_url": "https://api.grok.xai.com/v1/improve_strategy",
+        "grok_model": "grok-3-mini"
+    },
+    "notifications": {
+        "slack_webhook_url": "https://bbm-a1u4547.slack.com/archives/D09AGLZ7JMA"
+    },
+    "platforms": {
+        "spotify": {"enabled": true},
+        "apple": {"enabled": true},
+        "google": {"enabled": false, "api_key": ""}
     }
-  }
+}
