@@ -12,6 +12,10 @@ import logging
 import requests
 from openai import OpenAI
 
+def get_clean_symbol(symbol: str) -> str:
+    """統一的股票代號清理函數"""
+    return symbol.replace('^', '').replace('.', '_').replace('=', '_').replace('-', '_')
+
 class ConfigManager:
     """配置管理器"""
     
