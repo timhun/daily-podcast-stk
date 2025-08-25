@@ -1,0 +1,63 @@
+{
+  "timestamp": "2025-08-25T04:21:20.571728",
+  "symbol": "0050.TW",
+  "best_strategy": "sentiment_analysis",
+  "optimized_params": {
+    "sentiment_threshold": 0.1,
+    "news_importance_weight": 0.3,
+    "social_weight": 0.7
+  },
+  "win_rate": 0.5971565393840981,
+  "baseline_accuracy": 0.5,
+  "improvement": 0.09715653938409807,
+  "all_strategies": [
+    {
+      "strategy": "technical_analysis",
+      "display_name": "技術分析策略",
+      "accuracy": 0.37777777777777777,
+      "params": {
+        "sma_short": 20,
+        "sma_long": 50,
+        "rsi_period": 14,
+        "rsi_overbought": 70,
+        "rsi_oversold": 30,
+        "macd_fast": 12,
+        "macd_slow": 26,
+        "macd_signal": 9
+      }
+    },
+    {
+      "strategy": "ml_random_forest",
+      "display_name": "隨機森林策略",
+      "accuracy": 0.4222222222222222,
+      "params": {
+        "n_estimators": 100,
+        "max_depth": 10,
+        "min_samples_split": 5,
+        "feature_window": 20
+      }
+    },
+    {
+      "strategy": "lstm_deep_learning",
+      "display_name": "LSTM深度學習",
+      "accuracy": 0.5421686746987951,
+      "params": {
+        "sequence_length": 60,
+        "hidden_units": 50,
+        "dropout_rate": 0.2,
+        "epochs": 100,
+        "batch_size": 32
+      }
+    },
+    {
+      "strategy": "sentiment_analysis",
+      "display_name": "情緒分析策略",
+      "accuracy": 0.5971565393840981,
+      "params": {
+        "sentiment_threshold": 0.1,
+        "news_importance_weight": 0.3,
+        "social_weight": 0.7
+      }
+    }
+  ]
+}
