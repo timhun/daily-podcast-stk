@@ -1,8 +1,3 @@
-"""
-數據收集智士 (Data Intelligence Agent)
-負責從各種來源收集市場數據和新聞資訊
-"""
-
 import yfinance as yf
 import pandas as pd
 import requests
@@ -28,7 +23,6 @@ from loguru import logger
 
 # 設定日誌
 LoggerSetup.setup_logger("data_collector", config_manager.get("system.log_level", "INFO"))
-
 
 class MarketDataCollector:
     """市場數據收集器"""
@@ -160,226 +154,151 @@ class MarketDataCollector:
             else:
                 data_to_save = data
             
-            # 儲存數據
-            data_to_save.to_csv(filename, index=False, encoding='utf-8')
-            logger.success(f"已儲存 {symbol} {data_type} 數據到 {filename} (共 {len(data_to_save)} 筆)")
+            # 保存數據
+            data_to_save.to_csv(filename, index=False)
+            logger.info(f"成功儲存 {symbol} 的 {data_type} 數據到 {filename}")
             return True
             
         except Exception as e:
-            logger.error(f"儲存 {symbol} {data_type} 數據失敗: {str(e)}")
+            logger.error(f"儲存 {symbol} 的 {data_type} 數據失敗: {str(e)}")
             return False
     
-    def collect_taiwan_stocks(self) -> Dict[str, int]:
-        """收集台股數據"""
-        symbols = self.config.get("markets.taiwan.symbols", [])
-        logger.info(f"開始收集台股數據，共 {len(symbols)} 支股票")
-        
-        results = {'daily': 0, 'hourly': 0, 'errors': 0}
-        
-        for symbol in symbols:
-            try:
-                # 收集日線數據
-                daily_data = self.fetch_yahoo_data(symbol, period="1y", interval="1d")
-                if daily_data is not None and validate_data_quality(daily_data, symbol):
-                    if self.save_market_data(daily_data, symbol, "daily"):
-                        results['daily'] += 1
-                
-                # 收集小時線數據
-                hourly_data = self.fetch_yahoo_data(symbol, period="1mo", interval="1h")
-                if hourly_data is not None and validate_data_quality(hourly_data, symbol, min_rows=5):
-                    if self.save_market_data(hourly_data, symbol, "hourly"):
-                        results['hourly'] += 1
-                
-            except Exception as e:
-                logger.error(f"收集 {symbol} 數據時發生錯誤: {str(e)}")
-                results['errors'] += 1
-                continue
-        
-        logger.info(f"台股數據收集完成 - 日線: {results['daily']}, 小時線: {results['hourly']}, 錯誤: {results['errors']}")
-        return results
-    
-    def collect_us_stocks(self) -> Dict[str, int]:
-        """收集美股數據"""
-        symbols = self.config.get("markets.us.symbols", [])
-        logger.info(f"開始收集美股數據，共 {len(symbols)} 支股票")
-        
-        results = {'daily': 0, 'hourly': 0, 'errors': 0}
-        
-        for symbol in symbols:
-            try:
-                # 收集日線數據
-                daily_data = self.fetch_yahoo_data(symbol, period="1y", interval="1d")
-                if daily_data is not None and validate_data_quality(daily_data, symbol):
-                    if self.save_market_data(daily_data, symbol, "daily"):
-                        results['daily'] += 1
-                
-                # 收集小時線數據
-                hourly_data = self.fetch_yahoo_data(symbol, period="1mo", interval="1h")
-                if hourly_data is not None and validate_data_quality(hourly_data, symbol, min_rows=5):
-                    if self.save_market_data(hourly_data, symbol, "hourly"):
-                        results['hourly'] += 1
-                
-            except Exception as e:
-                logger.error(f"收集 {symbol} 數據時發生錯誤: {str(e)}")
-                results['errors'] += 1
-                continue
-        
-        logger.info(f"美股數據收集完成 - 日線: {results['daily']}, 小時線: {results['hourly']}, 錯誤: {results['errors']}")
-        return results
-    
-    def collect_crypto_data(self) -> Dict[str, int]:
-        """收集加密貨幣數據"""
-        symbols = self.config.get("markets.crypto.symbols", [])
-        logger.info(f"開始收集加密貨幣數據，共 {len(symbols)} 種")
-        
-        results = {'daily': 0, 'hourly': 0, 'errors': 0}
-        
-        for symbol in symbols:
-            try:
-                # 收集日線數據
-                daily_data = self.fetch_yahoo_data(symbol, period="6mo", interval="1d")
-                if daily_data is not None and validate_data_quality(daily_data, symbol):
-                    if self.save_market_data(daily_data, symbol, "daily"):
-                        results['daily'] += 1
-                
-                # 收集小時線數據
-                hourly_data = self.fetch_yahoo_data(symbol, period="1mo", interval="1h")
-                if hourly_data is not None and validate_data_quality(hourly_data, symbol, min_rows=5):
-                    if self.save_market_data(hourly_data, symbol, "hourly"):
-                        results['hourly'] += 1
-                
-            except Exception as e:
-                logger.error(f"收集 {symbol} 數據時發生錯誤: {str(e)}")
-                results['errors'] += 1
-                continue
-        
-        logger.info(f"加密貨幣數據收集完成 - 日線: {results['daily']}, 小時線: {results['hourly']}, 錯誤: {results['errors']}")
-        return results
-
-
-class NewsDataCollector:
-    """新聞數據收集器"""
-    
-    def __init__(self):
-        self.config = config_manager
-        self.news_dir = Path("data/news")
-        self.news_dir.mkdir(parents=True, exist_ok=True)
-        
-        self.today = get_taiwan_time().strftime("%Y-%m-%d")
-        self.today_dir = self.news_dir / self.today
-        self.today_dir.mkdir(exist_ok=True)
-    
-    @retry_on_failure(max_retries=3, delay=2.0)
-    def fetch_rss_news(self, rss_url: str, max_items: int = 10) -> List[Dict]:
-        """
-        從 RSS 獲取新聞
-        
-        Args:
-            rss_url: RSS 網址
-            max_items: 最大新聞數量
-        """
+    async def fetch_news(self, url: str, category: str) -> List[Dict]:
+        """異步抓取新聞 RSS"""
         try:
-            logger.info(f"正在獲取 RSS 新聞: {rss_url}")
-            
-            feed = feedparser.parse(rss_url)
-            
-            if feed.bozo:
-                logger.warning(f"RSS feed 可能有格式問題: {rss_url}")
-            
-            news_items = []
-            for entry in feed.entries[:max_items]:
-                news_item = {
-                    'title': entry.get('title', ''),
-                    'link': entry.get('link', ''),
-                    'published': entry.get('published', ''),
-                    'summary': entry.get('summary', ''),
-                    'source': feed.feed.get('title', 'Unknown'),
-                    'collected_at': get_taiwan_time().isoformat()
-                }
-                news_items.append(news_item)
-            
-            logger.success(f"成功獲取 {len(news_items)} 則新聞")
-            return news_items
-            
+            async with aiohttp.ClientSession() as session:
+                async with session.get(url, timeout=10) as response:
+                    text = await response.text()
+                    feed = feedparser.parse(text)
+                    
+                    news_items = []
+                    for entry in feed.entries[:self.config.get("data_collection.news_limit", 3)]:
+                        news_items.append({
+                            'title': entry.get('title', ''),
+                            'link': entry.get('link', ''),
+                            'published': entry.get('published', ''),
+                            'summary': entry.get('summary', ''),
+                            'category': category
+                        })
+                    
+                    return news_items
+                    
         except Exception as e:
-            logger.error(f"獲取 RSS 新聞失敗: {str(e)}")
-            raise
+            logger.error(f"抓取新聞 RSS 失敗 ({url}): {str(e)}")
+            return []
     
-    def collect_taiwan_news(self) -> int:
-        """收集台股相關新聞"""
-        news_sources = self.config.get("markets.taiwan.news_sources", [])
-        all_news = []
+    def collect_us_stocks(self) -> Dict:
+        """收集美股數據"""
+        results = {'daily': 0, 'hourly': 0}
+        symbols = self.config.get("markets.us.symbols.daily", [])
+        for symbol in symbols:
+            data = self.fetch_yahoo_data(symbol, period="1y", interval="1d")
+            if data is not None and validate_data_quality(data, symbol):
+                if self.save_market_data(data, symbol, "daily"):
+                    results['daily'] += 1
         
-        for source_url in news_sources:
-            try:
-                news = self.fetch_rss_news(source_url, max_items=5)
-                all_news.extend(news)
-            except Exception as e:
-                logger.error(f"收集台股新聞失敗 {source_url}: {str(e)}")
-                continue
+        hourly_symbols = self.config.get("markets.us.symbols.hourly", [])
+        for symbol in hourly_symbols:
+            data = self.fetch_yahoo_data(symbol, period="14d", interval="1h")
+            if data is not None and validate_data_quality(data, symbol):
+                if self.save_market_data(data, symbol, "hourly"):
+                    results['hourly'] += 1
         
-        if all_news:
-            # 儲存新聞數據
-            import json
-            filename = self.today_dir / "taiwan_news.json"
-            with open(filename, 'w', encoding='utf-8') as f:
-                json.dump(all_news, f, ensure_ascii=False, indent=2)
-            logger.success(f"已儲存 {len(all_news)} 則台股新聞到 {filename}")
-        
-        return len(all_news)
+        return results
     
-    def collect_us_news(self) -> int:
-        """收集美股相關新聞"""
-        news_sources = self.config.get("markets.us.news_sources", [])
-        all_news = []
+    def collect_taiwan_stocks(self) -> Dict:
+        """收集台股數據"""
+        results = {'daily': 0, 'hourly': 0}
+        symbols = self.config.get("markets.taiwan.symbols.daily", [])
+        for symbol in symbols:
+            data = self.fetch_yahoo_data(symbol, period="1y", interval="1d")
+            if data is not None and validate_data_quality(data, symbol):
+                if self.save_market_data(data, symbol, "daily"):
+                    results['daily'] += 1
         
-        for source_url in news_sources:
-            try:
-                news = self.fetch_rss_news(source_url, max_items=5)
-                all_news.extend(news)
-            except Exception as e:
-                logger.error(f"收集美股新聞失敗 {source_url}: {str(e)}")
-                continue
+        hourly_symbols = self.config.get("markets.taiwan.symbols.hourly", [])
+        for symbol in hourly_symbols:
+            data = self.fetch_yahoo_data(symbol, period="14d", interval="1h")
+            if data is not None and validate_data_quality(data, symbol):
+                if self.save_market_data(data, symbol, "hourly"):
+                    results['hourly'] += 1
         
-        if all_news:
-            import json
-            filename = self.today_dir / "us_news.json"
-            with open(filename, 'w', encoding='utf-8') as f:
-                json.dump(all_news, f, ensure_ascii=False, indent=2)
-            logger.success(f"已儲存 {len(all_news)} 則美股新聞到 {filename}")
+        return results
+    
+    def collect_crypto_data(self) -> Dict:
+        """收集加密貨幣數據"""
+        results = {'daily': 0, 'hourly': 0}
+        symbols = self.config.get("markets.crypto.symbols.daily", [])
+        for symbol in symbols:
+            data = self.fetch_yahoo_data(symbol, period="1y", interval="1d")
+            if data is not None and validate_data_quality(data, symbol):
+                if self.save_market_data(data, symbol, "daily"):
+                    results['daily'] += 1
         
-        return len(all_news)
+        return results
 
+class NewsCollector:
+    """新聞收集器"""
+    
+    def __init__(self, market_collector: MarketDataCollector):
+        self.market_collector = market_collector
+        self.config = market_collector.config
+    
+    async def collect_taiwan_news(self) -> int:
+        """收集台股新聞"""
+        news_urls = self.config.get("markets.taiwan.news_sources", [])
+        categories = self.config.get("news_categories", ["經濟", "半導體"])
+        news_count = 0
+        
+        for url in news_urls:
+            for category in categories:
+                news_items = await self.market_collector.fetch_news(url, category)
+                for item in news_items:
+                    filename = self.market_collector.today_news_dir / f"news_taiwan_{news_count}.json"
+                    with open(filename, 'w', encoding='utf-8') as f:
+                        json.dump(item, f, ensure_ascii=False, indent=2)
+                    news_count += 1
+        
+        return news_count
+    
+    async def collect_us_news(self) -> int:
+        """收集美股新聞"""
+        news_urls = self.config.get("markets.us.news_sources", [])
+        categories = self.config.get("news_categories", ["經濟", "半導體"])
+        news_count = 0
+        
+        for url in news_urls:
+            for category in categories:
+                news_items = await self.market_collector.fetch_news(url, category)
+                for item in news_items:
+                    filename = self.market_collector.today_news_dir / f"news_us_{news_count}.json"
+                    with open(filename, 'w', encoding='utf-8') as f:
+                        json.dump(item, f, ensure_ascii=False, indent=2)
+                    news_count += 1
+        
+        return news_count
 
 class DataCollector:
-    """主數據收集器"""
+    """整體數據收集協調器"""
     
     def __init__(self):
         self.market_collector = MarketDataCollector()
-        self.news_collector = NewsDataCollector()
+        self.news_collector = NewsCollector(self.market_collector)
     
-    def collect_all_data(self, market: str = "all") -> Dict:
-        """
-        收集所有數據
-        
-        Args:
-            market: "all", "taiwan", "us", "crypto"
-        """
-        logger.info(f"開始數據收集任務，市場範圍: {market}")
-        start_time = get_taiwan_time()
-        
+    async def collect_all_data(self, market: str = "all") -> Dict:
+        """收集所有指定市場的數據"""
         results = {
-            'market_data': {},
-            'news_data': {},
-            'collection_time': start_time.isoformat(),
             'status': 'success',
-            'summary': {}
+            'market_data': {'taiwan': {}, 'us': {}, 'crypto': {}},
+            'news_data': {'taiwan': 0, 'us': 0},
+            'summary': {'total_market_files': 0},
+            'error_message': None
         }
         
+        start_time = get_taiwan_time()
+        total_files = 0
+        
         try:
-            total_files = 0
-            
-            # 收集市場數據
             if market in ["all", "taiwan"]:
                 logger.info("收集台股數據...")
                 taiwan_data = self.market_collector.collect_taiwan_stocks()
@@ -387,7 +306,7 @@ class DataCollector:
                 total_files += taiwan_data['daily'] + taiwan_data['hourly']
                 
                 logger.info("收集台股新聞...")
-                taiwan_news_count = self.news_collector.collect_taiwan_news()
+                taiwan_news_count = await self.news_collector.collect_taiwan_news()
                 results['news_data']['taiwan'] = taiwan_news_count
             
             if market in ["all", "us"]:
@@ -397,7 +316,7 @@ class DataCollector:
                 total_files += us_data['daily'] + us_data['hourly']
                 
                 logger.info("收集美股新聞...")
-                us_news_count = self.news_collector.collect_us_news()
+                us_news_count = await self.news_collector.collect_us_news()
                 results['news_data']['us'] = us_news_count
             
             if market in ["all", "crypto"]:
@@ -430,7 +349,6 @@ class DataCollector:
         cutoff_str = cutoff_date.strftime("%Y-%m-%d")
         
         # 只清理新聞數據（按日期分組）
-        # 市場數據檔案現在是直接更新，不需要按日期清理
         news_dir = Path("data/news")
         if news_dir.exists():
             cleaned_dirs = 0
@@ -480,7 +398,6 @@ class DataCollector:
                 status['last_updated'] = datetime.fromtimestamp(latest_file.stat().st_mtime).isoformat()
         
         return status
-
 
 def main():
     """主程式入口"""
@@ -537,7 +454,7 @@ def main():
             sys.exit(1)
     else:
         # 正常模式
-        results = collector.collect_all_data(args.market)
+        results = asyncio.run(collector.collect_all_data(args.market))
         
         if results['status'] == 'success':
             logger.success("✅ 數據收集任務完成！")
@@ -548,7 +465,6 @@ def main():
             sys.exit(1)
     
     logger.info("=== 數據收集智士結束 ===")
-
 
 if __name__ == "__main__":
     main()
