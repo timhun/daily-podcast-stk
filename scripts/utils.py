@@ -245,10 +245,11 @@ class LoggerSetup:
     @staticmethod
     def setup_logger(module_name: str, log_level: str = "INFO") -> None:
         """設定模組專用日誌"""
+        from loguru import logger  # 確保 logger 從 loguru 導入
         
         # 避免重複初始化同一個模組的日誌
         if module_name in LoggerSetup._initialized_loggers:
-            return
+            return logger.bind(module=module_name)  # 返回已綁定的 logger
         
         # 移除預設處理器（只在第一次調用時）
         if not LoggerSetup._initialized_loggers:
@@ -293,11 +294,10 @@ class LoggerSetup:
             filter=lambda record: record["extra"].get("module") == module_name
         )
         
-        # 綁定模組名稱到logger
-        logger = logger.bind(module=module_name)
-        
+        # 綁定模組名稱到 logger 並返回
+        bound_logger = logger.bind(module=module_name)
         LoggerSetup._initialized_loggers.add(module_name)
-        return logger
+        return bound_logger
 
 def slack_alert(message: str, channel: Optional[str] = None, urgent: bool = False):
     """發送 Slack 通知 (使用 webhook)
@@ -410,124 +410,3 @@ def is_market_open(market: str = 'taiwan') -> bool:
     # 週末不開盤
     if tw_time.weekday() >= 5:  # 週六=5, 週日=6
         return False
-
-    if market == 'taiwan':
-        # 台股開盤時間：09:00-13:30 (台北時間)
-        market_open = tw_time.replace(hour=9, minute=0, second=0, microsecond=0)
-        market_close = tw_time.replace(hour=13, minute=30, second=0, microsecond=0)
-        return market_open <= tw_time <= market_close
-
-    elif market == 'us':
-        # 美股開盤時間：22:30-05:00 (台北時間，夏令時間可能不同)
-        # 這裡簡化處理，實際應考慮夏令時間
-        if tw_time.hour >= 22 or tw_time.hour <= 5:
-            return True
-        return False
-
-    return False
-
-def validate_data_quality(data, symbol: str, min_rows: int = 10) -> bool:
-    """驗證數據品質
-
-    Args:
-        data: pandas DataFrame
-        symbol: 股票代號
-        min_rows: 最小資料行數
-    """
-    if data is None or len(data) < min_rows:
-        logger.warning(f"{symbol} 數據行數不足: {len(data) if data is not None else 0}")
-        return False
-
-    # 檢查必要欄位
-    required_columns = ['Open', 'High', 'Low', 'Close', 'Volume']
-    missing_columns = [col for col in required_columns if col not in data.columns]
-
-    if missing_columns:
-        logger.warning(f"{symbol} 缺少必要欄位: {missing_columns}")
-        return False
-
-    # 檢查空值比例
-    null_percentage = data.isnull().sum().sum() / (len(data) * len(data.columns))
-    if null_percentage > 0.1:  # 超過10%空值
-        logger.warning(f"{symbol} 空值比例過高: {null_percentage:.2%}")
-        return False
-
-    # 檢查異常值（價格為0或負數）
-    if (data['Close'] <= 0).any():
-        logger.warning(f"{symbol} 存在異常價格數據")
-        return False
-
-    # 檢查價格數據的合理性（High >= Low, Close 在 High-Low 範圍內）
-    if (data['High'] < data['Low']).any():
-        logger.warning(f"{symbol} 存在 High < Low 的異常數據")
-        return False
-
-    if ((data['Close'] > data['High']) | (data['Close'] < data['Low'])).any():
-        logger.warning(f"{symbol} 存在 Close 超出 High-Low 範圍的異常數據")
-        return False
-
-    logger.debug(f"{symbol} 數據品質驗證通過，共 {len(data)} 筆記錄")
-    return True
-
-def safe_file_operation(operation):
-    """安全的檔案操作裝飾器"""
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(*args, **kwargs):
-            try:
-                return func(*args, **kwargs)
-            except FileNotFoundError as e:
-                logger.error(f"檔案不存在: {e}")
-                return None
-            except PermissionError as e:
-                logger.error(f"檔案權限錯誤: {e}")
-                return None
-            except OSError as e:
-                logger.error(f"檔案系統錯誤: {e}")
-                return None
-            except Exception as e:
-                logger.error(f"檔案操作時發生未預期錯誤: {e}")
-                return None
-        return wrapper
-    return decorator
-
-def format_number(num: float, decimals: int = 2) -> str:
-    """格式化數字顯示"""
-    if abs(num) >= 1_000_000:
-        return f"{num/1_000_000:.{decimals}f}M"
-    elif abs(num) >= 1_000:
-        return f"{num/1_000:.{decimals}f}K"
-    else:
-        return f"{num:.{decimals}f}"
-
-def calculate_percentage_change(old_value: float, new_value: float) -> float:
-    """計算百分比變化"""
-    if old_value == 0:
-        return 0.0
-    return ((new_value - old_value) / abs(old_value)) * 100
-
-def get_trading_day_offset(days: int) -> datetime:
-    """獲取交易日偏移（排除週末）"""
-    current = get_taiwan_time()
-    count = 0
-
-    while count < abs(days):
-        if days > 0:
-            current += timedelta(days=1)
-        else:
-            current -= timedelta(days=1)
-        
-        # 跳過週末
-        if current.weekday() < 5:  # Monday=0, Sunday=6
-            count += 1
-
-    return current
-
-# 全域配置管理器實例
-try:
-    config_manager = ConfigManager()
-    logger.info("配置管理器初始化成功")
-except Exception as e:
-    # 如果配置管理器初始化失敗，創建一個最小化的實例
-    logger.error(f"配置管理器初始化失敗: {e}")
-    config_manager = None
