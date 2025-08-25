@@ -38,11 +38,22 @@ def ask_grok(prompt: str, role: str = "user", model: str = "grok-4") -> str:
     }
 
     try:
-        # 添加重試機制
+        # Log payload for debugging (size and partial content)
+        payload_str = json.dumps(payload)
+        logger.info(f"Preparing Grok API request. Payload size: {len(payload_str)} bytes. Prompt preview: {prompt[:100]}...")
+
+        # 添加重試機制，啟用對 timeouts 的重試並允許 POST 方法
         session = requests.Session()
-        retries = Retry(total=3, backoff_factor=1, status_forcelist=[429, 500, 502, 503, 504])
+        retries = Retry(
+            total=5,  # 增加到 5 次重試
+            backoff_factor=2,  # 指數 backoff，從 2 秒開始遞增
+            status_forcelist=[429, 500, 502, 503, 504],
+            allowed_methods=None  # 禁用方法白名單，允許 POST 重試（包括 timeouts）
+        )
         session.mount("https://", HTTPAdapter(max_retries=retries))
-        response = session.post(GROK_API_URL, headers=headers, json=payload, timeout=30)
+        
+        # 增加 timeout 到 60 秒（connect=10, read=50）
+        response = session.post(GROK_API_URL, headers=headers, json=payload, timeout=(10, 50))
         response.raise_for_status()
         data = response.json()
         choices = data.get("choices", [])
@@ -52,10 +63,13 @@ def ask_grok(prompt: str, role: str = "user", model: str = "grok-4") -> str:
         reply = choices[0]["message"]["content"].strip()
         logger.info("成功從 Grok API 獲取回應")
         return reply
+    except requests.exceptions.ReadTimeout as e:
+        logger.error(f"Grok API 請求超時: {e}. 已嘗試重試但失敗。")
+        raise  # 或返回 None 作為 fallback
     except requests.RequestException as e:
         logger.error(f"Grok API 請求失敗: {e}")
         raise
-
+        
 def ask_grok_json(prompt: str, role: str = "user", model: str = "grok-4") -> dict:
     """
     呼叫 xAI Grok API，取得 JSON 結構回應（會自動解析為 dict）
