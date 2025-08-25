@@ -12,7 +12,6 @@ import logging
 import requests
 from openai import OpenAI
 
-
 class ConfigManager:
     """配置管理器"""
     
@@ -31,7 +30,7 @@ class ConfigManager:
         # 調試信息
         logger.info(f"已載入配置 - base_config keys: {list(self.base_config.keys())}")
         if "markets" in self.base_config:
-            taiwan_symbols = self.base_config.get("markets", {}).get("taiwan", {}).get("symbols", [])
+            taiwan_symbols = self.base_config.get("markets", {}).get("taiwan", {}).get("symbols", {}).get("daily", [])
             logger.info(f"台股股票列表: {taiwan_symbols}")
     
     def load_json(self, filename: str) -> Dict[str, Any]:
@@ -120,7 +119,6 @@ class ConfigManager:
         
         return config
 
-
 class LoggerSetup:
     """日誌系統設定"""
     
@@ -162,82 +160,25 @@ class LoggerSetup:
             log_dir / f"{module_name}.log",
             format=file_format,
             level=log_level,
-            rotation="1 day",
+            rotation="10 MB",
             retention="7 days",
             compression="zip"
         )
-        
-        # 添加錯誤專用檔案
-        logger.add(
-            log_dir / f"{module_name}_errors.log",
-            format=file_format,
-            level="ERROR",
-            rotation="1 week",
-            retention="30 days"
-        )
-
-
-def setup_json_logger(module_name: str, log_level: str = "INFO"):
-    """
-    設定JSON格式日誌記錄器 (向後相容函數)
-    
-    Args:
-        module_name: 模組名稱
-        log_level: 日誌級別
-        
-    Returns:
-        logger: 配置好的日誌記錄器
-    """
-    LoggerSetup.setup_logger(module_name, log_level)
-    return logger
-
-
-def get_grok_client():
-    """
-    獲取 Grok API 客戶端
-    
-    Returns:
-        OpenAI: 配置好的 Grok 客戶端
-    """
-    config = config_manager
-    api_key = config.get_secret('api_keys.grok_api_key')
-    
-    if not api_key:
-        logger.error("未找到 GROK_API_KEY，請檢查環境變數或配置檔案")
-        raise ValueError("GROK_API_KEY is required")
-    
-    # Grok API 使用 OpenAI 相容的介面
-    client = OpenAI(
-        api_key=api_key,
-        base_url="https://api.x.ai/v1"  # Grok API endpoint
-    )
-    
-    logger.info("Grok API 客戶端初始化成功")
-    return client
-
 
 def slack_alert(message: str, channel: Optional[str] = None, urgent: bool = False):
     """
-    發送 Slack 通知
+    發送 Slack 通知（使用 webhook）
     
     Args:
         message: 通知訊息
-        channel: Slack 頻道 (可選)
+        channel: Slack 頻道 (可選，預設從配置獲取)
         urgent: 是否為緊急通知
     """
     config = config_manager
+    webhook_url = config.get('notifications.slack_webhook_url')
     
-    bot_token = config.get_secret('notifications.slack_bot_token')
-    default_channel = config.get_secret('notifications.slack_channel')
-    
-    if not bot_token:
-        logger.warning("未配置 Slack Bot Token，跳過通知發送")
-        logger.info(f"通知內容: {message}")
-        return
-    
-    target_channel = channel or default_channel
-    if not target_channel:
-        logger.warning("未指定 Slack 頻道，跳過通知發送")
+    if not webhook_url:
+        logger.warning("未配置 Slack Webhook URL，跳過通知發送")
         logger.info(f"通知內容: {message}")
         return
     
@@ -248,28 +189,15 @@ def slack_alert(message: str, channel: Optional[str] = None, urgent: bool = Fals
             formatted_message = f"🚨 {formatted_message}"
         
         # 發送到 Slack
-        url = "https://slack.com/api/chat.postMessage"
-        headers = {
-            "Authorization": f"Bearer {bot_token}",
-            "Content-Type": "application/json"
-        }
-        
         payload = {
-            "channel": target_channel,
-            "text": formatted_message,
-            "username": "Strategy Manager",
-            "icon_emoji": ":robot_face:"
+            "text": formatted_message
         }
         
-        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        response = requests.post(webhook_url, json=payload, timeout=10)
         response.raise_for_status()
         
-        result = response.json()
-        if result.get("ok"):
-            logger.info(f"Slack 通知發送成功: {target_channel}")
-        else:
-            logger.error(f"Slack 通知發送失敗: {result.get('error', '未知錯誤')}")
-            
+        logger.info(f"Slack 通知發送成功")
+        
     except requests.RequestException as e:
         logger.error(f"發送 Slack 通知時發生網路錯誤: {e}")
     except Exception as e:
@@ -277,7 +205,6 @@ def slack_alert(message: str, channel: Optional[str] = None, urgent: bool = Fals
     
     # 無論如何都在日誌中記錄訊息
     logger.info(f"通知內容: {message}")
-
 
 def retry_on_failure(max_retries: int = 3, delay: float = 3.0, backoff_factor: float = 2.0):
     """
@@ -319,12 +246,10 @@ def retry_on_failure(max_retries: int = 3, delay: float = 3.0, backoff_factor: f
         return wrapper
     return decorator
 
-
 def get_taiwan_time() -> datetime:
     """獲取台灣時間"""
     tw_tz = pytz.timezone('Asia/Taipei')
     return datetime.now(tw_tz)
-
 
 def is_market_open(market: str = 'taiwan') -> bool:
     """
@@ -354,7 +279,6 @@ def is_market_open(market: str = 'taiwan') -> bool:
         return False
     
     return False
-
 
 def validate_data_quality(data, symbol: str, min_rows: int = 10) -> bool:
     """
@@ -390,7 +314,6 @@ def validate_data_quality(data, symbol: str, min_rows: int = 10) -> bool:
     
     logger.info(f"{symbol} 數據品質驗證通過，共 {len(data)} 筆記錄")
     return True
-
 
 # 全域配置管理器實例
 config_manager = ConfigManager()
