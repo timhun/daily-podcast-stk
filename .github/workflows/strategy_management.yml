@@ -10,8 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
     steps:
       - uses: actions/checkout@v4
+      
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -22,12 +25,25 @@ jobs:
           pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Create data directory
+        run: |
+          mkdir -p data
+          mkdir -p logs
+
       - name: Run strategy manager
-        run: python scripts/strategy_manager.py
+        run: |
+          cd scripts
+          python strategy_manager.py
+        
       - name: Commit changes
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add data/strategy_best_*
-          git commit -m "Update strategy results" || echo "No changes to commit"
-          git push
+          git add data/strategy_best_* || echo "No strategy files to add"
+          git add logs/*.log || echo "No log files to add"
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Update strategy results - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
+            git push
+          fi
