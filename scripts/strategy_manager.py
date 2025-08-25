@@ -112,7 +112,7 @@ def main(mode=None):
         
         # 載入和預處理數據
         logger.info(f"載入數據檔案: {daily_file}")
-        df = pd.read_csv(daily_file, index_col='Date', parse_dates=True)
+        df = pd.read_csv(daily_file, index_col='Datetime', parse_dates=True)
         
         if len(df) < 100:
             logger.warning(f"{focus_symbol} 數據量不足，僅有 {len(df)} 筆記錄")
