@@ -13,11 +13,11 @@ import requests
 from openai import OpenAI
 
 def get_clean_symbol(symbol: str) -> str:
-“”“統一的股票代號清理函數”””
+"""統一的股票代號清理函數"""
 return symbol.replace(’^’, ‘’).replace(’.’, ‘*’).replace(’=’, ’*’).replace(’-’, ‘_’)
 
 class ConfigManager:
-“”“配置管理器”””
+"""配置管理器"""
 
 ```
 def __init__(self, config_dir: str = "config"):
@@ -243,7 +243,7 @@ def get_log_path(self, relative_path: str = "") -> Path:
 ```
 
 class LoggerSetup:
-“”“日誌系統設定”””
+"""日誌系統設定"""
 
 ```
 _initialized_loggers = set()
@@ -307,7 +307,7 @@ def setup_logger(module_name: str, log_level: str = "INFO") -> None:
 ```
 
 def slack_alert(message: str, channel: Optional[str] = None, urgent: bool = False):
-“””
+"""
 發送 Slack 通知（使用 webhook）
 
 ```
