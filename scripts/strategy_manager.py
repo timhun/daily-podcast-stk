@@ -99,11 +99,11 @@ def main(mode=None):
             focus_symbol = '0050.TW'
             market_config = base_config.get('markets', {}).get('taiwan', {})
         
-        clean_symbol = focus_symbol.replace('.', '').replace('^', '')
+        clean_symbol = focus_symbol.replace('.', '_').replace('^', '')
         
         # 檢查數據檔案
         project_root = Path(__file__).parent.parent
-        daily_file = project_root / "data" / f"daily_{clean_symbol}.csv"
+        daily_file = project_root / "data/market" / f"daily_{clean_symbol}.csv"
         
         if not daily_file.exists():
             logger.error(f"找不到數據檔案: {daily_file}")
