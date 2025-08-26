@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     concurrency:
       group: podcast-tw
-      cancel-in-progress: false
+      #cancel-in-progress: false
 
     env:
       PODCAST_MODE: tw
