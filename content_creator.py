@@ -3,8 +3,11 @@ import datetime  # Add this import
 import os
 
 def generate_script(market_data, mode):
-    client = OpenAI(api_key=os.getenv('GROK_API_KEY'), base_url=os.getenv('GROK_API_URL'))
-
+    # Initialize OpenAI client with xAI API
+    client = OpenAI(
+        api_key=os.getenv('GROK_API_KEY'),
+        base_url=os.getenv('GROK_API_URL', 'https://api.x.ai/v1')  # Default to xAI base URL
+    )
     # 簡單分析：只計算漲跌
     analysis = "\n".join([f"{symbol}: 收盤 {info['close']:.2f}, 漲跌 {info['change']:.2f}%" for symbol, info in market_data.items() if symbol != 'news'])
     news = market_data.get('news', {})
@@ -19,7 +22,7 @@ def generate_script(market_data, mode):
     - 結尾: 投資金句 (例如: 投資如馬拉松)。
     """
     response = client.chat.completions.create(
-        model="grok-beta",  # 假設模型名；依 https://x.ai/api 調整
+        model="grok4",  # 假設模型名；依 https://x.ai/api 調整
         messages=[{"role": "user", "content": prompt}],
         max_tokens=1000
     )
