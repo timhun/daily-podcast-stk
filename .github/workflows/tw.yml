@@ -3,7 +3,7 @@ name: 🎧 台股 Podcast 自動化（tw）
 on:
   schedule:
     - cron: '5 6 * * *'   # 台灣時間 14:05 擷取市場資料
-    - cron: '0 8 * * *'   # 台灣時間 16:00 合成音檔與推播
+    #- cron: '0 8 * * *'   # 台灣時間 16:00 合成音檔與推播
   workflow_dispatch:
 
 jobs:
@@ -44,9 +44,9 @@ jobs:
       #- name: 🧮 第二步：分析多空判斷
         #run: python scripts/analyze_bullish_signal_from_prompt.py
 
-      - name: 🧭 檢查是否為台灣假日
-        id: holiday_check
-        run: python scripts/check_tw_holiday.py
+      #- name: 🧭 檢查是否為台灣假日
+        #id: holiday_check
+        #run: python scripts/check_tw_holiday.py
 
       - name: ✏️ 第三步：產出逐字稿
         run: python scripts/generate_script_kimi.py
