@@ -819,3 +819,25 @@ TypeError: unsupported operand type(s) for /: 'str' and 'str'
 2025-08-26 00:56:32 | INFO     | strategy_manager | 策略 sentiment_analysis 評估完成: 準確率 0.473
 2025-08-26 00:56:32 | SUCCESS  | strategy_manager | 策略結果已保存: data/strategy_best_0050_TW.json
 2025-08-26 00:56:32 | INFO     | strategy_manager | 策略管理器執行完成
+2025-08-26 04:17:16 | INFO     | strategy_manager | 策略管理器啟動，模式: default
+2025-08-26 04:17:16 | INFO     | strategy_manager | 策略管理器開始執行，模式: default
+2025-08-26 04:17:16 | ERROR    | strategy_manager | 策略配置檔案格式錯誤或為空，使用預設策略
+2025-08-26 04:17:16 | INFO     | strategy_manager | 分析目標: 0050.TW (台股)
+2025-08-26 04:17:16 | INFO     | strategy_manager | 載入數據檔案: data/market/daily_0050_TW.csv
+2025-08-26 04:17:16 | INFO     | strategy_manager | 成功載入 0050.TW 數據，共 300 筆記錄
+2025-08-26 04:17:16 | INFO     | strategy_manager | 0050.TW 數據品質驗證通過，共 300 筆記錄
+2025-08-26 04:17:16 | INFO     | strategy_manager | 0050.TW 數據預處理完成，共 281 筆記錄
+2025-08-26 04:17:16 | INFO     | strategy_manager | 計算 ARIMA 基準模型...
+2025-08-26 04:17:16 | WARNING  | strategy_manager | ARIMA 基準模型失敗: 0, 使用隨機基準 0.5
+2025-08-26 04:17:16 | INFO     | strategy_manager | 開始評估 3 個策略...
+2025-08-26 04:17:16 | INFO     | strategy_manager | 評估策略: technical_analysis
+2025-08-26 04:17:17 | ERROR    | strategy_manager | 優化策略參數時發生錯誤: Error code: 404 - {'code': 'Some requested entity was not found', 'error': "The model grok-beta does not exist or your team 69769d11-2ec7-46e8-b0cf-f1d23bd1987c does not have access to it. Please ensure you're using the correct API key. If you believe this is a mistake, please contact support and quote your team ID and the model name."}
+2025-08-26 04:17:17 | INFO     | strategy_manager | 策略 technical_analysis 評估完成: 準確率 0.488
+2025-08-26 04:17:17 | INFO     | strategy_manager | 評估策略: ml_random_forest
+2025-08-26 04:17:17 | ERROR    | strategy_manager | 優化策略參數時發生錯誤: Error code: 404 - {'code': 'Some requested entity was not found', 'error': "The model grok-beta does not exist or your team 69769d11-2ec7-46e8-b0cf-f1d23bd1987c does not have access to it. Please ensure you're using the correct API key. If you believe this is a mistake, please contact support and quote your team ID and the model name."}
+2025-08-26 04:17:18 | INFO     | strategy_manager | 策略 ml_random_forest 評估完成: 準確率 0.632
+2025-08-26 04:17:18 | INFO     | strategy_manager | 評估策略: sentiment_analysis
+2025-08-26 04:17:18 | ERROR    | strategy_manager | 優化策略參數時發生錯誤: Error code: 404 - {'code': 'Some requested entity was not found', 'error': "The model grok-beta does not exist or your team 69769d11-2ec7-46e8-b0cf-f1d23bd1987c does not have access to it. Please ensure you're using the correct API key. If you believe this is a mistake, please contact support and quote your team ID and the model name."}
+2025-08-26 04:17:18 | INFO     | strategy_manager | 策略 sentiment_analysis 評估完成: 準確率 0.473
+2025-08-26 04:17:18 | SUCCESS  | strategy_manager | 策略結果已保存: data/strategy_best_0050_TW.json
+2025-08-26 04:17:18 | INFO     | strategy_manager | 策略管理器執行完成
