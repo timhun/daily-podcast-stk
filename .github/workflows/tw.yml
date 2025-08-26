@@ -39,17 +39,17 @@ jobs:
           pip install -r requirements.txt
 
       - name: 🧠 第一步：取得市場資料（Grok）
-        run: python scripts/fetch_tw_market_data_grok.py
+        #run: python scripts/fetch_tw_market_data_grok.py
 
       - name: 🧮 第二步：分析多空判斷
-        run: python scripts/analyze_bullish_signal_from_prompt.py
+        #run: python scripts/analyze_bullish_signal_from_prompt.py
 
       - name: 🧭 檢查是否為台灣假日
         id: holiday_check
         run: python scripts/check_tw_holiday.py
 
       - name: ✏️ 第三步：產出逐字稿
-        run: python scripts/generate_script_tw.py
+        run: python scripts/generate_script_kimi.py
 
       - name: 🗣️ 合成語音（限非假日）
         #if: steps.holiday_check.outputs.is_holiday == 'false'
