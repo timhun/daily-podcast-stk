@@ -1,63 +1,92 @@
 {
-  "timestamp": "2025-08-25T04:21:20.571728",
+  "timestamp": "2025-08-26T08:29:24.327171+08:00",
   "symbol": "0050.TW",
-  "best_strategy": "sentiment_analysis",
-  "optimized_params": {
-    "sentiment_threshold": 0.1,
-    "news_importance_weight": 0.3,
-    "social_weight": 0.7
+  "market": "台股",
+  "best_strategy": "ml_random_forest",
+  "best_strategy_name": {
+    "n_estimators": 100,
+    "max_depth": 10,
+    "min_samples_split": 5
   },
-  "win_rate": 0.5971565393840981,
+  "optimized_params": {
+    "n_estimators": 100,
+    "max_depth": 10,
+    "min_samples_split": 5
+  },
+  "win_rate": 0.631578947368421,
   "baseline_accuracy": 0.5,
-  "improvement": 0.09715653938409807,
-  "all_strategies": [
-    {
-      "strategy": "technical_analysis",
-      "display_name": "技術分析策略",
-      "accuracy": 0.37777777777777777,
-      "params": {
+  "improvement": 0.13157894736842102,
+  "features_used": [
+    "SMA_5",
+    "SMA_20",
+    "RSI",
+    "Volume_Ratio",
+    "MACD",
+    "BB_Position",
+    "Sentiment"
+  ],
+  "data_period": {
+    "start": "2024-07-01T00:00:00+08:00",
+    "end": "2025-08-25T00:00:00+08:00",
+    "records": 281
+  },
+  "all_strategies": {
+    "technical_analysis": {
+      "original_accuracy": 0.4875444839857651,
+      "optimized_accuracy": 0.4875444839857651,
+      "optimized_params": {
         "sma_short": 20,
         "sma_long": 50,
         "rsi_period": 14,
         "rsi_overbought": 70,
-        "rsi_oversold": 30,
-        "macd_fast": 12,
-        "macd_slow": 26,
-        "macd_signal": 9
-      }
+        "rsi_oversold": 30
+      },
+      "weight": 0.4,
+      "features_used": [
+        "SMA_5",
+        "SMA_20",
+        "RSI",
+        "Volume_Ratio",
+        "MACD",
+        "BB_Position",
+        "Sentiment"
+      ]
     },
-    {
-      "strategy": "ml_random_forest",
-      "display_name": "隨機森林策略",
-      "accuracy": 0.4222222222222222,
-      "params": {
+    "ml_random_forest": {
+      "original_accuracy": 0.631578947368421,
+      "optimized_accuracy": 0.631578947368421,
+      "optimized_params": {
         "n_estimators": 100,
         "max_depth": 10,
-        "min_samples_split": 5,
-        "feature_window": 20
-      }
+        "min_samples_split": 5
+      },
+      "weight": 0.3,
+      "features_used": [
+        "SMA_5",
+        "SMA_20",
+        "RSI",
+        "Volume_Ratio",
+        "MACD",
+        "BB_Position",
+        "Sentiment"
+      ]
     },
-    {
-      "strategy": "lstm_deep_learning",
-      "display_name": "LSTM深度學習",
-      "accuracy": 0.5421686746987951,
-      "params": {
-        "sequence_length": 60,
-        "hidden_units": 50,
-        "dropout_rate": 0.2,
-        "epochs": 100,
-        "batch_size": 32
-      }
-    },
-    {
-      "strategy": "sentiment_analysis",
-      "display_name": "情緒分析策略",
-      "accuracy": 0.5971565393840981,
-      "params": {
-        "sentiment_threshold": 0.1,
-        "news_importance_weight": 0.3,
-        "social_weight": 0.7
-      }
+    "sentiment_analysis": {
+      "original_accuracy": 0.47330960854092524,
+      "optimized_accuracy": 0.47330960854092524,
+      "optimized_params": {
+        "sentiment_threshold": 0.1
+      },
+      "weight": 0.3,
+      "features_used": [
+        "SMA_5",
+        "SMA_20",
+        "RSI",
+        "Volume_Ratio",
+        "MACD",
+        "BB_Position",
+        "Sentiment"
+      ]
     }
-  ]
+  }
 }
