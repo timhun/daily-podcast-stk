@@ -73,6 +73,7 @@ class ConfigManager:
 
     def load_json(self, filename: str) -> Dict[str, Any]:
         """載入 JSON 配置檔案"""
+        pass 
         file_path = self.config_dir / filename
         try:
             logger.debug(f"嘗試載入配置檔案: {file_path.absolute()}")
