@@ -1,4 +1,5 @@
 from openai import OpenAI
+import os
 
 def generate_script(market_data, mode):
     client = OpenAI(api_key=os.getenv('GROK_API_KEY'), base_url=os.getenv('GROK_API_URL'))
