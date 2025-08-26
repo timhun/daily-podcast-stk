@@ -38,10 +38,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: 🧠 第一步：取得市場資料（Grok）
+      #- name: 🧠 第一步：取得市場資料（Grok）
         #run: python scripts/fetch_tw_market_data_grok.py
 
-      - name: 🧮 第二步：分析多空判斷
+      #- name: 🧮 第二步：分析多空判斷
         #run: python scripts/analyze_bullish_signal_from_prompt.py
 
       - name: 🧭 檢查是否為台灣假日
