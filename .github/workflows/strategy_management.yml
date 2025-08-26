@@ -32,8 +32,7 @@ jobs:
 
       - name: Run strategy manager
         run: |
-          cd scripts
-          python strategy_manager.py
+          python scripts/strategy_manager.py
         
       - name: Commit changes
         run: |
