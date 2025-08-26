@@ -3,7 +3,7 @@ import os
 import datetime
 import json
 
-def-гenerate_script(market_data, mode):
+def generate_script(market_data, mode):
     api_key = os.getenv('GROK_API_KEY')
     api_url = os.getenv('GROK_API_URL', 'https://api.x.ai/v1') + '/chat/completions'
 
