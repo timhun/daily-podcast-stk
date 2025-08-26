@@ -2,6 +2,7 @@ from feedgen.feed import FeedGenerator
 from slack_sdk import WebClient
 import os
 import datetime
+import pytz  # Add pytz for timezone support
 
 def generate_rss(date, mode, script, audio_url):
     fg = FeedGenerator()
@@ -15,7 +16,8 @@ def generate_rss(date, mode, script, audio_url):
     fe.title(f"{mode.upper()} 版 - {datetime.date.today()}")
     fe.description(script[:200] + '...')  # 簡短描述
     fe.enclosure(audio_url, 0, 'audio/mpeg')
-    fe.pubDate(datetime.datetime.now())
+    # Use timezone-aware datetime (UTC)
+    fe.pubDate(datetime.datetime.now(pytz.UTC))
 
     rss_path = 'rss/combined.xml'
     fg.rss_file(rss_path, pretty=True)
@@ -23,5 +25,4 @@ def generate_rss(date, mode, script, audio_url):
 
 def notify_slack(date, mode, audio_url):
     client = WebClient(token=os.getenv('SLACK_BOT_TOKEN'))
-    message = f"New {mode.upper()} podcast episode for {date} is ready! Audio: {audio_url}\nRSS: https://your-domain/combined.xml (host RSS yourself)"
-    client.chat_postMessage(channel=os.getenv('SLACK_CHANNEL'), text=message)
+    message = f"New {mode.upper()} podcast episode for {date} is ready! Audio: {audio /
