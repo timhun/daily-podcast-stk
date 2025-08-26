@@ -1,4 +1,5 @@
 from openai import OpenAI
+import datetime  # Add this import
 import os
 
 def generate_script(market_data, mode):
