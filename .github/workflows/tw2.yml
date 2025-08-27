@@ -28,6 +28,6 @@ jobs:
       - run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add rss/ episodes/
+          git add rss/ episodes/ data/
           git commit -m "TW Podcast ${{ github.event.schedule || 'manual' }} published" || exit 0
           git push
