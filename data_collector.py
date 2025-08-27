@@ -18,7 +18,7 @@ SYMBOLS = {
     'tw': ['^TWII', '0050.TW', '2330.TW', '2454.TW', '3008.TW']
 }
 
-# 新聞來源配置（移除無效的 Cnyes，加入 MoneyDJ）
+# 新聞來源配置
 NEWS_SOURCES = {
     'us': [
         'https://feeds.bloomberg.com/technology/news.rss',
@@ -26,7 +26,7 @@ NEWS_SOURCES = {
     ],
     'tw': [
         'https://tw.stock.yahoo.com/rss?category=news',
-        'https://www.moneydj.com/rss/feed.xml'  # 替代 Cnyes 的 RSS 來源
+        'https://www.moneydj.com/rss/feed.xml'
     ]
 }
 
@@ -66,48 +66,69 @@ class DataQualityChecker:
 @retry(tries=3, delay=1, backoff=2)
 def fetch_market_data(symbol):
     ticker = yf.Ticker(symbol)
-    hist = ticker.history(period='1d')
-    if hist.empty:
-        logger.error(f"{symbol} 無數據")
-        return None
-    data = {
-        'close': hist['Close'].iloc[-1],
-        'change': hist['Close'].pct_change().iloc[-1] * 100 if len(hist) > 1 else 0,
-        'timestamp': hist.index[-1].astimezone(datetime.timezone.utc)
-    }
-    return data
-
-@retry(tries=3, delay=1, backoff=2)
-def fetch_news(url):
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.content, 'xml')
-        items = soup.find_all('item', limit=3)  # 每個來源抓取最多 3 則新聞
-        return [{'title': item.title.text, 'description': item.description.text} for item in items if item.title and item.description]
-    except Exception as e:
-        logger.error(f"抓取新聞 {url} 失敗: {str(e)}")
-        return []  # 返回空列表，確保流程繼續
+    
+    # 每日數據
+    hist_daily = ticker.history(period='1d')
+    if hist_daily.empty:
+        logger.error(f"{symbol} 每日數據無回應")
+        daily_data = {'close': 0, 'change': 0, 'timestamp': datetime.datetime.now(datetime.timezone.utc)}
+    else:
+        daily_data = {
+            'close': hist_daily['Close'].iloc[-1],
+            'change': hist_daily['Close'].pct_change().iloc[-1] * 100 if len(hist_daily) > 1 else 0,
+            'timestamp': hist_daily.index[-1].astimezone(datetime.timezone.utc)
+        }
+    
+    # 每小時數據
+    hist_hourly = ticker.history(period='1d', interval='1h')
+    if hist_hourly.empty:
+        logger.error(f"{symbol} 每小時數據無回應")
+        hourly_data = {'close': 0, 'change': 0, 'timestamp': datetime.datetime.now(datetime.timezone.utc)}
+    else:
+        hourly_data = {
+            'close': hist_hourly['Close'].iloc[-1],
+            'change': hist_hourly['Close'].pct_change().iloc[-1] * 100 if len(hist_hourly) > 1 else 0,
+            'timestamp': hist_hourly.index[-1].astimezone(datetime.timezone.utc)
+        }
+    
+    return daily_data, hourly_data
 
 def collect_data(mode):
     # 初始化數據結構
-    data = {'market': {}, 'news': [], 'sentiment': {}}
-    today = datetime.date.today().strftime('%Y-%m-%d')
+    data = {'market': {}, 'news': [], 'sentiment': {}alarm    today = datetime.date.today().strftime('%Y-%m-%d')
     output_dir = f"data/news/{today}"
+    market_dir = "data/market"
+    os.makedirs(market_dir, exist_ok=True)
     os.makedirs(output_dir, exist_ok=True)
 
     # 抓取市場數據
     for symbol in SYMBOLS.get(mode, []):
         try:
-            market_info = fetch_market_data(symbol)
-            if market_info:
-                data['market'][symbol] = market_info
+            daily_data, hourly_data = fetch_market_data(symbol)
+            data['market'][symbol] = daily_data
+            
+            # 儲存每日數據
+            daily_file = f"{market_dir}/daily_{symbol.replace('^', '').replace('.', '_')}.csv"
+            daily_df = pd.DataFrame([{
+                'symbol': symbol,
+                'close': daily_data['close'],
+                'change': daily_data['change']
+            }])
+            daily_df.to_csv(daily_file, index=False)
+            logger.info(f"每日數據儲存至: {daily_file}")
+
+            # 儲存每小時數據
+            hourly_file = f"{market_dir}/hourly_{symbol.replace('^', '').replace('.', '_')}.csv"
+            hourly_df = pd.DataFrame([{
+                'symbol': symbol,
+                'close': hourly_data['close'],
+                'change': hourly_data['change']
+            }])
+            hourly_df.to_csv(hourly_file, index=False)
+            logger.info(f"每小時數據儲存至: {hourly_file}")
         except Exception as e:
             logger.error(f"抓取 {symbol} 市場數據失敗: {str(e)}")
-
-    # 儲存市場數據到 CSV
-    market_df = pd.DataFrame.from_dict(data['market'], orient='index')
-    market_df.to_csv(f"data/market/daily_{mode}.csv")
+            data['market'][symbol] = {'close': 0, 'change': 0}
 
     # 從多個來源抓取新聞
     for url in NEWS_SOURCES.get(mode, []):
@@ -118,6 +139,7 @@ def collect_data(mode):
     news_path = f"{output_dir}/{mode}_news.json"
     with open(news_path, 'w', encoding='utf-8') as f:
         json.dump(data['news'], f, ensure_ascii=False, indent=2)
+    logger.info(f"新聞數據儲存至: {news_path}")
 
     # 新聞標題情緒分析
     try:
@@ -134,6 +156,7 @@ def collect_data(mode):
         os.makedirs(os.path.dirname(sentiment_path), exist_ok=True)
         with open(sentiment_path, 'w', encoding='utf-8') as f:
             json.dump(data['sentiment'], f, ensure_ascii=False, indent=2)
+        logger.info(f"情緒數據儲存至: {sentiment_path}")
     except Exception as e:
         logger.error(f"情緒分析失敗: {str(e)}")
         data['sentiment'] = {'overall_score': 0, 'bullish_ratio': 0}
@@ -145,3 +168,15 @@ def collect_data(mode):
 
     logger.info(f"{mode} 數據收集完成: {len(data['market'])} 個標的, {len(data['news'])} 則新聞, 品質分數: {quality_score}")
     return data
+
+@retry(tries=3, delay=1, backoff=2)
+def fetch_news(url):
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, 'xml')
+        items = soup.find_all('item', limit=3)  # 每個來源抓取最多 3 則新聞
+        return [{'title': item.title.text, 'description': item.description.text} for item in items if item.title and item.description]
+    except Exception as e:
+        logger.error(f"抓取新聞 {url} 失敗: {str(e)}")
+        return []
