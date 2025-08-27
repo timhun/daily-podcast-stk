@@ -47,9 +47,11 @@ def generate_script(market_data, mode):
     }
 
     try:
+       
         response = requests.post(api_url, headers=headers, json=data)
         response.raise_for_status()
         return response.json()['choices'][0]['message']['content']
+        print("🔍 [Grok] 回傳 JSON：", data) 
     except requests.exceptions.HTTPError as e:
         error_msg = f"API 錯誤: {str(e)}\n回應: {response.text if response else '無回應'}"
         logger.error(error_msg)
