@@ -4,9 +4,12 @@ import datetime
 import json
 from loguru import logger  # 新增導入
 
+GROK_API_URL = os.getenv("GROK_API_URL")
+GROK_API_KEY = os.getenv("GROK_API_KEY")
+
 def generate_script(market_data, mode):
-    api_key = os.getenv('GROK_API_KEY')
-    api_url = os.getenv('GROK_API_URL')
+    api_key = GROK_API_KEY
+    api_url = GROK_API_URL
 
     # 市場數據分析
     market = market_data.get('market', {})
