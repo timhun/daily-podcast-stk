@@ -5,7 +5,7 @@ import datetime
 from loguru import logger
 
 # Environment variables for xAI API
-GROK_API_KEY = os.getenv("XAI_API_KEY")
+GROK_API_KEY = os.getenv("GROK_API_KEY")
 
 def generate_script(market_data, mode):
     # Validate API key
