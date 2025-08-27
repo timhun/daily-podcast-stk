@@ -7,7 +7,7 @@
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>zh-tw</language>
-    <lastBuildDate>Wed, 27 Aug 2025 10:55:03 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 27 Aug 2025 11:51:13 +0000</lastBuildDate>
     <item>
       <title>TW 版 - 2025-08-27</title>
       <description>
@@ -18,7 +18,7 @@
 2454.TW: 收盤 1400.00, 漲跌 0.00%
 3008.TW: 收盤 2395.00...</description>
       <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/episodes/20250827_tw/audio.mp3" length="0" type="audio/mpeg"/>
-      <pubDate>Wed, 27 Aug 2025 10:55:03 +0000</pubDate>
+      <pubDate>Wed, 27 Aug 2025 11:51:13 +0000</pubDate>
     </item>
   </channel>
 </rss>
