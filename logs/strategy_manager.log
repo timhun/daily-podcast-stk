@@ -1025,3 +1025,11 @@ TypeError: unsupported operand type(s) for /: 'str' and 'str'
 2025-08-27 16:16:02 | ERROR    | strategy_manager | 載入 0050.TW 數據時發生錯誤: Missing column provided to 'parse_dates': 'Datetime'
 2025-08-27 16:16:02 | WARNING  | strategy_manager | 0050.TW 數據行數不足: 0
 2025-08-27 16:16:02 | INFO     | strategy_manager | 策略管理器執行完成
+2025-08-27 20:14:49 | INFO     | strategy_manager | 策略管理器啟動，模式: default
+2025-08-27 20:14:49 | INFO     | strategy_manager | 策略管理器開始執行，模式: default
+2025-08-27 20:14:49 | ERROR    | strategy_manager | 策略配置檔案格式錯誤或為空，使用預設策略
+2025-08-27 20:14:49 | INFO     | strategy_manager | 分析目標: 0050.TW (台股)
+2025-08-27 20:14:49 | INFO     | strategy_manager | 載入數據檔案: data/market/daily_0050_TW.csv
+2025-08-27 20:14:49 | ERROR    | strategy_manager | 載入 0050.TW 數據時發生錯誤: Missing column provided to 'parse_dates': 'Datetime'
+2025-08-27 20:14:49 | WARNING  | strategy_manager | 0050.TW 數據行數不足: 0
+2025-08-27 20:14:49 | INFO     | strategy_manager | 策略管理器執行完成
