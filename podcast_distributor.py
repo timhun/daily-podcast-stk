@@ -2,7 +2,7 @@ from feedgen.feed import FeedGenerator
 from slack_sdk import WebClient
 import os
 import datetime
-import pytz  # Add pytz for timezone support
+import pytz
 
 def generate_rss(date, mode, script, audio_url):
     fg = FeedGenerator()
@@ -20,10 +20,12 @@ def generate_rss(date, mode, script, audio_url):
     fe.pubDate(datetime.datetime.now(pytz.UTC))
 
     rss_path = 'rss/combined.xml'
+    os.makedirs(os.path.dirname(rss_path), exist_ok=True)  # Create 'rss' directory if it doesn't exist
     fg.rss_file(rss_path, pretty=True)
     print(f"RSS updated: {rss_path}")
 
 def notify_slack(date, mode, audio_url):
     client = WebClient(token=os.getenv('SLACK_BOT_TOKEN'))
-    message = f"New {mode.upper()} podcast episode for {date} is ready! Audio: {audio_url}\nRSS: https://f005.backblazeb2.com/file/{os.getenv('B2_BUCKET_NAME')}/rss/combined.xml (host RSS yourself)"
+    message = f"New {mode.upper()} podcast episode for {date} is ready! Audio: {audio_url}"
     client.chat_postMessage(channel=os.getenv('SLACK_CHANNEL'), text=message)
+    print(f"Slack notification sent for {mode} episode on {date}")
