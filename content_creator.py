@@ -2,6 +2,7 @@ import requests
 import os
 import datetime
 import json
+from loguru import logger  # 新增導入
 
 def generate_script(market_data, mode):
     api_key = os.getenv('GROK_API_KEY')
