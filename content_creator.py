@@ -6,7 +6,7 @@ from loguru import logger  # 新增導入
 
 def generate_script(market_data, mode):
     api_key = os.getenv('GROK_API_KEY')
-    api_url = os.getenv('GROK_API_URL', 'https://api.x.ai/v1') + '/chat/completions'
+    api_url = os.getenv('GROK_API_URL')
 
     # 市場數據分析
     market = market_data.get('market', {})
