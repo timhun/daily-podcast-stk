@@ -6010,3 +6010,31 @@ Name: 114, dtype: object
 2025-08-25 20:27:19 | SUCCESS  | __main__:main:555 | ✅ 數據收集任務完成！
 2025-08-25 20:27:19 | INFO     | __main__:main:569 | 📊 處理統計: 市場檔案 20 個, 新聞 15 則
 2025-08-25 20:27:19 | INFO     | __main__:main:573 | === 數據收集智士結束 ===
+2025-08-28 13:21:30.111 | INFO     | data_collector:collect_data:150 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-08-28 13:21:30.113 | INFO     | data_collector:collect_data:155 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-08-28 13:21:30.354 | INFO     | data_collector:collect_data:150 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-08-28 13:21:30.356 | INFO     | data_collector:collect_data:155 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-08-28 13:21:30.599 | INFO     | data_collector:collect_data:150 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-08-28 13:21:30.600 | INFO     | data_collector:collect_data:155 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-08-28 13:21:30.844 | INFO     | data_collector:collect_data:150 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-08-28 13:21:30.845 | INFO     | data_collector:collect_data:155 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-08-28 13:21:31.732 | INFO     | data_collector:collect_data:169 - 新聞數據儲存至: data/news/2025-08-28/tw_news.json
+2025-08-28 13:21:35.957 | INFO     | data_collector:collect_data:186 - 情緒數據儲存至: data/sentiment/2025-08-28/social_metrics.json
+2025-08-28 13:21:35.957 | INFO     | data_collector:collect_data:196 - tw 數據收集完成: 4 個標的, 3 則新聞, 品質分數: 1.0
+2025-08-28 13:21:35.961 | ERROR    | strategy_mastermind:backtest:22 - ^TWII 1d 歷史數據檔案不存在: data/market/1d_TWII.csv
+2025-08-28 13:21:35.961 | INFO     | strategy_mastermind:run_strategy_tournament:96 - ^TWII technical 策略回測完成 (timeframe: 1d)
+2025-08-28 13:21:35.971 | ERROR    | strategy_mastermind:run_strategy_tournament:109 - ^TWII 優化結果為 None，返回預設結果
+2025-08-28 13:21:35.971 | INFO     | strategy_mastermind:run_strategy_tournament:133 - 策略結果儲存至: data/strategy/2025-08-28/TWII.json
+2025-08-28 13:21:35.971 | ERROR    | strategy_mastermind:backtest:22 - 0050.TW 1d 歷史數據檔案不存在: data/market/1d_0050_TW.csv
+2025-08-28 13:21:35.971 | INFO     | strategy_mastermind:run_strategy_tournament:96 - 0050.TW technical 策略回測完成 (timeframe: 1d)
+2025-08-28 13:21:35.972 | ERROR    | strategy_mastermind:run_strategy_tournament:109 - 0050.TW 優化結果為 None，返回預設結果
+2025-08-28 13:21:35.972 | INFO     | strategy_mastermind:run_strategy_tournament:133 - 策略結果儲存至: data/strategy/2025-08-28/0050_TW.json
+2025-08-28 13:21:35.972 | ERROR    | strategy_mastermind:backtest:22 - 2330.TW 1d 歷史數據檔案不存在: data/market/1d_2330_TW.csv
+2025-08-28 13:21:35.973 | INFO     | strategy_mastermind:run_strategy_tournament:96 - 2330.TW technical 策略回測完成 (timeframe: 1d)
+2025-08-28 13:21:35.973 | ERROR    | strategy_mastermind:run_strategy_tournament:109 - 2330.TW 優化結果為 None，返回預設結果
+2025-08-28 13:21:35.974 | INFO     | strategy_mastermind:run_strategy_tournament:133 - 策略結果儲存至: data/strategy/2025-08-28/2330_TW.json
+2025-08-28 13:21:35.974 | ERROR    | strategy_mastermind:backtest:22 - 2454.TW 1d 歷史數據檔案不存在: data/market/1d_2454_TW.csv
+2025-08-28 13:21:35.974 | INFO     | strategy_mastermind:run_strategy_tournament:96 - 2454.TW technical 策略回測完成 (timeframe: 1d)
+2025-08-28 13:21:35.975 | ERROR    | strategy_mastermind:run_strategy_tournament:109 - 2454.TW 優化結果為 None，返回預設結果
+2025-08-28 13:21:35.975 | INFO     | strategy_mastermind:run_strategy_tournament:133 - 策略結果儲存至: data/strategy/2025-08-28/2454_TW.json
+2025-08-28 13:21:54.731 | INFO     | content_creator:generate_script:73 - 成功生成播客文字稿
