@@ -1,5 +1,3 @@
-# Updated strategy_mastermind.py with RandomForestStrategy and chart generation
-
 import pandas as pd
 import numpy as np
 from xai_sdk import Client
@@ -21,8 +19,8 @@ class TechnicalAnalysis:
     def __init__(self):
         pass
 
-    def backtest(self, symbol, data, timeframe='1d'):
-        # 讀取歷史數據
+    def backtest(self, symbol, data, timeframe='daily'):  # 修改 timeframe 為 'daily'
+        # 修正檔案路徑
         file_path = f"data/market/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
         if not os.path.exists(file_path):
             logger.error(f"{symbol} {timeframe} 歷史數據檔案不存在: {file_path}")
@@ -55,13 +53,13 @@ class TechnicalAnalysis:
             # 計算回報和風險指標
             df['returns'] = df['close'].pct_change()
             df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
-            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(252) if timeframe == '1d' else np.sqrt(252 * 24)
+            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(252) if timeframe == 'daily' else np.sqrt(252 * 24)
             max_drawdown = (df['strategy_returns'].cumsum().cummax() - df['strategy_returns'].cumsum()).max()
-            expected_return = df['strategy_returns'].mean() * (252 if timeframe == '1d' else 252 * 24)
+            expected_return = df['strategy_returns'].mean() * (252 if timeframe == 'daily' else 252 * 24)
             
             # 最新交易信號
             latest_close = df['close'].iloc[-1]
-            multiplier = 1.05 if timeframe == '1d' else 1.02
+            multiplier = 1.05 if timeframe == 'daily' else 1.02
             signals = {
                 'position': 'LONG' if df['signal'].iloc[-1] == 1 else 'NEUTRAL' if df['signal'].iloc[-1] == 0 else 'SHORT',
                 'entry_price': latest_close,
@@ -113,8 +111,8 @@ class RandomForestStrategy:
     def __init__(self):
         self.model = RandomForestClassifier(n_estimators=100, random_state=42)
 
-    def backtest(self, symbol, data, timeframe='1d'):
-        # 讀取歷史數據
+    def backtest(self, symbol, data, timeframe='daily'):  # 修改 timeframe 為 'daily'
+        # 修正檔案路徑
         file_path = f"data/market/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
         if not os.path.exists(file_path):
             logger.error(f"{symbol} {timeframe} 歷史數據檔案不存在: {file_path}")
@@ -168,16 +166,16 @@ class RandomForestStrategy:
             # 計算回報和風險指標
             df['returns'] = df['close'].pct_change()
             df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
-            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(252) if timeframe == '1d' else np.sqrt(252 * 24)
+            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(252) if timeframe == 'daily' else np.sqrt(252 * 24)
             max_drawdown = (df['strategy_returns'].cumsum().cummax() - df['strategy_returns'].cumsum()).max()
-            expected_return = df['strategy_returns'].mean() * (252 if timeframe == '1d' else 252 * 24)
+            expected_return = df['strategy_returns'].mean() * (252 if timeframe == 'daily' else 252 * 24)
             
             # 最新交易信號
             latest_close = df['close'].iloc[-1]
             latest_features = df[features].iloc[-1:].values
             latest_pred = self.model.predict(latest_features)[0]
             position = 'LONG' if latest_pred == 1 else 'SHORT'
-            multiplier = 1.05 if timeframe == '1d' else 1.02
+            multiplier = 1.05 if timeframe == 'daily' else 1.02
             signals = {
                 'position': position,
                 'entry_price': latest_close,
@@ -230,14 +228,13 @@ class StrategyEngine:
         self.models = {
             'technical': TechnicalAnalysis(),
             'random_forest': RandomForestStrategy(),
-            # 可擴展其他策略，如 LSTMStrategy
         }
         self.api_key = os.getenv("GROK_API_KEY")
         if not self.api_key:
-            logger.error("XAI_API_KEY 未設置")
-            raise EnvironmentError("XAI_API_KEY 未設置")
+            logger.error("GROK_API_KEY 未設置")
+            raise EnvironmentError("GROK_API_KEY 未設置")
 
-    def run_strategy_tournament(self, symbol, data, timeframe='1d'):
+    def run_strategy_tournament(self, symbol, data, timeframe='daily'):  # 修改 timeframe 為 'daily'
         results = {}
         for name, strategy in self.models.items():
             try:
