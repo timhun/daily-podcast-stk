@@ -101,29 +101,31 @@ class StrategyEngine:
         chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on Sharpe ratio, ensuring max drawdown < 15%."))
 
         # 使用三引號字符串並以 markdown 程式碼塊包裝 JSON，避免引號衝突
-        prompt = f"""
-                    為股票 {symbol} 選擇最佳策略（時間框架: {timeframe}）。以下是回測結果：
-                    {json.dumps(results, ensure_ascii=False, indent=2)}
-                    要求：
-                    - 選擇夏普比率最高的策略，且最大回撤 < 15%。
-                    - 提供最佳策略名稱、信心分數、預期回報、最大回撤、夏普比率和交易信號。
-                    - 格式為 JSON:
-                    ```json
-                    {{
-                      "symbol": "{symbol}",
-                      "analysis_date": "{datetime.today().strftime('%Y-%m-%d')}",
-                      "winning_strategy": {{
-                        "name": "strategy_name",
-                        "confidence": 0.0,
-                        "expected_return": 0.0,
-                        "max_drawdown": 0.0,
-                        "sharpe_ratio": 0.0
-                      }},
-                      "signals": {{
-                        "position": "LONG/NEUTRAL/SHORT",
-                        "entry_price": 0.0,
-                        "target_price": 0.0,
-                        "stop_loss": 0.0,
-                        "position_size": 0.0
-                      }}
-                    }}
+        prompt = (
+            f"為股票 {symbol} 選擇最佳策略（時間框架: {timeframe}）。以下是回測結果：\n"
+            f"{json.dumps(results, ensure_ascii=False, indent=2)}\n"
+            "要求：\n"
+            "- 選擇夏普比率最高的策略，且最大回撤 < 15%。\n"
+            "- 提供最佳策略名稱、信心分數、預期回報、最大回撤、夏普比率和交易信號。\n"
+            "- 格式為 JSON:\n"
+            "```json\n"
+            "{\n"
+            f'  "symbol": "{symbol}",\n'
+            f'  "analysis_date": "{datetime.today().strftime("%Y-%m-%d")}",\n'
+            '  "winning_strategy": {\n'
+            '    "name": "strategy_name",\n'
+            '    "confidence": 0.0,\n'
+            '    "expected_return": 0.0,\n'
+            '    "max_drawdown": 0.0,\n'
+            '    "sharpe_ratio": 0.0\n'
+            '  },\n'
+            '  "signals": {\n'
+            '    "position": "LONG/NEUTRAL/SHORT",\n'
+            '    "entry_price": 0.0,\n'
+            '    "target_price": 0.0,\n'
+            '    "stop_loss": 0.0,\n'
+            '    "position_size": 0.0\n'
+            '  }\n'
+            '}\n'
+            '```'
+        )
