@@ -5,7 +5,7 @@ from xai_sdk.chat import user, system
 import os
 import json
 from loguru import logger
-import ta  # 技術分析庫
+import ta
 from datetime import datetime
 
 # 配置日誌
@@ -16,22 +16,45 @@ class TechnicalAnalysis:
         pass
 
     def backtest(self, symbol, data, timeframe='1d'):
-        # 簡單技術分析策略：基於 RSI 和移動平均線
-        df = pd.DataFrame([data], columns=['close', 'change'])
+        # 讀取歷史數據
+        file_path = f"data/market/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
+        if not os.path.exists(file_path):
+            logger.error(f"{symbol} {timeframe} 歷史數據檔案不存在: {file_path}")
+            return {
+                'sharpe_ratio': 0,
+                'max_drawdown': 0,
+                'expected_return': 0,
+                'signals': {}
+            }
+        
+        df = pd.read_csv(file_path)
         df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=14).rsi()
         df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=20).sma_indicator()
         
-        # 模擬回測結果（根據 timeframe 調整參數）
-        multiplier = 1.05 if timeframe == '1d' else 1.02  # 每日較大目標價，每小時較小
+        # 簡單策略：RSI < 30 買入，RSI > 70 賣出
+        df['signal'] = 0
+        df.loc[df['rsi'] < 30, 'signal'] = 1  # 買入
+        df.loc[df['rsi'] > 70, 'signal'] = -1  # 賣出
+        
+        # 計算回報和風險指標
+        df['returns'] = df['close'].pct_change()
+        df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
+        sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(252) if timeframe == '1d' else np.sqrt(252 * 24)
+        max_drawdown = (df['strategy_returns'].cumsum().cummax() - df['strategy_returns'].cumsum()).max()
+        expected_return = df['strategy_returns'].mean() * (252 if timeframe == '1d' else 252 * 24)
+        
+        # 最新交易信號
+        latest_close = df['close'].iloc[-1]
+        multiplier = 1.05 if timeframe == '1d' else 1.02
         return {
-            'sharpe_ratio': 1.0,
-            'max_drawdown': 0.1,
-            'expected_return': 0.03,
+            'sharpe_ratio': sharpe_ratio if not np.isnan(sharpe_ratio) else 0,
+            'max_drawdown': max_drawdown if not np.isnan(max_drawdown) else 0,
+            'expected_return': expected_return if not np.isnan(expected_return) else 0,
             'signals': {
-                'position': 'LONG',
-                'entry_price': data['close'],
-                'target_price': data['close'] * multiplier,
-                'stop_loss': data['close'] * 0.95,
+                'position': 'LONG' if df['signal'].iloc[-1] == 1 else 'NEUTRAL' if df['signal'].iloc[-1] == 0 else 'SHORT',
+                'entry_price': latest_close,
+                'target_price': latest_close * multiplier,
+                'stop_loss': latest_close * 0.95,
                 'position_size': 0.5
             }
         }
@@ -77,7 +100,6 @@ class StrategyEngine:
         chat = client.chat.create(model="grok-3-mini")
         chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on Sharpe ratio, ensuring max drawdown < 15%."))
 
-        # 使用三個反斜杠處理嵌套 JSON 格式，避免引號衝突
         prompt = f"""
 為股票 {symbol} 選擇最佳策略（時間框架: {timeframe}）。以下是回測結果：
 {json.dumps(results, ensure_ascii=False, indent=2)}
