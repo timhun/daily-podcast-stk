@@ -7,6 +7,7 @@ from content_creator import generate_script
 from voice_producer import generate_audio
 from cloud_manager import upload_episode
 from podcast_distributor import generate_rss, notify_slack
+from strategy_mastermind import StrategyEngine  # 新增
 
 load_dotenv()
 
@@ -17,23 +18,29 @@ def main(mode):
     # 步驟1: 收集數據
     market_data = collect_data(mode)
 
-    # 步驟2: 生成文字稿 (包含簡單分析)
-    script = generate_script(market_data, mode)
+    # 步驟2: 執行策略分析
+    strategy_engine = StrategyEngine()
+    strategy_results = {}
+    for symbol in market_data['market']:
+        strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, market_data['market'][symbol])
+
+    # 步驟3: 生成文字稿
+    script = generate_script(market_data, mode, strategy_results)  # 傳入策略結果
     script_path = f"episodes/{today}_{mode}/script.txt"
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
     with open(script_path, 'w', encoding='utf-8') as f:
         f.write(script)
 
-    # 步驟3: 生成音頻
+    # 步驟4: 生成音頻
     audio_path = f"episodes/{today}_{mode}/audio.mp3"
     generate_audio(script_path, audio_path)
 
-    # 步驟4: 上傳到 B2
+    # 步驟5: 上傳到 B2
     files = {'script': script_path, 'audio': audio_path}
     uploaded_urls = upload_episode(today, mode, files)
     audio_url = uploaded_urls['audio']
 
-    # 步驟5: 生成 RSS + Slack 通知
+    # 步驟6: 生成 RSS + Slack 通知
     generate_rss(today, mode, script, audio_url)
     notify_slack(today, mode, audio_url)
 
