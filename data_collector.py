@@ -30,9 +30,15 @@ NEWS_SOURCES = {
     ]
 }
 
+#環境日期
+def get_taiwan_time() -> datetime:
+    """獲取台灣時間"""
+    tw_tz = pytz.timezone('Asia/Taipei')
+    return datetime.now(tw_tz)
 now = datetime.datetime.now(TW_TZ)
 today_str = now.strftime("%Y%m%d")
 today_display = get_today_display()
+
 
 class DataQualityChecker:
     def __init__(self):
