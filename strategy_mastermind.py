@@ -27,37 +27,55 @@ class TechnicalAnalysis:
                 'signals': {}
             }
         
-        df = pd.read_csv(file_path)
-        df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=14).rsi()
-        df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=20).sma_indicator()
-        
-        # 簡單策略：RSI < 30 買入，RSI > 70 賣出
-        df['signal'] = 0
-        df.loc[df['rsi'] < 30, 'signal'] = 1  # 買入
-        df.loc[df['rsi'] > 70, 'signal'] = -1  # 賣出
-        
-        # 計算回報和風險指標
-        df['returns'] = df['close'].pct_change()
-        df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
-        sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(252) if timeframe == '1d' else np.sqrt(252 * 24)
-        max_drawdown = (df['strategy_returns'].cumsum().cummax() - df['strategy_returns'].cumsum()).max()
-        expected_return = df['strategy_returns'].mean() * (252 if timeframe == '1d' else 252 * 24)
-        
-        # 最新交易信號
-        latest_close = df['close'].iloc[-1]
-        multiplier = 1.05 if timeframe == '1d' else 1.02
-        return {
-            'sharpe_ratio': sharpe_ratio if not np.isnan(sharpe_ratio) else 0,
-            'max_drawdown': max_drawdown if not np.isnan(max_drawdown) else 0,
-            'expected_return': expected_return if not np.isnan(expected_return) else 0,
-            'signals': {
-                'position': 'LONG' if df['signal'].iloc[-1] == 1 else 'NEUTRAL' if df['signal'].iloc[-1] == 0 else 'SHORT',
-                'entry_price': latest_close,
-                'target_price': latest_close * multiplier,
-                'stop_loss': latest_close * 0.95,
-                'position_size': 0.5
+        try:
+            df = pd.read_csv(file_path)
+            if df.empty or len(df) < 20:  # 確保有足夠數據計算 RSI 和 SMA
+                logger.error(f"{symbol} {timeframe} 數據不足: {len(df)} 筆")
+                return {
+                    'sharpe_ratio': 0,
+                    'max_drawdown': 0,
+                    'expected_return': 0,
+                    'signals': {}
+                }
+            
+            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=14).rsi()
+            df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=20).sma_indicator()
+            
+            # 簡單策略：RSI < 30 買入，RSI > 70 賣出
+            df['signal'] = 0
+            df.loc[df['rsi'] < 30, 'signal'] = 1  # 買入
+            df.loc[df['rsi'] > 70, 'signal'] = -1  # 賣出
+            
+            # 計算回報和風險指標
+            df['returns'] = df['close'].pct_change()
+            df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
+            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(252) if timeframe == '1d' else np.sqrt(252 * 24)
+            max_drawdown = (df['strategy_returns'].cumsum().cummax() - df['strategy_returns'].cumsum()).max()
+            expected_return = df['strategy_returns'].mean() * (252 if timeframe == '1d' else 252 * 24)
+            
+            # 最新交易信號
+            latest_close = df['close'].iloc[-1]
+            multiplier = 1.05 if timeframe == '1d' else 1.02
+            return {
+                'sharpe_ratio': sharpe_ratio if not np.isnan(sharpe_ratio) else 0,
+                'max_drawdown': max_drawdown if not np.isnan(max_drawdown) else 0,
+                'expected_return': expected_return if not np.isnan(expected_return) else 0,
+                'signals': {
+                    'position': 'LONG' if df['signal'].iloc[-1] == 1 else 'NEUTRAL' if df['signal'].iloc[-1] == 0 else 'SHORT',
+                    'entry_price': latest_close,
+                    'target_price': latest_close * multiplier,
+                    'stop_loss': latest_close * 0.95,
+                    'position_size': 0.5
+                }
             }
-        }
+        except Exception as e:
+            logger.error(f"{symbol} {timeframe} 回測失敗: {str(e)}")
+            return {
+                'sharpe_ratio': 0,
+                'max_drawdown': 0,
+                'expected_return': 0,
+                'signals': {}
+            }
 
 class StrategyEngine:
     def __init__(self):
@@ -79,7 +97,7 @@ class StrategyEngine:
             except Exception as e:
                 logger.error(f"{symbol} {name} 回測失敗: {str(e)}")
                 results[name] = {
-                    'sharpe_ratio': 0,
+                    'shar אנון_ratio': 0,
                     'max_drawdown': 0,
                     'expected_return': 0,
                     'signals': {}
