@@ -36,9 +36,9 @@ def get_taiwan_time() -> datetime:
     tw_tz = pytz.timezone('Asia/Taipei')
     return datetime.now(tw_tz)
 def get_today_display() -> str:
-    return datetime.now(TW_TZ).strftime("%Y年%m月%d日")
+    return datetime.now(tw_tz).strftime("%Y年%m月%d日")
     
-now = datetime.datetime.now(TW_TZ)
+now = datetime.datetime.now(tw_tz)
 today_str = now.strftime("%Y%m%d")
 today_display = get_today_display()
 
