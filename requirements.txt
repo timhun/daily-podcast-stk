@@ -15,6 +15,7 @@ beautifulsoup4
 scikit-learn
 torch
 transformers
+matplotlib
 
 # 技術分析
 ta==0.10.2
