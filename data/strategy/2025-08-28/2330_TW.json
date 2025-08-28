@@ -2,17 +2,17 @@
   "symbol": "2330.TW",
   "analysis_date": "2025-08-28",
   "winning_strategy": {
-    "name": "none",
-    "confidence": 0.0,
-    "expected_return": 0.0,
-    "max_drawdown": 0.0,
-    "sharpe_ratio": 0.0
+    "name": "technical",
+    "confidence": 0.42386051325223856,
+    "expected_return": 0.05367805783608219,
+    "max_drawdown": 0.07572600100948934,
+    "sharpe_ratio": 0.42386051325223856
   },
   "signals": {
     "position": "NEUTRAL",
-    "entry_price": 0.0,
-    "target_price": 0.0,
-    "stop_loss": 0.0,
-    "position_size": 0.0
+    "entry_price": 1160.0,
+    "target_price": 1218.0,
+    "stop_loss": 1102.0,
+    "position_size": 0.5
   }
 }

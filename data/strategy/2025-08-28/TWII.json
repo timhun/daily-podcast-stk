@@ -2,17 +2,17 @@
   "symbol": "^TWII",
   "analysis_date": "2025-08-28",
   "winning_strategy": {
-    "name": "none",
-    "confidence": 0.0,
-    "expected_return": 0.0,
-    "max_drawdown": 0.0,
-    "sharpe_ratio": 0.0
+    "name": "technical",
+    "confidence": 0.2968464470833856,
+    "expected_return": 0.03638003143462138,
+    "max_drawdown": 0.0980267631663213,
+    "sharpe_ratio": 0.2968464470833856
   },
   "signals": {
     "position": "NEUTRAL",
-    "entry_price": 0.0,
-    "target_price": 0.0,
-    "stop_loss": 0.0,
-    "position_size": 0.0
+    "entry_price": 24236.44921875,
+    "target_price": 25448.2716796875,
+    "stop_loss": 23024.6267578125,
+    "position_size": 0.5
   }
 }
