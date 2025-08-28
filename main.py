@@ -12,7 +12,9 @@ from strategy_mastermind import StrategyEngine  # 新增
 load_dotenv()
 
 def main(mode):
-    today = datetime.date.today().strftime('%Y%m%d')
+
+    today = datetime.datetime.now(TW_TZ).strftime("%Y%m%d")
+    #today = datetime.date.today().strftime('%Y%m%d')
     print(f"Starting {mode.upper()} podcast production for {today}...")
 
     # 步驟1: 收集數據
