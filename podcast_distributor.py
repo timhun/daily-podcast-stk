@@ -6,7 +6,7 @@ import pytz
 
 def generate_rss(date, mode, script, audio_url):
     fg = FeedGenerator()
-    fg.title('幫幫忙說財經科技投資')
+    fg.title('幫幫忙說AI投資')
     fg.description('AI驅動的每日財經投資分析')
     fg.author({'name': '幫幫忙', 'email': os.getenv('EMAIL')})
     fg.language('zh-tw')
