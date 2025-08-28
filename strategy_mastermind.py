@@ -102,28 +102,28 @@ class StrategyEngine:
 
         # 使用三引號字符串並以 markdown 程式碼塊包裝 JSON，避免引號衝突
         prompt = f"""
-為股票 {symbol} 選擇最佳策略（時間框架: {timeframe}）。以下是回測結果：
-{json.dumps(results, ensure_ascii=False, indent=2)}
-要求：
-- 選擇夏普比率最高的策略，且最大回撤 < 15%。
-- 提供最佳策略名稱、信心分數、預期回報、最大回撤、夏普比率和交易信號。
-- 格式為 JSON:
-```json
-{{
-  "symbol": "{symbol}",
-  "analysis_date": "{datetime.today().strftime('%Y-%m-%d')}",
-  "winning_strategy": {{
-    "name": "strategy_name",
-    "confidence": 0.0,
-    "expected_return": 0.0,
-    "max_drawdown": 0.0,
-    "sharpe_ratio": 0.0
-  }},
-  "signals": {{
-    "position": "LONG/NEUTRAL/SHORT",
-    "entry_price": 0.0,
-    "target_price": 0.0,
-    "stop_loss": 0.0,
-    "position_size": 0.0
-  }}
-}}
+                    為股票 {symbol} 選擇最佳策略（時間框架: {timeframe}）。以下是回測結果：
+                    {json.dumps(results, ensure_ascii=False, indent=2)}
+                    要求：
+                    - 選擇夏普比率最高的策略，且最大回撤 < 15%。
+                    - 提供最佳策略名稱、信心分數、預期回報、最大回撤、夏普比率和交易信號。
+                    - 格式為 JSON:
+                    ```json
+                    {{
+                      "symbol": "{symbol}",
+                      "analysis_date": "{datetime.today().strftime('%Y-%m-%d')}",
+                      "winning_strategy": {{
+                        "name": "strategy_name",
+                        "confidence": 0.0,
+                        "expected_return": 0.0,
+                        "max_drawdown": 0.0,
+                        "sharpe_ratio": 0.0
+                      }},
+                      "signals": {{
+                        "position": "LONG/NEUTRAL/SHORT",
+                        "entry_price": 0.0,
+                        "target_price": 0.0,
+                        "stop_loss": 0.0,
+                        "position_size": 0.0
+                      }}
+                    }}
