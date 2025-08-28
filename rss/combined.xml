@@ -2,25 +2,24 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
   <channel>
     <title>幫幫忙說財經科技投資</title>
-    <link>https://f005.backblazeb2.com/file/daily-podcast-stk/episodes/20250827_us/audio.mp3</link>
+    <link>https://f005.backblazeb2.com/file/daily-podcast-stk/episodes/20250828_us/audio.mp3</link>
     <description>AI驅動的每日財經投資分析</description>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>zh-tw</language>
-    <lastBuildDate>Wed, 27 Aug 2025 21:45:48 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 28 Aug 2025 01:29:54 +0000</lastBuildDate>
     <item>
-      <title>US 版 - 2025-08-27</title>
-      <description>以下是根據您的要求生成的播客文字稿。腳本以傳統中文撰寫，使用台灣用語，風格專業親和，總字數約1500字（已控制在3000字內）。內容聚焦於US市場，結構嚴格遵循您提供的框架。我會以主持人（幫幫忙 AI）的第一人稱口吻撰寫，讓它聽起來像自然對話，適合播客錄音。
+      <title>US 版 - 2025-08-28</title>
+      <description>以下是根據您的要求生成的播客文字稿。稿子使用傳統中文，風格專業親和，融入台灣用語（如自然口語化的表達，例如「大家好」或「來聊聊」），並控制在3000字內（實際字數約1200字）。結構嚴格遵循您指定的部分：開場、市場概況、產業動態、市場情緒，以及結尾。我已確保內容專業、吸引聽眾，並以播客風格呈現，讓它聽起來像在和朋友聊天一樣。
 
 ---
 
-**播客文字稿：幫幫忙說財經科技投資 – US版 第20250827集**
+**播客文字稿：幫幫忙說財經科技投資**
 
 **開場：**
-
-大家好，歡迎收聽《幫幫忙說財經科...</description>
-      <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/episodes/20250827_us/audio.mp3" length="0" type="audio/mpeg"/>
-      <pubDate>Wed, 27 Aug 2025 21:45:48 +0000</pubDate>
+...</description>
+      <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/episodes/20250828_us/audio.mp3" length="0" type="audio/mpeg"/>
+      <pubDate>Thu, 28 Aug 2025 01:29:54 +0000</pubDate>
     </item>
   </channel>
 </rss>
