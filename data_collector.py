@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 import os
 import json
 import datetime
-import pytz
 from loguru import logger
 from retry import retry
 from transformers import pipeline
@@ -16,7 +15,7 @@ logger.add("logs/data_collector.log", rotation="1 MB")
 # 股票代碼配置
 SYMBOLS = {
     'us': ['^GSPC', 'QQQ', 'NVDA', '^DJI', '^IXIC', 'SPY', 'AAPL', '^VIX', 'BTC-USD', 'ETH-USD', 'GC=F', 'CL=F'],
-    'tw': ['^TWII', '0050.TW', '2330.TW', '2454.TW', '3008.TW']
+    'tw': ['^TWII', '0050.TW', '2330.TW', '2454.TW']
 }
 
 # 新聞來源配置
@@ -30,7 +29,6 @@ NEWS_SOURCES = {
         'https://www.moneydj.com/rss/feed.xml'
     ]
 }
-
 
 class DataQualityChecker:
     def __init__(self):
@@ -69,43 +67,55 @@ class DataQualityChecker:
 def fetch_market_data(symbol):
     ticker = yf.Ticker(symbol)
     
-    # 每日數據
-    hist_daily = ticker.history(period='1d')
+    # 每日數據（365 天）
+    hist_daily = ticker.history(period='1y')
     if hist_daily.empty:
         logger.error(f"{symbol} 每日數據無回應")
         daily_data = {'close': 0, 'change': 0, 'timestamp': datetime.datetime.now(datetime.timezone.utc)}
+        daily_df = pd.DataFrame([{
+            'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'),
+            'symbol': symbol,
+            'close': 0,
+            'change': 0
+        }])
     else:
         daily_data = {
             'close': hist_daily['Close'].iloc[-1],
             'change': hist_daily['Close'].pct_change().iloc[-1] * 100 if len(hist_daily) > 1 else 0,
             'timestamp': hist_daily.index[-1].astimezone(datetime.timezone.utc)
         }
-    
-    # 每小時數據
-    hist_hourly = ticker.history(period='1d', interval='1h')
+        daily_df = pd.DataFrame({
+            'date': hist_daily.index.strftime('%Y-%m-%d'),
+            'symbol': symbol,
+            'close': hist_daily['Close'],
+            'change': hist_daily['Close'].pct_change() * 100
+        }).dropna()
+
+    # 每小時數據（14 天）
+    hist_hourly = ticker.history(period='14d', interval='1h')
     if hist_hourly.empty:
         logger.error(f"{symbol} 每小時數據無回應")
         hourly_data = {'close': 0, 'change': 0, 'timestamp': datetime.datetime.now(datetime.timezone.utc)}
+        hourly_df = pd.DataFrame([{
+            'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+            'symbol': symbol,
+            'close': 0,
+            'change': 0
+        }])
     else:
         hourly_data = {
             'close': hist_hourly['Close'].iloc[-1],
             'change': hist_hourly['Close'].pct_change().iloc[-1] * 100 if len(hist_hourly) > 1 else 0,
             'timestamp': hist_hourly.index[-1].astimezone(datetime.timezone.utc)
         }
-    
-    return daily_data, hourly_data
+        hourly_df = pd.DataFrame({
+            'date': hist_hourly.index.strftime('%Y-%m-%d %H:%M:%S'),
+            'symbol': symbol,
+            'close': hist_hourly['Close'],
+            'change': hist_hourly['Close'].pct_change() * 100
+        }).dropna()
 
-@retry(tries=3, delay=1, backoff=2)
-def fetch_news(url):
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.content, 'xml')
-        items = soup.find_all('item', limit=3)  # 每個來源抓取最多 3 則新聞
-        return [{'title': item.title.text, 'description': item.description.text} for item in items if item.title and item.description]
-    except Exception as e:
-        logger.error(f"抓取新聞 {url} 失敗: {str(e)}")
-        return []
+    return daily_data, daily_df, hourly_data, hourly_df
 
 def collect_data(mode):
     # 初始化數據結構
@@ -119,26 +129,16 @@ def collect_data(mode):
     # 抓取市場數據
     for symbol in SYMBOLS.get(mode, []):
         try:
-            daily_data, hourly_data = fetch_market_data(symbol)
+            daily_data, daily_df, hourly_data, hourly_df = fetch_market_data(symbol)
             data['market'][symbol] = daily_data
             
             # 儲存每日數據
             daily_file = f"{market_dir}/daily_{symbol.replace('^', '').replace('.', '_')}.csv"
-            daily_df = pd.DataFrame([{
-                'symbol': symbol,
-                'close': daily_data['close'],
-                'change': daily_data['change']
-            }])
             daily_df.to_csv(daily_file, index=False)
             logger.info(f"每日數據儲存至: {daily_file}")
 
             # 儲存每小時數據
             hourly_file = f"{market_dir}/hourly_{symbol.replace('^', '').replace('.', '_')}.csv"
-            hourly_df = pd.DataFrame([{
-                'symbol': symbol,
-                'close': hourly_data['close'],
-                'change': hourly_data['change']
-            }])
             hourly_df.to_csv(hourly_file, index=False)
             logger.info(f"每小時數據儲存至: {hourly_file}")
         except Exception as e:
@@ -183,3 +183,15 @@ def collect_data(mode):
 
     logger.info(f"{mode} 數據收集完成: {len(data['market'])} 個標的, {len(data['news'])} 則新聞, 品質分數: {quality_score}")
     return data
+
+@retry(tries=3, delay=1, backoff=2)
+def fetch_news(url):
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, 'xml')
+        items = soup.find_all('item', limit=3)  # 每個來源抓取最多 3 則新聞
+        return [{'title': item.title.text, 'description': item.description.text} for item in items if item.title and item.description]
+    except Exception as e:
+        logger.error(f"抓取新聞 {url} 失敗: {str(e)}")
+        return []
