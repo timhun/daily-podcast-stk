@@ -100,6 +100,7 @@ class StrategyEngine:
         chat = client.chat.create(model="grok-3-mini")
         chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on Sharpe ratio, ensuring max drawdown < 15%."))
 
+        # 使用三引號字符串並以 markdown 程式碼塊包裝 JSON，避免引號衝突
         prompt = f"""
 為股票 {symbol} 選擇最佳策略（時間框架: {timeframe}）。以下是回測結果：
 {json.dumps(results, ensure_ascii=False, indent=2)}
