@@ -30,6 +30,10 @@ NEWS_SOURCES = {
     ]
 }
 
+now = datetime.datetime.now(TW_TZ)
+today_str = now.strftime("%Y%m%d")
+today_display = get_today_display()
+
 class DataQualityChecker:
     def __init__(self):
         self.quality_thresholds = {
