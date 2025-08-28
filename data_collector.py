@@ -117,6 +117,18 @@ def fetch_market_data(symbol):
 
     return daily_data, daily_df, hourly_data, hourly_df
 
+@retry(tries=3, delay=1, backoff=2)
+def fetch_news(url):
+    try:
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.content, 'xml')
+        items = soup.find_all('item', limit=3)  # 每個來源抓取最多 3 則新聞
+        return [{'title': item.title.text, 'description': item.description.text} for item in items if item.title and item.description]
+    except Exception as e:
+        logger.error(f"抓取新聞 {url} 失敗: {str(e)}")
+        return []
+
 def collect_data(mode):
     # 初始化數據結構
     data = {'market': {}, 'news': [], 'sentiment': {}}
@@ -183,15 +195,3 @@ def collect_data(mode):
 
     logger.info(f"{mode} 數據收集完成: {len(data['market'])} 個標的, {len(data['news'])} 則新聞, 品質分數: {quality_score}")
     return data
-
-@retry(tries=3, delay=1, backoff=2)
-def fetch_news(url):
-    try:
-        response = requests.get(url, timeout=10)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.content, 'xml')
-        items = soup.find_all('item', limit=3)  # 每個來源抓取最多 3 則新聞
-        return [{'title': item.title.text, 'description': item.description.text} for item in items if item.title and item.description]
-    except Exception as e:
-        logger.error(f"抓取新聞 {url} 失敗: {str(e)}")
-        return []
