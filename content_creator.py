@@ -19,15 +19,16 @@ def generate_script(market_data, mode, strategy_results):
                               for item in news[:3]])
         sentiment = market_data.get('sentiment', {})
         sentiment_str = f"市場情緒: 整體分數 {sentiment.get('overall_score', 0):.2f}, 看漲比例 {sentiment.get('bullish_ratio', 0):.2f}"
-        strategy_str = "\n".join([f"{symbol}: 最佳策略 {result['winning_strategy']['name']}, 夏普比率 {result['winning_strategy']['sharpe_ratio']:.2f}"
-                                 for symbol, result in strategy_results.items()])
+        strategy_str = "\n".join([f"{symbol}: 最佳策略 {result['winning_strategy']['name']}, 夏普比率 {result['winning_strategy']['sharpe_ratio']:.2f}, 預期回報 {result['winning_strategy']['expected_return']:.2f}%"
+                                 for symbol, result in strategy_results.items()
+                                 if result.get('winning_strategy') and result['winning_strategy'].get('name') != 'none'])
         today = datetime.date.today().strftime('%Y年%m月%d日')
         return f"""
         歡迎收聽《幫幫忙說財經科技投資》，我是幫幫忙 AI。今天是{today}。
         市場概況：{analysis}
         產業動態：{news_str}
         市場情緒：{sentiment_str}
-        策略分析：{strategy_str}
+        策略分析：{strategy_str or '無有效策略分析'}
         結尾：投資如馬拉松，穩健前行才能致勝。
         (備註：API 金鑰未設置，使用後備腳本)
         """
@@ -48,7 +49,8 @@ def generate_script(market_data, mode, strategy_results):
 
     # 策略分析
     strategy_str = "\n".join([f"{symbol}: 最佳策略 {result['winning_strategy']['name']}, 夏普比率 {result['winning_strategy']['sharpe_ratio']:.2f}, 預期回報 {result['winning_strategy']['expected_return']:.2f}%"
-                             for symbol, result in strategy_results.items()])
+                             for symbol, result in strategy_results.items()
+                             if result.get('winning_strategy') and result['winning_strategy'].get('name') != 'none'])
 
     today = datetime.date.today().strftime('%Y年%m月%d日')
     prompt = f"""
@@ -58,7 +60,7 @@ def generate_script(market_data, mode, strategy_results):
     - 市場概況: {analysis}
     - 產業動態: {news_str}
     - 市場情緒: {sentiment_str}
-    - 策略分析: {strategy_str}
+    - 策略分析: {strategy_str or '無有效策略分析'}
     - 結尾: 投資金句 (例如: 投資如馬拉松)。
     """
 
@@ -77,7 +79,7 @@ def generate_script(market_data, mode, strategy_results):
         市場概況：{analysis}
         產業動態：{news_str}
         市場情緒：{sentiment_str}
-        策略分析：{strategy_str}
+        策略分析：{strategy_str or '無有效策略分析'}
         結尾：投資如馬拉松，穩健前行才能致勝。
         (備註：API 調用失敗，無法生成完整內容)
         """
