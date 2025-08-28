@@ -21,7 +21,7 @@ def generate_script(market_data, mode, strategy_results):
         sentiment_str = f"市場情緒: 整體分數 {sentiment.get('overall_score', 0):.2f}, 看漲比例 {sentiment.get('bullish_ratio', 0):.2f}"
         strategy_str = "\n".join([f"{symbol}: 最佳策略 {result['winning_strategy']['name']}, 夏普比率 {result['winning_strategy']['sharpe_ratio']:.2f}, 預期回報 {result['winning_strategy']['expected_return']:.2f}%"
                                  for symbol, result in strategy_results.items()
-                                 if result.get('winning_strategy') and result['winning_strategy'].get('name') != 'none'])
+                                 if result is not None and result.get('winning_strategy') and result['winning_strategy'].get('name') != 'none'])
         today = datetime.date.today().strftime('%Y年%m月%d日')
         return f"""
         歡迎收聽《幫幫忙說財經科技投資》，我是幫幫忙 AI。今天是{today}。
@@ -50,7 +50,7 @@ def generate_script(market_data, mode, strategy_results):
     # 策略分析
     strategy_str = "\n".join([f"{symbol}: 最佳策略 {result['winning_strategy']['name']}, 夏普比率 {result['winning_strategy']['sharpe_ratio']:.2f}, 預期回報 {result['winning_strategy']['expected_return']:.2f}%"
                              for symbol, result in strategy_results.items()
-                             if result.get('winning_strategy') and result['winning_strategy'].get('name') != 'none'])
+                             if result is not None and result.get('winning_strategy') and result['winning_strategy'].get('name') != 'none'])
 
     today = datetime.date.today().strftime('%Y年%m月%d日')
     prompt = f"""
