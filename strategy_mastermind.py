@@ -97,7 +97,7 @@ class StrategyEngine:
             except Exception as e:
                 logger.error(f"{symbol} {name} 回測失敗: {str(e)}")
                 results[name] = {
-                    'shar אנון_ratio': 0,
+                    'sharpe_ratio': 0,
                     'max_drawdown': 0,
                     'expected_return': 0,
                     'signals': {}
@@ -105,6 +105,26 @@ class StrategyEngine:
 
         # 使用 Grok API 優化策略組合
         optimized = self.optimize_with_grok(symbol, results, timeframe)
+        if optimized is None:
+            logger.error(f"{symbol} 優化結果為 None，返回預設結果")
+            optimized = {
+                'symbol': symbol,
+                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
+                'winning_strategy': {
+                    'name': 'none',
+                    'confidence': 0.0,
+                    'expected_return': 0.0,
+                    'max_drawdown': 0.0,
+                    'sharpe_ratio': 0.0
+                },
+                'signals': {
+                    'position': 'NEUTRAL',
+                    'entry_price': 0.0,
+                    'target_price': 0.0,
+                    'stop_loss': 0.0,
+                    'position_size': 0.0
+                }
+            }
         # 儲存策略結果
         strategy_dir = f"data/strategy/{datetime.today().strftime('%Y-%m-%d')}"
         os.makedirs(strategy_dir, exist_ok=True)
