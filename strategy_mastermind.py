@@ -42,7 +42,7 @@ class StrategyEngine:
             'technical': TechnicalAnalysis(),
             # 可擴展其他策略，如 RandomForestStrategy、LSTMStrategy
         }
-        self.api_key = os.getenv("Grok_API_KEY")
+        self.api_key = os.getenv("GROK_API_KEY")
         if not self.api_key:
             logger.error("XAI_API_KEY 未設置")
             raise EnvironmentError("XAI_API_KEY 未設置")
