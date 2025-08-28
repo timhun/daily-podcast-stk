@@ -1,0 +1,18 @@
+{
+  "symbol": "^GSPC",
+  "analysis_date": "2025-08-28",
+  "winning_strategy": {
+    "name": "technical",
+    "confidence": 0.8046914637559072,
+    "expected_return": 0.08170467385108574,
+    "max_drawdown": 0.02137762957901168,
+    "sharpe_ratio": 0.8046914637559072
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 6501.85986328125,
+    "target_price": 6826.952856445313,
+    "stop_loss": 6176.766870117187,
+    "position_size": 0.5
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "symbol": "CL=F",
+  "analysis_date": "2025-08-28",
+  "winning_strategy": {
+    "name": "random_forest",
+    "confidence": 2.5449292653777897,
+    "expected_return": 0.28196490751750347,
+    "max_drawdown": 0.030447879633037078,
+    "sharpe_ratio": 2.5449292653777897
+  },
+  "signals": {
+    "position": "LONG",
+    "entry_price": 64.31999969482422,
+    "target_price": 67.53599967956544,
+    "stop_loss": 61.103999710083,
+    "position_size": 0.5
+  }
+}
