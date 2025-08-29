@@ -16,31 +16,12 @@ with open('config.json', 'r', encoding='utf-8') as f:
 # 配置日誌
 logger.add("logs/data_collector.log", rotation="1 MB")
 
-# 股票代碼配置
-SYMBOLS = {
-    'us': ['^GSPC', 'QQQ', 'NVDA', '^DJI', '^IXIC', 'SPY', 'AAPL', '^VIX', 'BTC-USD', 'ETH-USD', 'GC=F', 'CL=F'],
-    'tw': ['^TWII', '0050.TW', '2330.TW', '2454.TW']
-}
-
-# 新聞來源配置
-NEWS_SOURCES = {
-    'us': [
-        'https://feeds.bloomberg.com/technology/news.rss',
-        'https://www.reddit.com/r/investing/.rss'
-    ],
-    'tw': [
-        'https://tw.stock.yahoo.com/rss?category=news',
-        'https://www.moneydj.com/rss/feed.xml'
-    ]
-}
+SYMBOLS = config['symbols']
+NEWS_SOURCES = config['news_sources']
 
 class DataQualityChecker:
     def __init__(self):
-        self.quality_thresholds = {
-            'completeness': 0.95,  # 數據完整度 >95%
-            'freshness_hours': 4,  # 數據新鮮度 <4小時
-            'volatility_threshold': 0.1  # 最大波動閾值
-        }
+        self.quality_thresholds = config['quality_thresholds']
 
     def check_completeness(self, data, expected_keys):
         total = len(expected_keys)
