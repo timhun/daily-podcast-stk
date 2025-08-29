@@ -7,40 +7,20 @@
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>zh-tw</language>
-    <lastBuildDate>Fri, 29 Aug 2025 23:17:15 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 29 Aug 2025 23:35:31 +0000</lastBuildDate>
     <item>
-      <title>US 版 - 2025-08-29</title>
-      <description>以下是根據您的要求生成的播客文字稿。腳本以Traditional Chinese撰寫，使用台灣用語，風格專業親和，長度控制在3000字內（實際字數約1500字）。內容結構依照您提供的框架，語言流暢自然，像主持人對聽眾聊天一樣。為了符合播客形式，我加入了適當的過渡句和解說，讓它更具吸引力。
+      <title>TW 版 - 2025-08-29</title>
+      <description>以下是根據您的要求生成的播客文字稿。內容使用傳統中文（TW版），風格專業且親和，融入台灣用語（如「台股」、「新台幣」等），並控制在3000字內（實際字數約1200字）。結構嚴格遵循您提供的框架，內容基於給定的數據和新聞摘要。我會讓語言流暢、自然，像是主持人「幫幫忙」在和聽眾聊天一樣。
 
 ---
 
 **播客文字稿：幫幫忙說AI投資**
 
-**主持人（幫幫忙）：**  
-大家好，歡迎收聽《幫幫忙說...</description>
-      <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250830_us.mp3" length="0" type="audio/mpeg"/>
-      <pubDate>Fri, 29 Aug 2025 23:17:15 +0000</pubDate>
-    </item>
-    <item>
-      <title>幫幫忙每日投資快報 - 台股（20250817_tw）</title>
-      <description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
-每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+**開場：**
 
-
-讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
-提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
-
-
-提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
-
-
-
-🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
-
-
-📮 主持人：幫幫忙</description>
-      <enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250817_tw.mp3" length="1019664" type="audio/mpeg"/>
-      <pubDate>Sun, 17 Aug 2025 00:00:00 +0800</pubDate>
+大家好，歡迎收聽《幫幫忙說AI投資》！我是你...</description>
+      <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250830_tw.mp3" length="0" type="audio/mpeg"/>
+      <pubDate>Fri, 29 Aug 2025 23:35:31 +0000</pubDate>
     </item>
     <item>
       <title>幫幫忙每日投資快報 - 美股（20250830_us）</title>
@@ -64,6 +44,40 @@
 🎯 今日摘要：各位聽眾朋友，大家好！我是幫幫忙，這裡是《幫幫忙說美股》，今天是2025年8月30日，我們來聊聊最新的美股動態、ETF分析、AI趨勢，以及一些投資機會。讓我們直接切入正題。首先，來看台灣時間今日凌晨收盤的美股三大指數表現。道瓊工業指數收在38,000點，上漲200點，漲幅0.53%；標普500指數收在5,000點，上漲30點，漲幅0.60%；那斯達克綜合指數收在16,000點，上漲150點，漲幅0</description>
       <enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250830_us.mp3" length="2500704" type="audio/mpeg"/>
       <pubDate>Sat, 30 Aug 2025 00:00:00 +0800</pubDate>
+    </item>
+    <item>
+      <title>幫幫忙每日投資快報 - 台股（20250817_tw）</title>
+      <description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+
+
+讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
+提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
+
+
+提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
+
+
+
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
+
+
+📮 主持人：幫幫忙</description>
+      <enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250817_tw.mp3" length="1019664" type="audio/mpeg"/>
+      <pubDate>Sun, 17 Aug 2025 00:00:00 +0800</pubDate>
+    </item>
+    <item>
+      <title>US 版 - 2025-08-29</title>
+      <description>以下是根據您的要求生成的播客文字稿。腳本以Traditional Chinese撰寫，使用台灣用語，風格專業親和，長度控制在3000字內（實際字數約1500字）。內容結構依照您提供的框架，語言流暢自然，像主持人對聽眾聊天一樣。為了符合播客形式，我加入了適當的過渡句和解說，讓它更具吸引力。
+
+---
+
+**播客文字稿：幫幫忙說AI投資**
+
+**主持人（幫幫忙）：**  
+大家好，歡迎收聽《幫幫忙說...</description>
+      <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250830_us.mp3" length="0" type="audio/mpeg"/>
+      <pubDate>Fri, 29 Aug 2025 23:17:15 +0000</pubDate>
     </item>
   </channel>
 </rss>
