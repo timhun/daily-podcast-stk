@@ -8,7 +8,7 @@ from loguru import logger
 # Environment variables for xAI API
 XAI_API_KEY = os.getenv("GROK_API_KEY")
 
-def generate_script(market_data, mode, strategy_results):
+def generate_script(market_data, mode, strategy_results, market_analysis):
     if not XAI_API_KEY:
         logger.warning("XAI_API_KEY not set, using fallback script")
         market = market_data.get('market', {})
@@ -52,6 +52,10 @@ def generate_script(market_data, mode, strategy_results):
                              for symbol, result in strategy_results.items()
                              if result is not None and result.get('winning_strategy') and result['winning_strategy'].get('name') != 'none'])
 
+    # 市場分析
+    market_analysis_str = "\n".join([f"{symbol}: 趨勢 {result['trend']}, 波動性 {result['volatility']:.2f}%, {result['report']}"
+                                     for symbol, result in market_analysis.items()])
+    
     today = datetime.date.today().strftime('%Y年%m月%d日')
     prompt = f"""
     生成 {mode.upper()} 版播客文字稿，長度控制在3000字內，風格專業親和，使用台灣用語。
