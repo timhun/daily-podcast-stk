@@ -2,21 +2,25 @@
 <rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
   <channel>
     <title>幫幫忙說AI投資</title>
-    <link>https://f005.backblazeb2.com/file/daily-podcast-stk/episodes/20250829_us/audio.mp3</link>
+    <link>https://f005.backblazeb2.com/file/daily-podcast-stk/episodes/20250829_tw/audio.mp3</link>
     <description>AI驅動的每日財經投資分析</description>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>zh-tw</language>
-    <lastBuildDate>Fri, 29 Aug 2025 02:55:10 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 29 Aug 2025 06:44:20 +0000</lastBuildDate>
     <item>
-      <title>US 版 - 2025-08-29</title>
-      <description>以下是根據您的要求生成的播客文字稿。腳本以Traditional Chinese撰寫，風格專業親和，使用台灣用語（如“大家好”、“來看看”等口語化表達），並控制在3000字內（實際字數約為1800字）。主題聚焦於US市場的AI投資動態，結構嚴格遵循您提供的框架。腳本設計為主持人“幫幫忙”獨白形式，讓內容聽起來親切、易懂，並帶有鼓勵性語調。
+      <title>TW 版 - 2025-08-29</title>
+      <description>以下是根據您的要求生成的播客腳本，主題為《幫幫忙說AI投資》。腳本使用傳統中文，風格專業親和，融入台灣用語（如「台股」、「漲跌」等），並控制在3000字內（實際字數約1800字）。我已根據提供的結構組織內容，讓它聽起來像是一場自然、親切的播客對話。
 
 ---
 
-**播客文字稿：幫幫忙說AI投資 – US版*...</description>
-      <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/episodes/20250829_us/audio.mp3" length="0" type="audio/mpeg"/>
-      <pubDate>Fri, 29 Aug 2025 02:55:10 +0000</pubDate>
+**播客腳本：幫幫忙說AI投資**
+
+**開場：**
+
+大家好，歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2025年08月29日，又...</description>
+      <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/episodes/20250829_tw/audio.mp3" length="0" type="audio/mpeg"/>
+      <pubDate>Fri, 29 Aug 2025 06:44:20 +0000</pubDate>
     </item>
   </channel>
 </rss>

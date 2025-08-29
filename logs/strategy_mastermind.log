@@ -485,3 +485,45 @@
 2025-08-29 02:54:02.778 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/CL=F.json
 2025-08-29 02:54:02.784 | INFO     | strategy_mastermind:analyze_market:384 - CL=F 市場分析完成
 2025-08-29 02:54:24.717 | INFO     | content_creator:generate_script:78 - 成功生成播客文字稿
+2025-08-29 06:42:33.465 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-08-29 06:42:33.467 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-08-29 06:42:33.637 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-08-29 06:42:33.638 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-08-29 06:42:33.880 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-08-29 06:42:33.881 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-08-29 06:42:34.113 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-08-29 06:42:34.114 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-08-29 06:42:35.368 | INFO     | data_collector:collect_data:183 - 新聞數據儲存至: data/news/2025-08-29/tw_news.json
+2025-08-29 06:42:37.929 | INFO     | data_collector:collect_data:200 - 情緒數據儲存至: data/sentiment/2025-08-29/social_metrics.json
+2025-08-29 06:42:37.930 | INFO     | data_collector:collect_data:210 - tw 數據收集完成: 4 個標的, 3 則新聞, 品質分數: 1.0
+2025-08-29 06:42:39.329 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/TWII_daily.png
+2025-08-29 06:42:39.329 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ^TWII technical 策略回測完成 (timeframe: daily)
+2025-08-29 06:42:39.442 | INFO     | strategy_mastermind:backtest:164 - ^TWII RandomForest 準確率: 0.36
+2025-08-29 06:42:40.245 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/TWII_daily_rf.png
+2025-08-29 06:42:40.245 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ^TWII random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 06:42:57.220 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/TWII.json
+2025-08-29 06:42:57.226 | INFO     | strategy_mastermind:analyze_market:384 - ^TWII 市場分析完成
+2025-08-29 06:42:57.977 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/0050_TW_daily.png
+2025-08-29 06:42:57.977 | INFO     | strategy_mastermind:run_strategy_tournament:242 - 0050.TW technical 策略回測完成 (timeframe: daily)
+2025-08-29 06:42:58.090 | INFO     | strategy_mastermind:backtest:164 - 0050.TW RandomForest 準確率: 0.44
+2025-08-29 06:42:58.708 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/0050_TW_daily_rf.png
+2025-08-29 06:42:58.708 | INFO     | strategy_mastermind:run_strategy_tournament:242 - 0050.TW random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 06:43:06.676 | ERROR    | strategy_mastermind:optimize_with_grok:324 - Grok 回應 JSON 解析失敗
+2025-08-29 06:43:06.676 | ERROR    | strategy_mastermind:run_strategy_tournament:255 - 0050.TW 優化結果為 None，返回預設結果
+2025-08-29 06:43:06.677 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/0050_TW.json
+2025-08-29 06:43:06.683 | INFO     | strategy_mastermind:analyze_market:384 - 0050.TW 市場分析完成
+2025-08-29 06:43:07.419 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/2330_TW_daily.png
+2025-08-29 06:43:07.420 | INFO     | strategy_mastermind:run_strategy_tournament:242 - 2330.TW technical 策略回測完成 (timeframe: daily)
+2025-08-29 06:43:07.531 | INFO     | strategy_mastermind:backtest:164 - 2330.TW RandomForest 準確率: 0.54
+2025-08-29 06:43:08.371 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/2330_TW_daily_rf.png
+2025-08-29 06:43:08.371 | INFO     | strategy_mastermind:run_strategy_tournament:242 - 2330.TW random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 06:43:15.041 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/2330_TW.json
+2025-08-29 06:43:15.047 | INFO     | strategy_mastermind:analyze_market:384 - 2330.TW 市場分析完成
+2025-08-29 06:43:15.799 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/2454_TW_daily.png
+2025-08-29 06:43:15.800 | INFO     | strategy_mastermind:run_strategy_tournament:242 - 2454.TW technical 策略回測完成 (timeframe: daily)
+2025-08-29 06:43:15.910 | INFO     | strategy_mastermind:backtest:164 - 2454.TW RandomForest 準確率: 0.49
+2025-08-29 06:43:16.528 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/2454_TW_daily_rf.png
+2025-08-29 06:43:16.528 | INFO     | strategy_mastermind:run_strategy_tournament:242 - 2454.TW random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 06:43:23.469 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/2454_TW.json
+2025-08-29 06:43:23.475 | INFO     | strategy_mastermind:analyze_market:384 - 2454.TW 市場分析完成
+2025-08-29 06:43:42.798 | INFO     | content_creator:generate_script:78 - 成功生成播客文字稿
