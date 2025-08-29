@@ -12,8 +12,12 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
+# 載入 config.json
+with open('config.json', 'r', encoding='utf-8') as f:
+    config = json.load(f)
+    
 # 配置日誌
-logger.add("logs/strategy_mastermind.log", rotation="1 MB")
+logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
 class TechnicalAnalysis:
     def __init__(self):
