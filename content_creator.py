@@ -64,6 +64,7 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     - 市場概況: {analysis}
     - 產業動態: {news_str}
     - 市場情緒: {sentiment_str}
+    - 市場分析: {market_analysis_str or '無市場分析'}
     - 策略分析: {strategy_str or '無有效策略分析'}
     - 結尾: 投資金句 (例如: 投資如馬拉松)。
     """
@@ -83,6 +84,7 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
         市場概況：{analysis}
         產業動態：{news_str}
         市場情緒：{sentiment_str}
+        市場分析: {market_analysis_str or '無市場分析'}
         策略分析：{strategy_str or '無有效策略分析'}
         結尾：投資如馬拉松，穩健前行才能致勝。
         (備註：API 調用失敗，無法生成完整內容)
