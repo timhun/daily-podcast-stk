@@ -8,11 +8,12 @@ from voice_producer import generate_audio
 from cloud_manager import upload_episode
 from podcast_distributor import generate_rss, notify_slack
 from strategy_mastermind import StrategyEngine  # 新增
+import pytz
 
 load_dotenv()
 
 def main(mode):
-
+    TW_TZ = pytz.timezone("Asia/Taipei")
     today = datetime.datetime.now(TW_TZ).strftime("%Y%m%d")
     #today = datetime.date.today().strftime('%Y%m%d')
     print(f"Starting {mode.upper()} podcast production for {today}...")
