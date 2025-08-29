@@ -2,17 +2,17 @@
   "symbol": "0050.TW",
   "analysis_date": "2025-08-29",
   "winning_strategy": {
-    "name": "none",
-    "confidence": 0.0,
-    "expected_return": 0.0,
-    "max_drawdown": 0.0,
-    "sharpe_ratio": 0.0
+    "name": "technical",
+    "confidence": 0.8659645383615923,
+    "expected_return": 0.1142737310174443,
+    "max_drawdown": 0.07851591626911358,
+    "sharpe_ratio": 0.8659645383615923
   },
   "signals": {
     "position": "NEUTRAL",
-    "entry_price": 0.0,
-    "target_price": 0.0,
-    "stop_loss": 0.0,
-    "position_size": 0.0
+    "entry_price": 52.5,
+    "target_price": 55.125,
+    "stop_loss": 49.875,
+    "position_size": 0.5
   }
 }
