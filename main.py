@@ -39,7 +39,7 @@ def main(mode):
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
     script_path = f"{podcast_dir}/script.txt"
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
-    script = generate_script(market_data, mode, strategy_results)
+    script = generate_script(market_data, mode, strategy_results, market_analysis)
     with open(script_path, 'w', encoding='utf-8') as f:
         f.write(script)
 
