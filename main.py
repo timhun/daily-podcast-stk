@@ -12,6 +12,15 @@ import pytz
 
 load_dotenv()
 
+SYMBOLS = {
+    'tw': ['^TWII', '0050.TW', '2330.TW', '2454.TW'],  # 台股
+    'us': ['^IXIC', '^GSPC', 'AAPL', 'NVDA']  # 美股
+}
+INDEX_SYMBOLS = {
+    'tw': ['^TWII'],  # 台股大盤
+    'us': ['^IXIC', '^GSPC']  # 美股大盤
+}
+
 def main(mode):
     TW_TZ = pytz.timezone("Asia/Taipei")
     today = datetime.datetime.now(TW_TZ).strftime("%Y%m%d")
