@@ -15,7 +15,7 @@ from sklearn.metrics import accuracy_score
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
-    
+
 # 配置日誌
 logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
@@ -25,7 +25,7 @@ class TechnicalAnalysis:
 
     def backtest(self, symbol, data, timeframe='daily'):  # 修改 timeframe 為 'daily'
         # 修正檔案路徑
-        file_path = f"data/market/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
+        file_path = f"{config['data_paths']['market']}/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
         if not os.path.exists(file_path):
             logger.error(f"{symbol} {timeframe} 歷史數據檔案不存在: {file_path}")
             return {
@@ -37,7 +37,7 @@ class TechnicalAnalysis:
         
         try:
             df = pd.read_csv(file_path)
-            if df.empty or len(df) < 20:  # 確保有足夠數據計算 RSI 和 SMA
+            if df.empty or len(df) < config['technical_params']['min_data_length_rsi_sma']:  # 確保有足夠數據計算 RSI 和 SMA
                 logger.error(f"{symbol} {timeframe} 數據不足: {len(df)} 筆")
                 return {
                     'sharpe_ratio': 0,
@@ -46,30 +46,34 @@ class TechnicalAnalysis:
                     'signals': {}
                 }
             
-            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=14).rsi()
-            df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=20).sma_indicator()
+            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=config['technical_params']['rsi_window']).rsi()
+            df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=config['technical_params']['sma_window']).sma_indicator()
             
             # 簡單策略：RSI < 30 買入，RSI > 70 賣出
             df['signal'] = 0
-            df.loc[df['rsi'] < 30, 'signal'] = 1  # 買入
-            df.loc[df['rsi'] > 70, 'signal'] = -1  # 賣出
+            df.loc[df['rsi'] < config['technical_params']['rsi_buy_threshold'], 'signal'] = 1  # 買入
+            df.loc[df['rsi'] > config['technical_params']['rsi_sell_threshold'], 'signal'] = -1  # 賣出
             
             # 計算回報和風險指標
             df['returns'] = df['close'].pct_change()
             df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
-            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(252) if timeframe == 'daily' else np.sqrt(252 * 24)
+            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(
+                config['strategy_params']['sharpe_annualization_daily'] if timeframe == 'daily' else config['strategy_params']['sharpe_annualization_hourly']
+            ) if df['strategy_returns'].std() != 0 else 0
             max_drawdown = (df['strategy_returns'].cumsum().cummax() - df['strategy_returns'].cumsum()).max()
-            expected_return = df['strategy_returns'].mean() * (252 if timeframe == 'daily' else 252 * 24)
+            expected_return = df['strategy_returns'].mean() * (
+                config['strategy_params']['expected_return_annualization_daily'] if timeframe == 'daily' else config['strategy_params']['expected_return_annualization_hourly']
+            )
             
             # 最新交易信號
             latest_close = df['close'].iloc[-1]
-            multiplier = 1.05 if timeframe == 'daily' else 1.02
+            multiplier = config['strategy_params']['daily_multiplier'] if timeframe == 'daily' else config['strategy_params']['hourly_multiplier']
             signals = {
                 'position': 'LONG' if df['signal'].iloc[-1] == 1 else 'NEUTRAL' if df['signal'].iloc[-1] == 0 else 'SHORT',
                 'entry_price': latest_close,
                 'target_price': latest_close * multiplier,
-                'stop_loss': latest_close * 0.95,
-                'position_size': 0.5
+                'stop_loss': latest_close * config['strategy_params']['stop_loss_ratio'],
+                'position_size': config['strategy_params']['position_size']
             }
             
             # 生成策略表現圖表
@@ -104,7 +108,7 @@ class TechnicalAnalysis:
         plt.legend()
         plt.grid(True)
         
-        chart_dir = f"data/charts/{datetime.today().strftime('%Y-%m-%d')}"
+        chart_dir = f"{config['data_paths']['charts']}/{datetime.today().strftime('%Y-%m-%d')}"
         os.makedirs(chart_dir, exist_ok=True)
         chart_path = f"{chart_dir}/{symbol.replace('^', '').replace('.', '_')}_{timeframe}.png"
         plt.savefig(chart_path)
@@ -113,11 +117,14 @@ class TechnicalAnalysis:
 
 class RandomForestStrategy:
     def __init__(self):
-        self.model = RandomForestClassifier(n_estimators=100, random_state=42)
+        self.model = RandomForestClassifier(
+            n_estimators=config['ml_params']['rf_estimators'],
+            random_state=config['ml_params']['rf_random_state']
+        )
 
     def backtest(self, symbol, data, timeframe='daily'):  # 修改 timeframe 為 'daily'
         # 修正檔案路徑
-        file_path = f"data/market/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
+        file_path = f"{config['data_paths']['market']}/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
         if not os.path.exists(file_path):
             logger.error(f"{symbol} {timeframe} 歷史數據檔案不存在: {file_path}")
             return {
@@ -129,7 +136,7 @@ class RandomForestStrategy:
         
         try:
             df = pd.read_csv(file_path)
-            if df.empty or len(df) < 50:  # 需要更多數據來訓練模型
+            if df.empty or len(df) < config['technical_params']['min_data_length_ml']:
                 logger.error(f"{symbol} {timeframe} 數據不足: {len(df)} 筆")
                 return {
                     'sharpe_ratio': 0,
@@ -139,53 +146,45 @@ class RandomForestStrategy:
                 }
             
             # 特徵工程
-            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=14).rsi()
-            df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=20).sma_indicator()
-            df['sma_50'] = ta.trend.SMAIndicator(df['close'], window=50).sma_indicator()
-            df['momentum'] = df['close'].pct_change(5)
-            df.dropna(inplace=True)
-            
-            # 目標變量：未來1期的方向 (1: 上漲, 0: 下跌)
-            df['target'] = (df['close'].shift(-1) > df['close']).astype(int)
-            
-            # 訓練/測試分割
-            features = ['rsi', 'sma_20', 'sma_50', 'momentum']
+            features = config['ml_params']['ml_features']
             X = df[features]
-            y = df['target']
-            X_train, X_test, y_train, y_test = train_test_split(X[:-1], y[:-1], test_size=0.2, shuffle=False)
+            y = (df['close'].shift(-1) > df['close']).astype(int)  # 預測下一天是否上漲
             
-            # 訓練模型
+            # 分割數據
+            X_train, X_test, y_train, y_test = train_test_split(
+                X[:-1], y[:-1], 
+                test_size=config['ml_params']['ml_test_size'], 
+                random_state=config['ml_params']['rf_random_state']
+            )
+            
             self.model.fit(X_train, y_train)
-            
-            # 預測
-            df['signal'] = 0
-            test_index = df.index[-len(X_test):]
             predictions = self.model.predict(X_test)
-            df.loc[test_index, 'signal'] = np.where(predictions == 1, 1, -1)  # 1: LONG, -1: SHORT
-            
-            # 計算準確率
             accuracy = accuracy_score(y_test, predictions)
-            logger.info(f"{symbol} RandomForest 準確率: {accuracy:.2f}")
+            
+            # 生成信號
+            df['signal'] = self.model.predict(X)
+            df['signal'] = df['signal'].map({1: 1, 0: -1})  # 1: LONG, -1: SHORT
             
             # 計算回報和風險指標
             df['returns'] = df['close'].pct_change()
             df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
-            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(252) if timeframe == 'daily' else np.sqrt(252 * 24)
+            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(
+                config['strategy_params']['sharpe_annualization_daily'] if timeframe == 'daily' else config['strategy_params']['sharpe_annualization_hourly']
+            ) if df['strategy_returns'].std() != 0 else 0
             max_drawdown = (df['strategy_returns'].cumsum().cummax() - df['strategy_returns'].cumsum()).max()
-            expected_return = df['strategy_returns'].mean() * (252 if timeframe == 'daily' else 252 * 24)
+            expected_return = df['strategy_returns'].mean() * (
+                config['strategy_params']['expected_return_annualization_daily'] if timeframe == 'daily' else config['strategy_params']['expected_return_annualization_hourly']
+            )
             
             # 最新交易信號
             latest_close = df['close'].iloc[-1]
-            latest_features = df[features].iloc[-1:].values
-            latest_pred = self.model.predict(latest_features)[0]
-            position = 'LONG' if latest_pred == 1 else 'SHORT'
-            multiplier = 1.05 if timeframe == 'daily' else 1.02
+            multiplier = config['strategy_params']['daily_multiplier'] if timeframe == 'daily' else config['strategy_params']['hourly_multiplier']
             signals = {
-                'position': position,
+                'position': 'LONG' if df['signal'].iloc[-1] == 1 else 'SHORT',
                 'entry_price': latest_close,
-                'target_price': latest_close * multiplier if latest_pred == 1 else latest_close * 0.95,
-                'stop_loss': latest_close * 0.95 if latest_pred == 1 else latest_close * 1.05,
-                'position_size': 0.5
+                'target_price': latest_close * multiplier,
+                'stop_loss': latest_close * config['strategy_params']['stop_loss_ratio'],
+                'position_size': config['strategy_params']['position_size']
             }
             
             # 生成策略表現圖表
@@ -198,7 +197,7 @@ class RandomForestStrategy:
                 'signals': signals
             }
         except Exception as e:
-            logger.error(f"{symbol} {timeframe} RandomForest 回測失敗: {str(e)}")
+            logger.error(f"{symbol} {timeframe} 回測失敗: {str(e)}")
             return {
                 'sharpe_ratio': 0,
                 'max_drawdown': 0,
@@ -212,7 +211,7 @@ class RandomForestStrategy:
         df['cum_returns'] = (1 + df['returns']).cumprod() - 1
         
         plt.figure(figsize=(10, 6))
-        plt.plot(df['date'], df['cum_strategy_returns'], label='RandomForest Strategy Returns')
+        plt.plot(df['date'], df['cum_strategy_returns'], label='Strategy Returns')
         plt.plot(df['date'], df['cum_returns'], label='Buy & Hold Returns')
         plt.title(f'{symbol} {timeframe.upper()} RandomForest Performance')
         plt.xlabel('Date')
@@ -220,7 +219,7 @@ class RandomForestStrategy:
         plt.legend()
         plt.grid(True)
         
-        chart_dir = f"data/charts/{datetime.today().strftime('%Y-%m-%d')}"
+        chart_dir = f"{config['data_paths']['charts']}/{datetime.today().strftime('%Y-%m-%d')}"
         os.makedirs(chart_dir, exist_ok=True)
         chart_path = f"{chart_dir}/{symbol.replace('^', '').replace('.', '_')}_{timeframe}_rf.png"
         plt.savefig(chart_path)
@@ -276,7 +275,7 @@ class StrategyEngine:
                 }
             }
         # 儲存策略結果
-        strategy_dir = f"data/strategy/{datetime.today().strftime('%Y-%m-%d')}"
+        strategy_dir = f"{config['data_paths']['strategy']}/{datetime.today().strftime('%Y-%m-%d')}"
         os.makedirs(strategy_dir, exist_ok=True)
         with open(f"{strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json", 'w', encoding='utf-8') as f:
             json.dump(optimized, f, ensure_ascii=False, indent=2)
@@ -293,7 +292,7 @@ class StrategyEngine:
             f"為股票 {symbol} 選擇最佳策略（時間框架: {timeframe}）。以下是回測結果：\n"
             f"{json.dumps(results, ensure_ascii=False, indent=2)}\n"
             "要求：\n"
-            "- 選擇夏普比率最高的策略，且最大回撤 < 15%。\n"
+            f"- 選擇夏普比率最高的策略，且最大回撤 < {config['strategy_params']['max_drawdown_threshold']}。\n"
             "- 提供最佳策略名稱、信心分數、預期回報、最大回撤、夏普比率和交易信號。\n"
             "- 格式為 JSON:\n"
             "```json\n"
