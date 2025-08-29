@@ -40,14 +40,16 @@ def main(mode):
         market_analysis[symbol] = analyst.analyze_market(symbol)  # 新增市場分析
 
     # 步驟3: 生成文字稿
-    script = generate_script(market_data, mode, strategy_results, market_analysis)  # 傳入市場分析結果
-    script_path = f"episodes/{today}_{mode}/script.txt"
+    podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
+    script_path = f"{podcast_dir}/script.txt"
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
+    script = generate_script(market_data, mode, strategy_results)
     with open(script_path, 'w', encoding='utf-8') as f:
         f.write(script)
 
     # 步驟4: 生成音頻
-    audio_path = f"episodes/{today}_{mode}/audio.mp3"
+    audio_path = f"{podcast_dir}/audio.mp3"
+    os.makedirs(os.path.dirname(audio_path), exist_ok=True)
     generate_audio(script_path, audio_path)
 
     # 步驟5: 上傳到 B2
