@@ -9,6 +9,10 @@ from retry import retry
 from transformers import pipeline
 import pandas as pd
 
+# 載入 config.json
+with open('config.json', 'r', encoding='utf-8') as f:
+    config = json.load(f)
+    
 # 配置日誌
 logger.add("logs/data_collector.log", rotation="1 MB")
 
