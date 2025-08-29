@@ -71,52 +71,66 @@ def fetch_market_data(symbol):
     hist_daily = ticker.history(period='1y')
     if hist_daily.empty:
         logger.error(f"{symbol} 每日數據無回應")
-        daily_data = {'close': 0, 'change': 0, 'timestamp': datetime.datetime.now(datetime.timezone.utc)}
+        daily_data = {'close': 0, 'change': 0, 'volume': 0, 'timestamp': datetime.datetime.now(datetime.timezone.utc)}  # 新增 volume
         daily_df = pd.DataFrame([{
             'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'),
             'symbol': symbol,
             'close': 0,
-            'change': 0
+            'change': 0,
+            'volume': 0  # 新增 volume
         }])
     else:
+        # 確保索引是 timezone-aware（從之前修復）
+        if hist_daily.index.tz is None:
+            hist_daily.index = hist_daily.index.tz_localize('Asia/Taipei')
+        hist_daily.index = hist_daily.index.tz_convert('UTC')
         daily_data = {
             'close': hist_daily['Close'].iloc[-1],
             'change': hist_daily['Close'].pct_change().iloc[-1] * 100 if len(hist_daily) > 1 else 0,
-            'timestamp': hist_daily.index[-1].astimezone(datetime.timezone.utc)
+            'volume': hist_daily['Volume'].iloc[-1],  # 新增 volume
+            'timestamp': hist_daily.index[-1]
         }
         daily_df = pd.DataFrame({
             'date': hist_daily.index.strftime('%Y-%m-%d'),
             'symbol': symbol,
             'close': hist_daily['Close'],
-            'change': hist_daily['Close'].pct_change() * 100
+            'change': hist_daily['Close'].pct_change() * 100,
+            'volume': hist_daily['Volume']  # 新增 volume
         }).dropna()
 
     # 每小時數據（14 天）
     hist_hourly = ticker.history(period='14d', interval='1h')
     if hist_hourly.empty:
         logger.error(f"{symbol} 每小時數據無回應")
-        hourly_data = {'close': 0, 'change': 0, 'timestamp': datetime.datetime.now(datetime.timezone.utc)}
+        hourly_data = {'close': 0, 'change': 0, 'volume': 0, 'timestamp': datetime.datetime.now(datetime.timezone.utc)}  # 新增 volume
         hourly_df = pd.DataFrame([{
             'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
             'symbol': symbol,
             'close': 0,
-            'change': 0
+            'change': 0,
+            'volume': 0  # 新增 volume
         }])
     else:
+        # 確保索引是 timezone-aware
+        if hist_hourly.index.tz is None:
+            hist_hourly.index = hist_hourly.index.tz_localize('Asia/Taipei')
+        hist_hourly.index = hist_hourly.index.tz_convert('UTC')
         hourly_data = {
             'close': hist_hourly['Close'].iloc[-1],
             'change': hist_hourly['Close'].pct_change().iloc[-1] * 100 if len(hist_hourly) > 1 else 0,
-            'timestamp': hist_hourly.index[-1].astimezone(datetime.timezone.utc)
+            'volume': hist_hourly['Volume'].iloc[-1],  # 新增 volume
+            'timestamp': hist_hourly.index[-1]
         }
         hourly_df = pd.DataFrame({
             'date': hist_hourly.index.strftime('%Y-%m-%d %H:%M:%S'),
             'symbol': symbol,
             'close': hist_hourly['Close'],
-            'change': hist_hourly['Close'].pct_change() * 100
+            'change': hist_hourly['Close'].pct_change() * 100,
+            'volume': hist_hourly['Volume']  # 新增 volume
         }).dropna()
 
-    return daily_data, daily_df, hourly_data, hourly_df
-
+    return daily_data, daily_df, hourly_data, hourly_df    
+    
 @retry(tries=3, delay=1, backoff=2)
 def fetch_news(url):
     try:
