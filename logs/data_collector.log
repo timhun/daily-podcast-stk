@@ -6277,3 +6277,107 @@ Name: 114, dtype: object
 2025-08-29 00:24:11.924 | INFO     | strategy_mastermind:run_strategy_tournament:242 - CL=F random_forest 策略回測完成 (timeframe: daily)
 2025-08-29 00:24:20.647 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/CL=F.json
 2025-08-29 00:24:43.141 | INFO     | content_creator:generate_script:73 - 成功生成播客文字稿
+2025-08-29 01:21:36.822 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_GSPC.csv
+2025-08-29 01:21:36.824 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_GSPC.csv
+2025-08-29 01:21:37.055 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_QQQ.csv
+2025-08-29 01:21:37.057 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_QQQ.csv
+2025-08-29 01:21:37.252 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_NVDA.csv
+2025-08-29 01:21:37.254 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_NVDA.csv
+2025-08-29 01:21:37.411 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_DJI.csv
+2025-08-29 01:21:37.413 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_DJI.csv
+2025-08-29 01:21:37.570 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_IXIC.csv
+2025-08-29 01:21:37.571 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_IXIC.csv
+2025-08-29 01:21:37.789 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_SPY.csv
+2025-08-29 01:21:37.790 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_SPY.csv
+2025-08-29 01:21:38.110 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_AAPL.csv
+2025-08-29 01:21:38.112 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_AAPL.csv
+2025-08-29 01:21:38.326 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_VIX.csv
+2025-08-29 01:21:38.328 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_VIX.csv
+2025-08-29 01:21:38.507 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_BTC-USD.csv
+2025-08-29 01:21:38.510 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_BTC-USD.csv
+2025-08-29 01:21:38.674 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_ETH-USD.csv
+2025-08-29 01:21:38.676 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_ETH-USD.csv
+2025-08-29 01:21:38.832 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_GC=F.csv
+2025-08-29 01:21:38.835 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_GC=F.csv
+2025-08-29 01:21:39.014 | INFO     | data_collector:collect_data:164 - 每日數據儲存至: data/market/daily_CL=F.csv
+2025-08-29 01:21:39.017 | INFO     | data_collector:collect_data:169 - 每小時數據儲存至: data/market/hourly_CL=F.csv
+2025-08-29 01:21:39.580 | INFO     | data_collector:collect_data:183 - 新聞數據儲存至: data/news/2025-08-29/us_news.json
+2025-08-29 01:21:42.321 | INFO     | data_collector:collect_data:200 - 情緒數據儲存至: data/sentiment/2025-08-29/social_metrics.json
+2025-08-29 01:21:42.321 | INFO     | data_collector:collect_data:210 - us 數據收集完成: 12 個標的, 3 則新聞, 品質分數: 1.0
+2025-08-29 01:21:43.693 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/GSPC_daily.png
+2025-08-29 01:21:43.694 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ^GSPC technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:21:43.809 | INFO     | strategy_mastermind:backtest:164 - ^GSPC RandomForest 準確率: 0.45
+2025-08-29 01:21:44.691 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/GSPC_daily_rf.png
+2025-08-29 01:21:44.691 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ^GSPC random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:21:52.959 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/GSPC.json
+2025-08-29 01:21:53.748 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/QQQ_daily.png
+2025-08-29 01:21:53.749 | INFO     | strategy_mastermind:run_strategy_tournament:242 - QQQ technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:21:53.863 | INFO     | strategy_mastermind:backtest:164 - QQQ RandomForest 準確率: 0.47
+2025-08-29 01:21:54.516 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/QQQ_daily_rf.png
+2025-08-29 01:21:54.516 | INFO     | strategy_mastermind:run_strategy_tournament:242 - QQQ random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:02.192 | ERROR    | strategy_mastermind:optimize_with_grok:324 - Grok 回應 JSON 解析失敗
+2025-08-29 01:22:02.192 | ERROR    | strategy_mastermind:run_strategy_tournament:255 - QQQ 優化結果為 None，返回預設結果
+2025-08-29 01:22:02.192 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/QQQ.json
+2025-08-29 01:22:03.257 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/NVDA_daily.png
+2025-08-29 01:22:03.257 | INFO     | strategy_mastermind:run_strategy_tournament:242 - NVDA technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:03.372 | INFO     | strategy_mastermind:backtest:164 - NVDA RandomForest 準確率: 0.53
+2025-08-29 01:22:04.027 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/NVDA_daily_rf.png
+2025-08-29 01:22:04.027 | INFO     | strategy_mastermind:run_strategy_tournament:242 - NVDA random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:12.074 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/NVDA.json
+2025-08-29 01:22:12.875 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/DJI_daily.png
+2025-08-29 01:22:12.875 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ^DJI technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:12.991 | INFO     | strategy_mastermind:backtest:164 - ^DJI RandomForest 準確率: 0.50
+2025-08-29 01:22:13.655 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/DJI_daily_rf.png
+2025-08-29 01:22:13.655 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ^DJI random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:23.327 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/DJI.json
+2025-08-29 01:22:24.433 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/IXIC_daily.png
+2025-08-29 01:22:24.433 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ^IXIC technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:24.548 | INFO     | strategy_mastermind:backtest:164 - ^IXIC RandomForest 準確率: 0.35
+2025-08-29 01:22:25.216 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/IXIC_daily_rf.png
+2025-08-29 01:22:25.216 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ^IXIC random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:33.893 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/IXIC.json
+2025-08-29 01:22:34.681 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/SPY_daily.png
+2025-08-29 01:22:34.681 | INFO     | strategy_mastermind:run_strategy_tournament:242 - SPY technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:34.795 | INFO     | strategy_mastermind:backtest:164 - SPY RandomForest 準確率: 0.47
+2025-08-29 01:22:35.453 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/SPY_daily_rf.png
+2025-08-29 01:22:35.453 | INFO     | strategy_mastermind:run_strategy_tournament:242 - SPY random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:44.894 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/SPY.json
+2025-08-29 01:22:46.000 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/AAPL_daily.png
+2025-08-29 01:22:46.001 | INFO     | strategy_mastermind:run_strategy_tournament:242 - AAPL technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:46.114 | INFO     | strategy_mastermind:backtest:164 - AAPL RandomForest 準確率: 0.55
+2025-08-29 01:22:46.781 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/AAPL_daily_rf.png
+2025-08-29 01:22:46.781 | INFO     | strategy_mastermind:run_strategy_tournament:242 - AAPL random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:54.057 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/AAPL.json
+2025-08-29 01:22:54.846 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/VIX_daily.png
+2025-08-29 01:22:54.847 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ^VIX technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:22:54.962 | INFO     | strategy_mastermind:backtest:164 - ^VIX RandomForest 準確率: 0.53
+2025-08-29 01:22:55.625 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/VIX_daily_rf.png
+2025-08-29 01:22:55.625 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ^VIX random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:23:08.696 | ERROR    | strategy_mastermind:optimize_with_grok:324 - Grok 回應 JSON 解析失敗
+2025-08-29 01:23:08.697 | ERROR    | strategy_mastermind:run_strategy_tournament:255 - ^VIX 優化結果為 None，返回預設結果
+2025-08-29 01:23:08.697 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/VIX.json
+2025-08-29 01:23:10.126 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/BTC-USD_daily.png
+2025-08-29 01:23:10.126 | INFO     | strategy_mastermind:run_strategy_tournament:242 - BTC-USD technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:23:10.252 | INFO     | strategy_mastermind:backtest:164 - BTC-USD RandomForest 準確率: 0.44
+2025-08-29 01:23:11.229 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/BTC-USD_daily_rf.png
+2025-08-29 01:23:11.230 | INFO     | strategy_mastermind:run_strategy_tournament:242 - BTC-USD random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:23:34.981 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/BTC-USD.json
+2025-08-29 01:23:36.048 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/ETH-USD_daily.png
+2025-08-29 01:23:36.048 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ETH-USD technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:23:36.171 | INFO     | strategy_mastermind:backtest:164 - ETH-USD RandomForest 準確率: 0.40
+2025-08-29 01:23:37.343 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/ETH-USD_daily_rf.png
+2025-08-29 01:23:37.343 | INFO     | strategy_mastermind:run_strategy_tournament:242 - ETH-USD random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:23:49.659 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/ETH-USD.json
+2025-08-29 01:23:50.421 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/GC=F_daily.png
+2025-08-29 01:23:50.421 | INFO     | strategy_mastermind:run_strategy_tournament:242 - GC=F technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:23:50.532 | INFO     | strategy_mastermind:backtest:164 - GC=F RandomForest 準確率: 0.46
+2025-08-29 01:23:51.172 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/GC=F_daily_rf.png
+2025-08-29 01:23:51.172 | INFO     | strategy_mastermind:run_strategy_tournament:242 - GC=F random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:23:58.418 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/GC=F.json
+2025-08-29 01:23:59.519 | INFO     | strategy_mastermind:generate_performance_chart:108 - 策略表現圖表儲存至: data/charts/2025-08-29/CL=F_daily.png
+2025-08-29 01:23:59.519 | INFO     | strategy_mastermind:run_strategy_tournament:242 - CL=F technical 策略回測完成 (timeframe: daily)
+2025-08-29 01:23:59.632 | INFO     | strategy_mastermind:backtest:164 - CL=F RandomForest 準確率: 0.49
+2025-08-29 01:24:00.291 | INFO     | strategy_mastermind:generate_performance_chart:224 - RandomForest 策略表現圖表儲存至: data/charts/2025-08-29/CL=F_daily_rf.png
+2025-08-29 01:24:00.291 | INFO     | strategy_mastermind:run_strategy_tournament:242 - CL=F random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 01:24:09.153 | INFO     | strategy_mastermind:run_strategy_tournament:279 - 策略結果儲存至: data/strategy/2025-08-29/CL=F.json
+2025-08-29 01:24:30.189 | INFO     | content_creator:generate_script:73 - 成功生成播客文字稿

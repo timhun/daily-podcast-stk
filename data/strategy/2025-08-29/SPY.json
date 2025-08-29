@@ -3,10 +3,10 @@
   "analysis_date": "2025-08-29",
   "winning_strategy": {
     "name": "technical",
-    "confidence": 1.0122276936798333,
-    "expected_return": 0.1115732545843217,
+    "confidence": 1.012225798441977,
+    "expected_return": 0.1115730395071317,
     "max_drawdown": 0.017443957497177198,
-    "sharpe_ratio": 1.0122276936798333
+    "sharpe_ratio": 1.012225798441977
   },
   "signals": {
     "position": "NEUTRAL",
