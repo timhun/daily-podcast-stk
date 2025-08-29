@@ -3,6 +3,11 @@ from slack_sdk import WebClient
 import os
 import datetime
 import pytz
+import json
+
+# 載入 config.json
+with open('config.json', 'r', encoding='utf-8') as f:
+    config = json.load(f)
 
 def generate_rss(date, mode, script, audio_url):
     fg = FeedGenerator()
@@ -19,8 +24,8 @@ def generate_rss(date, mode, script, audio_url):
     # Use timezone-aware datetime (UTC)
     fe.pubDate(datetime.datetime.now(pytz.UTC))
 
-    rss_path = 'docs/rss/podcast.xml'
-    os.makedirs(os.path.dirname(rss_path), exist_ok=True)  # Create 'rss' directory if it doesn't exist
+    rss_path = config['data_paths']['rss']
+    os.makedirs(os.path.dirname(rss_path), exist_ok=True)  # Create 'docs/rss' directory if it doesn't exist
     fg.rss_file(rss_path, pretty=True)
     print(f"RSS updated: {rss_path}")
 
