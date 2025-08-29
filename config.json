@@ -19,6 +19,7 @@
     "strategy": "data/strategy",
     "news": "data/news",
     "sentiment": "data/sentiment"
+    "podcast": "docs/podcast"
   },
   "technical_params": {
     "rsi_window": 14,
