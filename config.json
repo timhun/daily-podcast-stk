@@ -1,75 +1,62 @@
 {
-  "timezone": "Asia/Taipei",
-  "site_base": "https://timhun.github.io/daily-podcast-stk",
   "symbols": {
-    "us_daily": ["^DJI", "^IXIC", "^GSPC", "^SOX", "QQQ", "SPY", "IBIT", "GC=F", "^TNX", "BTC-USD"],
-    "tw_daily": ["^TWII", "0050.TW"],
-    "us_hourly": ["QQQ", "SPY"],
-    "tw_hourly": ["0050.TW"]
+    "us": ["^GSPC", "QQQ", "NVDA", "^DJI", "^IXIC", "SPY", "AAPL", "^VIX", "BTC-USD", "ETH-USD", "GC=F", "CL=F"],
+    "tw": ["^TWII", "0050.TW", "2330.TW", "2454.TW"]
   },
-  "data_sources": {"yfinance": {"enabled": true}},
-  "strategies": {
-    "VolumeBreakout": {"volume_multiplier": 1.5},
-    "MLStrategy": {"model_type": "rf"}
+  "news_sources": {
+    "us": [
+      "https://feeds.bloomberg.com/technology/news.rss",
+      "https://www.reddit.com/r/investing/.rss"
+    ],
+    "tw": [
+      "https://tw.stock.yahoo.com/rss?category=news",
+      "https://www.moneydj.com/rss/feed.xml"
+    ]
   },
-  "voices": {
-    "tw": "zh-TW-YunJheNeural",
-    "us": "en-US-GuyNeural"
+  "data_paths": {
+    "market": "data/market",
+    "charts": "data/charts",
+    "strategy": "data/strategy",
+    "news": "data/news",
+    "sentiment": "data/sentiment"
   },
-  "rate": "+20%",
-  "volume": "+30%",
-  "tts": {
-    "voice": "zh-TW-YunJheNeural",
-    "rate": "+20%",
-    "volume": "+30%"
+  "technical_params": {
+    "rsi_window": 14,
+    "sma_window": 20,
+    "rsi_buy_threshold": 30,
+    "rsi_sell_threshold": 70,
+    "min_data_length_rsi_sma": 20,
+    "min_data_length_ml": 50
   },
-  "llm": {
-    "provider": "openrouter",
-    "model": "openai/gpt-4o-mini", 
-    "temperature": 0.6,
-    "max_tokens": 2200
+  "strategy_params": {
+    "daily_multiplier": 1.05,
+    "hourly_multiplier": 1.02,
+    "stop_loss_ratio": 0.95,
+    "position_size": 0.5,
+    "sharpe_annualization_daily": 252,
+    "sharpe_annualization_hourly": 2520,
+    "expected_return_annualization_daily": 252,
+    "expected_return_annualization_hourly": 2520,
+    "max_drawdown_threshold": 0.15
   },
-  "cleanup_days": 14,
-  "b2": {
-    "key_id": "your_b2_key_id",
-    "application_key": "your_b2_application_key",
-    "bucket_name": "podcast-bucket"
+  "ml_params": {
+    "rf_estimators": 100,
+    "rf_random_state": 42,
+    "ml_test_size": 0.2,
+    "ml_features": ["open", "high", "low", "close", "volume"]
   },
-  "s3": {
-    "enabled": false,
-    "access_key": "",
-    "secret_key": "",
-    "bucket_name": ""
+  "quality_thresholds": {
+    "completeness": 0.95,
+    "freshness_hours": 4,
+    "volatility_threshold": 0.1
   },
-  "platforms": {
-    "spotify": {"enabled": true},
-    "apple": {"enabled": true},
-    "google": {"enabled": false, "api_key": ""}
+  "logging": {
+    "file": "logs/strategy_mastermind.log",
+    "rotation": "1 MB"
   },
-  "history": {
-    "days_daily": 300,
-    "days_hourly": 14
-  },
-  "rss": {
-    "tw": ["https://tw.stock.yahoo.com/rss?category=news"],
-    "us": ["https://news.google.com/rss/search?q=site:reuters.com+AI+OR+economy&hl=en-US&gl=US&ceid=US:en"]
-  },
-  "grok_api_url": "https://api.grok.xai.com/v1/improve_strategy",
-  "slack_webhook_url": "https://bbm-a1u4547.slack.com/archives/D09AGLZ7JMA",
-  "retain_daily": 300,
-  "retain_hourly": 14
-  "news_categories": ["經濟", "半導體"],
-  "news_limit": 3,
-  "grok_model": "grok-3-mini",
-  "retry_times": 3,
-  "delay_sec": 3,
-  "data_retention_days": 300,
-  "hourly_retention_days": 14,
-  "b2_base_url": "<https://f005.backblazeb2.com/file/daily-podcast-stk>",
-  "podcast_title_tw": "幫幫忙說台股",
-  "podcast_title_us": "幫幫忙說美股",
-  "host_name": "幫幫忙",
-  "kosto_quotes": [
-    "股市就像女人一樣，永遠捉摸不透，但耐心總有回報。",
-    "投資不是賭博，而是智慧的遊戲。"
+  "podcast": {
+    "script_length_limit": 3000,
+    "sentiment_model": "ProsusAI/finbert"
+  }
 }
+
