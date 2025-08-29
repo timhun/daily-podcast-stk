@@ -18,8 +18,9 @@
     "charts": "data/charts",
     "strategy": "data/strategy",
     "news": "data/news",
-    "sentiment": "data/sentiment"
-    "podcast": "docs/podcast"
+    "sentiment": "data/sentiment",
+    "podcast": "docs/podcast",
+    "rss": "docs/rss/podcast.xml"
   },
   "technical_params": {
     "rsi_window": 14,
