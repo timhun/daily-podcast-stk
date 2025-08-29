@@ -22,6 +22,7 @@
     "podcast": "docs/podcast",
     "rss": "docs/rss/podcast.xml"
   },
+  "b2_podcast_prefix": "daily-podcast-stk",
   "technical_params": {
     "rsi_window": 14,
     "sma_window": 20,
