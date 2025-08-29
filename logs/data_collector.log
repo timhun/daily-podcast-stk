@@ -6577,3 +6577,39 @@ Name: 114, dtype: object
 2025-08-29 08:34:43.379 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-29/2454_TW.json
 2025-08-29 08:34:43.385 | INFO     | strategy_mastermind:analyze_market:387 - 2454.TW 市場分析完成
 2025-08-29 08:35:03.141 | INFO     | content_creator:generate_script:82 - 成功生成播客文字稿
+2025-08-29 09:20:13.517 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-08-29 09:20:13.519 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-08-29 09:20:13.772 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-08-29 09:20:13.773 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-08-29 09:20:13.978 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-08-29 09:20:13.979 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-08-29 09:20:14.189 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-08-29 09:20:14.190 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-08-29 09:20:15.363 | INFO     | data_collector:collect_data:168 - 新聞數據儲存至: data/news/2025-08-29/tw_news.json
+2025-08-29 09:20:17.877 | INFO     | data_collector:collect_data:185 - 情緒數據儲存至: data/sentiment/2025-08-29/social_metrics.json
+2025-08-29 09:20:17.877 | INFO     | data_collector:collect_data:195 - tw 數據收集完成: 4 個標的, 3 則新聞, 品質分數: 1.0
+2025-08-29 09:20:19.190 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-29/TWII_daily.png
+2025-08-29 09:20:19.190 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^TWII technical 策略回測完成 (timeframe: daily)
+2025-08-29 09:20:19.192 | ERROR    | strategy_mastermind:backtest:200 - ^TWII daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-29 09:20:19.192 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^TWII random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 09:20:28.556 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-29/TWII.json
+2025-08-29 09:20:28.563 | INFO     | strategy_mastermind:analyze_market:387 - ^TWII 市場分析完成
+2025-08-29 09:20:29.501 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-29/0050_TW_daily.png
+2025-08-29 09:20:29.501 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 0050.TW technical 策略回測完成 (timeframe: daily)
+2025-08-29 09:20:29.503 | ERROR    | strategy_mastermind:backtest:200 - 0050.TW daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-29 09:20:29.503 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 0050.TW random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 09:20:36.856 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-29/0050_TW.json
+2025-08-29 09:20:36.862 | INFO     | strategy_mastermind:analyze_market:387 - 0050.TW 市場分析完成
+2025-08-29 09:20:37.606 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-29/2330_TW_daily.png
+2025-08-29 09:20:37.606 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2330.TW technical 策略回測完成 (timeframe: daily)
+2025-08-29 09:20:37.608 | ERROR    | strategy_mastermind:backtest:200 - 2330.TW daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-29 09:20:37.608 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2330.TW random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 09:20:56.265 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-29/2330_TW.json
+2025-08-29 09:20:56.271 | INFO     | strategy_mastermind:analyze_market:387 - 2330.TW 市場分析完成
+2025-08-29 09:20:57.015 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-29/2454_TW_daily.png
+2025-08-29 09:20:57.015 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2454.TW technical 策略回測完成 (timeframe: daily)
+2025-08-29 09:20:57.017 | ERROR    | strategy_mastermind:backtest:200 - 2454.TW daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-29 09:20:57.017 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2454.TW random_forest 策略回測完成 (timeframe: daily)
+2025-08-29 09:21:06.742 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-29/2454_TW.json
+2025-08-29 09:21:06.748 | INFO     | strategy_mastermind:analyze_market:387 - 2454.TW 市場分析完成
+2025-08-29 09:21:28.646 | INFO     | content_creator:generate_script:82 - 成功生成播客文字稿
