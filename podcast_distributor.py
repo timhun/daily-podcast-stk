@@ -35,12 +35,16 @@ def generate_rss(date, mode, script, audio_url):
     fe.pubDate(datetime.datetime.now(pytz.UTC))
 
     rss_path = config['data_paths']['rss']
-    os.makedirs(os.path.dirname(rss_path), exist_ok=True)  # Create 'docs/rss' directory if it doesn't exist
+    os.makedirs(os.path.dirname(rss_path), exist_ok=True)  # 確保本地 docs/rss 目錄存在
     fg.rss_file(rss_path, pretty=True)
-    print(f"RSS updated: {rss_path}")
+    
+    # 上傳 RSS 到 B2 儲存桶根目錄
+    rss_url = upload_rss(rss_path)
+    print(f"RSS 本地生成: {rss_path}")
+    print(f"RSS 上傳至 B2: {rss_url}")
 
 def notify_slack(date, mode, audio_url):
     client = WebClient(token=os.getenv('SLACK_BOT_TOKEN'))
     message = f"New {mode.upper()} podcast episode for {date} is ready! Audio: {audio_url}"
     client.chat_postMessage(channel=os.getenv('SLACK_CHANNEL'), text=message)
-    print(f"Slack notification sent for {mode} episode on {date}")
+    print(f"已發送 Slack 通知，{mode} 版 {date} 集數")
