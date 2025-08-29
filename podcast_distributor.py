@@ -4,6 +4,8 @@ import os
 import datetime
 import pytz
 import json
+import xml.etree.ElementTree as ET
+from cloud_manager import upload_rss
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
