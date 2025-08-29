@@ -24,11 +24,14 @@ def main(mode):
     # 步驟2: 執行策略分析
     strategy_engine = StrategyEngine()
     strategy_results = {}
+    market_analysis = {}  # 新增市場分析結果
+    analyst = MarketAnalyst()  # 新增 MarketAnalyst 實例
     for symbol in market_data['market']:
         strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, market_data['market'][symbol])
+        market_analysis[symbol] = analyst.analyze_market(symbol)  # 新增市場分析
 
     # 步驟3: 生成文字稿
-    script = generate_script(market_data, mode, strategy_results)  # 傳入策略結果
+    script = generate_script(market_data, mode, strategy_results, market_analysis)  # 傳入市場分析結果
     script_path = f"episodes/{today}_{mode}/script.txt"
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
     with open(script_path, 'w', encoding='utf-8') as f:
