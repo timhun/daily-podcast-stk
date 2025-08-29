@@ -19,7 +19,7 @@ def generate_rss(date, mode, script, audio_url):
     # Use timezone-aware datetime (UTC)
     fe.pubDate(datetime.datetime.now(pytz.UTC))
 
-    rss_path = 'rss/combined.xml'
+    rss_path = 'docs/rss/podcast.xml'
     os.makedirs(os.path.dirname(rss_path), exist_ok=True)  # Create 'rss' directory if it doesn't exist
     fg.rss_file(rss_path, pretty=True)
     print(f"RSS updated: {rss_path}")
