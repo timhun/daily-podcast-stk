@@ -2,7 +2,7 @@
   "symbol": "BTC-USD",
   "analysis_date": "2025-08-29",
   "winning_strategy": {
-    "name": "none",
+    "name": "random_forest",
     "confidence": 0.0,
     "expected_return": 0.0,
     "max_drawdown": 0.0,

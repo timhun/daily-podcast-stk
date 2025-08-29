@@ -3,16 +3,16 @@
   "analysis_date": "2025-08-29",
   "winning_strategy": {
     "name": "technical",
-    "confidence": 0.32308748323747144,
-    "expected_return": 0.056069791214139714,
-    "max_drawdown": 0.0900411283466177,
-    "sharpe_ratio": 0.32308748323747144
+    "confidence": 0.4869,
+    "expected_return": 0.08568144661917089,
+    "max_drawdown": 0.09004112693114186,
+    "sharpe_ratio": 0.4868962886045954
   },
   "signals": {
     "position": "NEUTRAL",
-    "entry_price": 232.55999755859372,
-    "target_price": 244.18799743652343,
-    "stop_loss": 220.931997680664,
+    "entry_price": 232.13999938964844,
+    "target_price": 243.74699935913088,
+    "stop_loss": 220.532999420166,
     "position_size": 0.5
   }
 }
