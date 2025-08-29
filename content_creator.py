@@ -24,7 +24,7 @@ def generate_script(market_data, mode, strategy_results):
                                  if result is not None and result.get('winning_strategy') and result['winning_strategy'].get('name') != 'none'])
         today = datetime.date.today().strftime('%Y年%m月%d日')
         return f"""
-        歡迎收聽《幫幫忙說財經科技投資》，我是幫幫忙 AI。今天是{today}。
+        歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是{today}。
         市場概況：{analysis}
         產業動態：{news_str}
         市場情緒：{sentiment_str}
@@ -56,7 +56,7 @@ def generate_script(market_data, mode, strategy_results):
     prompt = f"""
     生成 {mode.upper()} 版播客文字稿，長度控制在3000字內，風格專業親和，使用台灣用語。
     結構:
-    - 開場: 歡迎收聽《幫幫忙說財經科技投資》，我是幫幫忙 AI。今天是{today}。
+    - 開場: 歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是{today}。
     - 市場概況: {analysis}
     - 產業動態: {news_str}
     - 市場情緒: {sentiment_str}
@@ -75,7 +75,7 @@ def generate_script(market_data, mode, strategy_results):
     except Exception as e:
         logger.error(f"API 錯誤: {str(e)}")
         return f"""
-        歡迎收聽《幫幫忙說財經科技投資》，我是幫幫忙 AI。今天是{today}。
+        歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是{today}。
         市場概況：{analysis}
         產業動態：{news_str}
         市場情緒：{sentiment_str}
