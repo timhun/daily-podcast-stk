@@ -323,3 +323,76 @@ class StrategyEngine:
         except json.JSONDecodeError:
             logger.error("Grok 回應 JSON 解析失敗")
             return None
+
+class MarketAnalyst:
+    def __init__(self):
+        pass
+
+    def analyze_market(self, symbol, timeframe='daily'):
+        file_path = f"data/market/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
+        if not os.path.exists(file_path):
+            logger.error(f"{symbol} {timeframe} 數據檔案不存在: {file_path}")
+            return {
+                'trend': 'NEUTRAL',
+                'volatility': 0.0,
+                'technical_indicators': {},
+                'report': '無數據可分析'
+            }
+        
+        try:
+            df = pd.read_csv(file_path)
+            if df.empty or len(df) < 50:
+                logger.error(f"{symbol} {timeframe} 數據不足: {len(df)} 筆")
+                return {
+                    'trend': 'NEUTRAL',
+                    'volatility': 0.0,
+                    'technical_indicators': {},
+                    'report': '數據不足'
+                }
+            
+            # 技術指標計算
+            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=14).rsi()
+            df['macd'] = ta.trend.MACD(df['close']).macd()
+            df['bollinger_hband'] = ta.volatility.BollingerBands(df['close']).bollinger_hband()
+            df['bollinger_lband'] = ta.volatility.BollingerBands(df['close']).bollinger_lband()
+            df['sma_50'] = ta.trend.SMAIndicator(df['close'], window=50).sma_indicator()
+            df['sma_200'] = ta.trend.SMAIndicator(df['close'], window=200).sma_indicator()
+            
+            # 趨勢分析：黃金交叉/死亡交叉
+            trend = 'NEUTRAL'
+            if df['sma_50'].iloc[-1] > df['sma_200'].iloc[-1]:
+                trend = 'BULLISH'  # 看漲
+            elif df['sma_50'].iloc[-1] < df['sma_200'].iloc[-1]:
+                trend = 'BEARISH'  # 看跌
+            
+            # 波動性：最近 20 期的標準差
+            volatility = df['close'].pct_change().rolling(20).std().iloc[-1] * 100 if 'close' in df else 0.0
+            
+            # 指標摘要
+            indicators = {
+                'rsi': df['rsi'].iloc[-1],
+                'macd': df['macd'].iloc[-1],
+                'bollinger': {
+                    'high': df['bollinger_hband'].iloc[-1],
+                    'low': df['bollinger_lband'].iloc[-1]
+                }
+            }
+            
+            # 生成報告
+            report = f"{symbol} 市場分析：趨勢 {trend}，波動性 {volatility:.2f}%，RSI {indicators['rsi']:.2f}，MACD {indicators['macd']:.2f}。"
+            
+            logger.info(f"{symbol} 市場分析完成")
+            return {
+                'trend': trend,
+                'volatility': volatility,
+                'technical_indicators': indicators,
+                'report': report
+            }
+        except Exception as e:
+            logger.error(f"{symbol} 市場分析失敗: {str(e)}")
+            return {
+                'trend': 'NEUTRAL',
+                'volatility': 0.0,
+                'technical_indicators': {},
+                'report': '分析失敗'
+            }
