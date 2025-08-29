@@ -2,17 +2,17 @@
   "symbol": "BTC-USD",
   "analysis_date": "2025-08-29",
   "winning_strategy": {
-    "name": "random_forest",
-    "confidence": 0.5185,
-    "expected_return": -0.057595617644684495,
-    "max_drawdown": 0.12933421857305671,
-    "sharpe_ratio": -0.5185162549197528
+    "name": "none",
+    "confidence": 0.0,
+    "expected_return": 0.0,
+    "max_drawdown": 0.0,
+    "sharpe_ratio": 0.0
   },
   "signals": {
-    "position": "LONG",
-    "entry_price": 111770.5859375,
-    "target_price": 117359.115234375,
-    "stop_loss": 106182.056640625,
-    "position_size": 0.5
+    "position": "NEUTRAL",
+    "entry_price": 0.0,
+    "target_price": 0.0,
+    "stop_loss": 0.0,
+    "position_size": 0.0
   }
 }

@@ -7,20 +7,16 @@
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>zh-tw</language>
-    <lastBuildDate>Fri, 29 Aug 2025 01:25:05 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 29 Aug 2025 02:55:10 +0000</lastBuildDate>
     <item>
       <title>US 版 - 2025-08-29</title>
-      <description>以下是根據您的要求生成的播客文字稿。腳本以傳統中文撰寫，使用台灣用語，風格專業親和（例如，加入一些口語化的表達，讓聽眾感覺像在和朋友聊天）。總字數約為1500字（已精簡控制在3000字內），聚焦在指定結構上。播客名稱為《幫幫忙說AI投資》，主持人為幫幫忙。
+      <description>以下是根據您的要求生成的播客文字稿。腳本以Traditional Chinese撰寫，風格專業親和，使用台灣用語（如“大家好”、“來看看”等口語化表達），並控制在3000字內（實際字數約為1800字）。主題聚焦於US市場的AI投資動態，結構嚴格遵循您提供的框架。腳本設計為主持人“幫幫忙”獨白形式，讓內容聽起來親切、易懂，並帶有鼓勵性語調。
 
 ---
 
-**播客文字稿：幫幫忙說AI投資 – 2025年08月29日版**
-
-**開場：**
-
-大家好，歡迎收聽《幫幫忙說AI投資》！我是...</description>
+**播客文字稿：幫幫忙說AI投資 – US版*...</description>
       <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/episodes/20250829_us/audio.mp3" length="0" type="audio/mpeg"/>
-      <pubDate>Fri, 29 Aug 2025 01:25:05 +0000</pubDate>
+      <pubDate>Fri, 29 Aug 2025 02:55:10 +0000</pubDate>
     </item>
   </channel>
 </rss>
