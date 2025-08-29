@@ -5,6 +5,10 @@ from xai_sdk.chat import user, system
 import datetime
 from loguru import logger
 
+# 載入 config.json
+with open('config.json', 'r', encoding='utf-8') as f:
+    config = json.load(f)
+    
 # Environment variables for xAI API
 XAI_API_KEY = os.getenv("GROK_API_KEY")
 
@@ -58,7 +62,7 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     
     today = datetime.date.today().strftime('%Y年%m月%d日')
     prompt = f"""
-    生成 {mode.upper()} 版播客文字稿，長度控制在3000字內，風格專業親和，使用台灣用語。
+    生成 {mode.upper()} 版播客文字稿，長度控制在{config['podcast']['script_length_limit']}字內，風格專業親和，使用台灣用語。
     結構:
     - 開場: 歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是{today}。
     - 市場概況: {analysis}
