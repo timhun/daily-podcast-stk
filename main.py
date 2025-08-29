@@ -20,7 +20,7 @@ load_dotenv()
 def main(mode):
     TW_TZ = pytz.timezone("Asia/Taipei")
     today = datetime.datetime.now(TW_TZ).strftime("%Y%m%d")
-    print(f"Starting {mode.upper()} podcast production for {today}...")
+    print(f"開始生成 {mode.upper()} 版 podcast，日期 {today}...")
 
     # 步驟1: 收集數據
     market_data = collect_data(mode)
@@ -37,14 +37,16 @@ def main(mode):
     
     # 步驟3: 生成文字稿
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
-    script_path = f"{podcast_dir}/script.txt"
+    script_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.txt"
+    script_path = f"{podcast_dir}/{script_filename}"
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
-    script = generate_script(market_data, mode, strategy_results, market_analysis)
+    script = generate_script(market_data, mode, strategy_results)
     with open(script_path, 'w', encoding='utf-8') as f:
         f.write(script)
 
     # 步驟4: 生成音頻
-    audio_path = f"{podcast_dir}/audio.mp3"
+    audio_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.mp3"
+    audio_path = f"{podcast_dir}/{audio_filename}"
     os.makedirs(os.path.dirname(audio_path), exist_ok=True)
     generate_audio(script_path, audio_path)
 
@@ -57,7 +59,7 @@ def main(mode):
     generate_rss(today, mode, script, audio_url)
     notify_slack(today, mode, audio_url)
 
-    print("Podcast production completed!")
+    print("Podcast 製作完成！")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
