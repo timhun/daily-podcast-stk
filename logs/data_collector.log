@@ -6749,3 +6749,107 @@ Name: 114, dtype: object
 2025-08-29 23:34:33.562 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-29/2454_TW.json
 2025-08-29 23:34:33.568 | INFO     | strategy_mastermind:analyze_market:387 - 2454.TW 市場分析完成
 2025-08-29 23:34:54.232 | INFO     | content_creator:generate_script:82 - 成功生成播客文字稿
+2025-08-30 21:42:23.933 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_GSPC.csv
+2025-08-30 21:42:23.935 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_GSPC.csv
+2025-08-30 21:42:24.156 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_QQQ.csv
+2025-08-30 21:42:24.157 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_QQQ.csv
+2025-08-30 21:42:24.367 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_NVDA.csv
+2025-08-30 21:42:24.368 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_NVDA.csv
+2025-08-30 21:42:24.553 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_DJI.csv
+2025-08-30 21:42:24.555 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_DJI.csv
+2025-08-30 21:42:24.733 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_IXIC.csv
+2025-08-30 21:42:24.735 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_IXIC.csv
+2025-08-30 21:42:25.019 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_SPY.csv
+2025-08-30 21:42:25.021 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_SPY.csv
+2025-08-30 21:42:25.305 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_AAPL.csv
+2025-08-30 21:42:25.307 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_AAPL.csv
+2025-08-30 21:42:25.513 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_VIX.csv
+2025-08-30 21:42:25.515 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_VIX.csv
+2025-08-30 21:42:25.693 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_BTC-USD.csv
+2025-08-30 21:42:25.696 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_BTC-USD.csv
+2025-08-30 21:42:25.939 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_ETH-USD.csv
+2025-08-30 21:42:25.942 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_ETH-USD.csv
+2025-08-30 21:42:26.235 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_GC=F.csv
+2025-08-30 21:42:26.237 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_GC=F.csv
+2025-08-30 21:42:26.430 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_CL=F.csv
+2025-08-30 21:42:26.432 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_CL=F.csv
+2025-08-30 21:42:27.286 | INFO     | data_collector:collect_data:168 - 新聞數據儲存至: data/news/2025-08-30/us_news.json
+2025-08-30 21:42:30.877 | INFO     | data_collector:collect_data:185 - 情緒數據儲存至: data/sentiment/2025-08-30/social_metrics.json
+2025-08-30 21:42:30.877 | INFO     | data_collector:collect_data:195 - us 數據收集完成: 12 個標的, 3 則新聞, 品質分數: 1.0
+2025-08-30 21:42:32.118 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/GSPC_daily.png
+2025-08-30 21:42:32.118 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^GSPC technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:42:32.120 | ERROR    | strategy_mastermind:backtest:200 - ^GSPC daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:42:32.120 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^GSPC random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:42:40.934 | ERROR    | strategy_mastermind:optimize_with_grok:327 - Grok 回應 JSON 解析失敗
+2025-08-30 21:42:40.935 | ERROR    | strategy_mastermind:run_strategy_tournament:258 - ^GSPC 優化結果為 None，返回預設結果
+2025-08-30 21:42:40.935 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/GSPC.json
+2025-08-30 21:42:40.941 | INFO     | strategy_mastermind:analyze_market:387 - ^GSPC 市場分析完成
+2025-08-30 21:42:41.883 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/QQQ_daily.png
+2025-08-30 21:42:41.883 | INFO     | strategy_mastermind:run_strategy_tournament:245 - QQQ technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:42:41.885 | ERROR    | strategy_mastermind:backtest:200 - QQQ daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:42:41.885 | INFO     | strategy_mastermind:run_strategy_tournament:245 - QQQ random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:42:50.916 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/QQQ.json
+2025-08-30 21:42:50.922 | INFO     | strategy_mastermind:analyze_market:387 - QQQ 市場分析完成
+2025-08-30 21:42:51.677 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/NVDA_daily.png
+2025-08-30 21:42:51.677 | INFO     | strategy_mastermind:run_strategy_tournament:245 - NVDA technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:42:51.679 | ERROR    | strategy_mastermind:backtest:200 - NVDA daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:42:51.679 | INFO     | strategy_mastermind:run_strategy_tournament:245 - NVDA random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:00.581 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/NVDA.json
+2025-08-30 21:43:00.587 | INFO     | strategy_mastermind:analyze_market:387 - NVDA 市場分析完成
+2025-08-30 21:43:01.353 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/DJI_daily.png
+2025-08-30 21:43:01.353 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^DJI technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:01.355 | ERROR    | strategy_mastermind:backtest:200 - ^DJI daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:43:01.355 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^DJI random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:10.677 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/DJI.json
+2025-08-30 21:43:10.683 | INFO     | strategy_mastermind:analyze_market:387 - ^DJI 市場分析完成
+2025-08-30 21:43:11.671 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/IXIC_daily.png
+2025-08-30 21:43:11.671 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^IXIC technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:11.673 | ERROR    | strategy_mastermind:backtest:200 - ^IXIC daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:43:11.673 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^IXIC random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:23.157 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/IXIC.json
+2025-08-30 21:43:23.163 | INFO     | strategy_mastermind:analyze_market:387 - ^IXIC 市場分析完成
+2025-08-30 21:43:23.931 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/SPY_daily.png
+2025-08-30 21:43:23.932 | INFO     | strategy_mastermind:run_strategy_tournament:245 - SPY technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:23.933 | ERROR    | strategy_mastermind:backtest:200 - SPY daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:43:23.933 | INFO     | strategy_mastermind:run_strategy_tournament:245 - SPY random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:33.637 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/SPY.json
+2025-08-30 21:43:33.643 | INFO     | strategy_mastermind:analyze_market:387 - SPY 市場分析完成
+2025-08-30 21:43:34.412 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/AAPL_daily.png
+2025-08-30 21:43:34.412 | INFO     | strategy_mastermind:run_strategy_tournament:245 - AAPL technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:34.414 | ERROR    | strategy_mastermind:backtest:200 - AAPL daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:43:34.414 | INFO     | strategy_mastermind:run_strategy_tournament:245 - AAPL random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:45.309 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/AAPL.json
+2025-08-30 21:43:45.314 | INFO     | strategy_mastermind:analyze_market:387 - AAPL 市場分析完成
+2025-08-30 21:43:46.295 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/VIX_daily.png
+2025-08-30 21:43:46.296 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^VIX technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:46.297 | ERROR    | strategy_mastermind:backtest:200 - ^VIX daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:43:46.297 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^VIX random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:55.969 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/VIX.json
+2025-08-30 21:43:55.975 | INFO     | strategy_mastermind:analyze_market:387 - ^VIX 市場分析完成
+2025-08-30 21:43:57.059 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/BTC-USD_daily.png
+2025-08-30 21:43:57.059 | INFO     | strategy_mastermind:run_strategy_tournament:245 - BTC-USD technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:43:57.061 | ERROR    | strategy_mastermind:backtest:200 - BTC-USD daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:43:57.061 | INFO     | strategy_mastermind:run_strategy_tournament:245 - BTC-USD random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:44:07.058 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/BTC-USD.json
+2025-08-30 21:44:07.064 | INFO     | strategy_mastermind:analyze_market:387 - BTC-USD 市場分析完成
+2025-08-30 21:44:08.133 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/ETH-USD_daily.png
+2025-08-30 21:44:08.133 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ETH-USD technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:44:08.135 | ERROR    | strategy_mastermind:backtest:200 - ETH-USD daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:44:08.135 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ETH-USD random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:44:22.005 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/ETH-USD.json
+2025-08-30 21:44:22.011 | INFO     | strategy_mastermind:analyze_market:387 - ETH-USD 市場分析完成
+2025-08-30 21:44:23.012 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/GC=F_daily.png
+2025-08-30 21:44:23.012 | INFO     | strategy_mastermind:run_strategy_tournament:245 - GC=F technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:44:23.014 | ERROR    | strategy_mastermind:backtest:200 - GC=F daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:44:23.014 | INFO     | strategy_mastermind:run_strategy_tournament:245 - GC=F random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:44:33.405 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/GC=F.json
+2025-08-30 21:44:33.411 | INFO     | strategy_mastermind:analyze_market:387 - GC=F 市場分析完成
+2025-08-30 21:44:34.181 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-08-30/CL=F_daily.png
+2025-08-30 21:44:34.181 | INFO     | strategy_mastermind:run_strategy_tournament:245 - CL=F technical 策略回測完成 (timeframe: daily)
+2025-08-30 21:44:34.183 | ERROR    | strategy_mastermind:backtest:200 - CL=F daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-08-30 21:44:34.183 | INFO     | strategy_mastermind:run_strategy_tournament:245 - CL=F random_forest 策略回測完成 (timeframe: daily)
+2025-08-30 21:44:41.750 | ERROR    | strategy_mastermind:optimize_with_grok:327 - Grok 回應 JSON 解析失敗
+2025-08-30 21:44:41.751 | ERROR    | strategy_mastermind:run_strategy_tournament:258 - CL=F 優化結果為 None，返回預設結果
+2025-08-30 21:44:41.751 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-08-30/CL=F.json
+2025-08-30 21:44:41.757 | INFO     | strategy_mastermind:analyze_market:387 - CL=F 市場分析完成
+2025-08-30 21:45:04.754 | INFO     | content_creator:generate_script:82 - 成功生成播客文字稿

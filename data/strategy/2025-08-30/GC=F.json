@@ -1,0 +1,18 @@
+{
+  "symbol": "GC=F",
+  "analysis_date": "2025-08-30",
+  "winning_strategy": {
+    "name": "technical",
+    "confidence": 0.006610740767442547,
+    "expected_return": 0.00043654766169453295,
+    "max_drawdown": 0.037761265369934405,
+    "sharpe_ratio": 0.006610740767442547
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 3473.699951171875,
+    "target_price": 3647.3849487304688,
+    "stop_loss": 3300.0149536132812,
+    "position_size": 0.5
+  }
+}

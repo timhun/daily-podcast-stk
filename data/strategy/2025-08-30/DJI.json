@@ -1,0 +1,18 @@
+{
+  "symbol": "^DJI",
+  "analysis_date": "2025-08-30",
+  "winning_strategy": {
+    "name": "technical",
+    "confidence": 1.0895690893845866,
+    "expected_return": 0.09433912325120807,
+    "max_drawdown": 0.017544457508609668,
+    "sharpe_ratio": 1.0895690893845866
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 45544.87890625,
+    "target_price": 47822.122851562504,
+    "stop_loss": 43267.634960937496,
+    "position_size": 0.5
+  }
+}
