@@ -57,11 +57,13 @@ def generate_rss(date, mode, script, audio_url):
 
     # 添加新集數
     fe = fg.add_entry()
-    fe.title(f"{mode.upper()} 版 - {datetime.date.today()}")
+    today_title = datetime.datetime.now(pytz.timezone("Asia/Taipei")).strftime("%Y-%m-%d")
+    fe.title(f"{mode.upper()} 版 - {today_title}")
     fe.description(script[:200] + '...')
     fe.enclosure(audio_url, 0, 'audio/mpeg')
     fe.pubDate(datetime.datetime.now(pytz.UTC))
 
+    
     # 儲存 RSS 檔案
     fg.rss_file(rss_path, pretty=True)
     
