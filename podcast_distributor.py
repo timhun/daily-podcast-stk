@@ -11,16 +11,6 @@ from cloud_manager import upload_rss
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
-FIXED_DESCRIPTION = """(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
-每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
-\n\n讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
-提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。\n\n
-提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
-\n\n
-🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！\n\n
-📮 主持人：幫幫忙"""
-
-
 def generate_rss(date, mode, script, audio_url):
     rss_path = config['data_paths']['rss']
     os.makedirs(os.path.dirname(rss_path), exist_ok=True)
@@ -37,9 +27,10 @@ def generate_rss(date, mode, script, audio_url):
                     'title': item.find('title').text,
                     'description': item.find('description').text,
                     'enclosure_url': item.find('enclosure').get('url'),
-                    'enclosure_length': item.find('enclosure').get('length'),
-                    'enclosure_type': item.find('enclosure').get('type'),
-                    'pubDate': item.find('pubDate').text
+                    'enclosure_length': item.find('enclosure').get('length', '0'),
+                    'enclosure_type': item.find('enclosure').get('type', 'audio/mpeg'),
+                    'pubDate': item.find('pubDate').text,
+                    'guid': item.find('guid').text if item.find('guid') is not None else item.find('enclosure').get('url')
                 }
                 existing_entries.append(entry)
         except ET.ParseError as e:
@@ -47,11 +38,17 @@ def generate_rss(date, mode, script, audio_url):
 
     # 初始化 FeedGenerator
     fg = FeedGenerator()
+    fg.load_extension('podcast')  # 啟用 podcast 擴展
     fg.title('幫幫忙說AI投資')
     fg.description('AI驅動的每日財經投資分析')
     fg.author({'name': '幫幫忙', 'email': os.getenv('EMAIL')})
     fg.language('zh-tw')
     fg.link(href='https://f005.backblazeb2.com/file/daily-podcast-stk/', rel='alternate')
+    # 添加 atom:link rel="self"
+    b2_rss_url = f"https://f005.backblazeb2.com/file/{os.getenv('B2_BUCKET_NAME')}/podcast.xml"
+    fg.link(href=b2_rss_url, rel='self', type='application/rss+xml')
+    fg.podcast.itunes_category([{'cat': 'Business', 'sub': 'Investing'}])
+    fg.podcast.itunes_explicit('no')
 
     # 保留舊集數
     for entry in existing_entries:
@@ -60,6 +57,7 @@ def generate_rss(date, mode, script, audio_url):
         fe.description(entry['description'])
         fe.enclosure(entry['enclosure_url'], entry['enclosure_length'], entry['enclosure_type'])
         fe.pubDate(entry['pubDate'])
+        fe.guid(entry['guid'], permalink=True)
 
     # 添加新集數
     TW_TZ = pytz.timezone("Asia/Taipei")
@@ -69,6 +67,7 @@ def generate_rss(date, mode, script, audio_url):
     fe.description(script[:200] + '...')
     fe.enclosure(audio_url, 0, 'audio/mpeg')
     fe.pubDate(datetime.datetime.now(pytz.UTC))
+    fe.guid(audio_url, permalink=True)  # 使用 audio_url 作為 guid
 
     # 儲存 RSS 檔案
     fg.rss_file(rss_path, pretty=True)
