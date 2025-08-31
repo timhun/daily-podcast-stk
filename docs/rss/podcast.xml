@@ -1,47 +1,31 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0">
   <channel>
     <title>幫幫忙說AI投資</title>
-    <link>https://timhun.github.io/daily-podcast-stk/</link>
+    <link>https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml</link>
     <description>AI驅動的每日財經投資分析</description>
+    <atom:link href="https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml" rel="self" type="application/rss+xml"/>
     <docs>http://www.rssboard.org/rss-specification</docs>
     <generator>python-feedgen</generator>
     <language>zh-tw</language>
-    <lastBuildDate>Sat, 30 Aug 2025 21:45:45 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 31 Aug 2025 13:52:47 +0000</lastBuildDate>
+    <itunes:category text="Business">
+      <itunes:category text="Investing"/>
+    </itunes:category>
+    <itunes:explicit>no</itunes:explicit>
     <item>
-      <title>US 版 - 2025-08-30</title>
-      <description>以下是根據您的要求生成的播客文字稿。內容以傳統中文撰寫，風格力求專業親和，使用台灣用語，讓感覺像是在跟聽眾聊天一樣自然。總字數約為1500字（已控制在3000字內），聚焦於美國市場的AI投資相關議題。腳本結構嚴格遵循您提供的架構。
+      <title>TW 版 - 2025-08-31</title>
+      <description>以下是根據您的要求生成的播客文字稿，主題為《幫幫忙說AI投資》。我已將長度控制在3000字內（實際字數約1800字），風格維持專業親和，使用台灣常見用語，讓內容聽起來像在和聽眾聊天一樣自然。結構嚴格遵循您提供的架構，並以傳統中文撰寫。
 
 ---
 
-**播客文字稿：幫幫忙說AI投資 – US版**
+**播客文字稿：幫幫忙說AI投資**
 
-**開場：**
-
-大家好，歡迎收聽《幫幫忙說AI投資》！我是幫幫忙，你們的AI投資好夥伴。今天是2025...</description>
-      <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250831_us.mp3" length="0" type="audio/mpeg"/>
-      <pubDate>Sat, 30 Aug 2025 21:45:45 +0000</pubDate>
-    </item>
-    <item>
-      <title>幫幫忙每日投資快報 - 台股（20250817_tw）</title>
-      <description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
-每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
-
-
-讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
-提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
-
-
-提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
-
-
-
-🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
-
-
-📮 主持人：幫幫忙</description>
-      <enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250817_tw.mp3" length="1019664" type="audio/mpeg"/>
-      <pubDate>Sun, 17 Aug 2025 00:00:00 +0800</pubDate>
+**開場**  
+大家好，歡迎收聽《幫幫忙說AI投資》！我是幫幫忙，你的投資好夥伴。今天是2025年08月31日...</description>
+      <guid isPermaLink="true">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250831_tw.mp3</guid>
+      <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250831_tw.mp3" length="0" type="audio/mpeg"/>
+      <pubDate>Sun, 31 Aug 2025 13:52:47 +0000</pubDate>
     </item>
     <item>
       <title>幫幫忙每日投資快報 - 美股（20250830_us）</title>
@@ -63,8 +47,46 @@
 📮 主持人：幫幫忙
 
 🎯 今日摘要：各位聽眾朋友，大家好！我是幫幫忙，這裡是《幫幫忙說美股》，今天是2025年8月30日，我們來聊聊最新的美股動態、ETF分析、AI趨勢，以及一些投資機會。讓我們直接切入正題。首先，來看台灣時間今日凌晨收盤的美股三大指數表現。道瓊工業指數收在38,000點，上漲200點，漲幅0.53%；標普500指數收在5,000點，上漲30點，漲幅0.60%；那斯達克綜合指數收在16,000點，上漲150點，漲幅0</description>
+      <guid isPermaLink="true">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250830_us.mp3</guid>
       <enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250830_us.mp3" length="2500704" type="audio/mpeg"/>
       <pubDate>Sat, 30 Aug 2025 00:00:00 +0800</pubDate>
+    </item>
+    <item>
+      <title>幫幫忙每日投資快報 - 台股（20250817_tw）</title>
+      <description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+
+
+讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
+提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
+
+
+提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
+
+
+
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
+
+
+📮 主持人：幫幫忙</description>
+      <guid isPermaLink="true">https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250817_tw.mp3</guid>
+      <enclosure url="https://daily-podcast-stk.s3.us-east-005.backblazeb2.com/daily-podcast-stk-20250817_tw.mp3" length="1019664" type="audio/mpeg"/>
+      <pubDate>Sun, 17 Aug 2025 00:00:00 +0800</pubDate>
+    </item>
+    <item>
+      <title>US 版 - 2025-08-30</title>
+      <description>以下是根據您的要求生成的播客文字稿。內容以傳統中文撰寫，風格力求專業親和，使用台灣用語，讓感覺像是在跟聽眾聊天一樣自然。總字數約為1500字（已控制在3000字內），聚焦於美國市場的AI投資相關議題。腳本結構嚴格遵循您提供的架構。
+
+---
+
+**播客文字稿：幫幫忙說AI投資 – US版**
+
+**開場：**
+
+大家好，歡迎收聽《幫幫忙說AI投資》！我是幫幫忙，你們的AI投資好夥伴。今天是2025...</description>
+      <guid isPermaLink="true">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250831_us.mp3</guid>
+      <enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20250831_us.mp3" length="0" type="audio/mpeg"/>
+      <pubDate>Sat, 30 Aug 2025 21:45:45 +0000</pubDate>
     </item>
   </channel>
 </rss>

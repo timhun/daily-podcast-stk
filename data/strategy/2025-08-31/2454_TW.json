@@ -1,0 +1,18 @@
+{
+  "symbol": "2454.TW",
+  "analysis_date": "2025-08-31",
+  "winning_strategy": {
+    "name": "technical",
+    "confidence": 1.1536774459321495,
+    "expected_return": 0.11551139642366014,
+    "max_drawdown": 0.0,
+    "sharpe_ratio": 1.1536774459321495
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 1370.0,
+    "target_price": 1438.5,
+    "stop_loss": 1301.5,
+    "position_size": 0.5
+  }
+}
