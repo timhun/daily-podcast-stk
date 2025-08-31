@@ -25,17 +25,25 @@ def generate_rss(date, mode, script, audio_url):
     rss_path = config['data_paths']['rss']
     os.makedirs(os.path.dirname(rss_path), exist_ok=True)
 
-    # 如果 RSS 檔案已存在，讀取現有內容以追加新集數
+    # 如果 RSS 檔案存在，讀取舊集數
+    existing_entries = []
     if os.path.exists(rss_path):
         try:
             tree = ET.parse(rss_path)
             root = tree.getroot()
             channel = root.find('channel')
-        except ET.ParseError:
-            # 如果 RSS 檔案無效，重新創建
-            channel = None
-    else:
-        channel = None
+            for item in channel.findall('item'):
+                entry = {
+                    'title': item.find('title').text,
+                    'description': item.find('description').text,
+                    'enclosure_url': item.find('enclosure').get('url'),
+                    'enclosure_length': item.find('enclosure').get('length'),
+                    'enclosure_type': item.find('enclosure').get('type'),
+                    'pubDate': item.find('pubDate').text
+                }
+                existing_entries.append(entry)
+        except ET.ParseError as e:
+            print(f"RSS 解析錯誤: {e}，重新創建 RSS。")
 
     # 初始化 FeedGenerator
     fg = FeedGenerator()
@@ -43,31 +51,29 @@ def generate_rss(date, mode, script, audio_url):
     fg.description('AI驅動的每日財經投資分析')
     fg.author({'name': '幫幫忙', 'email': os.getenv('EMAIL')})
     fg.language('zh-tw')
-    fg.link(href='https://timhun.github.io/daily-podcast-stk/', rel='alternate')
+    fg.link(href='https://f005.backblazeb2.com/file/daily-podcast-stk/', rel='alternate')
 
-    # 如果有現有頻道，保留舊集數
-    if channel is not None:
-        for item in channel.findall('item'):
-            fe = fg.add_entry()
-            fe.title(item.find('title').text)
-            fe.description(item.find('description').text)
-            enclosure = item.find('enclosure')
-            fe.enclosure(enclosure.get('url'), enclosure.get('length'), enclosure.get('type'))
-            fe.pubDate(item.find('pubDate').text)
+    # 保留舊集數
+    for entry in existing_entries:
+        fe = fg.add_entry()
+        fe.title(entry['title'])
+        fe.description(entry['description'])
+        fe.enclosure(entry['enclosure_url'], entry['enclosure_length'], entry['enclosure_type'])
+        fe.pubDate(entry['pubDate'])
 
     # 添加新集數
+    TW_TZ = pytz.timezone("Asia/Taipei")
+    today_title = datetime.datetime.now(TW_TZ).strftime("%Y-%m-%d")
     fe = fg.add_entry()
-    today_title = datetime.datetime.now(pytz.timezone("Asia/Taipei")).strftime("%Y-%m-%d")
     fe.title(f"{mode.upper()} 版 - {today_title}")
     fe.description(script[:200] + '...')
     fe.enclosure(audio_url, 0, 'audio/mpeg')
     fe.pubDate(datetime.datetime.now(pytz.UTC))
 
-    
     # 儲存 RSS 檔案
     fg.rss_file(rss_path, pretty=True)
     
-    # 上傳 RSS 到 B2 儲存桶根目錄
+    # 上傳 RSS 到 B2
     rss_url = upload_rss(rss_path)
     print(f"RSS 本地生成: {rss_path}")
     print(f"RSS 上傳至 B2: {rss_url}")
