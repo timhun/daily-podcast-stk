@@ -23,7 +23,7 @@
     "rss": "docs/rss/podcast.xml"
   },
   "b2_podcast_prefix": "daily-podcast-stk",
-  "b2_rss_prefix": "bbm",  // 使用唯一前綴，避免衝突
+  "b2_rss_prefix": "bbm", 
   "technical_params": {
     "rsi_window": 14,
     "sma_window": 20,
