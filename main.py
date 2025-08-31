@@ -7,7 +7,7 @@ from content_creator import generate_script
 from voice_producer import generate_audio
 from cloud_manager import upload_episode
 from podcast_distributor import generate_rss, notify_slack
-from strategy_mastermind import StrategyEngine, MarketAnalyst  # 引入 MarketAnalyst
+from strategy_mastermind import StrategyEngine
 import pytz
 import json
 
@@ -28,19 +28,15 @@ def main(mode):
     # 步驟2: 執行策略分析
     strategy_engine = StrategyEngine()
     strategy_results = {}
-    market_analysis = {}  # 新增市場分析結果
-    analyst = MarketAnalyst()  # 新增 MarketAnalyst 實例
     for symbol in market_data['market']:
         strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, market_data['market'][symbol])
-        market_analysis[symbol] = analyst.analyze_market(symbol)  # 新增市場分析
 
-    
     # 步驟3: 生成文字稿
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
     script_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.txt"
     script_path = f"{podcast_dir}/{script_filename}"
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
-    script = generate_script(market_data, mode, strategy_results, market_analysis)
+    script = generate_script(market_data, mode, strategy_results)
     with open(script_path, 'w', encoding='utf-8') as f:
         f.write(script)
 
@@ -66,4 +62,3 @@ if __name__ == "__main__":
     parser.add_argument("--mode", required=True, choices=['us', 'tw'])
     args = parser.parse_args()
     main(args.mode)
-
