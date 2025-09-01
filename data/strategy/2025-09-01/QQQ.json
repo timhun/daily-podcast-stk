@@ -1,0 +1,18 @@
+{
+  "symbol": "QQQ",
+  "analysis_date": "2025-09-01",
+  "winning_strategy": {
+    "name": "technical",
+    "confidence": 1.4271548490583885,
+    "expected_return": 0.18465839749913063,
+    "max_drawdown": 0.018008423626390657,
+    "sharpe_ratio": 1.4271548490583885
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 570.4000244140625,
+    "target_price": 598.9200256347657,
+    "stop_loss": 541.8800231933593,
+    "position_size": 0.5
+  }
+}
