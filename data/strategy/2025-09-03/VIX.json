@@ -3,10 +3,10 @@
   "analysis_date": "2025-09-03",
   "winning_strategy": {
     "name": "random_forest",
-    "confidence": 0.0,
-    "expected_return": 0.0,
-    "max_drawdown": 0.0,
-    "sharpe_ratio": 0.0
+    "confidence": 0,
+    "expected_return": 0,
+    "max_drawdown": 0,
+    "sharpe_ratio": 0
   },
   "signals": {
     "position": "",
