@@ -1,0 +1,18 @@
+{
+  "symbol": "AAPL",
+  "analysis_date": "2025-09-03",
+  "winning_strategy": {
+    "name": "technical",
+    "confidence": 0.4868955997672019,
+    "expected_return": 0.08568131485874919,
+    "max_drawdown": 0.09004112693114186,
+    "sharpe_ratio": 0.4868955997672019
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 229.72000122070312,
+    "target_price": 241.20600128173828,
+    "stop_loss": 218.23400115966797,
+    "position_size": 0.5
+  }
+}

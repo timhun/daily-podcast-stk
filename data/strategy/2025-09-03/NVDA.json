@@ -1,0 +1,18 @@
+{
+  "symbol": "NVDA",
+  "analysis_date": "2025-09-03",
+  "winning_strategy": {
+    "name": "technical",
+    "confidence": 1.0165745049018335,
+    "expected_return": 0.11447508288021989,
+    "max_drawdown": 0.07917929264136148,
+    "sharpe_ratio": 1.0165745049018335
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 170.77999877929688,
+    "target_price": 179.31899871826172,
+    "stop_loss": 162.24099884033203,
+    "position_size": 0.5
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "symbol": "^IXIC",
+  "analysis_date": "2025-09-03",
+  "winning_strategy": {
+    "name": "technical",
+    "confidence": 1.4339,
+    "expected_return": 0.1908913834381846,
+    "max_drawdown": 0.02149227881944238,
+    "sharpe_ratio": 1.4339059501982012
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 21279.630859375,
+    "target_price": 22343.61240234375,
+    "stop_loss": 20215.64931640625,
+    "position_size": 0.5
+  }
+}
