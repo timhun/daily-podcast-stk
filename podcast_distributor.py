@@ -118,7 +118,7 @@ def generate_rss(date, mode, script, audio_url):
     if duration:
         fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
     fe.podcast.itunes_summary(full_description[:500])
-    fe.podcast.itunes_keywords("投資, AI, 美股, 台股, ETF")
+    #fe.podcast.itunes_keywords("投資, AI, 美股, 台股, ETF")
 
     # 輸出 RSS
     try:
