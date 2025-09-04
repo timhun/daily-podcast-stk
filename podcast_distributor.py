@@ -132,6 +132,18 @@ def generate_rss(date, mode, script, audio_url):
         logger.error(f"⚠️ 產生 RSS 檔案失敗: {e}")
         raise IOError(f"⚠️ 產生 RSS 檔案失敗: {e}")
 
+def notify_slack(date, mode, audio_url):
+    try:
+        client = WebClient(token=os.getenv('SLACK_BOT_TOKEN'))
+        message = f"New {mode.upper()} podcast episode for {date} is ready! Audio: {audio_url}"
+        client.chat_postMessage(channel=os.getenv('SLACK_CHANNEL'), text=message)
+        logger.info(f"已發送 Slack 通知，{mode} 版 {date} 集數")
+        print(f"已發送 Slack 通知，{mode} 版 {date} 集數")
+    
+    except Exception as e:
+        logger.error(f"Slack 通知失敗：{str(e)}")
+        raise
+
 if __name__ == "__main__":
     date = datetime.datetime.now(pytz.timezone("Asia/Taipei")).strftime("%Y%m%d")
     mode = os.getenv("PODCAST_MODE", "tw").lower()
