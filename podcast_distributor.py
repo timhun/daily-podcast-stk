@@ -7,7 +7,6 @@ from feedgen.feed import FeedGenerator
 from loguru import logger
 import json
 from cloud_manager import upload_rss
-from podcast_distributor import notify_slack
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
