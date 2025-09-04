@@ -69,14 +69,18 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     today = datetime.date.today().strftime('%Y年%m月%d日')
     prompt = f"""
     生成 {mode.upper()} 版播客文字稿，長度控制在{config['podcast']['script_length_limit']}字內，風格專業親和，使用台灣用語。
-    結構:
-    - 開場: 歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是{today}。
-    - 市場概況: {analysis}
-    - 產業動態: {news_str}
-    - 市場情緒: {sentiment_str}
-    - 市場分析: {market_analysis_str or '無市場分析'}
-    - 策略分析: {strategy_str or '無有效策略分析'}
-    - 結尾: 投資金句 (例如: 投資如馬拉松)。
+    文字稿必須是連貫的敘述性文字，適合直接轉換成語音。不要包含任何結構標記如 '-' 或 '*'，不要包含橋段標題或解釋（如 '開場:' 或 '市場概況:'），只需生成完整的、流暢的播客內容。
+    
+    基於以下內容生成：
+    開場白：歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是{today}。
+    市場概況：{analysis}
+    產業動態：{news_str}
+    市場情緒：{sentiment_str}
+    市場分析：{market_analysis_str or '無市場分析'}
+    策略分析：{strategy_str or '無有效策略分析'}
+    結尾：投資金句 (例如: 投資如馬拉松，穩健前行才能致勝)。
+    
+    輸出應為純文字稿，無額外格式。記得你是專業的財經主播。
     """
 
     try:
