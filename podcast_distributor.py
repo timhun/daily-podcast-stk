@@ -1,25 +1,36 @@
-from feedgen.feed import FeedGenerator
-from slack_sdk import WebClient
 import os
 import datetime
 import pytz
-import json
 import xml.etree.ElementTree as ET
+from mutagen.mp3 import MP3
+from feedgen.feed import FeedGenerator
 from loguru import logger
+import json
 from cloud_manager import upload_rss
+from podcast_distributor import notify_slack
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
-# 配置日誌
+# 設置日誌
 logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
-def generate_rss(date, mode, script, audio_url):
-    rss_path = config['data_paths']['rss']
-    os.makedirs(os.path.dirname(rss_path), exist_ok=True)
+# 基本常數
+B2_BASE = f"https://f005.backblazeb2.com/file/{config['b2_podcast_prefix']}"
+RSS_FILE = config['data_paths']['rss']
+COVER_URL = "https://timhun.github.io/daily-podcast-stk/img/cover.jpg"
 
-    # 如果 RSS 檔案存在，讀取舊集數
+FIXED_DESCRIPTION = """(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+\n\n讓你在 7 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
+提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。\n\n
+提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
+\n\n
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！\n\n
+📮 主持人：幫幫忙"""
+
+def parse_existing_rss(rss_path):
     existing_entries = []
     if os.path.exists(rss_path):
         try:
@@ -38,31 +49,29 @@ def generate_rss(date, mode, script, audio_url):
                 }
                 existing_entries.append(entry)
         except ET.ParseError as e:
-            logger.error(f"RSS 解析錯誤: {e}，重新創建 RSS。")
+            logger.warning(f"RSS 解析錯誤: {e}，重新創建 RSS。")
+    return existing_entries
 
-    # 檢查是否已存在相同日期和模式的集數
-    existing_guids = {entry['guid'] for entry in existing_entries}
-    if audio_url in existing_guids:
-        logger.warning(f"發現重複集數：{mode.upper()} 版 - {date}，跳過添加")
-        return
-
-    # 初始化 FeedGenerator
+def generate_rss(date, mode, script, audio_url):
+    # 初始化 Feed
     fg = FeedGenerator()
-    fg.load_extension('podcast')  # 啟用 podcast 擴展
-    fg.title('幫幫忙說AI投資')
-    fg.description('AI驅動的每日財經投資分析')
-    fg.author({'name': '幫幫忙', 'email': os.getenv('EMAIL')})
-    fg.language('zh-tw')
-    fg.link(href='https://f005.backblazeb2.com/file/daily-podcast-stk/', rel='alternate')
-    # 添加 atom:link rel="self"
-    b2_rss_url = f"https://f005.backblazeb2.com/file/{os.getenv('B2_BUCKET_NAME')}/podcast.xml"
-    fg.link(href=b2_rss_url, rel='self', type='application/rss+xml')
-    fg.podcast.itunes_category([{'cat': 'Business', 'sub': 'Investing'}])
-    fg.podcast.itunes_explicit('no')
-    # 添加播客封面圖片（3000x3000 像素，公開可訪問）
-    fg.podcast.itunes_image('https://f005.backblazeb2.com/file/daily-podcast-stk/cover.jpg')
+    fg.load_extension("podcast")
+    fg.id("https://timhun.github.io/daily-podcast-stk")
+    fg.title("幫幫忙說AI投資")
+    fg.author({"name": "幫幫忙AI投資腦", "email": "tim.oneway@gmail.com"})
+    fg.link(href="https://timhun.github.io/daily-podcast-stk", rel="alternate")
+    fg.language("zh-TW")
+    fg.description("掌握美股台股、科技、AI 與投資機會，每日兩集！")
+    fg.logo(COVER_URL)
+    fg.link(href=f"{B2_BASE}/podcast.xml", rel="self")
+    fg.podcast.itunes_category("Business", "Investing")
+    fg.podcast.itunes_image(COVER_URL)
+    fg.podcast.itunes_explicit("no")
+    fg.podcast.itunes_author("幫幫忙AI投資腦")
+    fg.podcast.itunes_owner(name="幫幫忙AI投資腦", email="tim.oneway@gmail.com")
 
-    # 保留舊集數
+    # 加入歷史集數
+    existing_entries = parse_existing_rss(RSS_FILE)
     for entry in existing_entries:
         fe = fg.add_entry()
         fe.title(entry['title'])
@@ -71,41 +80,63 @@ def generate_rss(date, mode, script, audio_url):
         fe.pubDate(entry['pubDate'])
         fe.guid(entry['guid'], permalink=True)
 
-    # 添加新集數
-    TW_TZ = pytz.timezone("Asia/Taipei")
-    today_title = datetime.datetime.now(TW_TZ).strftime("%Y-%m-%d")
-    audio_path = f"{config['data_paths']['podcast']}/{date}_{mode}/daily-podcast-stk-{date}_{mode}.mp3"
-    audio_size = os.path.getsize(audio_path) if os.path.exists(audio_path) else 0
-    
+    # 查找最新集數資料夾
+    episodes_dir = config['data_paths']['podcast']
+    folder = f"{date}_{mode}"
+    base_path = os.path.join(episodes_dir, folder)
+    audio_filename = f"daily-podcast-stk-{date}_{mode}.mp3"
+    audio = os.path.join(base_path, audio_filename)
+
+    if not os.path.exists(audio):
+        logger.error(f"⚠️ 找不到音頻檔案：{audio}")
+        raise FileNotFoundError(f"⚠️ 找不到音頻檔案：{audio}")
+
+    # 提取音頻時長
+    try:
+        mp3 = MP3(audio)
+        duration = int(mp3.info.length)
+    except Exception as e:
+        logger.warning(f"⚠️ 讀取 mp3 時長失敗：{e}")
+        duration = None
+
+    # 設置發布日期
+    tz = pytz.timezone("Asia/Taipei")
+    pub_date = tz.localize(datetime.datetime.strptime(date, "%Y%m%d"))
+    title = f"幫幫忙每日投資快報 - {'台股' if mode == 'tw' else '美股'}（{date}_{mode}）"
+
+    # 使用腳本作為描述
+    full_description = script[:200] + "..." if script else FIXED_DESCRIPTION
+
+    # 新增集數
     fe = fg.add_entry()
-    fe.title(f"{mode.upper()} 版 - {today_title}")
-    fe.description(script[:200] + '...')
-    fe.enclosure(audio_url, audio_size, 'audio/mpeg')
-    fe.pubDate(datetime.datetime.now(pytz.UTC))
-    fe.guid(audio_url, permalink=True)  # 使用 audio_url 作為 guid
+    fe.id(audio_url)
+    fe.title(title)
+    fe.description(full_description)
+    fe.content(full_description, type="CDATA")
+    fe.enclosure(audio_url, str(os.path.getsize(audio)), "audio/mpeg")
+    fe.pubDate(pub_date)
+    if duration:
+        fe.podcast.itunes_duration(str(datetime.timedelta(seconds=duration)))
+    fe.podcast.itunes_summary(full_description[:500])
+    fe.podcast.itunes_keywords("投資, AI, 美股, 台股, ETF")
 
+    # 輸出 RSS
     try:
-        # 儲存 RSS 檔案
-        fg.rss_file(rss_path, pretty=True)
-        logger.info(f"RSS 檔案儲存至：{rss_path}")
-        
-        # 上傳 RSS 到 B2
-        rss_url = upload_rss(rss_path)
-        logger.info(f"RSS 上傳至 B2：{rss_url}")
-        
-        print(f"RSS 本地生成: {rss_path}")
-        print(f"RSS 上傳至 B2: {rss_url}")
+        os.makedirs(os.path.dirname(RSS_FILE), exist_ok=True)
+        fg.rss_file(RSS_FILE)
+        logger.info(f"✅ 已產生 RSS Feed：{RSS_FILE}")
+        rss_url = upload_rss(RSS_FILE)
+        logger.info(f"RSS 上傳至 B2: {rss_url}")
+        notify_slack(date, mode, audio_url)
     except Exception as e:
-        logger.error(f"RSS 生成或上傳失敗：{str(e)}")
-        raise
+        logger.error(f"⚠️ 產生 RSS 檔案失敗: {e}")
+        raise IOError(f"⚠️ 產生 RSS 檔案失敗: {e}")
 
-def notify_slack(date, mode, audio_url):
-    try:
-        client = WebClient(token=os.getenv('SLACK_BOT_TOKEN'))
-        message = f"New {mode.upper()} podcast episode for {date} is ready! Audio: {audio_url}"
-        client.chat_postMessage(channel=os.getenv('SLACK_CHANNEL'), text=message)
-        logger.info(f"已發送 Slack 通知，{mode} 版 {date} 集數")
-        print(f"已發送 Slack 通知，{mode} 版 {date} 集數")
-    except Exception as e:
-        logger.error(f"Slack 通知失敗：{str(e)}")
-        raise
+if __name__ == "__main__":
+    date = datetime.datetime.now(pytz.timezone("Asia/Taipei")).strftime("%Y%m%d")
+    mode = os.getenv("PODCAST_MODE", "tw").lower()
+    script_path = f"{config['data_paths']['podcast']}/{date}_{mode}/daily-podcast-stk-{date}_{mode}.txt"
+    audio_url = f"{B2_BASE}/daily-podcast-stk-{date}_{mode}.mp3"
+    with open(script_path, 'r', encoding='utf-8') as f:
+        script = f.read().strip()
+    generate_rss(date, mode, script, audio_url)
