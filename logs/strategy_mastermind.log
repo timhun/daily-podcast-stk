@@ -1667,3 +1667,83 @@
 2025-09-04 23:22:00.570 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250905 集數
 2025-09-04 23:22:00.840 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250905 集數
 2025-09-04 23:22:00.840 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250905 集數
+2025-09-05 06:42:21.530 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-09-05 06:42:21.530 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-09-05 06:42:21.531 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-09-05 06:42:21.531 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-09-05 06:42:21.731 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-09-05 06:42:21.731 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-09-05 06:42:21.732 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-09-05 06:42:21.732 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-09-05 06:42:21.948 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-09-05 06:42:21.948 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-09-05 06:42:21.950 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-09-05 06:42:21.950 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-09-05 06:42:22.164 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-09-05 06:42:22.164 | INFO     | data_collector:collect_data:149 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-09-05 06:42:22.165 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-09-05 06:42:22.165 | INFO     | data_collector:collect_data:154 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-09-05 06:42:23.269 | INFO     | data_collector:collect_data:168 - 新聞數據儲存至: data/news/2025-09-05/tw_news.json
+2025-09-05 06:42:23.269 | INFO     | data_collector:collect_data:168 - 新聞數據儲存至: data/news/2025-09-05/tw_news.json
+2025-09-05 06:42:26.520 | INFO     | data_collector:collect_data:185 - 情緒數據儲存至: data/sentiment/2025-09-05/social_metrics.json
+2025-09-05 06:42:26.520 | INFO     | data_collector:collect_data:185 - 情緒數據儲存至: data/sentiment/2025-09-05/social_metrics.json
+2025-09-05 06:42:26.520 | INFO     | data_collector:collect_data:195 - tw 數據收集完成: 4 個標的, 3 則新聞, 品質分數: 1.0
+2025-09-05 06:42:26.520 | INFO     | data_collector:collect_data:195 - tw 數據收集完成: 4 個標的, 3 則新聞, 品質分數: 1.0
+2025-09-05 06:42:27.536 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-09-05/TWII_daily.png
+2025-09-05 06:42:27.536 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-09-05/TWII_daily.png
+2025-09-05 06:42:27.536 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^TWII technical 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:27.536 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^TWII technical 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:27.538 | ERROR    | strategy_mastermind:backtest:200 - ^TWII daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-09-05 06:42:27.538 | ERROR    | strategy_mastermind:backtest:200 - ^TWII daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-09-05 06:42:27.538 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^TWII random_forest 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:27.538 | INFO     | strategy_mastermind:run_strategy_tournament:245 - ^TWII random_forest 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:42.283 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-09-05/TWII.json
+2025-09-05 06:42:42.283 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-09-05/TWII.json
+2025-09-05 06:42:42.290 | INFO     | strategy_mastermind:analyze_market:387 - ^TWII 市場分析完成
+2025-09-05 06:42:42.290 | INFO     | strategy_mastermind:analyze_market:387 - ^TWII 市場分析完成
+2025-09-05 06:42:43.202 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-09-05/0050_TW_daily.png
+2025-09-05 06:42:43.202 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-09-05/0050_TW_daily.png
+2025-09-05 06:42:43.203 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 0050.TW technical 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:43.203 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 0050.TW technical 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:43.204 | ERROR    | strategy_mastermind:backtest:200 - 0050.TW daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-09-05 06:42:43.204 | ERROR    | strategy_mastermind:backtest:200 - 0050.TW daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-09-05 06:42:43.204 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 0050.TW random_forest 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:43.204 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 0050.TW random_forest 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:59.107 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-09-05/0050_TW.json
+2025-09-05 06:42:59.107 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-09-05/0050_TW.json
+2025-09-05 06:42:59.113 | INFO     | strategy_mastermind:analyze_market:387 - 0050.TW 市場分析完成
+2025-09-05 06:42:59.113 | INFO     | strategy_mastermind:analyze_market:387 - 0050.TW 市場分析完成
+2025-09-05 06:42:59.847 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-09-05/2330_TW_daily.png
+2025-09-05 06:42:59.847 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-09-05/2330_TW_daily.png
+2025-09-05 06:42:59.847 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2330.TW technical 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:59.847 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2330.TW technical 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:59.849 | ERROR    | strategy_mastermind:backtest:200 - 2330.TW daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-09-05 06:42:59.849 | ERROR    | strategy_mastermind:backtest:200 - 2330.TW daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-09-05 06:42:59.849 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2330.TW random_forest 策略回測完成 (timeframe: daily)
+2025-09-05 06:42:59.849 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2330.TW random_forest 策略回測完成 (timeframe: daily)
+2025-09-05 06:43:31.631 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-09-05/2330_TW.json
+2025-09-05 06:43:31.631 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-09-05/2330_TW.json
+2025-09-05 06:43:31.637 | INFO     | strategy_mastermind:analyze_market:387 - 2330.TW 市場分析完成
+2025-09-05 06:43:31.637 | INFO     | strategy_mastermind:analyze_market:387 - 2330.TW 市場分析完成
+2025-09-05 06:43:32.374 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-09-05/2454_TW_daily.png
+2025-09-05 06:43:32.374 | INFO     | strategy_mastermind:generate_performance_chart:116 - 策略表現圖表儲存至: data/charts/2025-09-05/2454_TW_daily.png
+2025-09-05 06:43:32.374 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2454.TW technical 策略回測完成 (timeframe: daily)
+2025-09-05 06:43:32.374 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2454.TW technical 策略回測完成 (timeframe: daily)
+2025-09-05 06:43:32.376 | ERROR    | strategy_mastermind:backtest:200 - 2454.TW daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-09-05 06:43:32.376 | ERROR    | strategy_mastermind:backtest:200 - 2454.TW daily 回測失敗: "['open', 'high', 'low'] not in index"
+2025-09-05 06:43:32.376 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2454.TW random_forest 策略回測完成 (timeframe: daily)
+2025-09-05 06:43:32.376 | INFO     | strategy_mastermind:run_strategy_tournament:245 - 2454.TW random_forest 策略回測完成 (timeframe: daily)
+2025-09-05 06:43:58.276 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-09-05/2454_TW.json
+2025-09-05 06:43:58.276 | INFO     | strategy_mastermind:run_strategy_tournament:282 - 策略結果儲存至: data/strategy/2025-09-05/2454_TW.json
+2025-09-05 06:43:58.282 | INFO     | strategy_mastermind:analyze_market:387 - 2454.TW 市場分析完成
+2025-09-05 06:43:58.282 | INFO     | strategy_mastermind:analyze_market:387 - 2454.TW 市場分析完成
+2025-09-05 06:44:23.132 | INFO     | content_creator:generate_script:92 - 成功生成播客文字稿
+2025-09-05 06:44:23.132 | INFO     | content_creator:generate_script:92 - 成功生成播客文字稿
+2025-09-05 06:44:47.059 | INFO     | podcast_distributor:generate_rss:127 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-09-05 06:44:47.059 | INFO     | podcast_distributor:generate_rss:127 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-09-05 06:44:47.789 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-09-05 06:44:47.789 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-09-05 06:44:47.983 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250905 集數
+2025-09-05 06:44:47.983 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250905 集數
+2025-09-05 06:44:48.103 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250905 集數
+2025-09-05 06:44:48.103 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250905 集數

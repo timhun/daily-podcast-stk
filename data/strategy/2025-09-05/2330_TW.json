@@ -1,0 +1,18 @@
+{
+  "symbol": "2330.TW",
+  "analysis_date": "2025-09-05",
+  "winning_strategy": {
+    "name": "technical",
+    "confidence": 0.8164218495015725,
+    "expected_return": 0.10904503759094948,
+    "max_drawdown": 0.07572600100948934,
+    "sharpe_ratio": 0.8164218495015725
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 1180.0,
+    "target_price": 1239.0,
+    "stop_loss": 1121.0,
+    "position_size": 0.5
+  }
+}
