@@ -60,7 +60,17 @@
   },
   "podcast": {
     "script_length_limit": 3000,
-    "sentiment_model": "ProsusAI/finbert"
+    "sentiment_model": "ProsusAI/finbert",
+    "tts": {
+      "model_name": "microsoft/VibeVoice-1.5B",
+      "language": "zh",
+      "speaker_id": "zh_speaker_1",
+      "sample_rate": 24000,
+      "output_format": "mp3",
+      "bitrate": "128k",
+      "channels": 2,
+      "target_sample_rate": 44100
+    }
   }
 }
 
