@@ -54,3 +54,4 @@ statsmodels
 openai
 pytz
 xai_sdk
+huggingface_hub
