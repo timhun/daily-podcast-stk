@@ -41,8 +41,15 @@
     "sharpe_annualization_hourly": 2520,
     "expected_return_annualization_daily": 252,
     "expected_return_annualization_hourly": 2520,
-    "max_drawdown_threshold": 0.15
-  },
+    "max_drawdown_threshold": 0.15,
+    "quantity_params": {
+      "volume_ma_period": 5,
+      "volume_multiplier": 1.2,
+      "stop_profit": 0.02,
+      "stop_loss": 0.02,
+      "risk_per_trade": 0.02
+    }
+  },  
   "ml_params": {
     "rf_estimators": 100,
     "rf_random_state": 42,
@@ -54,13 +61,6 @@
     "freshness_hours": 4,
     "volatility_threshold": 0.1
   },
-  "quantity_params": {
-    "volume_ma_period": 5,
-    "volume_multiplier": 1.2,
-    "stop_profit": 0.02,
-    "stop_loss": 0.02,
-    "risk_per_trade": 0.02
-},
   "logging": {
     "file": "logs/strategy_mastermind.log",
     "rotation": "1 MB"
