@@ -56,10 +56,21 @@ def fetch_market_data(symbol):
     hist_daily = ticker.history(period='1y')
     if hist_daily.empty:
         logger.error(f"{symbol} 每日數據無回應")
-        daily_data = {'close': 0, 'change': 0, 'volume': 0, 'timestamp': datetime.datetime.now(datetime.timezone.utc)}  # 新增 volume
+        daily_data = {
+            'open': 0,
+            'high': 0,
+            'low': 0
+            'close': 0, 
+            'change': 0, 
+            'volume': 0, 
+            'timestamp': datetime.datetime.now(datetime.timezone.utc)
+        }  # 新增 volume
         daily_df = pd.DataFrame([{
             'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'),
             'symbol': symbol,
+            'open': 0,
+            'high': 0,
+            'low': 0,
             'close': 0,
             'change': 0,
             'volume': 0  # 新增 volume
@@ -70,6 +81,10 @@ def fetch_market_data(symbol):
             hist_daily.index = hist_daily.index.tz_localize('Asia/Taipei')
         hist_daily.index = hist_daily.index.tz_convert('UTC')
         daily_data = {
+            'open': hist_daily['Open'].iloc[-1],
+            'high': hist_daily['High'].iloc[-1],
+            'low': hist_daily['Low'].iloc[-1],
+            'close': hist_daily['Close'].iloc[-1],
             'close': hist_daily['Close'].iloc[-1],
             'change': hist_daily['Close'].pct_change().iloc[-1] * 100 if len(hist_daily) > 1 else 0,
             'volume': hist_daily['Volume'].iloc[-1],  # 新增 volume
@@ -78,6 +93,9 @@ def fetch_market_data(symbol):
         daily_df = pd.DataFrame({
             'date': hist_daily.index.strftime('%Y-%m-%d'),
             'symbol': symbol,
+            'open': hist_daily['Open'],
+            'high': hist_daily['High'],
+            'low': hist_daily['Low'],
             'close': hist_daily['Close'],
             'change': hist_daily['Close'].pct_change() * 100,
             'volume': hist_daily['Volume']  # 新增 volume
@@ -87,10 +105,21 @@ def fetch_market_data(symbol):
     hist_hourly = ticker.history(period='14d', interval='1h')
     if hist_hourly.empty:
         logger.error(f"{symbol} 每小時數據無回應")
-        hourly_data = {'close': 0, 'change': 0, 'volume': 0, 'timestamp': datetime.datetime.now(datetime.timezone.utc)}  # 新增 volume
+        hourly_data = {
+            'open': 0,
+            'high': 0,
+            'low': 0,
+            'close': 0, 
+            'change': 0, 
+            'volume': 0, 
+            'timestamp': datetime.datetime.now(datetime.timezone.utc)
+        }  # 新增 volume
         hourly_df = pd.DataFrame([{
             'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
             'symbol': symbol,
+            'open': 0,
+            'high': 0,
+            'low': 0,
             'close': 0,
             'change': 0,
             'volume': 0  # 新增 volume
@@ -101,6 +130,9 @@ def fetch_market_data(symbol):
             hist_hourly.index = hist_hourly.index.tz_localize('Asia/Taipei')
         hist_hourly.index = hist_hourly.index.tz_convert('UTC')
         hourly_data = {
+            'open': hist_hourly['Open'].iloc[-1],
+            'high': hist_hourly['High'].iloc[-1],
+            'low': hist_hourly['Low'].iloc[-1],
             'close': hist_hourly['Close'].iloc[-1],
             'change': hist_hourly['Close'].pct_change().iloc[-1] * 100 if len(hist_hourly) > 1 else 0,
             'volume': hist_hourly['Volume'].iloc[-1],  # 新增 volume
@@ -109,6 +141,9 @@ def fetch_market_data(symbol):
         hourly_df = pd.DataFrame({
             'date': hist_hourly.index.strftime('%Y-%m-%d %H:%M:%S'),
             'symbol': symbol,
+            'open': hist_hourly['Open'],
+            'high': hist_hourly['High'],
+            'low': hist_hourly['Low'],
             'close': hist_hourly['Close'],
             'change': hist_hourly['Close'].pct_change() * 100,
             'volume': hist_hourly['Volume']  # 新增 volume
