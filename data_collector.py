@@ -59,7 +59,7 @@ def fetch_market_data(symbol):
         daily_data = {
             'open': 0,
             'high': 0,
-            'low': 0
+            'low': 0,
             'close': 0, 
             'change': 0, 
             'volume': 0, 
