@@ -275,7 +275,7 @@ class QuantityStrategy:
         df['cum_returns'] = (1 + df['returns']).cumprod() - 1
         
         plt.figure(figsize=(10, 6))
-        plt.plot(df['date'], df['cum_strategy_returns'], label='Quantity Strategy Returns')
+        plt.plot(df['date'], df['cum_strategy_returns'], label='Quantity Strategy Returns(Dynamic')
         plt.plot(df['date'], df['cum_returns'], label='Buy & Hold Returns')
         plt.title(f'{symbol} {timeframe.upper()} Quantity Strategy Performance')
         plt.xlabel('Date')
@@ -421,7 +421,8 @@ class BigLineStrategy:
             'ma_short': 5,
             'ma_mid': 20,
             'ma_long': 60,
-            'vol_window': 60
+            'vol_window': 60,
+            'rsi_window': 14
         })
 
     def backtest(self, symbol, data, timeframe='daily'):
@@ -479,7 +480,9 @@ class BigLineStrategy:
             index_ma_mid = index_prices.rolling(window=self.params['ma_mid']).mean()
             index_ma_long = index_prices.rolling(window=self.params['ma_long']).mean()
             index_bullish = (index_ma_short > index_ma_mid) & (index_ma_mid > index_ma_long)
-            
+            index_rsi = ta.momentum.RSIIndicator(index_prices, window=self.params['rsi_window']).rsi()
+            sentiment_score = self._load_sentiment_score(symbol, timeframe)
+
             df['signal'] = 0
             df.loc[(big_line_diff > 0) & bullish & index_bullish, 'signal'] = 1
             df.loc[(big_line_diff < 0) & ~index_bullish, 'signal'] = -1
@@ -624,10 +627,14 @@ class StrategyEngine:
             'quantity': QuantityStrategy(),
             'bigline': BigLineStrategy()
         }
+        
+        
         self.api_key = os.getenv("GROK_API_KEY")
         if not self.api_key:
             logger.error("GROK_API_KEY 未設置")
             raise EnvironmentError("GROK_API_KEY 未設置")
+
+        self.strategy_generator = DynamicStrategyGenerator(self.api_key)
         
         # 定義參數搜索範圍
         self.param_grid = {
