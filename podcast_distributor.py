@@ -105,7 +105,7 @@ def generate_rss(date, mode, script, audio_url):
     title = f"幫幫忙每日投資快報 - {'台股' if mode == 'tw' else '美股'}（{date}_{mode}）"
 
     # 使用腳本作為描述
-    full_description = script[:200] + "..." if script else FIXED_DESCRIPTION
+    full_description = FIXED_DESCRIPTION + script[:200] + "..." if script else FIXED_DESCRIPTION
 
     # 新增集數
     fe = fg.add_entry()
