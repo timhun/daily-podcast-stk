@@ -1,5 +1,4 @@
 # strategy_mastermind.py
-# strategy_mastermind.py
 import pandas as pd
 import numpy as np
 from xai_sdk import Client
@@ -15,6 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import itertools
 from copy import deepcopy
+import joblib  # 用於模型增量學習的保存與載入
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -25,12 +25,15 @@ logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
 class TechnicalAnalysis:
     def __init__(self):
-        self.params = config.get('technical_params', {
+        self.params = config.get('strategy_params', {}).get('technical_params', {
             'rsi_window': 14,
             'rsi_buy_threshold': 30,
             'rsi_sell_threshold': 70,
             'sma_window': 20,
-            'min_data_length_rsi_sma': 50
+            'macd_fast': 12,
+            'macd_slow': 26,
+            'macd_signal': 9,
+            'min_data_length_rsi_sma': 20  # 降低至20以解決數據不足問題
         })
 
     def backtest(self, symbol, data, timeframe='daily'):
@@ -58,18 +61,14 @@ class TechnicalAnalysis:
             df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=self.params['rsi_window']).rsi()
             df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=self.params['sma_window']).sma_indicator()
             
+            df['macd'] = ta.trend.MACD(df['close'], window_fast=self.params['macd_fast'], window_slow=self.params['macd_slow'], window_sign=self.params['macd_signal']).macd()
+            df['macd_signal'] = ta.trend.MACD(df['close'], window_fast=self.params['macd_fast'], window_slow=self.params['macd_slow'], window_sign=self.params['macd_signal']).macd_signal()
             df['bollinger_hband'] = ta.volatility.BollingerBands(df['close']).bollinger_hband()
             df['bollinger_lband'] = ta.volatility.BollingerBands(df['close']).bollinger_lband()
-            sentiment_score = self._load_sentiment_score(symbol, timeframe)  # 新增方法
+            sentiment_score = self._load_sentiment_score(symbol, timeframe)  # 新增情緒過濾
             df['signal'] = 0
-            df.loc[(df['rsi'] < self.params['rsi_buy_threshold']) & 
-                   (df['macd'] > df['macd_signal']) & 
-                   (df['close'] <= df['bollinger_lband']) & 
-                   (sentiment_score > 0.5), 'signal'] = 1
-            df.loc[(df['rsi'] > self.params['rsi_sell_threshold']) & 
-                   (df['macd'] < df['macd_signal']) & 
-                   (df['close'] >= df['bollinger_hband']) & 
-                   (sentiment_score < -0.5), 'signal'] = -1
+            df.loc[(df['rsi'] < self.params['rsi_buy_threshold']) & (df['macd'] > df['macd_signal']) & (df['close'] <= df['bollinger_lband']) & (sentiment_score > 0.5), 'signal'] = 1
+            df.loc[(df['rsi'] > self.params['rsi_sell_threshold']) & (df['macd'] < df['macd_signal']) & (df['close'] >= df['bollinger_hband']) & (sentiment_score < -0.5), 'signal'] = -1
             
             df['returns'] = df['close'].pct_change()
             df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
@@ -107,7 +106,17 @@ class TechnicalAnalysis:
                 'expected_return': 0,
                 'signals': {}
             }
+    def _load_sentiment_score(self, symbol, timeframe):
+        sentiment_file = f"{config['data_paths']['sentiment']}/{datetime.today().strftime('%Y-%m-%d')}/social_metrics.json"
+        try:
+            with open(sentiment_file, 'r', encoding='utf-8') as f:
+                sentiment_data = json.load(f)
+            return sentiment_data.get('overall_score', 0.0)  # 使用 overall_score
+        except Exception as e:
+            logger.error(f"載入情緒數據失敗: {str(e)}")
+            return 0.0
 
+    
     def generate_performance_chart(self, df, symbol, timeframe):
         df['cum_strategy_returns'] = (1 + df['strategy_returns']).cumprod() - 1
         df['cum_returns'] = (1 + df['returns']).cumprod() - 1
@@ -115,7 +124,7 @@ class TechnicalAnalysis:
         plt.figure(figsize=(10, 6))
         plt.plot(df['date'], df['cum_strategy_returns'], label='Technical Strategy Returns')
         plt.plot(df['date'], df['cum_returns'], label='Buy & Hold Returns')
-        plt.title(f'{symbol} {timeframe.upper()} Technical Strategy Performance')
+        plt.title(f'{symbol} {timeframe.upper()} Technical Strategy Performance (Optimized)')
         plt.xlabel('Date')
         plt.ylabel('Cumulative Returns')
         plt.legend()
@@ -160,6 +169,12 @@ class QuantityStrategy:
                     'signals': {}
                 }
 
+            df['atr'] = ta.volatility.AverageTrueRange(df['high'], df['low'], df['close'], window=14).average_true_range()
+            stop_profit = self.params['stop_profit'] * df['atr'].iloc[-1]
+            stop_loss = self.params['stop_loss'] * df['atr'].iloc[-1]
+            index_volume_trend = self._load_index_volume_trend(symbol, timeframe)  # 新增
+            dynamic_volume_multiplier = self.params['volume_multiplier'] * (1 + index_volume_trend)
+            
             df['volume_ma'] = ta.trend.SMAIndicator(df['volume'], window=self.params['volume_ma_period']).sma_indicator()
             df['volume_rate'] = df['volume'] / df['volume_ma'].replace(0, np.nan)
             df['returns'] = df['close'].pct_change()
@@ -243,7 +258,18 @@ class QuantityStrategy:
                 'expected_return': 0,
                 'signals': {}
             }
-
+            
+    def _load_index_volume_trend(self, symbol, timeframe):
+        index_symbol = '^TWII' if symbol in config['symbols']['tw'] else '^IXIC'
+        index_file_path = f"{config['data_paths']['market']}/{timeframe}_{index_symbol.replace('^', '').replace('.', '_')}.csv"
+        try:
+            index_df = pd.read_csv(index_file_path)
+            volume_trend = (index_df['volume'].iloc[-1] - index_df['volume'].rolling(5).mean().iloc[-1]) / index_df['volume'].rolling(5).mean().iloc[-1]
+            return volume_trend if not np.isnan(volume_trend) else 0.0
+        except Exception as e:
+            logger.error(f"載入大盤成交量趨勢失敗: {str(e)}")
+            return 0.0
+        
     def generate_performance_chart(self, df, symbol, timeframe):
         df['cum_strategy_returns'] = (1 + df['strategy_returns']).cumprod() - 1
         df['cum_returns'] = (1 + df['returns']).cumprod() - 1
@@ -280,6 +306,16 @@ class RandomForestStrategy:
 
     def backtest(self, symbol, data, timeframe='daily'):
         file_path = f"{config['data_paths']['market']}/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
+
+        if os.path.exists(self.model_path):
+            self.model = joblib.load(self.model_path)
+            logger.info(f"載入已有模型: {self.model_path}")
+        self.model.n_estimators += 10
+        self.model.fit(X_train, y_train)
+        joblib.dump(self.model, self.model_path)
+        logger.info(f"模型儲存至: {self.model_path}")
+
+
         if not os.path.exists(file_path):
             logger.error(f"{symbol} {timeframe} 歷史數據檔案不存在: {file_path}")
             return {
@@ -305,6 +341,11 @@ class RandomForestStrategy:
             df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=config['technical_params']['sma_window']).sma_indicator()
             df['returns'] = df['close'].pct_change()
             df['target'] = np.where(df['returns'].shift(-1) > 0, 1, 0)
+
+            feature_importance = dict(zip(X.columns, self.model.feature_importances_))
+            logger.info(f"{symbol} 特徵重要性: {feature_importance}")
+            active_features = [f for f, imp in feature_importance.items() if imp > 0.1]
+            X = X[active_features]
             
             X = df[features + ['rsi', 'sma_20']].dropna()
             y = df['target'].loc[X.index]
@@ -321,6 +362,10 @@ class RandomForestStrategy:
             self.model.fit(X_train, y_train)
             predictions = self.model.predict(X_test)
             accuracy = accuracy_score(y_test, predictions)
+
+            from sklearn.model_selection import cross_val_score
+            cv_scores = cross_val_score(self.model, X_train, y_train, cv=5, scoring='accuracy')
+            logger.info(f"{symbol} 交叉驗證準確率: {cv_scores.mean():.2f} ± {cv_scores.std():.2f}")
             
             df['signal'] = 0
             df.loc[X.index[-len(predictions):], 'signal'] = predictions
