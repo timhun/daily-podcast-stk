@@ -395,6 +395,142 @@ class RandomForestStrategy:
             logger.error("Grok 回應 JSON 解析失敗")
             return None
 
+class BigLineStrategy:
+    def __init__(self):
+        self.params = config.get('strategy_params', {}).get('bigline_params', {
+            'weights': [0.4, 0.35, 0.25],
+            'ma_short': 5,
+            'ma_mid': 20,
+            'ma_long': 60,
+            'vol_window': 60
+        })
+
+    def backtest(self, symbol, data, timeframe='daily'):
+        file_path = f"{config['data_paths']['market']}/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
+        if not os.path.exists(file_path):
+            logger.error(f"{symbol} {timeframe} 歷史數據檔案不存在: {file_path}")
+            return {
+                'sharpe_ratio': 0,
+                'max_drawdown': 0,
+                'expected_return': 0,
+                'signals': {}
+            }
+        
+        try:
+            df = pd.read_csv(file_path)
+            if df.empty or len(df) < self.params['ma_long']:
+                logger.error(f"{symbol} {timeframe} 數據不足: {len(df)} 筆")
+                return {
+                    'sharpe_ratio': 0,
+                    'max_drawdown': 0,
+                    'expected_return': 0,
+                    'signals': {}
+                }
+            
+            # 確保日期欄位並排序
+            df['date'] = pd.to_datetime(df['date'])
+            df = df.sort_values('date').set_index('date')
+            
+            prices = df['close']
+            volume = df['volume']
+            
+            # 計算移動平均線
+            ma_short = prices.rolling(window=self.params['ma_short']).mean()
+            ma_mid = prices.rolling(window=self.params['ma_mid']).mean()
+            ma_long = prices.rolling(window=self.params['ma_long']).mean()
+            
+            # 多頭排列判斷
+            bullish = (ma_short > ma_mid) & (ma_mid > ma_long)
+            
+            # 計算 BigLine
+            big_line = (self.params['weights'][0] * ma_short +
+                        self.params['weights'][1] * ma_mid +
+                        self.params['weights'][2] * ma_long)
+            
+            # 成交量因子
+            max_vol = volume.rolling(window=self.params['vol_window']).max()
+            vol_factor = 1 + volume / (max_vol + 1e-9)
+            big_line_weighted = big_line * vol_factor
+            
+            # BigLine 差異
+            big_line_diff = big_line_weighted.diff()
+            
+            # 生成信號：基於 BigLine_Diff 和 bullish 判斷多空
+            df['signal'] = 0
+            df.loc[(big_line_diff > 0) & bullish, 'signal'] = 1  # LONG
+            df.loc[big_line_diff < 0, 'signal'] = -1  # SHORT
+            
+            # 計算回報
+            df['returns'] = df['close'].pct_change()
+            df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
+            
+            # Sharpe Ratio（考慮 NaN）
+            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(
+                config['strategy_params']['sharpe_annualization_daily'] if timeframe == 'daily' else config['strategy_params']['sharpe_annualization_hourly']
+            ) if df['strategy_returns'].std() != 0 else 0
+            sharpe_ratio = sharpe_ratio if not np.isnan(sharpe_ratio) else 0
+            
+            # Max Drawdown
+            cum_returns = df['strategy_returns'].cumsum()
+            max_drawdown = (cum_returns.cummax() - cum_returns).max()
+            max_drawdown = max_drawdown if not np.isnan(max_drawdown) else 0
+            
+            # Expected Return
+            expected_return = df['strategy_returns'].mean() * (
+                config['strategy_params']['expected_return_annualization_daily'] if timeframe == 'daily' else config['strategy_params']['expected_return_annualization_hourly']
+            )
+            expected_return = expected_return if not np.isnan(expected_return) else 0
+            
+            # 最新信號
+            latest_close = df['close'].iloc[-1]
+            multiplier = config['strategy_params']['daily_multiplier'] if timeframe == 'daily' else config['strategy_params']['hourly_multiplier']
+            signals = {
+                'position': 'LONG' if df['signal'].iloc[-1] == 1 else 'SHORT' if df['signal'].iloc[-1] == -1 else 'NEUTRAL',
+                'entry_price': latest_close,
+                'target_price': latest_close * multiplier,
+                'stop_loss': latest_close * config['strategy_params']['stop_loss_ratio'],
+                'position_size': config['strategy_params']['position_size']
+            }
+            
+            # 生成圖表（類似 TechnicalAnalysis）
+            self.generate_performance_chart(df, symbol, timeframe)
+            
+            return {
+                'sharpe_ratio': sharpe_ratio,
+                'max_drawdown': max_drawdown,
+                'expected_return': expected_return,
+                'signals': signals
+            }
+        except Exception as e:
+            logger.error(f"{symbol} {timeframe} 回測失敗: {str(e)}")
+            return {
+                'sharpe_ratio': 0,
+                'max_drawdown': 0,
+                'expected_return': 0,
+                'signals': {}
+            }
+
+    def generate_performance_chart(self, df, symbol, timeframe):
+        df['cum_strategy_returns'] = (1 + df['strategy_returns']).cumprod() - 1
+        df['cum_returns'] = (1 + df['returns']).cumprod() - 1
+        
+        plt.figure(figsize=(10, 6))
+        plt.plot(df.index, df['cum_strategy_returns'], label='Strategy Returns')
+        plt.plot(df.index, df['cum_returns'], label='Buy & Hold Returns')
+        plt.title(f'{symbol} {timeframe.upper()} BigLine Strategy Performance')
+        plt.xlabel('Date')
+        plt.ylabel('Cumulative Returns')
+        plt.legend()
+        plt.grid(True)
+        
+        chart_dir = f"{config['data_paths']['charts']}/{datetime.today().strftime('%Y-%m-%d')}"
+        os.makedirs(chart_dir, exist_ok=True)
+        chart_path = f"{chart_dir}/{symbol.replace('^', '').replace('.', '_')}_{timeframe}_bigline.png"
+        plt.savefig(chart_path)
+        plt.close()
+        logger.info(f"BigLine 策略表現圖表儲存至: {chart_path}")
+
+
 class MarketAnalyst:
     def __init__(self):
         pass
@@ -468,7 +604,8 @@ class StrategyEngine:
         self.models = {
             'technical': TechnicalAnalysis(),
             'random_forest': RandomForestStrategy(),
-            'quantity': QuantityStrategy()  # 新增 QuantityStrategy
+            'quantity': QuantityStrategy(),  # 新增 QuantityStrategy
+            'bigline': BigLineStrategy()  # 新增 BigLineStrategy
         }
         self.api_key = os.getenv("GROK_API_KEY")
         if not self.api_key:
