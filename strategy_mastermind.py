@@ -47,7 +47,7 @@ class TechnicalAnalysis:
         try:
             df = pd.read_csv(file_path)
             if df.empty or len(df) < self.params['min_data_length_rsi_sma']:
-                logger.error(f"{symbol} {timeframe} 數據不足: {len(df)} 筆")
+                logger.error(f"{symbol} {timeframe} 數據不足: 實際 {len(df)} 筆，需 {self.params['min_data_length_rsi_sma']} 筆")
                 return {
                     'sharpe_ratio': 0,
                     'max_drawdown': 0,
@@ -58,9 +58,18 @@ class TechnicalAnalysis:
             df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=self.params['rsi_window']).rsi()
             df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=self.params['sma_window']).sma_indicator()
             
+            df['bollinger_hband'] = ta.volatility.BollingerBands(df['close']).bollinger_hband()
+            df['bollinger_lband'] = ta.volatility.BollingerBands(df['close']).bollinger_lband()
+            sentiment_score = self._load_sentiment_score(symbol, timeframe)  # 新增方法
             df['signal'] = 0
-            df.loc[df['rsi'] < self.params['rsi_buy_threshold'], 'signal'] = 1
-            df.loc[df['rsi'] > self.params['rsi_sell_threshold'], 'signal'] = -1
+            df.loc[(df['rsi'] < self.params['rsi_buy_threshold']) & 
+                   (df['macd'] > df['macd_signal']) & 
+                   (df['close'] <= df['bollinger_lband']) & 
+                   (sentiment_score > 0.5), 'signal'] = 1
+            df.loc[(df['rsi'] > self.params['rsi_sell_threshold']) & 
+                   (df['macd'] < df['macd_signal']) & 
+                   (df['close'] >= df['bollinger_hband']) & 
+                   (sentiment_score < -0.5), 'signal'] = -1
             
             df['returns'] = df['close'].pct_change()
             df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
