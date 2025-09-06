@@ -1126,20 +1126,4 @@ def run_single_symbol_analysis(symbol: str, timeframe: str = 'daily',
     data = {'symbol': symbol}  # Dummy data, actual data loaded from cache
     return engine.run_strategy_tournament(symbol, data, timeframe)
 
-# Example usage and testing
-if __name__ == "__main__":
-    # Example usage
-    engine = StrategyEngine()
-    
-    # Single symbol analysis
-    result = engine.run_strategy_tournament('AAPL', {}, timeframe='daily')
-    print(f"Best strategy: {result.get('winning_strategy', {}).get('name', 'none')}")
-    
-    # Market analysis
-    analysis = engine.get_market_analysis('AAPL')
-    print(f"Market trend: {analysis.get('trend', 'NEUTRAL')}")
-    
-    # Batch analysis (commented out for safety)
-    # symbols = ['AAPL', 'GOOGL', 'MSFT']
-    # batch_results = engine.batch_analyze_symbols(symbols)
-    # print(f"Analyzed {len(batch_results)} symbols")
+
