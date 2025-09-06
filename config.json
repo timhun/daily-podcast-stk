@@ -1,6 +1,6 @@
 {
   "symbols": {
-    "us": ["^GSPC", "QQQ", "NVDA", "^DJI", "^IXIC", "SPY", "AAPL", "^VIX", "BTC-USD", "ETH-USD", "GC=F", "CL=F"],
+    "us": ["^GSPC", "QQQ", "NVDA", "^DJI", "^IXIC", "SPY", "AAPL", "^VIX", "BTC-USD", "GC=F", "CL=F"],
     "tw": ["^TWII", "0050.TW", "2330.TW", "2454.TW"]
   },
   "news_sources": {
@@ -68,6 +68,26 @@
     "freshness_hours": 4,
     "volatility_threshold": 0.1
   },
+  "winning_strategy": {
+        "name": "random_forest",
+        "confidence": 0.85,
+        "expected_return": 0.0247,
+        "max_drawdown": 0.06,
+        "sharpe_ratio": 14.93
+    },
+    "signals": {
+        "position": "LONG",
+        "entry_price": 152.11,
+        "target_price": 159.71,
+        "stop_loss": 144.50,
+        "position_size": 0.5
+    },
+    "dynamic_params": {
+        "rsi_window": 12,
+        "volume_multiplier": 1.15,
+        "rf_estimators": 200
+    },
+    "strategy_version": "2.0",
   "logging": {
     "file": "logs/strategy_mastermind.log",
     "rotation": "1 MB"
