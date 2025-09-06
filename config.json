@@ -35,9 +35,9 @@
   },
   "strategy_params": {
         "sharpe_annualization_daily": 252,
-        "sharpe_annualization_hourly": 252 * 6.5,
+        "sharpe_annualization_hourly": 1638,
         "expected_return_annualization_daily": 252,
-        "expected_return_annualization_hourly": 252 * 6.5,
+        "expected_return_annualization_hourly": 1638,
         "daily_multiplier": 1.05,
         "hourly_multiplier": 1.02,
         "stop_loss_ratio": 0.95,
