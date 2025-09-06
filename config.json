@@ -48,6 +48,13 @@
       "stop_profit": 0.02,
       "stop_loss": 0.02,
       "risk_per_trade": 0.02
+    },
+    "bigline_params": {
+    "weights": [0.4, 0.35, 0.25],
+    "ma_short": 5,
+    "ma_mid": 20,
+    "ma_long": 60,
+    "vol_window": 60
     }
   },  
   "ml_params": {
