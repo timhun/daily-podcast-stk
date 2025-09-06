@@ -2,9 +2,13 @@ import pandas as pd
 import ta
 from loguru import logger
 
+# 載入 config.json
+with open('config.json', 'r', encoding='utf-8') as f:
+    config = json.load(f)
+    
 class MarketAnalyst:
-    def __init__(self, config_manager):
-        self.config = config_manager
+    def __init__(self, config):
+        self.config = config
         self.min_data_length = self.config.get('strategy_params', {}).get('technical_params', {}).get('min_data_length_rsi_sma', 20)
 
     def analyze_market(self, symbol, timeframe='daily'):
