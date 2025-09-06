@@ -1,0 +1,18 @@
+{
+  "symbol": "^VIX",
+  "analysis_date": "2025-09-06",
+  "winning_strategy": {
+    "name": "quantity",
+    "confidence": 0,
+    "expected_return": 0.0,
+    "max_drawdown": 0.0,
+    "sharpe_ratio": 0
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 15.18000030517578,
+    "target_price": 15.93900032043457,
+    "stop_loss": 14.42100028991699,
+    "position_size": 0.02
+  }
+}

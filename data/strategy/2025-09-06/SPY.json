@@ -1,0 +1,18 @@
+{
+  "symbol": "SPY",
+  "analysis_date": "2025-09-06",
+  "winning_strategy": {
+    "name": "random_forest",
+    "confidence": 0.45652173913043476,
+    "expected_return": 0.04999678028090251,
+    "max_drawdown": 0.019279098676848627,
+    "sharpe_ratio": 1.3634905647127324
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 647.239990234375,
+    "target_price": 679.6019897460938,
+    "stop_loss": 614.8779907226562,
+    "position_size": 0.5
+  }
+}

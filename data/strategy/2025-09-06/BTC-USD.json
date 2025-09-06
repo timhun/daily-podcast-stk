@@ -1,0 +1,18 @@
+{
+  "symbol": "BTC-USD",
+  "analysis_date": "2025-09-06",
+  "winning_strategy": {
+    "name": "random_forest",
+    "confidence": 0.5797,
+    "expected_return": 0.0012465874608159153,
+    "max_drawdown": 0.09002597628047981,
+    "sharpe_ratio": 0.01695481182485037
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 110842.390625,
+    "target_price": 116384.51015625,
+    "stop_loss": 105300.27109375,
+    "position_size": 0.5
+  }
+}
