@@ -25,7 +25,7 @@ logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
 class TechnicalAnalysis:
     def __init__(self):
-        self.params = config.get('strategy_params', {}).get('technical_params', {
+        self.params = config.get('technical_params', {
             'rsi_window': 14,
             'rsi_buy_threshold': 30,
             'rsi_sell_threshold': 70,
@@ -257,7 +257,7 @@ class QuantityStrategy:
 
 class RandomForestStrategy:
     def __init__(self):
-        self.params = config.get('strategy_params', {}).get('ml_params', {
+        self.params = config.get('ml_params', {
             'rf_estimators': 100,
             'rf_random_state': 42,
             'ml_test_size': 0.2,
