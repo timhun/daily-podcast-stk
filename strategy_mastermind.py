@@ -1,3 +1,4 @@
+```python
 # strategy_mastermind.py
 import pandas as pd
 import numpy as np
@@ -10,11 +11,12 @@ import ta
 from datetime import datetime
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import accuracy_score
 import itertools
 from copy import deepcopy
-import joblib  # 用於模型增量學習的保存與載入
+import joblib
+import uuid
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -33,7 +35,7 @@ class TechnicalAnalysis:
             'macd_fast': 12,
             'macd_slow': 26,
             'macd_signal': 9,
-            'min_data_length_rsi_sma': 20  # 降低至20以解決數據不足問題
+            'min_data_length_rsi_sma': 20
         })
 
     def backtest(self, symbol, data, timeframe='daily'):
@@ -49,6 +51,7 @@ class TechnicalAnalysis:
         
         try:
             df = pd.read_csv(file_path)
+            df['date'] = pd.to_datetime(df['date'])
             if df.empty or len(df) < self.params['min_data_length_rsi_sma']:
                 logger.error(f"{symbol} {timeframe} 數據不足: 實際 {len(df)} 筆，需 {self.params['min_data_length_rsi_sma']} 筆")
                 return {
@@ -60,15 +63,21 @@ class TechnicalAnalysis:
             
             df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=self.params['rsi_window']).rsi()
             df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=self.params['sma_window']).sma_indicator()
-            
             df['macd'] = ta.trend.MACD(df['close'], window_fast=self.params['macd_fast'], window_slow=self.params['macd_slow'], window_sign=self.params['macd_signal']).macd()
             df['macd_signal'] = ta.trend.MACD(df['close'], window_fast=self.params['macd_fast'], window_slow=self.params['macd_slow'], window_sign=self.params['macd_signal']).macd_signal()
             df['bollinger_hband'] = ta.volatility.BollingerBands(df['close']).bollinger_hband()
             df['bollinger_lband'] = ta.volatility.BollingerBands(df['close']).bollinger_lband()
-            sentiment_score = self._load_sentiment_score(symbol, timeframe)  # 新增情緒過濾
+            sentiment_score = self._load_sentiment_score(symbol, timeframe)
+            
             df['signal'] = 0
-            df.loc[(df['rsi'] < self.params['rsi_buy_threshold']) & (df['macd'] > df['macd_signal']) & (df['close'] <= df['bollinger_lband']) & (sentiment_score > 0.5), 'signal'] = 1
-            df.loc[(df['rsi'] > self.params['rsi_sell_threshold']) & (df['macd'] < df['macd_signal']) & (df['close'] >= df['bollinger_hband']) & (sentiment_score < -0.5), 'signal'] = -1
+            df.loc[(df['rsi'] < self.params['rsi_buy_threshold']) & 
+                   (df['macd'] > df['macd_signal']) & 
+                   (df['close'] <= df['bollinger_lband']) & 
+                   (sentiment_score > 0.5), 'signal'] = 1
+            df.loc[(df['rsi'] > self.params['rsi_sell_threshold']) & 
+                   (df['macd'] < df['macd_signal']) & 
+                   (df['close'] >= df['bollinger_hband']) & 
+                   (sentiment_score < -0.5), 'signal'] = -1
             
             df['returns'] = df['close'].pct_change()
             df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
@@ -106,23 +115,23 @@ class TechnicalAnalysis:
                 'expected_return': 0,
                 'signals': {}
             }
+
     def _load_sentiment_score(self, symbol, timeframe):
         sentiment_file = f"{config['data_paths']['sentiment']}/{datetime.today().strftime('%Y-%m-%d')}/social_metrics.json"
         try:
             with open(sentiment_file, 'r', encoding='utf-8') as f:
                 sentiment_data = json.load(f)
-            return sentiment_data.get('overall_score', 0.0)  # 使用 overall_score
+            return sentiment_data.get(symbol, {}).get('sentiment_score', 0.0)
         except Exception as e:
             logger.error(f"載入情緒數據失敗: {str(e)}")
             return 0.0
 
-    
     def generate_performance_chart(self, df, symbol, timeframe):
         df['cum_strategy_returns'] = (1 + df['strategy_returns']).cumprod() - 1
         df['cum_returns'] = (1 + df['returns']).cumprod() - 1
         
         plt.figure(figsize=(10, 6))
-        plt.plot(df['date'], df['cum_strategy_returns'], label='Technical Strategy Returns')
+        plt.plot(df['date'], df['cum_strategy_returns'], label='Technical Strategy Returns (Optimized)')
         plt.plot(df['date'], df['cum_returns'], label='Buy & Hold Returns')
         plt.title(f'{symbol} {timeframe.upper()} Technical Strategy Performance (Optimized)')
         plt.xlabel('Date')
@@ -160,6 +169,7 @@ class QuantityStrategy:
 
         try:
             df = pd.read_csv(file_path)
+            df['date'] = pd.to_datetime(df['date'])
             if df.empty or len(df) < self.params['volume_ma_period']:
                 logger.error(f"{symbol} {timeframe} 數據不足: {len(df)} 筆")
                 return {
@@ -169,15 +179,16 @@ class QuantityStrategy:
                     'signals': {}
                 }
 
-            df['atr'] = ta.volatility.AverageTrueRange(df['high'], df['low'], df['close'], window=14).average_true_range()
-            stop_profit = self.params['stop_profit'] * df['atr'].iloc[-1]
-            stop_loss = self.params['stop_loss'] * df['atr'].iloc[-1]
-            index_volume_trend = self._load_index_volume_trend(symbol, timeframe)  # 新增
-            dynamic_volume_multiplier = self.params['volume_multiplier'] * (1 + index_volume_trend)
-            
             df['volume_ma'] = ta.trend.SMAIndicator(df['volume'], window=self.params['volume_ma_period']).sma_indicator()
             df['volume_rate'] = df['volume'] / df['volume_ma'].replace(0, np.nan)
             df['returns'] = df['close'].pct_change()
+            df['atr'] = ta.volatility.AverageTrueRange(df['high'], df['low'], df['close'], window=14).average_true_range()
+            
+            stop_profit = self.params['stop_profit'] * df['atr'].iloc[-1]
+            stop_loss = self.params['stop_loss'] * df['atr'].iloc[-1]
+            index_volume_trend = self._load_index_volume_trend(symbol, timeframe)
+            dynamic_volume_multiplier = self.params['volume_multiplier'] * (1 + index_volume_trend)
+            sentiment_score = self._load_sentiment_score(symbol, timeframe)
 
             df['signal'] = 0
             position = 0
@@ -187,12 +198,18 @@ class QuantityStrategy:
             total_trades = 0
 
             for i in range(1, len(df)):
-                if df['volume_rate'].iloc[i] > self.params['volume_multiplier'] and df['close'].iloc[i] > df['close'].iloc[i-1] and position == 0:
+                if (df['volume_rate'].iloc[i] > dynamic_volume_multiplier and 
+                    df['close'].iloc[i] > df['close'].iloc[i-1] and 
+                    position == 0 and 
+                    sentiment_score > 0.5):
                     df.loc[df.index[i], 'signal'] = 1
                     position = 1
                     entry_price = df['close'].iloc[i]
                 elif position == 1:
-                    if df['volume_rate'].iloc[i] < 1 and df['close'].iloc[i] < df['close'].iloc[i-1]:
+                    if (df['volume_rate'].iloc[i] < 1 and 
+                        df['close'].iloc[i] < df['close'].iloc[i-1] or 
+                        df['close'].iloc[i] >= entry_price * (1 + stop_profit) or 
+                        df['close'].iloc[i] <= entry_price * (1 - stop_loss)):
                         df.loc[df.index[i], 'signal'] = -1
                         position = 0
                         trade_return = (df['close'].iloc[i] - entry_price) / entry_price
@@ -200,19 +217,6 @@ class QuantityStrategy:
                         total_trades += 1
                         if trade_return > 0:
                             win_count += 1
-                    elif df['close'].iloc[i] >= entry_price * (1 + self.params['stop_profit']):
-                        df.loc[df.index[i], 'signal'] = -1
-                        position = 0
-                        trade_return = self.params['stop_profit']
-                        trades.append(trade_return)
-                        total_trades += 1
-                        win_count += 1
-                    elif df['close'].iloc[i] <= entry_price * (1 - self.params['stop_loss']):
-                        df.loc[df.index[i], 'signal'] = -1
-                        position = 0
-                        trade_return = -self.params['stop_loss']
-                        trades.append(trade_return)
-                        total_trades += 1
 
             df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
             sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(
@@ -229,7 +233,7 @@ class QuantityStrategy:
                 'position': 'LONG' if df['signal'].iloc[-1] == 1 else 'NEUTRAL' if df['signal'].iloc[-1] == 0 else 'SHORT',
                 'entry_price': latest_close,
                 'target_price': latest_close * multiplier,
-                'stop_loss': latest_close * config['strategy_params']['stop_loss_ratio'],
+                'stop_loss': latest_close * (1 - stop_loss),
                 'position_size': self.params['risk_per_trade']
             }
 
@@ -242,9 +246,9 @@ class QuantityStrategy:
                 'signals': signals,
                 'win_rate': win_count / total_trades if total_trades > 0 else 0
             }
-            with open(f"{strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json", 'w', encoding='utf-8') as f:
+            with open(f"{strategy_dir}/{symbol.replace('^', '').replace('.', '_')}_quantity.json", 'w', encoding='utf-8') as f:
                 json.dump(result, f, ensure_ascii=False, indent=2)
-            logger.info(f"量價策略結果儲存至: {strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json")
+            logger.info(f"量價策略結果儲存至: {strategy_dir}/{symbol.replace('^', '').replace('.', '_')}_quantity.json")
 
             self.generate_performance_chart(df, symbol, timeframe)
             
@@ -258,7 +262,7 @@ class QuantityStrategy:
                 'expected_return': 0,
                 'signals': {}
             }
-            
+
     def _load_index_volume_trend(self, symbol, timeframe):
         index_symbol = '^TWII' if symbol in config['symbols']['tw'] else '^IXIC'
         index_file_path = f"{config['data_paths']['market']}/{timeframe}_{index_symbol.replace('^', '').replace('.', '_')}.csv"
@@ -269,15 +273,25 @@ class QuantityStrategy:
         except Exception as e:
             logger.error(f"載入大盤成交量趨勢失敗: {str(e)}")
             return 0.0
-        
+
+    def _load_sentiment_score(self, symbol, timeframe):
+        sentiment_file = f"{config['data_paths']['sentiment']}/{datetime.today().strftime('%Y-%m-%d')}/social_metrics.json"
+        try:
+            with open(sentiment_file, 'r', encoding='utf-8') as f:
+                sentiment_data = json.load(f)
+            return sentiment_data.get(symbol, {}).get('sentiment_score', 0.0)
+        except Exception as e:
+            logger.error(f"載入情緒數據失敗: {str(e)}")
+            return 0.0
+
     def generate_performance_chart(self, df, symbol, timeframe):
         df['cum_strategy_returns'] = (1 + df['strategy_returns']).cumprod() - 1
         df['cum_returns'] = (1 + df['returns']).cumprod() - 1
         
         plt.figure(figsize=(10, 6))
-        plt.plot(df['date'], df['cum_strategy_returns'], label='Quantity Strategy Returns(Dynamic')
+        plt.plot(df['date'], df['cum_strategy_returns'], label='Quantity Strategy Returns (Dynamic)')
         plt.plot(df['date'], df['cum_returns'], label='Buy & Hold Returns')
-        plt.title(f'{symbol} {timeframe.upper()} Quantity Strategy Performance')
+        plt.title(f'{symbol} {timeframe.upper()} Quantity Strategy Performance (Dynamic)')
         plt.xlabel('Date')
         plt.ylabel('Cumulative Returns')
         plt.legend()
@@ -292,30 +306,22 @@ class QuantityStrategy:
 
 class RandomForestStrategy:
     def __init__(self):
-        self.params = config.get('ml_params', {
+        self.params = config.get('strategy_params', {}).get('ml_params', {
             'rf_estimators': 100,
             'rf_random_state': 42,
             'ml_test_size': 0.2,
-            'ml_features': ['open', 'high', 'low', 'close', 'volume'],
+            'ml_features': ['open', 'high', 'low', 'close', 'volume', 'rsi', 'sma_20'],
             'min_data_length_ml': 100
         })
         self.model = RandomForestClassifier(
             n_estimators=self.params['rf_estimators'],
-            random_state=self.params['rf_random_state']
+            random_state=self.params['rf_random_state'],
+            warm_start=True
         )
+        self.model_path = f"{config['data_paths']['models']}/rf_model_{uuid.uuid4().hex}.pkl"
 
     def backtest(self, symbol, data, timeframe='daily'):
         file_path = f"{config['data_paths']['market']}/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
-
-        if os.path.exists(self.model_path):
-            self.model = joblib.load(self.model_path)
-            logger.info(f"載入已有模型: {self.model_path}")
-        self.model.n_estimators += 10
-        self.model.fit(X_train, y_train)
-        joblib.dump(self.model, self.model_path)
-        logger.info(f"模型儲存至: {self.model_path}")
-
-
         if not os.path.exists(file_path):
             logger.error(f"{symbol} {timeframe} 歷史數據檔案不存在: {file_path}")
             return {
@@ -327,6 +333,7 @@ class RandomForestStrategy:
         
         try:
             df = pd.read_csv(file_path)
+            df['date'] = pd.to_datetime(df['date'])
             if df.empty or len(df) < self.params['min_data_length_ml']:
                 logger.error(f"{symbol} {timeframe} 數據不足: {len(df)} 筆")
                 return {
@@ -336,18 +343,12 @@ class RandomForestStrategy:
                     'signals': {}
                 }
             
-            features = self.params['ml_features']
             df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=config['technical_params']['rsi_window']).rsi()
             df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=config['technical_params']['sma_window']).sma_indicator()
             df['returns'] = df['close'].pct_change()
             df['target'] = np.where(df['returns'].shift(-1) > 0, 1, 0)
-
-            feature_importance = dict(zip(X.columns, self.model.feature_importances_))
-            logger.info(f"{symbol} 特徵重要性: {feature_importance}")
-            active_features = [f for f, imp in feature_importance.items() if imp > 0.1]
-            X = X[active_features]
             
-            X = df[features + ['rsi', 'sma_20']].dropna()
+            X = df[self.params['ml_features']].dropna()
             y = df['target'].loc[X.index]
             if len(X) < self.params['min_data_length_ml']:
                 logger.error(f"{symbol} {timeframe} 特徵數據不足: {len(X)} 筆")
@@ -358,14 +359,29 @@ class RandomForestStrategy:
                     'signals': {}
                 }
             
+            if os.path.exists(self.model_path):
+                self.model = joblib.load(self.model_path)
+                logger.info(f"載入已有模型: {self.model_path}")
+            
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.params['ml_test_size'], random_state=self.params['rf_random_state'])
+            self.model.n_estimators += 10
             self.model.fit(X_train, y_train)
             predictions = self.model.predict(X_test)
             accuracy = accuracy_score(y_test, predictions)
-
-            from sklearn.model_selection import cross_val_score
+            
+            feature_importance = dict(zip(X.columns, self.model.feature_importances_))
+            logger.info(f"{symbol} 特徵重要性: {feature_importance}")
+            active_features = [f for f, imp in feature_importance.items() if imp > 0.1]
+            if active_features:
+                X = X[active_features]
+                X_train = X_train[active_features]
+                self.model.fit(X_train, y_train)
+            
             cv_scores = cross_val_score(self.model, X_train, y_train, cv=5, scoring='accuracy')
             logger.info(f"{symbol} 交叉驗證準確率: {cv_scores.mean():.2f} ± {cv_scores.std():.2f}")
+            
+            joblib.dump(self.model, self.model_path)
+            logger.info(f"模型儲存至: {self.model_path}")
             
             df['signal'] = 0
             df.loc[X.index[-len(predictions):], 'signal'] = predictions
@@ -379,7 +395,7 @@ class RandomForestStrategy:
             )
             
             latest_close = df['close'].iloc[-1]
-            latest_features = df[features + ['rsi', 'sma_20']].iloc[-1:].dropna()
+            latest_features = df[active_features].iloc[-1:].dropna()
             latest_signal = self.model.predict(latest_features)[0] if not latest_features.empty else 0
             multiplier = config['strategy_params']['daily_multiplier'] if timeframe == 'daily' else config['strategy_params']['hourly_multiplier']
             signals = {
@@ -395,14 +411,17 @@ class RandomForestStrategy:
                 'max_drawdown': max_drawdown if not np.isnan(max_drawdown) else 0,
                 'expected_return': expected_return if not np.isnan(expected_return) else 0,
                 'signals': signals,
-                'accuracy': accuracy
+                'accuracy': accuracy,
+                'feature_importance': feature_importance
             }
             
             strategy_dir = f"{config['data_paths']['strategy']}/{datetime.today().strftime('%Y-%m-%d')}"
             os.makedirs(strategy_dir, exist_ok=True)
-            with open(f"{strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json", 'w', encoding='utf-8') as f:
+            with open(f"{strategy_dir}/{symbol.replace('^', '').replace('.', '_')}_random_forest.json", 'w', encoding='utf-8') as f:
                 json.dump(result, f, ensure_ascii=False, indent=2)
-            logger.info(f"隨機森林策略結果儲存至: {strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json")
+            logger.info(f"隨機森林策略結果儲存至: {strategy_dir}/{symbol.replace('^', '').replace('.', '_')}_random_forest.json")
+            
+            self.generate_performance_chart(df, symbol, timeframe)
             
             return result
         except Exception as e:
@@ -413,6 +432,26 @@ class RandomForestStrategy:
                 'expected_return': 0,
                 'signals': {}
             }
+
+    def generate_performance_chart(self, df, symbol, timeframe):
+        df['cum_strategy_returns'] = (1 + df['strategy_returns']).cumprod() - 1
+        df['cum_returns'] = (1 + df['returns']).cumprod() - 1
+        
+        plt.figure(figsize=(10, 6))
+        plt.plot(df['date'], df['cum_strategy_returns'], label='Random Forest Strategy Returns')
+        plt.plot(df['date'], df['cum_returns'], label='Buy & Hold Returns')
+        plt.title(f'{symbol} {timeframe.upper()} Random Forest Strategy Performance')
+        plt.xlabel('Date')
+        plt.ylabel('Cumulative Returns')
+        plt.legend()
+        plt.grid(True)
+        
+        chart_dir = f"{config['data_paths']['charts']}/{datetime.today().strftime('%Y-%m-%d')}"
+        os.makedirs(chart_dir, exist_ok=True)
+        chart_path = f"{chart_dir}/{symbol.replace('^', '').replace('.', '_')}_{timeframe}_random_forest.png"
+        plt.savefig(chart_path)
+        plt.close()
+        logger.info(f"隨機森林策略表現圖表儲存至: {chart_path}")
 
 class BigLineStrategy:
     def __init__(self):
@@ -442,6 +481,8 @@ class BigLineStrategy:
         try:
             df = pd.read_csv(file_path)
             index_df = pd.read_csv(index_file_path)
+            df['date'] = pd.to_datetime(df['date'])
+            index_df['date'] = pd.to_datetime(index_df['date'])
             if df.empty or len(df) < self.params['ma_long'] or index_df.empty or len(index_df) < self.params['ma_long']:
                 logger.error(f"{symbol} 或大盤 {index_symbol} {timeframe} 數據不足")
                 return {
@@ -451,11 +492,8 @@ class BigLineStrategy:
                     'signals': {}
                 }
             
-            df['date'] = pd.to_datetime(df['date'])
             df = df.sort_values('date').set_index('date')
-            index_df['date'] = pd.to_datetime(index_df['date'])
             index_df = index_df.sort_values('date').set_index('date')
-            
             df = df.join(index_df[['close', 'volume']], rsuffix='_index', how='inner')
             
             prices = df['close']
@@ -482,10 +520,10 @@ class BigLineStrategy:
             index_bullish = (index_ma_short > index_ma_mid) & (index_ma_mid > index_ma_long)
             index_rsi = ta.momentum.RSIIndicator(index_prices, window=self.params['rsi_window']).rsi()
             sentiment_score = self._load_sentiment_score(symbol, timeframe)
-
+            
             df['signal'] = 0
-            df.loc[(big_line_diff > 0) & bullish & index_bullish, 'signal'] = 1
-            df.loc[(big_line_diff < 0) & ~index_bullish, 'signal'] = -1
+            df.loc[(big_line_diff > 0) & bullish & index_bullish & (index_rsi < 70) & (sentiment_score > 0.5), 'signal'] = 1
+            df.loc[(big_line_diff < 0) & ~index_bullish & (index_rsi > 30) & (sentiment_score < -0.5), 'signal'] = -1
             
             df['returns'] = df['close'].pct_change()
             df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
@@ -516,12 +554,19 @@ class BigLineStrategy:
             
             self.generate_performance_chart(df, symbol, timeframe)
             
-            return {
+            strategy_dir = f"{config['data_paths']['strategy']}/{datetime.today().strftime('%Y-%m-%d')}"
+            os.makedirs(strategy_dir, exist_ok=True)
+            result = {
                 'sharpe_ratio': sharpe_ratio,
                 'max_drawdown': max_drawdown,
                 'expected_return': expected_return,
                 'signals': signals
             }
+            with open(f"{strategy_dir}/{symbol.replace('^', '').replace('.', '_')}_bigline.json", 'w', encoding='utf-8') as f:
+                json.dump(result, f, ensure_ascii=False, indent=2)
+            logger.info(f"BigLine 策略結果儲存至: {strategy_dir}/{symbol.replace('^', '').replace('.', '_')}_bigline.json")
+            
+            return result
         except Exception as e:
             logger.error(f"{symbol} {timeframe} 回測失敗: {str(e)}")
             return {
@@ -531,14 +576,24 @@ class BigLineStrategy:
                 'signals': {}
             }
 
+    def _load_sentiment_score(self, symbol, timeframe):
+        sentiment_file = f"{config['data_paths']['sentiment']}/{datetime.today().strftime('%Y-%m-%d')}/social_metrics.json"
+        try:
+            with open(sentiment_file, 'r', encoding='utf-8') as f:
+                sentiment_data = json.load(f)
+            return sentiment_data.get(symbol, {}).get('sentiment_score', 0.0)
+        except Exception as e:
+            logger.error(f"載入情緒數據失敗: {str(e)}")
+            return 0.0
+
     def generate_performance_chart(self, df, symbol, timeframe):
         df['cum_strategy_returns'] = (1 + df['strategy_returns']).cumprod() - 1
         df['cum_returns'] = (1 + df['returns']).cumprod() - 1
         
         plt.figure(figsize=(10, 6))
-        plt.plot(df.index, df['cum_strategy_returns'], label='BigLine Strategy Returns')
+        plt.plot(df.index, df['cum_strategy_returns'], label='BigLine Strategy Returns (Optimized)')
         plt.plot(df.index, df['cum_returns'], label='Buy & Hold Returns')
-        plt.title(f'{symbol} {timeframe.upper()} BigLine Strategy Performance')
+        plt.title(f'{symbol} {timeframe.upper()} BigLine Strategy Performance (Optimized)')
         plt.xlabel('Date')
         plt.ylabel('Cumulative Returns')
         plt.legend()
@@ -551,73 +606,44 @@ class BigLineStrategy:
         plt.close()
         logger.info(f"BigLine 策略表現圖表儲存至: {chart_path}")
 
-class MarketAnalyst:
-    def __init__(self):
-        pass
+class DynamicStrategyGenerator:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.client = Client(api_key=self.api_key, timeout=3600)
 
-    def analyze_market(self, symbol, timeframe='daily'):
-        file_path = f"{config['data_paths']['market']}/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
-        if not os.path.exists(file_path):
-            logger.error(f"{symbol} {timeframe} 數據檔案不存在: {file_path}")
-            return {
-                'trend': 'NEUTRAL',
-                'volatility': 0.0,
-                'technical_indicators': {},
-                'report': '無數據可分析'
-            }
+    def generate_strategy(self, symbol, results, timeframe):
+        chat = self.client.chat.create(model="grok-3-mini")
+        chat.append(system("You are an AI-driven financial strategy generator. Analyze backtest results and propose a new strategy combining technical indicators to improve performance."))
+        
+        index_symbol = '^TWII' if symbol in config['symbols']['tw'] else '^IXIC'
+        prompt = (
+            f"為股票 {symbol} 設計一個新交易策略（時間框架: {timeframe}，大盤參考: {index_symbol}）。以下是現有策略回測結果：\n"
+            f"{json.dumps(results, ensure_ascii=False, indent=2)}\n"
+            "要求：\n"
+            "- 分析現有策略的弱點，提出一個新策略，結合至少兩個技術指標（如 MACD, Bollinger Bands, RSI）。\n"
+            "- 提供策略名稱、邏輯描述、參數範圍和信號生成規則。\n"
+            "- 格式為 JSON:\n"
+            "```json\n"
+            "{\n"
+            '  "strategy_name": "new_strategy",\n'
+            '  "description": "strategy logic",\n'
+            '  "parameters": {\n'
+            '    "param1": [min, max],\n'
+            '    "param2": [min, max]\n'
+            '  },\n'
+            '  "signal_logic": "buy/sell rules"\n'
+            '}\n'
+            '```'
+        )
+        chat.append(user(prompt))
+        response = chat.sample()
         
         try:
-            df = pd.read_csv(file_path)
-            if df.empty or len(df) < 50:
-                logger.error(f"{symbol} {timeframe} 數據不足: {len(df)} 筆")
-                return {
-                    'trend': 'NEUTRAL',
-                    'volatility': 0.0,
-                    'technical_indicators': {},
-                    'report': '數據不足'
-                }
-            
-            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=14).rsi()
-            df['macd'] = ta.trend.MACD(df['close']).macd()
-            df['bollinger_hband'] = ta.volatility.BollingerBands(df['close']).bollinger_hband()
-            df['bollinger_lband'] = ta.volatility.BollingerBands(df['close']).bollinger_lband()
-            df['sma_50'] = ta.trend.SMAIndicator(df['close'], window=50).sma_indicator()
-            df['sma_200'] = ta.trend.SMAIndicator(df['close'], window=200).sma_indicator()
-            
-            trend = 'NEUTRAL'
-            if df['sma_50'].iloc[-1] > df['sma_200'].iloc[-1]:
-                trend = 'BULLISH'
-            elif df['sma_50'].iloc[-1] < df['sma_200'].iloc[-1]:
-                trend = 'BEARISH'
-            
-            volatility = df['close'].pct_change().rolling(20).std().iloc[-1] * 100 if 'close' in df else 0.0
-            
-            indicators = {
-                'rsi': df['rsi'].iloc[-1],
-                'macd': df['macd'].iloc[-1],
-                'bollinger': {
-                    'high': df['bollinger_hband'].iloc[-1],
-                    'low': df['bollinger_lband'].iloc[-1]
-                }
-            }
-            
-            report = f"{symbol} 市場分析：趨勢 {trend}，波動性 {volatility:.2f}%，RSI {indicators['rsi']:.2f}，MACD {indicators['macd']:.2f}。"
-            
-            logger.info(f"{symbol} 市場分析完成")
-            return {
-                'trend': trend,
-                'volatility': volatility,
-                'technical_indicators': indicators,
-                'report': report
-            }
-        except Exception as e:
-            logger.error(f"{symbol} 市場分析失敗: {str(e)}")
-            return {
-                'trend': 'NEUTRAL',
-                'volatility': 0.0,
-                'technical_indicators': {},
-                'report': '分析失敗'
-            }
+            new_strategy = json.loads(response.content.strip('```json\n').strip('\n```'))
+            return new_strategy
+        except json.JSONDecodeError:
+            logger.error("Grok 策略生成 JSON 解析失敗")
+            return None
 
 class StrategyEngine:
     def __init__(self):
@@ -627,48 +653,155 @@ class StrategyEngine:
             'quantity': QuantityStrategy(),
             'bigline': BigLineStrategy()
         }
-        
-        
         self.api_key = os.getenv("GROK_API_KEY")
         if not self.api_key:
             logger.error("GROK_API_KEY 未設置")
             raise EnvironmentError("GROK_API_KEY 未設置")
-
         self.strategy_generator = DynamicStrategyGenerator(self.api_key)
+
+    def calculate_dynamic_param_range(self, df, index_df):
+        volatility = df['close'].pct_change().rolling(20).std().iloc[-1] * 100 if not df.empty else 0.1
+        atr = ta.volatility.AverageTrueRange(df['high'], df['low'], df['close'], window=14).average_true_range().iloc[-1] if not df.empty else 1.0
+        index_trend = 1 if not index_df.empty and index_df['close'].iloc[-1] > index_df['close'].rolling(50).mean().iloc[-1] else -1
         
-        # 定義參數搜索範圍
-        self.param_grid = {
+        base_params = {
             'technical': {
-                'rsi_window': [10, 14, 20],
-                'rsi_buy_threshold': [25, 30, 35],
-                'rsi_sell_threshold': [65, 70, 75]
+                'rsi_window': [max(7, int(14 * (1 - volatility))), min(21, int(14 * (1 + volatility)))],
+                'rsi_buy_threshold': [max(20, int(30 * (1 - volatility/2))), min(40, int(30 * (1 + volatility/2)))],
+                'rsi_sell_threshold': [max(60, int(70 * (1 - volatility/2))), min(80, int(70 * (1 + volatility/2)))],
+                'macd_fast': [max(8, int(12 * (1 - volatility))), min(16, int(12 * (1 + volatility)))],
             },
             'random_forest': {
-                'rf_estimators': [50, 100, 200]
+                'rf_estimators': [50, 100, 200, 300] if index_trend > 0 else [50, 100],
             },
             'quantity': {
-                'volume_ma_period': [3, 5, 7],
-                'volume_multiplier': [1.1, 1.2, 1.3]
+                'volume_ma_period': [max(3, int(5 * (1 - volatility))), min(7, int(5 * (1 + volatility)))],
+                'volume_multiplier': [max(1.0, 1.2 - volatility/100), min(1.4, 1.2 + volatility/100)],
+                'stop_profit': [0.01 * atr, 0.02 * atr, 0.03 * atr],
+                'stop_loss': [0.01 * atr, 0.02 * atr, 0.03 * atr],
             },
             'bigline': {
                 'weights': [[0.4, 0.35, 0.25], [0.5, 0.3, 0.2], [0.3, 0.4, 0.3]],
-                'ma_short': [3, 5, 7]
+                'ma_short': [max(3, int(5 * (1 - volatility))), min(7, int(5 * (1 + volatility)))],
+                'ma_mid': [max(15, int(20 * (1 - volatility))), min(25, int(20 * (1 + volatility)))],
             }
         }
+        return base_params
+
+    def _get_param_combinations(self, strategy_name, df, index_df):
+        params = self.calculate_dynamic_param_range(df, index_df).get(strategy_name, {})
+        keys = list(params.keys())
+        values = list(params.values())
+        combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
+        return combinations if combinations else [{}]
+
+    def _apply_dynamic_strategy(self, symbol, strategy_config, timeframe):
+        file_path = f"{config['data_paths']['market']}/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
+        if not os.path.exists(file_path):
+            logger.error(f"{symbol} {timeframe} 歷史數據檔案不存在")
+            return {
+                'sharpe_ratio': 0,
+                'max_drawdown': 0,
+                'expected_return': 0,
+                'signals': {}
+            }
+        
+        try:
+            df = pd.read_csv(file_path)
+            df['date'] = pd.to_datetime(df['date'])
+            if df.empty or len(df) < 50:
+                logger.error(f"{symbol} {timeframe} 數據不足: {len(df)} 筆")
+                return {
+                    'sharpe_ratio': 0,
+                    'max_drawdown': 0,
+                    'expected_return': 0,
+                    'signals': {}
+                }
+            
+            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=14).rsi()
+            df['macd'] = ta.trend.MACD(df['close']).macd()
+            df['macd_signal'] = ta.trend.MACD(df['close']).macd_signal()
+            df['bollinger_hband'] = ta.volatility.BollingerBands(df['close']).bollinger_hband()
+            df['bollinger_lband'] = ta.volatility.BollingerBands(df['close']).bollinger_lband()
+            sentiment_score = self.models['technical']._load_sentiment_score(symbol, timeframe)
+            
+            df['signal'] = 0
+            if 'rsi' in strategy_config['signal_logic'].lower():
+                df.loc[(df['rsi'] < 30) & (sentiment_score > 0.5), 'signal'] = 1
+                df.loc[(df['rsi'] > 70) & (sentiment_score < -0.5), 'signal'] = -1
+            if 'macd' in strategy_config['signal_logic'].lower():
+                df.loc[(df['macd'] > df['macd_signal']) & (df['signal'] == 1), 'signal'] = 1
+                df.loc[(df['macd'] < df['macd_signal']) & (df['signal'] == -1), 'signal'] = -1
+            if 'bollinger' in strategy_config['signal_logic'].lower():
+                df.loc[(df['close'] <= df['bollinger_lband']) & (df['signal'] == 1), 'signal'] = 1
+                df.loc[(df['close'] >= df['bollinger_hband']) & (df['signal'] == -1), 'signal'] = -1
+            
+            df['returns'] = df['close'].pct_change()
+            df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
+            
+            sharpe_ratio = df['strategy_returns'].mean() / df['strategy_returns'].std() * np.sqrt(
+                config['strategy_params']['sharpe_annualization_daily'] if timeframe == 'daily' else config['strategy_params']['sharpe_annualization_hourly']
+            ) if df['strategy_returns'].std() != 0 else 0
+            sharpe_ratio = sharpe_ratio if not np.isnan(sharpe_ratio) else 0
+            
+            cum_returns = df['strategy_returns'].cumsum()
+            max_drawdown = (cum_returns.cummax() - cum_returns).max()
+            max_drawdown = max_drawdown if not np.isnan(max_drawdown) else 0
+            
+            expected_return = df['strategy_returns'].mean() * (
+                config['strategy_params']['expected_return_annualization_daily'] if timeframe == 'daily' else config['strategy_params']['expected_return_annualization_hourly']
+            )
+            expected_return = expected_return if not np.isnan(expected_return) else 0
+            
+            latest_close = df['close'].iloc[-1]
+            multiplier = config['strategy_params']['daily_multiplier'] if timeframe == 'daily' else config['strategy_params']['hourly_multiplier']
+            signals = {
+                'position': 'LONG' if df['signal'].iloc[-1] == 1 else 'SHORT' if df['signal'].iloc[-1] == -1 else 'NEUTRAL',
+                'entry_price': latest_close,
+                'target_price': latest_close * multiplier,
+                'stop_loss': latest_close * config['strategy_params']['stop_loss_ratio'],
+                'position_size': config['strategy_params']['position_size']
+            }
+            
+            strategy_dir = f"{config['data_paths']['strategy']}/{datetime.today().strftime('%Y-%m-%d')}"
+            os.makedirs(strategy_dir, exist_ok=True)
+            result = {
+                'sharpe_ratio': sharpe_ratio,
+                'max_drawdown': max_drawdown,
+                'expected_return': expected_return,
+                'signals': signals
+            }
+            with open(f"{strategy_dir}/{symbol.replace('^', '').replace('.', '_')}_dynamic.json", 'w', encoding='utf-8') as f:
+                json.dump(result, f, ensure_ascii=False, indent=2)
+            logger.info(f"動態策略結果儲存至: {strategy_dir}/{symbol.replace('^', '').replace('.', '_')}_dynamic.json")
+            
+            return result
+        except Exception as e:
+            logger.error(f"{symbol} 動態策略回測失敗: {str(e)}")
+            return {
+                'sharpe_ratio': 0,
+                'max_drawdown': 0,
+                'expected_return': 0,
+                'signals': {}
+            }
 
     def run_strategy_tournament(self, symbol, data, timeframe='daily'):
         results = {}
         best_results = {}
+        
+        file_path = f"{config['data_paths']['market']}/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
+        index_symbol = '^TWII' if symbol in config['symbols']['tw'] else '^IXIC'
+        index_file_path = f"{config['data_paths']['market']}/{timeframe}_{index_symbol.replace('^', '').replace('.', '_')}.csv"
+        df = pd.read_csv(file_path) if os.path.exists(file_path) else pd.DataFrame()
+        index_df = pd.read_csv(index_file_path) if os.path.exists(index_file_path) else pd.DataFrame()
         
         for name, strategy in self.models.items():
             best_score = -float('inf')
             best_params = None
             best_result = None
             
-            # 網格搜索參數
-            param_combinations = self._get_param_combinations(name)
+            param_combinations = self._get_param_combinations(name, df, index_df)
             for params in param_combinations:
-                # 臨時修改策略參數
                 original_params = deepcopy(getattr(strategy, 'params', {}))
                 strategy.params = params
                 
@@ -685,7 +818,6 @@ class StrategyEngine:
                 except Exception as e:
                     logger.error(f"{symbol} {name} 參數 {params} 回測失敗: {str(e)}")
                 
-                # 恢復原始參數
                 strategy.params = original_params
             
             results[name] = best_result or {
@@ -699,14 +831,18 @@ class StrategyEngine:
                 'result': best_result
             }
         
-        # 使用 Grok API 選擇最佳策略
-        optimized = self.optimize_with_grok(symbol, results, timeframe)
+        new_strategy = self.strategy_generator.generate_strategy(symbol, results, timeframe)
+        if new_strategy:
+            results['dynamic'] = self._apply_dynamic_strategy(symbol, new_strategy, timeframe)
+            best_results['dynamic'] = {'params': new_strategy['parameters'], 'result': results['dynamic']}
+        
+        optimized = self.optimize_with_grok(symbol, results, timeframe, best_results)
         if optimized is None:
             logger.error(f"{symbol} 優化結果為 None，返回預設結果")
             optimized = {
                 'symbol': symbol,
                 'analysis_date': datetime.today().strftime('%Y-%m-%d'),
-                'index_symbol': '^TWII' if symbol in config['symbols']['tw'] else '^IXIC',
+                'index_symbol': index_symbol,
                 'winning_strategy': {
                     'name': 'none',
                     'confidence': 0.0,
@@ -720,10 +856,11 @@ class StrategyEngine:
                     'target_price': 0.0,
                     'stop_loss': 0.0,
                     'position_size': 0.0
-                }
+                },
+                'dynamic_params': {},
+                'strategy_version': '2.0'
             }
         
-        # 儲存最佳策略結果
         strategy_dir = f"{config['data_paths']['strategy']}/{datetime.today().strftime('%Y-%m-%d')}"
         os.makedirs(strategy_dir, exist_ok=True)
         with open(f"{strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json", 'w', encoding='utf-8') as f:
@@ -732,26 +869,19 @@ class StrategyEngine:
         
         return optimized
 
-    def _get_param_combinations(self, strategy_name):
-        """生成參數組合"""
-        params = self.param_grid.get(strategy_name, {})
-        keys = list(params.keys())
-        values = list(params.values())
-        combinations = [dict(zip(keys, v)) for v in itertools.product(*values)]
-        return combinations if combinations else [{}]
-
-    def optimize_with_grok(self, symbol, results, timeframe):
+    def optimize_with_grok(self, symbol, results, timeframe, best_results):
         client = Client(api_key=self.api_key, timeout=3600)
         chat = client.chat.create(model="grok-3-mini")
         chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on Sharpe ratio, ensuring max drawdown < 15%."))
-
+        
         index_symbol = '^TWII' if symbol in config['symbols']['tw'] else '^IXIC'
         prompt = (
             f"為股票 {symbol} 選擇最佳策略（時間框架: {timeframe}，大盤參考: {index_symbol}）。以下是回測結果：\n"
             f"{json.dumps(results, ensure_ascii=False, indent=2)}\n"
+            f"最佳參數：\n{json.dumps(best_results, ensure_ascii=False, indent=2)}\n"
             "要求：\n"
             f"- 選擇夏普比率最高的策略，且最大回撤 < {config['strategy_params']['max_drawdown_threshold']}。\n"
-            "- 提供最佳策略名稱、信心分數、預期回報、最大回撤、夏普比率和交易信號。\n"
+            "- 提供最佳策略名稱、信心分數、預期回報、最大回撤、夏普比率、交易信號和動態參數。\n"
             "- 格式為 JSON:\n"
             "```json\n"
             "{\n"
@@ -771,7 +901,9 @@ class StrategyEngine:
             '    "target_price": 0.0,\n'
             '    "stop_loss": 0.0,\n'
             '    "position_size": 0.0\n'
-            '  }\n'
+            '  },\n'
+            '  "dynamic_params": {},\n'
+            '  "strategy_version": "2.0"\n'
             '}\n'
             '```'
         )
@@ -784,3 +916,4 @@ class StrategyEngine:
         except json.JSONDecodeError:
             logger.error("Grok 回應 JSON 解析失敗")
             return None
+```
