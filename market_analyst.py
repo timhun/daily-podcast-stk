@@ -1,6 +1,8 @@
 import pandas as pd
 import ta
 from loguru import logger
+import json
+import os
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
