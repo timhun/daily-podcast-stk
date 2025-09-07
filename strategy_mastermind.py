@@ -989,4 +989,3 @@ class StrategyEngine:
         except json.JSONDecodeError:
             logger.error("Grok 回應 JSON 解析失敗")
             return None
-```
