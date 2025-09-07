@@ -1,3 +1,4 @@
+import os  # 新增匯入
 import pandas as pd
 import matplotlib.pyplot as plt
 import itertools
