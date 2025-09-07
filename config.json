@@ -34,76 +34,23 @@
     "min_data_length_ml": 50
   },
   "strategy_params": {
-        "sharpe_annualization_daily": 252,
-        "sharpe_annualization_hourly": 1638,
-        "expected_return_annualization_daily": 252,
-        "expected_return_annualization_hourly": 1638,
-        "daily_multiplier": 1.05,
-        "hourly_multiplier": 1.02,
-        "stop_loss_ratio": 0.95,
-        "position_size": 0.5,
-        "max_drawdown_threshold": 0.15,
-        "technical_params": {
-            "rsi_window": 14,
-            "rsi_buy_threshold": 30,
-            "rsi_sell_threshold": 70,
-            "sma_window": 20,
-            "macd_fast": 12,
-            "macd_slow": 26,
-            "macd_signal": 9,
-            "min_data_length_rsi_sma": 20
-        },
-        "quantity_params": {
-            "volume_ma_period": 5,
-            "volume_multiplier": 1.2,
-            "stop_profit": 0.02,
-            "stop_loss": 0.02,
-            "risk_per_trade": 0.02
-        },
-        "ml_params": {
-            "rf_estimators": 100,
-            "rf_random_state": 42,
-            "ml_test_size": 0.2,
-            "ml_features": ["open", "high", "low", "close", "volume", "rsi", "sma_20"],
-            "min_data_length_ml": 100
-        },
-        "bigline_params": {
-            "weights": [0.4, 0.35, 0.25],
-            "ma_short": 5,
-            "ma_mid": 20,
-            "ma_long": 60,
-            "vol_window": 60,
-            "rsi_window": 14
-        }
+    "sharpe_annualization_daily": 252,
+    "sharpe_annualization_hourly": 252 * 6.5,
+    "expected_return_annualization_daily": 252,
+    "expected_return_annualization_hourly": 252 * 6.5,
+    "max_drawdown_threshold": 0.15,
+    "stop_loss_ratio": 0.95,
+    "position_size": 1000,
+    "daily_multiplier": 1.05,
+    "hourly_multiplier": 1.02
   },
-  "quality_thresholds": {
-    "completeness": 0.95,
-    "freshness_hours": 4,
-    "volatility_threshold": 0.1
-  },
-  "winning_strategy": {
-        "name": "random_forest",
-        "confidence": 0.85,
-        "expected_return": 0.0247,
-        "max_drawdown": 0.06,
-        "sharpe_ratio": 14.93
-    },
-    "signals": {
-        "position": "LONG",
-        "entry_price": 152.11,
-        "target_price": 159.71,
-        "stop_loss": 144.50,
-        "position_size": 0.5
-    },
-    "dynamic_params": {
-        "rsi_window": 12,
-        "volume_multiplier": 1.15,
-        "rf_estimators": 200
-    },
-    "strategy_version": "2.0",
   "logging": {
     "file": "logs/strategy_mastermind.log",
     "rotation": "1 MB"
+  },
+  "quality_thresholds": {
+    "freshness_hours": 24,
+    "volatility_threshold": 0.05
   },
   "podcast": {
     "script_length_limit": 3000,
