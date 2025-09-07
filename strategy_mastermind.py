@@ -7,6 +7,7 @@ from xai_sdk.chat import user, system
 from copy import deepcopy
 from strategies.technical_strategy import TechnicalStrategy
 from strategies.ml_strategy import MLStrategy
+from strategies.bigline_strategy import BigLineStrategy  # 新增匯入
 from strategies.utils import get_param_combinations
 import pandas as pd
 
@@ -25,14 +26,56 @@ class StrategyEngine:
 
     def _load_strategies(self):
         # Load technical strategy
-        with open('strategies/technical_strategy.json', 'r', encoding='utf-8') as f:
-            tech_params = json.load(f)
+        try:
+            with open('strategies/technical_strategy.json', 'r', encoding='utf-8') as f:
+                tech_params = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            logger.error(f"載入 technical_strategy.json 失敗: {str(e)}，使用預設參數")
+            tech_params = {
+                "rsi_window": 14,
+                "rsi_buy_threshold": 30,
+                "rsi_sell_threshold": 70,
+                "sma_window": 20,
+                "macd_fast": 12,
+                "macd_slow": 26,
+                "macd_signal": 9,
+                "min_data_length_rsi_sma": 20
+            }
         self.models['technical'] = TechnicalStrategy(config, tech_params)
         
         # Load ML strategy
-        with open('strategies/ml_strategy.json', 'r', encoding='utf-8') as f:
-            ml_params = json.load(f)
+        try:
+            with open('strategies/ml_strategy.json', 'r', encoding='utf-8') as f:
+                ml_params = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            logger.error(f"載入 ml_strategy.json 失敗: {str(e)}，使用預設參數")
+            ml_params = {
+                "n_estimators": [50, 100, 200],
+                "max_depth": [null, 10, 20],
+                "rsi_window": 14,
+                "macd_fast": 12,
+                "macd_slow": 26,
+                "macd_signal": 9,
+                "min_data_length": 50,
+                "return_threshold": 0.01
+            }
         self.models['ml'] = MLStrategy(config, ml_params)
+
+        # Load BigLine strategy
+        try:
+            with open('strategies/bigline_strategy.json', 'r', encoding='utf-8') as f:
+                bigline_params = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            logger.error(f"載入 bigline_strategy.json 失敗: {str(e)}，使用預設參數")
+            bigline_params = {
+                "weights": [[0.4, 0.35, 0.25], [0.5, 0.3, 0.2], [0.3, 0.4, 0.3]],
+                "ma_short": 5,
+                "ma_mid": 20,
+                "ma_long": 60,
+                "vol_window": 60,
+                "rsi_window": 14
+            }
+        self.models['bigline'] = BigLineStrategy(config, bigline_params)
 
     def run_strategy_tournament(self, symbol, data, timeframe='daily', index_symbol=None):
         results = {}
