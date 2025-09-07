@@ -9,11 +9,8 @@ from loguru import logger
 class MLStrategy(BaseStrategy):
     def __init__(self, config, params=None):
         super().__init__(config, params)
-        self.model = RandomForestClassifier(
-            n_estimators=self.params.get('n_estimators', 100),
-            max_depth=self.params.get('max_depth', None),
-            random_state=42
-        )
+        # 初始化時不設置 max_depth，延遲到 backtest
+        self.model = None
 
     def _load_sentiment_score(self, symbol, timeframe):
         # 情緒分數載入邏輯（與 technical_strategy.py 保持一致）
@@ -61,6 +58,13 @@ class MLStrategy(BaseStrategy):
             X_train = train_df[features]
             y_train = train_df['target']
             X_test = test_df[features]
+
+            # 初始化模型，確保 max_depth 是單一值
+            self.model = RandomForestClassifier(
+                n_estimators=self.params.get('n_estimators', 100),
+                max_depth=self.params.get('max_depth', None),  # 確保是單一值
+                random_state=42
+            )
 
             # 訓練模型
             self.model.fit(X_train, y_train)
