@@ -35,7 +35,7 @@
   },
   "strategy_params": {
     "sharpe_annualization_daily": 252,
-    "sharpe_annualization_hourly": 1638
+    "sharpe_annualization_hourly": 1638,
     "expected_return_annualization_daily": 252,
     "expected_return_annualization_hourly": 1638,
     "max_drawdown_threshold": 0.15,
