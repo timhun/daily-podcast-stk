@@ -6,6 +6,7 @@ from xai_sdk import Client
 from xai_sdk.chat import user, system
 from copy import deepcopy
 from strategies.technical_strategy import TechnicalStrategy
+from strategies.ml_strategy import MLStrategy
 from strategies.utils import get_param_combinations
 import pandas as pd
 
@@ -27,7 +28,11 @@ class StrategyEngine:
         with open('strategies/technical_strategy.json', 'r', encoding='utf-8') as f:
             tech_params = json.load(f)
         self.models['technical'] = TechnicalStrategy(config, tech_params)
-        # Add more strategies here as needed
+        
+        # Load ML strategy
+        with open('strategies/ml_strategy.json', 'r', encoding='utf-8') as f:
+            ml_params = json.load(f)
+        self.models['ml'] = MLStrategy(config, ml_params)
 
     def run_strategy_tournament(self, symbol, data, timeframe='daily', index_symbol=None):
         results = {}
