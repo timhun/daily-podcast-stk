@@ -1,0 +1,38 @@
+{
+  "symbol": "^VIX",
+  "analysis_date": "2025-09-07",
+  "index_symbol": "^IXIC",
+  "winning_strategy": {
+    "name": "dynamic",
+    "confidence": 0.0,
+    "expected_return": 0.0,
+    "max_drawdown": 0.0,
+    "sharpe_ratio": 0.0
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 15.18000030517578,
+    "target_price": 15.93900032043457,
+    "stop_loss": 14.42100028991699,
+    "position_size": 0.5
+  },
+  "dynamic_params": {
+    "MACD_fast_period": [
+      5,
+      20
+    ],
+    "MACD_slow_period": [
+      10,
+      50
+    ],
+    "MACD_signal_period": [
+      5,
+      15
+    ],
+    "RSI_period": [
+      10,
+      20
+    ]
+  },
+  "strategy_version": "2.0"
+}

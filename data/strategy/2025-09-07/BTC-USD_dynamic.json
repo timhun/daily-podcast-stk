@@ -1,0 +1,12 @@
+{
+  "sharpe_ratio": 0,
+  "max_drawdown": 0.0,
+  "expected_return": 0.0,
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 110677.59375,
+    "target_price": 116211.47343750001,
+    "stop_loss": 105143.71406249999,
+    "position_size": 0.5
+  }
+}

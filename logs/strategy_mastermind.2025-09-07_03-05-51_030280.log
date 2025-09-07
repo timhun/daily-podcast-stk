@@ -1,3 +1,4 @@
+2025-09-07 03:05:51.029 | INFO     | strategy_mastermind:run_strategy_tournament:890 - CL=F quantity 策略參數 {'volume_ma_period': 3, 'volume_multiplier': np.float64(1.2157190622766292), 'stop_profit': np.float64(0.01625092123033168), 'stop_loss': np.float64(0.03250184246066336)} 回測完成，Sharpe: 0.00
 2025-09-07 03:05:51.038 | ERROR    | strategy_mastermind:backtest:257 - CL=F daily 回測失敗: 'risk_per_trade'
 2025-09-07 03:05:51.038 | INFO     | strategy_mastermind:run_strategy_tournament:890 - CL=F quantity 策略參數 {'volume_ma_period': 3, 'volume_multiplier': np.float64(1.2157190622766292), 'stop_profit': np.float64(0.01625092123033168), 'stop_loss': np.float64(0.04875276369099504)} 回測完成，Sharpe: 0.00
 2025-09-07 03:05:51.047 | ERROR    | strategy_mastermind:backtest:257 - CL=F daily 回測失敗: 'risk_per_trade'

@@ -1,0 +1,46 @@
+{
+  "symbol": "CL=F",
+  "analysis_date": "2025-09-07",
+  "index_symbol": "^IXIC",
+  "winning_strategy": {
+    "name": "dynamic",
+    "confidence": 0.0,
+    "expected_return": 0.0,
+    "max_drawdown": 0.0,
+    "sharpe_ratio": 0.0
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 61.869998931884766,
+    "target_price": 64.963498878479,
+    "stop_loss": 58.77649898529052,
+    "position_size": 0.5
+  },
+  "dynamic_params": {
+    "MACD_fast": [
+      5,
+      20
+    ],
+    "MACD_slow": [
+      10,
+      50
+    ],
+    "MACD_signal": [
+      5,
+      15
+    ],
+    "RSI_period": [
+      10,
+      20
+    ],
+    "RSI_oversold": [
+      20,
+      30
+    ],
+    "RSI_overbought": [
+      70,
+      80
+    ]
+  },
+  "strategy_version": "2.0"
+}

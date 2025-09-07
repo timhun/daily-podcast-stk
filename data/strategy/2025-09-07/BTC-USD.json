@@ -1,0 +1,46 @@
+{
+  "symbol": "BTC-USD",
+  "analysis_date": "2025-09-07",
+  "index_symbol": "^IXIC",
+  "winning_strategy": {
+    "name": "dynamic",
+    "confidence": 0.0,
+    "expected_return": 0.0,
+    "max_drawdown": 0.0,
+    "sharpe_ratio": 0.0
+  },
+  "signals": {
+    "position": "NEUTRAL",
+    "entry_price": 110677.59375,
+    "target_price": 116211.47343750001,
+    "stop_loss": 105143.71406249999,
+    "position_size": 0.5
+  },
+  "dynamic_params": {
+    "MACD_fast_period": [
+      12,
+      26
+    ],
+    "MACD_slow_period": [
+      26,
+      50
+    ],
+    "MACD_signal_period": [
+      9,
+      14
+    ],
+    "RSI_period": [
+      14,
+      21
+    ],
+    "RSI_overbought_threshold": [
+      70,
+      80
+    ],
+    "RSI_oversold_threshold": [
+      20,
+      30
+    ]
+  },
+  "strategy_version": "2.0"
+}
