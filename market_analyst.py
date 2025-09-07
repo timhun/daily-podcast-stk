@@ -4,14 +4,15 @@ from loguru import logger
 import json
 import os
 
-# 載入 config.json
-with open('config.json', 'r', encoding='utf-8') as f:
-    config = json.load(f)
-    
+# 載入 technical_strategy.json
+with open('strategies/technical_strategy.json', 'r', encoding='utf-8') as f:
+    tech_params = json.load(f)
+
 class MarketAnalyst:
     def __init__(self, config):
         self.config = config
-        self.min_data_length = self.config.get('strategy_params', {}).get('technical_params', {}).get('min_data_length_rsi_sma', 20)
+        self.params = tech_params  # 使用 technical_strategy.json 的參數
+        self.min_data_length = self.params.get('min_data_length_rsi_sma', 20)
 
     def analyze_market(self, symbol, timeframe='daily'):
         file_path = f"{self.config['data_paths']['market']}/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
@@ -37,11 +38,11 @@ class MarketAnalyst:
                 }
             
             # 技術指標計算
-            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=self.config['strategy_params']['technical_params']['rsi_window']).rsi()
+            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=self.params['rsi_window']).rsi()
             df['macd'] = ta.trend.MACD(df['close'], 
-                                      window_fast=self.config['strategy_params']['technical_params']['macd_fast'],
-                                      window_slow=self.config['strategy_params']['technical_params']['macd_slow'],
-                                      window_sign=self.config['strategy_params']['technical_params']['macd_signal']).macd()
+                                      window_fast=self.params['macd_fast'],
+                                      window_slow=self.params['macd_slow'],
+                                      window_sign=self.params['macd_signal']).macd()
             df['bollinger_hband'] = ta.volatility.BollingerBands(df['close']).bollinger_hband()
             df['bollinger_lband'] = ta.volatility.BollingerBands(df['close']).bollinger_lband()
             df['sma_50'] = ta.trend.SMAIndicator(df['close'], window=50).sma_indicator()
