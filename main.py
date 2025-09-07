@@ -7,7 +7,8 @@ from content_creator import generate_script
 from voice_producer import generate_audio
 from cloud_manager import upload_episode
 from podcast_distributor import generate_rss, notify_slack
-from strategy_mastermind import StrategyEngine, MarketAnalyst  # 引入 MarketAnalyst
+from strategy_mastermind import StrategyEngine
+from market_analyst import MarketAnalyst  # 修改：從 market_analyst 匯入 MarketAnalyst
 import pytz
 import json
 
@@ -29,11 +30,10 @@ def main(mode):
     strategy_engine = StrategyEngine()
     strategy_results = {}
     market_analysis = {}  # 新增市場分析結果
-    analyst = MarketAnalyst()  # 新增 MarketAnalyst 實例
+    analyst = MarketAnalyst(config)  # 修改：傳遞 config 參數以符合 MarketAnalyst 初始化
     for symbol in market_data['market']:
         strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, market_data['market'][symbol])
         market_analysis[symbol] = analyst.analyze_market(symbol)  # 新增市場分析
-
     
     # 步驟3: 生成文字稿
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
