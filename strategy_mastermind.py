@@ -51,7 +51,7 @@ class StrategyEngine:
             logger.error(f"載入 ml_strategy.json 失敗: {str(e)}，使用預設參數")
             ml_params = {
                 "n_estimators": [50, 100, 200],
-                "max_depth": [null, 10, 20],
+                "max_depth": [None, 10, 20],  # 修正 null 為 None
                 "rsi_window": 14,
                 "macd_fast": 12,
                 "macd_slow": 26,
@@ -121,8 +121,8 @@ class StrategyEngine:
                 'result': best_result
             }
 
-        # Placeholder for dynamic strategy generation
-        new_strategy = self._generate_dynamic_strategy(symbol, results, timeframe)
+        # Pass best_results to _generate_dynamic_strategy
+        new_strategy = self._generate_dynamic_strategy(symbol, results, best_results, timeframe)
         if new_strategy:
             results['dynamic'] = self._apply_dynamic_strategy(symbol, new_strategy, timeframe)
             best_results['dynamic'] = {'params': new_strategy['parameters'], 'result': results['dynamic']}
@@ -160,13 +160,13 @@ class StrategyEngine:
 
         return optimized
 
-    def _generate_dynamic_strategy(self, symbol, results, timeframe):
+    def _generate_dynamic_strategy(self, symbol, results, best_results, timeframe):
         best_expected_return = -float('inf')
         best_params = None
         for name, result in results.items():
             if result['expected_return'] > best_expected_return:
                 best_expected_return = result['expected_return']
-                best_params = best_results[name]['params']
+                best_params = best_results.get(name, {}).get('params', None)
         return {'parameters': best_params} if best_params else None
 
     def _apply_dynamic_strategy(self, symbol, strategy, timeframe):
