@@ -633,3 +633,131 @@
 2025-09-08 03:46:48.449 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-09-08 03:46:48.676 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250908 集數
 2025-09-08 03:46:48.900 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250908 集數
+2025-09-08 06:46:31.357 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-09-08 06:46:31.359 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-09-08 06:46:31.555 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-09-08 06:46:31.557 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-09-08 06:46:31.791 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-09-08 06:46:31.792 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-09-08 06:46:32.044 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-09-08 06:46:32.045 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-09-08 06:46:33.178 | INFO     | data_collector:collect_data:203 - 新聞數據儲存至: data/news/2025-09-08/tw_news.json
+2025-09-08 06:46:36.787 | INFO     | data_collector:collect_data:220 - 情緒數據儲存至: data/sentiment/2025-09-08/social_metrics.json
+2025-09-08 06:46:36.788 | INFO     | data_collector:collect_data:230 - tw 數據收集完成: 4 個標的, 3 則新聞, 品質分數: 1.0
+2025-09-08 06:46:37.090 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^TWII daily
+2025-09-08 06:46:37.093 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:37.482 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^TWII daily
+2025-09-08 06:46:37.482 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:37.767 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^TWII daily
+2025-09-08 06:46:37.767 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:37.949 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^TWII daily
+2025-09-08 06:46:37.950 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:38.177 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^TWII daily
+2025-09-08 06:46:38.177 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:38.402 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^TWII daily
+2025-09-08 06:46:38.402 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:38.624 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^TWII daily
+2025-09-08 06:46:38.625 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:38.953 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^TWII daily
+2025-09-08 06:46:38.954 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:39.278 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^TWII daily
+2025-09-08 06:46:39.279 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:39.610 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^TWII daily
+2025-09-08 06:46:39.610 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:39.621 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^TWII: 'date'
+2025-09-08 06:46:39.621 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:39.631 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^TWII: 'date'
+2025-09-08 06:46:39.631 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:39.641 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^TWII: 'date'
+2025-09-08 06:46:39.641 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^TWII bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:57.887 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/TWII.json
+2025-09-08 06:46:57.894 | INFO     | market_analyst:analyze_market:76 - ^TWII 市場分析完成
+2025-09-08 06:46:57.997 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 0050.TW daily
+2025-09-08 06:46:57.997 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:58.168 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 0050.TW daily
+2025-09-08 06:46:58.169 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:58.337 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 0050.TW daily
+2025-09-08 06:46:58.337 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:58.687 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 0050.TW daily
+2025-09-08 06:46:58.688 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:58.911 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 0050.TW daily
+2025-09-08 06:46:58.911 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:59.131 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 0050.TW daily
+2025-09-08 06:46:59.131 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:59.354 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 0050.TW daily
+2025-09-08 06:46:59.354 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:46:59.685 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 0050.TW daily
+2025-09-08 06:46:59.685 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:00.013 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 0050.TW daily
+2025-09-08 06:47:00.014 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:00.346 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 0050.TW daily
+2025-09-08 06:47:00.346 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:00.357 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for 0050.TW: 'date'
+2025-09-08 06:47:00.357 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:00.367 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for 0050.TW: 'date'
+2025-09-08 06:47:00.368 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:00.378 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for 0050.TW: 'date'
+2025-09-08 06:47:00.378 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:17.719 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/0050_TW.json
+2025-09-08 06:47:17.725 | INFO     | market_analyst:analyze_market:76 - 0050.TW 市場分析完成
+2025-09-08 06:47:17.826 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2330.TW daily
+2025-09-08 06:47:17.827 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:18.000 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2330.TW daily
+2025-09-08 06:47:18.001 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:18.174 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2330.TW daily
+2025-09-08 06:47:18.174 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:18.347 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2330.TW daily
+2025-09-08 06:47:18.347 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:18.570 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2330.TW daily
+2025-09-08 06:47:18.571 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:18.793 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2330.TW daily
+2025-09-08 06:47:18.794 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:19.016 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2330.TW daily
+2025-09-08 06:47:19.017 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:19.348 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2330.TW daily
+2025-09-08 06:47:19.348 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:19.678 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2330.TW daily
+2025-09-08 06:47:19.678 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:20.006 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2330.TW daily
+2025-09-08 06:47:20.007 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:20.018 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for 2330.TW: 'date'
+2025-09-08 06:47:20.018 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:20.028 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for 2330.TW: 'date'
+2025-09-08 06:47:20.028 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:20.039 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for 2330.TW: 'date'
+2025-09-08 06:47:20.039 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2330.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:40.232 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/2330_TW.json
+2025-09-08 06:47:40.239 | INFO     | market_analyst:analyze_market:76 - 2330.TW 市場分析完成
+2025-09-08 06:47:40.342 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2454.TW daily
+2025-09-08 06:47:40.342 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:40.512 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2454.TW daily
+2025-09-08 06:47:40.512 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:40.683 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2454.TW daily
+2025-09-08 06:47:40.683 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:40.852 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2454.TW daily
+2025-09-08 06:47:40.852 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:41.077 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2454.TW daily
+2025-09-08 06:47:41.078 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:41.300 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2454.TW daily
+2025-09-08 06:47:41.300 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:41.523 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2454.TW daily
+2025-09-08 06:47:41.524 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:41.856 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2454.TW daily
+2025-09-08 06:47:41.856 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:42.181 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2454.TW daily
+2025-09-08 06:47:42.182 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:42.518 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for 2454.TW daily
+2025-09-08 06:47:42.518 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:42.529 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for 2454.TW: 'date'
+2025-09-08 06:47:42.529 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:42.539 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for 2454.TW: 'date'
+2025-09-08 06:47:42.540 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:47:42.550 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for 2454.TW: 'date'
+2025-09-08 06:47:42.550 | INFO     | strategy_mastermind:run_strategy_tournament:107 - 2454.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 06:48:03.060 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/2454_TW.json
+2025-09-08 06:48:03.067 | INFO     | market_analyst:analyze_market:76 - 2454.TW 市場分析完成
+2025-09-08 06:48:26.924 | INFO     | content_creator:generate_script:92 - 成功生成播客文字稿
+2025-09-08 06:48:49.637 | INFO     | podcast_distributor:generate_rss:127 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-09-08 06:48:50.990 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-09-08 06:48:51.240 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250908 集數
+2025-09-08 06:48:51.489 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250908 集數
