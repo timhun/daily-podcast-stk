@@ -161,8 +161,14 @@ class StrategyEngine:
         return optimized
 
     def _generate_dynamic_strategy(self, symbol, results, timeframe):
-        # Placeholder for dynamic strategy generation
-        return None  # Implement as needed
+        # 動態生成參數，選擇預期報酬最高的參數
+        best_expected_return = -float('inf')
+        best_params = None
+        for name, result in results.items():
+            if result['expected_return'] > best_expected_return:
+                best_expected_return = result['expected_return']
+                best_params = best_results[name]['params']
+        return {'parameters': best_params} if best_params else None
 
     def _apply_dynamic_strategy(self, symbol, strategy, timeframe):
         # Placeholder for applying dynamic strategy
