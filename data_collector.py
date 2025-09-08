@@ -64,7 +64,7 @@ def fetch_market_data(symbol):
             'change': 0, 
             'volume': 0, 
             'timestamp': datetime.datetime.now(datetime.timezone.utc)
-        }  # 新增 volume
+        }
         daily_df = pd.DataFrame([{
             'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'),
             'symbol': symbol,
@@ -73,10 +73,9 @@ def fetch_market_data(symbol):
             'low': 0,
             'close': 0,
             'change': 0,
-            'volume': 0  # 新增 volume
+            'volume': 0
         }])
     else:
-        # 確保索引是 timezone-aware（從之前修復）
         if hist_daily.index.tz is None:
             hist_daily.index = hist_daily.index.tz_localize('Asia/Taipei')
         hist_daily.index = hist_daily.index.tz_convert('UTC')
@@ -85,9 +84,8 @@ def fetch_market_data(symbol):
             'high': hist_daily['High'].iloc[-1],
             'low': hist_daily['Low'].iloc[-1],
             'close': hist_daily['Close'].iloc[-1],
-            'close': hist_daily['Close'].iloc[-1],
             'change': hist_daily['Close'].pct_change().iloc[-1] * 100 if len(hist_daily) > 1 else 0,
-            'volume': hist_daily['Volume'].iloc[-1],  # 新增 volume
+            'volume': hist_daily['Volume'].iloc[-1],
             'timestamp': hist_daily.index[-1]
         }
         daily_df = pd.DataFrame({
@@ -98,7 +96,7 @@ def fetch_market_data(symbol):
             'low': hist_daily['Low'],
             'close': hist_daily['Close'],
             'change': hist_daily['Close'].pct_change() * 100,
-            'volume': hist_daily['Volume']  # 新增 volume
+            'volume': hist_daily['Volume']
         }).dropna()
 
     # 每小時數據（14 天）
@@ -113,7 +111,7 @@ def fetch_market_data(symbol):
             'change': 0, 
             'volume': 0, 
             'timestamp': datetime.datetime.now(datetime.timezone.utc)
-        }  # 新增 volume
+        }
         hourly_df = pd.DataFrame([{
             'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
             'symbol': symbol,
@@ -122,10 +120,9 @@ def fetch_market_data(symbol):
             'low': 0,
             'close': 0,
             'change': 0,
-            'volume': 0  # 新增 volume
+            'volume': 0
         }])
     else:
-        # 確保索引是 timezone-aware
         if hist_hourly.index.tz is None:
             hist_hourly.index = hist_hourly.index.tz_localize('Asia/Taipei')
         hist_hourly.index = hist_hourly.index.tz_convert('UTC')
@@ -135,7 +132,7 @@ def fetch_market_data(symbol):
             'low': hist_hourly['Low'].iloc[-1],
             'close': hist_hourly['Close'].iloc[-1],
             'change': hist_hourly['Close'].pct_change().iloc[-1] * 100 if len(hist_hourly) > 1 else 0,
-            'volume': hist_hourly['Volume'].iloc[-1],  # 新增 volume
+            'volume': hist_hourly['Volume'].iloc[-1],
             'timestamp': hist_hourly.index[-1]
         }
         hourly_df = pd.DataFrame({
@@ -146,7 +143,7 @@ def fetch_market_data(symbol):
             'low': hist_hourly['Low'],
             'close': hist_hourly['Close'],
             'change': hist_hourly['Close'].pct_change() * 100,
-            'volume': hist_hourly['Volume']  # 新增 volume
+            'volume': hist_hourly['Volume']
         }).dropna()
 
     return daily_data, daily_df, hourly_data, hourly_df    
@@ -157,7 +154,7 @@ def fetch_news(url):
         response = requests.get(url, timeout=10)
         response.raise_for_status()
         soup = BeautifulSoup(response.content, 'xml')
-        items = soup.find_all('item', limit=3)  # 每個來源抓取最多 3 則新聞
+        items = soup.find_all('item', limit=3)
         return [{'title': item.title.text, 'description': item.description.text} for item in items if item.title and item.description]
     except Exception as e:
         logger.error(f"抓取新聞 {url} 失敗: {str(e)}")
@@ -192,8 +189,14 @@ def collect_data(mode):
             data['market'][symbol] = {'close': 0, 'change': 0}
 
     # 從多個來源抓取新聞
+    news_by_symbol = {symbol: [] for symbol in SYMBOLS.get(mode, [])}
     for url in NEWS_SOURCES.get(mode, []):
         news_items = fetch_news(url)
+        for item in news_items:
+            # 簡單分配新聞到符號（假設新聞標題包含符號）
+            for symbol in SYMBOLS.get(mode, []):
+                if symbol in item['title'] or symbol in item['description']:
+                    news_by_symbol[symbol].append(item)
         data['news'].extend(news_items)
 
     # 儲存新聞到 JSON
@@ -205,22 +208,41 @@ def collect_data(mode):
     # 新聞標題情緒分析
     try:
         sentiment_analyzer = pipeline("sentiment-analysis", model="ProsusAI/finbert")
+        # 整體市場情緒
         headlines = [item['title'] for item in data['news']]
         sentiments = sentiment_analyzer(headlines)
-        sentiment_score = sum(s['score'] if s['label'] == 'positive' else -s['score'] for s in sentiments) / len(sentiments) if sentiments else 0
-        data['sentiment'] = {
-            'overall_score': sentiment_score,
-            'bullish_ratio': sum(1 for s in sentiments if s['label'] == 'positive') / len(sentiments) if sentiments else 0
+        overall_score = sum(s['score'] if s['label'] == 'positive' else -s['score'] for s in sentiments) / len(sentiments) if sentiments else 0
+        bullish_ratio = sum(1 for s in sentiments if s['label'] == 'positive') / len(sentiments) if sentiments else 0
+        
+        # 個別股票情緒
+        sentiment_data = {
+            'overall_score': overall_score,
+            'bullish_ratio': bullish_ratio,
+            'symbols': {}
         }
+        for symbol in SYMBOLS.get(mode, []):
+            symbol_headlines = [item['title'] for item in news_by_symbol[symbol]]
+            if symbol_headlines:
+                symbol_sentiments = sentiment_analyzer(symbol_headlines)
+                symbol_score = sum(s['score'] if s['label'] == 'positive' else -s['score'] for s in symbol_sentiments) / len(symbol_sentiments) if symbol_sentiments else 0
+            else:
+                symbol_score = 0.0  # 若無相關新聞，設為中性
+            sentiment_data['symbols'][symbol] = {'sentiment_score': symbol_score}
+        
+        data['sentiment'] = sentiment_data
         # 儲存情緒分析到 JSON
         sentiment_path = f"data/sentiment/{today}/social_metrics.json"
         os.makedirs(os.path.dirname(sentiment_path), exist_ok=True)
         with open(sentiment_path, 'w', encoding='utf-8') as f:
-            json.dump(data['sentiment'], f, ensure_ascii=False, indent=2)
+            json.dump(sentiment_data, f, ensure_ascii=False, indent=2)
         logger.info(f"情緒數據儲存至: {sentiment_path}")
     except Exception as e:
         logger.error(f"情緒分析失敗: {str(e)}")
-        data['sentiment'] = {'overall_score': 0, 'bullish_ratio': 0}
+        data['sentiment'] = {
+            'overall_score': 0,
+            'bullish_ratio': 0,
+            'symbols': {symbol: {'sentiment_score': 0.0} for symbol in SYMBOLS.get(mode, [])}
+        }
 
     # 數據品質驗證
     checker = DataQualityChecker()
