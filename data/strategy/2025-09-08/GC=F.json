@@ -3,28 +3,28 @@
   "analysis_date": "2025-09-08",
   "index_symbol": "^IXIC",
   "winning_strategy": {
-    "name": "technical",
+    "name": "ml",
     "confidence": 0.0,
     "expected_return": 0.0,
     "max_drawdown": 0.0,
     "sharpe_ratio": 0.0
   },
   "signals": {
-    "position": "NEUTRAL",
-    "entry_price": 3627.89990234375,
-    "target_price": 3809.2948974609376,
-    "stop_loss": 3446.5049072265624,
+    "position": "LONG",
+    "entry_price": 3676.0,
+    "target_price": 3859.8,
+    "stop_loss": 3492.2,
     "position_size": 1000
   },
   "dynamic_params": {
+    "n_estimators": 50,
+    "max_depth": null,
     "rsi_window": 14,
-    "rsi_buy_threshold": 30,
-    "rsi_sell_threshold": 70,
-    "sma_window": 20,
     "macd_fast": 12,
     "macd_slow": 26,
     "macd_signal": 9,
-    "min_data_length_rsi_sma": 20
+    "min_data_length": 50,
+    "return_threshold": 0.01
   },
   "strategy_version": "2.0"
 }

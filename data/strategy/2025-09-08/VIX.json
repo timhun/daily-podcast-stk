@@ -11,9 +11,9 @@
   },
   "signals": {
     "position": "NEUTRAL",
-    "entry_price": 15.18000030517578,
-    "target_price": 15.93900032043457,
-    "stop_loss": 14.42100028991699,
+    "entry_price": 15.109999656677246,
+    "target_price": 15.865499639511109,
+    "stop_loss": 14.354499673843383,
     "position_size": 1000
   },
   "dynamic_params": {

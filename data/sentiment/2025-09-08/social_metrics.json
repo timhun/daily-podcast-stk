@@ -1,4 +1,39 @@
 {
-  "overall_score": -0.8743790785471598,
-  "bullish_ratio": 0.0
+  "overall_score": -0.3639821807543437,
+  "bullish_ratio": 0.3333333333333333,
+  "symbols": {
+    "^GSPC": {
+      "sentiment_score": 0.0
+    },
+    "QQQ": {
+      "sentiment_score": 0.0
+    },
+    "NVDA": {
+      "sentiment_score": 0.0
+    },
+    "^DJI": {
+      "sentiment_score": 0.0
+    },
+    "^IXIC": {
+      "sentiment_score": 0.0
+    },
+    "SPY": {
+      "sentiment_score": 0.0
+    },
+    "AAPL": {
+      "sentiment_score": 0.0
+    },
+    "^VIX": {
+      "sentiment_score": 0.0
+    },
+    "BTC-USD": {
+      "sentiment_score": 0.0
+    },
+    "GC=F": {
+      "sentiment_score": 0.0
+    },
+    "CL=F": {
+      "sentiment_score": 0.0
+    }
+  }
 }

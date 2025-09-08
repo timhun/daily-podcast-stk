@@ -4,16 +4,16 @@
   "index_symbol": "^IXIC",
   "winning_strategy": {
     "name": "technical",
-    "confidence": 0.0,
+    "confidence": 0.5,
     "expected_return": 0.0,
     "max_drawdown": 0.0,
     "sharpe_ratio": 0.0
   },
   "signals": {
     "position": "NEUTRAL",
-    "entry_price": 21700.390625,
-    "target_price": 22785.41015625,
-    "stop_loss": 20615.37109375,
+    "entry_price": 21798.69921875,
+    "target_price": 22888.634179687502,
+    "stop_loss": 20708.764257812498,
     "position_size": 1000.0
   },
   "dynamic_params": {
