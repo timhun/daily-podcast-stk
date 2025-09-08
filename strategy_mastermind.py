@@ -97,7 +97,7 @@ class StrategyEngine:
 
                 try:
                     result = strategy.backtest(symbol, data, timeframe)
-                    score = result['expected_return']] if result['max_drawdown'] < config['strategy_params']['max_drawdown_threshold'] else -float('inf')
+                    score = result['expected_return'] if result['max_drawdown'] < config['strategy_params']['max_drawdown_threshold'] else -float('inf')
 
                     if score > best_score:
                         best_score = score
