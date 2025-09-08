@@ -7,7 +7,7 @@ from xai_sdk.chat import user, system
 from copy import deepcopy
 from strategies.technical_strategy import TechnicalStrategy
 from strategies.ml_strategy import MLStrategy
-from strategies.bigline_strategy import BigLineStrategy  # 新增匯入
+from strategies.bigline_strategy import BigLineStrategy
 from strategies.utils import get_param_combinations
 import pandas as pd
 
@@ -104,7 +104,7 @@ class StrategyEngine:
                         best_params = params
                         best_result = result
 
-                    logger.info(f"{symbol} {name} 策略參數 {params} 回測完成，Sharpe: {result['sharpe_ratio']:.2f}")
+                    logger.info(f"{symbol} {name} 策略參數 {params} 回測完成，Expected Return: {result['expected_return']:.4f}, Sharpe: {result['sharpe_ratio']:.2f}")
                 except Exception as e:
                     logger.error(f"{symbol} {name} 參數 {params} 回測失敗: {str(e)}")
                 finally:
@@ -161,7 +161,6 @@ class StrategyEngine:
         return optimized
 
     def _generate_dynamic_strategy(self, symbol, results, timeframe):
-        # 動態生成參數，選擇預期報酬最高的參數
         best_expected_return = -float('inf')
         best_params = None
         for name, result in results.items():
@@ -171,7 +170,6 @@ class StrategyEngine:
         return {'parameters': best_params} if best_params else None
 
     def _apply_dynamic_strategy(self, symbol, strategy, timeframe):
-        # Placeholder for applying dynamic strategy
         return {
             'sharpe_ratio': 0,
             'max_drawdown': 0,
@@ -182,7 +180,7 @@ class StrategyEngine:
     def optimize_with_grok(self, symbol, results, timeframe, best_results, index_symbol):
         client = Client(api_key=self.api_key, timeout=3600)
         chat = client.chat.create(model="grok-3-mini")
-        chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on Sharpe ratio, ensuring max drawdown < 15%."))
+        chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on expected return, ensuring max drawdown < 15%."))
 
         prompt = (
             f"為股票 {symbol} 選擇最佳策略（時間框架: {timeframe}，大盤參考: {index_symbol}）。以下是回測結果：\n"
@@ -190,7 +188,7 @@ class StrategyEngine:
             f"最佳參數：\n{json.dumps(best_results, ensure_ascii=False, indent=2)}\n"
             "要求：\n"
             f"- 選擇預期報酬最高的策略，且最大回撤 < {config['strategy_params']['max_drawdown_threshold']}。\n"
-            "- 提供最佳策略名稱、信心分數、預期回報、最大回撤、夏普比率、交易信號和動態參數。\n"
+            "- 提供最佳策略名稱、信心分數、預期報酬、最大回撤、夏普比率、交易信號和動態參數。\n"
             "- 格式為 JSON:\n"
             "```json\n"
             "{\n"
