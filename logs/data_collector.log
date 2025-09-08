@@ -294,3 +294,342 @@
 2025-09-07 13:06:16.762 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-09-07 13:06:17.043 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250907 集數
 2025-09-07 13:06:17.305 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250907 集數
+2025-09-08 03:40:50.587 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_GSPC.csv
+2025-09-08 03:40:50.589 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_GSPC.csv
+2025-09-08 03:40:50.852 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_QQQ.csv
+2025-09-08 03:40:50.854 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_QQQ.csv
+2025-09-08 03:40:51.084 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_NVDA.csv
+2025-09-08 03:40:51.086 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_NVDA.csv
+2025-09-08 03:40:51.271 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_DJI.csv
+2025-09-08 03:40:51.273 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_DJI.csv
+2025-09-08 03:40:51.456 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_IXIC.csv
+2025-09-08 03:40:51.458 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_IXIC.csv
+2025-09-08 03:40:51.773 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_SPY.csv
+2025-09-08 03:40:51.774 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_SPY.csv
+2025-09-08 03:40:52.153 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_AAPL.csv
+2025-09-08 03:40:52.155 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_AAPL.csv
+2025-09-08 03:40:52.355 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_VIX.csv
+2025-09-08 03:40:52.358 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_VIX.csv
+2025-09-08 03:40:52.586 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_BTC-USD.csv
+2025-09-08 03:40:52.589 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_BTC-USD.csv
+2025-09-08 03:40:52.868 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_GC=F.csv
+2025-09-08 03:40:52.871 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_GC=F.csv
+2025-09-08 03:40:53.102 | INFO     | data_collector:collect_data:184 - 每日數據儲存至: data/market/daily_CL=F.csv
+2025-09-08 03:40:53.105 | INFO     | data_collector:collect_data:189 - 每小時數據儲存至: data/market/hourly_CL=F.csv
+2025-09-08 03:40:53.530 | ERROR    | data_collector:fetch_news:163 - 抓取新聞 https://www.reddit.com/r/investing/.rss 失敗: 429 Client Error: Too Many Requests for url: https://www.reddit.com/r/investing/.rss
+2025-09-08 03:40:53.531 | INFO     | data_collector:collect_data:203 - 新聞數據儲存至: data/news/2025-09-08/us_news.json
+2025-09-08 03:40:56.963 | INFO     | data_collector:collect_data:220 - 情緒數據儲存至: data/sentiment/2025-09-08/social_metrics.json
+2025-09-08 03:40:56.963 | INFO     | data_collector:collect_data:230 - us 數據收集完成: 11 個標的, 3 則新聞, 品質分數: 1.0
+2025-09-08 03:40:57.351 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^GSPC daily
+2025-09-08 03:40:57.352 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:40:57.795 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^GSPC daily
+2025-09-08 03:40:57.796 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:40:58.097 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^GSPC daily
+2025-09-08 03:40:58.097 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:40:58.458 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^GSPC daily
+2025-09-08 03:40:58.458 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:40:58.957 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^GSPC daily
+2025-09-08 03:40:58.958 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:40:59.310 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^GSPC daily
+2025-09-08 03:40:59.311 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:40:59.875 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^GSPC daily
+2025-09-08 03:40:59.876 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:00.202 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^GSPC daily
+2025-09-08 03:41:00.202 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:00.529 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^GSPC daily
+2025-09-08 03:41:00.530 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:00.856 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^GSPC daily
+2025-09-08 03:41:00.856 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:00.867 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^GSPC: 'date'
+2025-09-08 03:41:00.868 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:00.878 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^GSPC: 'date'
+2025-09-08 03:41:00.878 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:00.888 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^GSPC: 'date'
+2025-09-08 03:41:00.888 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^GSPC bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:23.816 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/GSPC.json
+2025-09-08 03:41:23.823 | INFO     | market_analyst:analyze_market:76 - ^GSPC 市場分析完成
+2025-09-08 03:41:23.926 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for QQQ daily
+2025-09-08 03:41:23.927 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:24.104 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for QQQ daily
+2025-09-08 03:41:24.105 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:24.458 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for QQQ daily
+2025-09-08 03:41:24.458 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:24.632 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for QQQ daily
+2025-09-08 03:41:24.632 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:24.857 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for QQQ daily
+2025-09-08 03:41:24.857 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:25.081 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for QQQ daily
+2025-09-08 03:41:25.081 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:25.303 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for QQQ daily
+2025-09-08 03:41:25.304 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:25.633 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for QQQ daily
+2025-09-08 03:41:25.634 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:25.965 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for QQQ daily
+2025-09-08 03:41:25.965 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:26.297 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for QQQ daily
+2025-09-08 03:41:26.298 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:26.309 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for QQQ: 'date'
+2025-09-08 03:41:26.309 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:26.319 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for QQQ: 'date'
+2025-09-08 03:41:26.319 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:26.330 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for QQQ: 'date'
+2025-09-08 03:41:26.330 | INFO     | strategy_mastermind:run_strategy_tournament:107 - QQQ bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:47.193 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/QQQ.json
+2025-09-08 03:41:47.200 | INFO     | market_analyst:analyze_market:76 - QQQ 市場分析完成
+2025-09-08 03:41:47.303 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for NVDA daily
+2025-09-08 03:41:47.303 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:47.475 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for NVDA daily
+2025-09-08 03:41:47.475 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:47.648 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for NVDA daily
+2025-09-08 03:41:47.648 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:47.821 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for NVDA daily
+2025-09-08 03:41:47.821 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:48.050 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for NVDA daily
+2025-09-08 03:41:48.050 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:48.278 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for NVDA daily
+2025-09-08 03:41:48.278 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:48.505 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for NVDA daily
+2025-09-08 03:41:48.505 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:48.845 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for NVDA daily
+2025-09-08 03:41:48.845 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:49.177 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for NVDA daily
+2025-09-08 03:41:49.177 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:49.513 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for NVDA daily
+2025-09-08 03:41:49.514 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:49.525 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for NVDA: 'date'
+2025-09-08 03:41:49.525 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:49.535 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for NVDA: 'date'
+2025-09-08 03:41:49.535 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:41:49.545 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for NVDA: 'date'
+2025-09-08 03:41:49.545 | INFO     | strategy_mastermind:run_strategy_tournament:107 - NVDA bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:18.153 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/NVDA.json
+2025-09-08 03:42:18.160 | INFO     | market_analyst:analyze_market:76 - NVDA 市場分析完成
+2025-09-08 03:42:18.261 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^DJI daily
+2025-09-08 03:42:18.261 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:18.434 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^DJI daily
+2025-09-08 03:42:18.434 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:18.604 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^DJI daily
+2025-09-08 03:42:18.605 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:18.775 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^DJI daily
+2025-09-08 03:42:18.775 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:19.001 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^DJI daily
+2025-09-08 03:42:19.002 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:19.224 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^DJI daily
+2025-09-08 03:42:19.224 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:19.449 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^DJI daily
+2025-09-08 03:42:19.450 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:19.777 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^DJI daily
+2025-09-08 03:42:19.778 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:20.114 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^DJI daily
+2025-09-08 03:42:20.114 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:20.451 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^DJI daily
+2025-09-08 03:42:20.451 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:20.464 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^DJI: 'date'
+2025-09-08 03:42:20.464 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:20.475 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^DJI: 'date'
+2025-09-08 03:42:20.475 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:20.486 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^DJI: 'date'
+2025-09-08 03:42:20.487 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^DJI bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:41.583 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/DJI.json
+2025-09-08 03:42:41.590 | INFO     | market_analyst:analyze_market:76 - ^DJI 市場分析完成
+2025-09-08 03:42:41.693 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^IXIC daily
+2025-09-08 03:42:41.693 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:41.867 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^IXIC daily
+2025-09-08 03:42:41.867 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:42.038 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^IXIC daily
+2025-09-08 03:42:42.038 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:42.212 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^IXIC daily
+2025-09-08 03:42:42.212 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:42.439 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^IXIC daily
+2025-09-08 03:42:42.439 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:42.666 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^IXIC daily
+2025-09-08 03:42:42.666 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:42.893 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^IXIC daily
+2025-09-08 03:42:42.893 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:43.228 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^IXIC daily
+2025-09-08 03:42:43.228 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:43.559 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^IXIC daily
+2025-09-08 03:42:43.559 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:43.892 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^IXIC daily
+2025-09-08 03:42:43.893 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:43.903 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^IXIC: 'date'
+2025-09-08 03:42:43.904 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:43.914 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^IXIC: 'date'
+2025-09-08 03:42:43.914 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:42:43.924 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^IXIC: 'date'
+2025-09-08 03:42:43.924 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^IXIC bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:03.693 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/IXIC.json
+2025-09-08 03:43:03.699 | INFO     | market_analyst:analyze_market:76 - ^IXIC 市場分析完成
+2025-09-08 03:43:03.802 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for SPY daily
+2025-09-08 03:43:03.802 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:03.971 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for SPY daily
+2025-09-08 03:43:03.971 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:04.143 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for SPY daily
+2025-09-08 03:43:04.143 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:04.313 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for SPY daily
+2025-09-08 03:43:04.314 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:04.537 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for SPY daily
+2025-09-08 03:43:04.538 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:04.761 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for SPY daily
+2025-09-08 03:43:04.762 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:04.983 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for SPY daily
+2025-09-08 03:43:04.984 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:05.537 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for SPY daily
+2025-09-08 03:43:05.538 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:05.863 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for SPY daily
+2025-09-08 03:43:05.863 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:06.190 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for SPY daily
+2025-09-08 03:43:06.190 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:06.201 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for SPY: 'date'
+2025-09-08 03:43:06.202 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:06.212 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for SPY: 'date'
+2025-09-08 03:43:06.212 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:06.222 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for SPY: 'date'
+2025-09-08 03:43:06.222 | INFO     | strategy_mastermind:run_strategy_tournament:107 - SPY bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:30.757 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/SPY.json
+2025-09-08 03:43:30.763 | INFO     | market_analyst:analyze_market:76 - SPY 市場分析完成
+2025-09-08 03:43:30.866 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for AAPL daily
+2025-09-08 03:43:30.866 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:31.039 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for AAPL daily
+2025-09-08 03:43:31.040 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:31.211 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for AAPL daily
+2025-09-08 03:43:31.211 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:31.382 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for AAPL daily
+2025-09-08 03:43:31.382 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:31.609 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for AAPL daily
+2025-09-08 03:43:31.610 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:31.834 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for AAPL daily
+2025-09-08 03:43:31.834 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:32.062 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for AAPL daily
+2025-09-08 03:43:32.062 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:32.403 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for AAPL daily
+2025-09-08 03:43:32.403 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:32.736 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for AAPL daily
+2025-09-08 03:43:32.737 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:33.072 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for AAPL daily
+2025-09-08 03:43:33.072 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:33.084 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for AAPL: 'date'
+2025-09-08 03:43:33.084 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:33.094 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for AAPL: 'date'
+2025-09-08 03:43:33.095 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:33.105 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for AAPL: 'date'
+2025-09-08 03:43:33.106 | INFO     | strategy_mastermind:run_strategy_tournament:107 - AAPL bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:58.418 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/AAPL.json
+2025-09-08 03:43:58.425 | INFO     | market_analyst:analyze_market:76 - AAPL 市場分析完成
+2025-09-08 03:43:58.527 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^VIX daily
+2025-09-08 03:43:58.527 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:58.702 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^VIX daily
+2025-09-08 03:43:58.703 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:58.876 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^VIX daily
+2025-09-08 03:43:58.876 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:59.052 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^VIX daily
+2025-09-08 03:43:59.053 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:59.283 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^VIX daily
+2025-09-08 03:43:59.283 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:59.511 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^VIX daily
+2025-09-08 03:43:59.511 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:43:59.740 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^VIX daily
+2025-09-08 03:43:59.740 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:00.078 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^VIX daily
+2025-09-08 03:44:00.078 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:00.412 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^VIX daily
+2025-09-08 03:44:00.412 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:00.748 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for ^VIX daily
+2025-09-08 03:44:00.748 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:00.760 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^VIX: 'date'
+2025-09-08 03:44:00.760 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:00.771 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^VIX: 'date'
+2025-09-08 03:44:00.771 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:00.781 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^VIX: 'date'
+2025-09-08 03:44:00.782 | INFO     | strategy_mastermind:run_strategy_tournament:107 - ^VIX bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:19.435 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/VIX.json
+2025-09-08 03:44:19.442 | INFO     | market_analyst:analyze_market:76 - ^VIX 市場分析完成
+2025-09-08 03:44:19.551 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for BTC-USD daily
+2025-09-08 03:44:19.551 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:19.742 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for BTC-USD daily
+2025-09-08 03:44:19.743 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:19.939 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for BTC-USD daily
+2025-09-08 03:44:19.939 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:20.132 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for BTC-USD daily
+2025-09-08 03:44:20.133 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:20.386 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for BTC-USD daily
+2025-09-08 03:44:20.386 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:20.636 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for BTC-USD daily
+2025-09-08 03:44:20.636 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:20.884 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for BTC-USD daily
+2025-09-08 03:44:20.885 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:21.254 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for BTC-USD daily
+2025-09-08 03:44:21.255 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:21.611 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for BTC-USD daily
+2025-09-08 03:44:21.611 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:21.978 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for BTC-USD daily
+2025-09-08 03:44:21.979 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:21.990 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for BTC-USD: 'date'
+2025-09-08 03:44:21.990 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:22.001 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for BTC-USD: 'date'
+2025-09-08 03:44:22.001 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:22.011 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for BTC-USD: 'date'
+2025-09-08 03:44:22.012 | INFO     | strategy_mastermind:run_strategy_tournament:107 - BTC-USD bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:45.960 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/BTC-USD.json
+2025-09-08 03:44:45.967 | INFO     | market_analyst:analyze_market:76 - BTC-USD 市場分析完成
+2025-09-08 03:44:46.069 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for GC=F daily
+2025-09-08 03:44:46.070 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:46.245 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for GC=F daily
+2025-09-08 03:44:46.245 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:46.418 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for GC=F daily
+2025-09-08 03:44:46.419 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:46.591 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for GC=F daily
+2025-09-08 03:44:46.591 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:46.821 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for GC=F daily
+2025-09-08 03:44:46.821 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:47.046 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for GC=F daily
+2025-09-08 03:44:47.046 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:47.273 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for GC=F daily
+2025-09-08 03:44:47.273 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:47.610 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for GC=F daily
+2025-09-08 03:44:47.610 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:47.943 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for GC=F daily
+2025-09-08 03:44:47.943 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:48.278 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for GC=F daily
+2025-09-08 03:44:48.279 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:48.290 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for GC=F: 'date'
+2025-09-08 03:44:48.290 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:48.301 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for GC=F: 'date'
+2025-09-08 03:44:48.301 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:44:48.311 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for GC=F: 'date'
+2025-09-08 03:44:48.312 | INFO     | strategy_mastermind:run_strategy_tournament:107 - GC=F bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:11.231 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/GC=F.json
+2025-09-08 03:45:11.238 | INFO     | market_analyst:analyze_market:76 - GC=F 市場分析完成
+2025-09-08 03:45:11.339 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for CL=F daily
+2025-09-08 03:45:11.340 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:11.514 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for CL=F daily
+2025-09-08 03:45:11.514 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:11.685 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for CL=F daily
+2025-09-08 03:45:11.686 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:11.858 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for CL=F daily
+2025-09-08 03:45:11.858 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:12.085 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for CL=F daily
+2025-09-08 03:45:12.085 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:12.311 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for CL=F daily
+2025-09-08 03:45:12.312 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:12.538 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for CL=F daily
+2025-09-08 03:45:12.539 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:13.108 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for CL=F daily
+2025-09-08 03:45:13.108 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:13.439 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for CL=F daily
+2025-09-08 03:45:13.439 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:13.775 | INFO     | strategies.utils:generate_performance_chart:20 - Generated performance chart for CL=F daily
+2025-09-08 03:45:13.775 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 50, 'return_threshold': 0.01} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:13.786 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for CL=F: 'date'
+2025-09-08 03:45:13.787 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:13.797 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for CL=F: 'date'
+2025-09-08 03:45:13.797 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:13.807 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for CL=F: 'date'
+2025-09-08 03:45:13.807 | INFO     | strategy_mastermind:run_strategy_tournament:107 - CL=F bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Sharpe: 0.00
+2025-09-08 03:45:39.547 | INFO     | strategy_mastermind:run_strategy_tournament:159 - 策略結果儲存至: data/strategy/2025-09-08/CL=F.json
+2025-09-08 03:45:39.554 | INFO     | market_analyst:analyze_market:76 - CL=F 市場分析完成
+2025-09-08 03:46:17.803 | INFO     | content_creator:generate_script:92 - 成功生成播客文字稿
+2025-09-08 03:46:47.523 | INFO     | podcast_distributor:generate_rss:127 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-09-08 03:46:48.449 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-09-08 03:46:48.676 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250908 集數
+2025-09-08 03:46:48.900 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250908 集數
