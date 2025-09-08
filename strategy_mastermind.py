@@ -97,7 +97,7 @@ class StrategyEngine:
 
                 try:
                     result = strategy.backtest(symbol, data, timeframe)
-                    score = result['sharpe_ratio'] if result['max_drawdown'] < config['strategy_params']['max_drawdown_threshold'] else -float('inf')
+                    score = result['expected_return']] if result['max_drawdown'] < config['strategy_params']['max_drawdown_threshold'] else -float('inf')
 
                     if score > best_score:
                         best_score = score
@@ -183,7 +183,7 @@ class StrategyEngine:
             f"{json.dumps(results, ensure_ascii=False, indent=2)}\n"
             f"最佳參數：\n{json.dumps(best_results, ensure_ascii=False, indent=2)}\n"
             "要求：\n"
-            f"- 選擇夏普比率最高的策略，且最大回撤 < {config['strategy_params']['max_drawdown_threshold']}。\n"
+            f"- 選擇預期報酬最高的策略，且最大回撤 < {config['strategy_params']['max_drawdown_threshold']}。\n"
             "- 提供最佳策略名稱、信心分數、預期回報、最大回撤、夏普比率、交易信號和動態參數。\n"
             "- 格式為 JSON:\n"
             "```json\n"
