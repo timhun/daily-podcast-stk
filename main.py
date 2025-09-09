@@ -1,6 +1,7 @@
 import argparse
 import datetime
 import os
+import pandas as pd  # Added pandas import
 from dotenv import load_dotenv
 from data_collector import collect_data
 from content_creator import generate_script
