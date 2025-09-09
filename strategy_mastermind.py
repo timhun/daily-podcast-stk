@@ -10,6 +10,8 @@ from strategies.ml_strategy import MLStrategy
 from strategies.bigline_strategy import BigLineStrategy
 from strategies.utils import get_param_combinations
 import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 
 # Load config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -17,6 +19,46 @@ with open('config.json', 'r', encoding='utf-8') as f:
 
 # Configure logging
 logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
+
+# 計算移動平均線
+def calculate_ma(prices, window):
+    return prices.rolling(window=window).mean()
+
+# 判斷三線多頭
+def is_bullish(ma_short, ma_mid, ma_long):
+    return (ma_short > ma_mid) & (ma_mid > ma_long)
+
+# 計算強化指數
+def composite_index_with_weights(prices, volume, weight_stock_info, weights=[0.4, 0.35, 0.25]):
+    ma_short = calculate_ma(prices, 5)
+    ma_mid = calculate_ma(prices, 20)
+    ma_long = calculate_ma(prices, 60)
+    
+    three_line_bullish = is_bullish(ma_short, ma_mid, ma_long)
+
+    base_line = weights[0] * ma_short + weights[1] * ma_mid + weights[2] * ma_long
+
+    max_vol = volume.rolling(window=60).max()
+    vol_factor = 1 + (volume / (max_vol + 1e-9)) / 1e6  # 縮放成交量
+
+    weighted_sum = 0
+    for stock_name, info in weight_stock_info.items():
+        bullish_binary = info['bullish'].astype(int)
+        weighted_sum += info['alpha'] * bullish_binary * (info['weighted_ma'] / info['price'])
+
+    final_index = base_line * vol_factor * (1 + weighted_sum)
+
+    return pd.DataFrame({
+        'Price': prices,
+        'MA_5': ma_short,
+        'MA_20': ma_mid,
+        'MA_60': ma_long,
+        'Three_Line_Bullish': three_line_bullish,
+        'Base_Line': base_line,
+        'Vol_Factor': vol_factor,
+        'Weighted_Stock_Sum': weighted_sum,
+        'Final_Index': final_index
+    }, index=prices.index)
 
 class StrategyEngine:
     def __init__(self):
@@ -51,7 +93,7 @@ class StrategyEngine:
             logger.error(f"載入 ml_strategy.json 失敗: {str(e)}，使用預設參數")
             ml_params = {
                 "n_estimators": [50, 100, 200],
-                "max_depth": [None, 10, 20],  # 修正 null 為 None
+                "max_depth": [None, 10, 20],
                 "rsi_window": 14,
                 "macd_fast": 12,
                 "macd_slow": 26,
@@ -84,6 +126,14 @@ class StrategyEngine:
         index_file_path = f"{config['data_paths']['market']}/{timeframe}_{index_symbol.replace('^', '').replace('.', '_')}.csv"
         index_df = pd.read_csv(index_file_path) if os.path.exists(index_file_path) else pd.DataFrame()
 
+        # 計算強化指數（整合 data_collector.py 數據）
+        weight_stock_info = self._prepare_weight_stock_info(timeframe)
+        composite_index_df = composite_index_with_weights(
+            index_df['close'] if not index_df.empty else data['close'],
+            index_df['volume'] if not index_df.empty else data['volume'],
+            weight_stock_info
+        )
+
         for name, strategy in self.models.items():
             best_score = -float('inf')
             best_params = None
@@ -96,7 +146,10 @@ class StrategyEngine:
                 strategy.params = params
 
                 try:
-                    result = strategy.backtest(symbol, data, timeframe)
+                    # 將強化指數加入策略回測
+                    strategy_data = data.copy()
+                    strategy_data['composite_index'] = composite_index_df['Final_Index']
+                    result = strategy.backtest(symbol, strategy_data, timeframe)
                     score = result['expected_return'] if result['max_drawdown'] < config['strategy_params']['max_drawdown_threshold'] else -float('inf')
 
                     if score > best_score:
@@ -152,6 +205,9 @@ class StrategyEngine:
                 'strategy_version': '2.0'
             }
 
+        # 儲存強化指數圖表
+        self._plot_composite_index(symbol, composite_index_df, timeframe)
+
         strategy_dir = f"{config['data_paths']['strategy']}/{datetime.today().strftime('%Y-%m-%d')}"
         os.makedirs(strategy_dir, exist_ok=True)
         with open(f"{strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json", 'w', encoding='utf-8') as f:
@@ -159,6 +215,73 @@ class StrategyEngine:
         logger.info(f"策略結果儲存至: {strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json")
 
         return optimized
+
+    def _prepare_weight_stock_info(self, timeframe):
+        # 從 data_collector.py 的 CSV 文件讀取權值股數據
+        weight_stock_info = {}
+        for stock in ['0050.TW', '2330.TW']:
+            file_path = f"{config['data_paths']['market']}/{timeframe}_{stock.replace('.', '_')}.csv"
+            if os.path.exists(file_path):
+                df = pd.read_csv(file_path)
+                df['date'] = pd.to_datetime(df['date'])
+                df.set_index('date', inplace=True)
+                
+                price = df['close']
+                ma_short = calculate_ma(price, 5)
+                ma_mid = calculate_ma(price, 20)
+                ma_long = calculate_ma(price, 60)
+                bullish = is_bullish(ma_short, ma_mid, ma_long)
+                weighted_ma = 0.4 * ma_short + 0.35 * ma_mid + 0.25 * ma_long
+                
+                weight_stock_info[stock] = {
+                    'alpha': 0.3 if stock == '0050.TW' else 0.2,
+                    'bullish': bullish,
+                    'weighted_ma': weighted_ma,
+                    'price': price
+                }
+            else:
+                logger.warning(f"找不到 {stock} 的數據，使用模擬數據")
+                dates = pd.date_range(start='2025-01-01', end='2025-09-09')
+                price = pd.Series(1000 + np.random.normal(0, 5, len(dates)), index=dates)
+                ma_short = calculate_ma(price, 5)
+                ma_mid = calculate_ma(price, 20)
+                ma_long = calculate_ma(price, 60)
+                bullish = is_bullish(ma_short, ma_mid, ma_long)
+                weighted_ma = 0.4 * ma_short + 0.35 * ma_mid + 0.25 * ma_long
+                weight_stock_info[stock] = {
+                    'alpha': 0.3 if stock == '0050.TW' else 0.2,
+                    'bullish': bullish,
+                    'weighted_ma': weighted_ma,
+                    'price': price
+                }
+        return weight_stock_info
+
+    def _plot_composite_index(self, symbol, composite_index_df, timeframe):
+        fig, ax1 = plt.subplots(figsize=(14, 8))
+
+        # 股價和均線
+        ax1.plot(composite_index_df.index, composite_index_df['Price'], label='台股加權指數', color='black')
+        ax1.plot(composite_index_df.index, composite_index_df['MA_5'], label='5日均線', linestyle='--', color='#1f77b4')
+        ax1.plot(composite_index_df.index, composite_index_df['MA_20'], label='20日均線', linestyle='--', color='#ff7f0e')
+        ax1.plot(composite_index_df.index, composite_index_df['MA_60'], label='60日均線', linestyle='--', color='#2ca02c')
+        ax1.fill_between(composite_index_df.index, composite_index_df['Price'].min(), composite_index_df['Price'].max(),
+                         where=composite_index_df['Three_Line_Bullish'], color='lightgreen', alpha=0.3, label='三線多頭區間')
+        ax1.set_xlabel('日期')
+        ax1.set_ylabel('價格')
+        ax1.legend(loc='upper left')
+        ax1.grid(True)
+
+        # 強化大盤線（次要 Y 軸）
+        ax2 = ax1.twinx()
+        ax2.plot(composite_index_df.index, composite_index_df['Final_Index'], label='強化大盤線', color='red', linewidth=2)
+        ax2.set_ylabel('強化指數')
+        ax2.legend(loc='upper right')
+
+        plt.title(f'{symbol} 強化版大盤線與三線架構 ({timeframe})')
+        chart_dir = f"charts/{datetime.today().strftime('%Y-%m-%d')}"
+        os.makedirs(chart_dir, exist_ok=True)
+        plt.savefig(f"{chart_dir}/{symbol.replace('.', '_')}_{timeframe}.png")
+        plt.close()
 
     def _generate_dynamic_strategy(self, symbol, results, best_results, timeframe):
         best_expected_return = -float('inf')
