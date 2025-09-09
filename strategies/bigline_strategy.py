@@ -13,7 +13,6 @@ from .utils import generate_performance_chart
 class BigLineStrategy(BaseStrategy):
     def __init__(self, config, params=None):
         super().__init__(config, params)
-        # 若 params 未提供，則從 bigline_strategy.json 載入
         if not params:
             try:
                 with open('strategies/bigline_strategy.json', 'r', encoding='utf-8') as f:
@@ -21,7 +20,7 @@ class BigLineStrategy(BaseStrategy):
             except (FileNotFoundError, json.JSONDecodeError) as e:
                 logger.error(f"載入 bigline_strategy.json 失敗: {str(e)}，使用預設參數")
                 self.params = {
-                    "weights": [0.4, 0.35, 0.25],
+                    "weights": [[0.4, 0.35, 0.25], [0.5, 0.3, 0.2], [0.3, 0.4, 0.3]],  # 多組權重
                     "ma_short": 5,
                     "ma_mid": 20,
                     "ma_long": 60,
@@ -30,7 +29,14 @@ class BigLineStrategy(BaseStrategy):
                 }
 
     def backtest(self, symbol, data, timeframe='daily'):
-        df = self.load_data(symbol, timeframe)
+        logger.info(f"開始回測 BigLine 策略: {symbol}, 時間框架: {timeframe}")
+        
+        # 確保 data 包含必要欄位
+        if not all(col in data for col in ['close', 'volume', 'composite_index', 'sentiment_score']):
+            logger.error(f"{symbol} 數據缺少必要欄位")
+            return self._default_results()
+
+        df = data.copy()
         index_symbol = '^TWII' if symbol in self.config['symbols']['tw'] else '^IXIC'
         index_file_path = f"{self.config['data_paths']['market']}/{timeframe}_{index_symbol.replace('^', '').replace('.', '_')}.csv"
         
@@ -52,18 +58,20 @@ class BigLineStrategy(BaseStrategy):
             prices = df['close']
             volume = df['volume']
             index_prices = df['close_index']
+            sentiment_score = df['sentiment_score']
+            
+            # 選擇當前權重（支援網格搜索）
+            weights = self.params['weights'] if isinstance(self.params['weights'], list) and not isinstance(self.params['weights'][0], list) else self.params['weights'][0]
             
             ma_short = prices.rolling(window=self.params['ma_short']).mean()
             ma_mid = prices.rolling(window=self.params['ma_mid']).mean()
             ma_long = prices.rolling(window=self.params['ma_long']).mean()
             bullish = (ma_short > ma_mid) & (ma_mid > ma_long)
             
-            big_line = (self.params['weights'][0] * ma_short +
-                        self.params['weights'][1] * ma_mid +
-                        self.params['weights'][2] * ma_long)
+            big_line = (weights[0] * ma_short + weights[1] * ma_mid + weights[2] * ma_long)
             
             max_vol = volume.rolling(window=self.params['vol_window']).max()
-            vol_factor = 1 + volume / (max_vol + 1e-9)
+            vol_factor = 1 + (volume / (max_vol + 1e-9)) / 1e6  # 縮放成交量
             big_line_weighted = big_line * vol_factor
             big_line_diff = big_line_weighted.diff()
             
@@ -72,11 +80,10 @@ class BigLineStrategy(BaseStrategy):
             index_ma_long = index_prices.rolling(window=self.params['ma_long']).mean()
             index_bullish = (index_ma_short > index_ma_mid) & (index_ma_mid > index_ma_long)
             index_rsi = ta.momentum.RSIIndicator(index_prices, window=self.params['rsi_window']).rsi()
-            sentiment_score = self._load_sentiment_score(symbol, timeframe)
             
             df['signal'] = 0
-            df.loc[(big_line_diff > 0) & bullish & index_bullish & (index_rsi < 70) & (sentiment_score > 0.5), 'signal'] = 1
-            df.loc[(big_line_diff < 0) & ~index_bullish & (index_rsi > 30) & (sentiment_score < -0.5), 'signal'] = -1
+            df.loc[(big_line_diff > 0) & bullish & index_bullish & (index_rsi < 70) & (sentiment_score > 0.0), 'signal'] = 1  # 放寬條件
+            df.loc[(big_line_diff < 0) & ~index_bullish & (index_rsi > 30) & (sentiment_score < 0.0), 'signal'] = -1  # 放寬條件
             
             df['returns'] = df['close'].pct_change()
             df['strategy_returns'] = df['returns'] * df['signal'].shift(1)
@@ -105,7 +112,10 @@ class BigLineStrategy(BaseStrategy):
                 'position_size': self.config['strategy_params']['position_size']
             }
             
-            generate_performance_chart(df, symbol, timeframe)  # 使用 utils.py 的 generate_performance_chart
+            generate_performance_chart(df, symbol, timeframe)
+            
+            logger.info(f"{symbol} signal distribution: {df['signal'].value_counts().to_dict()}")
+            logger.info(f"{symbol} returns std: {df['strategy_returns'].std():.4f}")
             
             return {
                 'sharpe_ratio': sharpe_ratio,
@@ -122,7 +132,21 @@ class BigLineStrategy(BaseStrategy):
         try:
             with open(sentiment_file, 'r', encoding='utf-8') as f:
                 sentiment_data = json.load(f)
-            return sentiment_data.get(symbol, {}).get('sentiment_score', 0.0)
+            return sentiment_data.get('symbols', {}).get(symbol, {}).get('sentiment_score', 0.0)
         except Exception as e:
             logger.error(f"載入情緒數據失敗: {str(e)}")
             return 0.0
+
+    def _default_results(self):
+        return {
+            'sharpe_ratio': 0,
+            'max_drawdown': 0,
+            'expected_return': 0,
+            'signals': {
+                'position': 'NEUTRAL',
+                'entry_price': 0.0,
+                'target_price': 0.0,
+                'stop_loss': 0.0,
+                'position_size': 0.0
+            }
+        }
