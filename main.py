@@ -32,6 +32,15 @@ def main(mode):
     market_analysis = {}  # 新增市場分析結果
     analyst = MarketAnalyst(config)  # 修改：傳遞 config 參數以符合 MarketAnalyst 初始化
     for symbol in market_data['market']:
+        # Load the full DataFrame from CSV for historical data
+        file_path = f"{config['data_paths']['market']}/daily_{symbol.replace('^', '').replace('.', '_')}.csv"
+        if os.path.exists(file_path):
+            df = pd.read_csv(file_path)
+            df['date'] = pd.to_datetime(df['date'])
+            df.set_index('date', inplace=True)
+        else:
+            df = pd.DataFrame()
+            print(f"Warning: No data for {symbol}, using empty DataFrame")
         strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, market_data['market'][symbol])
         market_analysis[symbol] = analyst.analyze_market(symbol)  # 新增市場分析
     
