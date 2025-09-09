@@ -1,16 +1,21 @@
 {
-  "overall_score": -0.8743790785471598,
+  "overall_score": -0.895485500494639,
   "bullish_ratio": 0.0,
   "symbols": {
-    "^IXIC": {"sentiment_score": -0.7},
-    "QQQ": {"sentiment_score": 0.5},
-    "^TWII": {"sentiment_score": -0.8},
-    "0050.TW": {"sentiment_score": 0.6},
-    "2330.TW": {"sentiment_score": -0.3},
-    "NVDA": {"sentiment_score": 0.4},
-    "AAPL": {"sentiment_score": -0.2},
-    "BTC-USD": {"sentiment_score": 0.1},
-    "GC=F": {"sentiment_score": 0.0},
-    "CL=F": {"sentiment_score": -0.5}
+    "^TWII": {
+      "sentiment_score": 0.0
+    },
+    "0050.TW": {
+      "sentiment_score": 0.0
+    },
+    "2330.TW": {
+      "sentiment_score": 0.0
+    },
+    "2454.TW": {
+      "sentiment_score": 0.0
+    },
+    "2308.TW": {
+      "sentiment_score": 0.0
+    }
   }
 }

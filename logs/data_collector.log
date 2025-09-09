@@ -3492,3 +3492,36 @@
 2025-09-09 06:48:07.424 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-09-09 06:48:07.598 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250909 集數
 2025-09-09 06:48:07.740 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250909 集數
+2025-09-09 14:56:09.914 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-09-09 14:56:09.916 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-09-09 14:56:10.168 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-09-09 14:56:10.169 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-09-09 14:56:10.431 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-09-09 14:56:10.432 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-09-09 14:56:10.751 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-09-09 14:56:10.752 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-09-09 14:56:11.019 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2308_TW.csv
+2025-09-09 14:56:11.020 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2308_TW.csv
+2025-09-09 14:56:11.847 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-09-09/tw_news.json
+2025-09-09 14:56:15.405 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-09-09/social_metrics.json
+2025-09-09 14:56:15.405 | WARNING  | data_collector:validate:48 - 數據品質不佳: {'completeness': 1.0, 'freshness': True, 'volatility': False}, 分數: 0.6666666666666666
+2025-09-09 14:56:15.405 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 5 個標的, 3 則新聞, 品質分數: 0.6666666666666666
+2025-09-09 14:56:15.410 | INFO     | strategy_mastermind:run_strategy_tournament:126 - ^TWII 非主要交易標的，僅用於趨勢分析或播報
+2025-09-09 14:56:15.410 | ERROR    | strategy_mastermind:_trend_analysis:334 - ^TWII 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-09 14:56:15.418 | INFO     | market_analyst:analyze_market:76 - ^TWII 市場分析完成
+2025-09-09 14:56:15.418 | ERROR    | strategy_mastermind:run_strategy_tournament:130 - 0050.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-09 14:56:15.424 | INFO     | market_analyst:analyze_market:76 - 0050.TW 市場分析完成
+2025-09-09 14:56:15.424 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2330.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-09 14:56:15.424 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2330.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-09 14:56:15.430 | INFO     | market_analyst:analyze_market:76 - 2330.TW 市場分析完成
+2025-09-09 14:56:15.430 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2454.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-09 14:56:15.430 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2454.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-09 14:56:15.436 | INFO     | market_analyst:analyze_market:76 - 2454.TW 市場分析完成
+2025-09-09 14:56:15.436 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2308.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-09 14:56:15.436 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2308.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-09 14:56:15.441 | INFO     | market_analyst:analyze_market:76 - 2308.TW 市場分析完成
+2025-09-09 14:56:37.042 | INFO     | content_creator:generate_script:92 - 成功生成播客文字稿
+2025-09-09 14:57:00.674 | INFO     | podcast_distributor:generate_rss:127 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-09-09 14:57:02.268 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-09-09 14:57:02.550 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250909 集數
+2025-09-09 14:57:02.771 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250909 集數
