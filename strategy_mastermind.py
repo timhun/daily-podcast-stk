@@ -110,7 +110,7 @@ class StrategyEngine:
         except (FileNotFoundError, json.JSONDecodeError) as e:
             logger.error(f"載入 bigline_strategy.json 失敗: {str(e)}，使用預設參數")
             bigline_params = {
-                "weights": [[0.4, 0.35, 0.25], [0.5, 0.3, 0.2], [0.3, 0.4, 0.3]],
+                "weights": [[0.4, 0.35, 0.25], [0.5, 0.3, 0.2], [0.3, 0.4, 0.3]],  # 多組權重以進行網格搜索
                 "ma_short": 5,
                 "ma_mid": 20,
                 "ma_long": 60,
@@ -126,7 +126,7 @@ class StrategyEngine:
         index_file_path = f"{config['data_paths']['market']}/{timeframe}_{index_symbol.replace('^', '').replace('.', '_')}.csv"
         index_df = pd.read_csv(index_file_path) if os.path.exists(index_file_path) else pd.DataFrame()
 
-        # 計算強化指數（整合 data_collector.py 數據）
+        # 計算強化指數
         weight_stock_info = self._prepare_weight_stock_info(timeframe)
         composite_index_df = composite_index_with_weights(
             index_df['close'] if not index_df.empty else data['close'],
@@ -146,9 +146,10 @@ class StrategyEngine:
                 strategy.params = params
 
                 try:
-                    # 將強化指數加入策略回測
+                    # 將強化指數和情緒數據加入回測
                     strategy_data = data.copy()
                     strategy_data['composite_index'] = composite_index_df['Final_Index']
+                    strategy_data['sentiment_score'] = self._load_sentiment_score(symbol, timeframe)
                     result = strategy.backtest(symbol, strategy_data, timeframe)
                     score = result['expected_return'] if result['max_drawdown'] < config['strategy_params']['max_drawdown_threshold'] else -float('inf')
 
@@ -174,7 +175,6 @@ class StrategyEngine:
                 'result': best_result
             }
 
-        # Pass best_results to _generate_dynamic_strategy
         new_strategy = self._generate_dynamic_strategy(symbol, results, best_results, timeframe)
         if new_strategy:
             results['dynamic'] = self._apply_dynamic_strategy(symbol, new_strategy, timeframe)
@@ -217,7 +217,6 @@ class StrategyEngine:
         return optimized
 
     def _prepare_weight_stock_info(self, timeframe):
-        # 從 data_collector.py 的 CSV 文件讀取權值股數據
         weight_stock_info = {}
         for stock in ['0050.TW', '2330.TW']:
             file_path = f"{config['data_paths']['market']}/{timeframe}_{stock.replace('.', '_')}.csv"
@@ -259,7 +258,6 @@ class StrategyEngine:
     def _plot_composite_index(self, symbol, composite_index_df, timeframe):
         fig, ax1 = plt.subplots(figsize=(14, 8))
 
-        # 股價和均線
         ax1.plot(composite_index_df.index, composite_index_df['Price'], label='台股加權指數', color='black')
         ax1.plot(composite_index_df.index, composite_index_df['MA_5'], label='5日均線', linestyle='--', color='#1f77b4')
         ax1.plot(composite_index_df.index, composite_index_df['MA_20'], label='20日均線', linestyle='--', color='#ff7f0e')
@@ -271,7 +269,6 @@ class StrategyEngine:
         ax1.legend(loc='upper left')
         ax1.grid(True)
 
-        # 強化大盤線（次要 Y 軸）
         ax2 = ax1.twinx()
         ax2.plot(composite_index_df.index, composite_index_df['Final_Index'], label='強化大盤線', color='red', linewidth=2)
         ax2.set_ylabel('強化指數')
@@ -282,6 +279,16 @@ class StrategyEngine:
         os.makedirs(chart_dir, exist_ok=True)
         plt.savefig(f"{chart_dir}/{symbol.replace('.', '_')}_{timeframe}.png")
         plt.close()
+
+    def _load_sentiment_score(self, symbol, timeframe):
+        sentiment_file = f"{config['data_paths']['sentiment']}/{datetime.today().strftime('%Y-%m-%d')}/social_metrics.json"
+        try:
+            with open(sentiment_file, 'r', encoding='utf-8') as f:
+                sentiment_data = json.load(f)
+            return pd.Series(sentiment_data.get('symbols', {}).get(symbol, {}).get('sentiment_score', 0.0), index=pd.date_range(start='2025-01-01', end='2025-09-09'))
+        except Exception as e:
+            logger.error(f"載入情緒數據失敗: {str(e)}")
+            return pd.Series(0.0, index=pd.date_range(start='2025-01-01', end='2025-09-09'))
 
     def _generate_dynamic_strategy(self, symbol, results, best_results, timeframe):
         best_expected_return = -float('inf')
