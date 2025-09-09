@@ -38,11 +38,10 @@
     "sharpe_annualization_hourly": 1638,
     "expected_return_annualization_daily": 252,
     "expected_return_annualization_hourly": 1638,
-    "max_drawdown_threshold": 0.15,
-    "stop_loss_ratio": 0.95,
-    "position_size": 1000,
-    "daily_multiplier": 1.05,
-    "hourly_multiplier": 1.02
+    "daily_multiplier": 1.1,
+    "hourly_multiplier": 1.05,
+    "stop_loss_ratio": 0.9,
+    "position_size": 0.1
   },
   "logging": {
     "file": "logs/strategy_mastermind.log",
