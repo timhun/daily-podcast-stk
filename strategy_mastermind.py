@@ -12,6 +12,7 @@ from strategies.utils import get_param_combinations
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import ta
 
 # Load config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -22,6 +23,8 @@ logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
 # 計算移動平均線
 def calculate_ma(prices, window):
+    if not isinstance(prices, pd.Series):
+        raise ValueError(f"prices 必須是 pandas.Series，收到 {type(prices)}")
     return prices.rolling(window=window).mean()
 
 # 判斷三線多頭
@@ -30,6 +33,8 @@ def is_bullish(ma_short, ma_mid, ma_long):
 
 # 計算強化指數
 def composite_index_with_weights(prices, volume, weight_stock_info, weights=[0.4, 0.35, 0.25]):
+    if not isinstance(prices, pd.Series) or not isinstance(volume, pd.Series):
+        raise ValueError(f"prices 和 volume 必須是 pandas.Series，收到 prices: {type(prices)}, volume: {type(volume)}")
     ma_short = calculate_ma(prices, 5)
     ma_mid = calculate_ma(prices, 20)
     ma_long = calculate_ma(prices, 60)
@@ -120,6 +125,18 @@ class StrategyEngine:
         if symbol not in ['QQQ', '0050.TW']:
             logger.info(f"{symbol} 非主要交易標的，僅用於趨勢分析或播報")
             return self._trend_analysis(symbol, data, timeframe)
+
+        if not isinstance(data, pd.DataFrame) or data.empty or 'close' not in data.columns:
+            logger.error(f"{symbol} 數據格式錯誤或缺少 close 欄位，收到 {type(data)}")
+            return {
+                'symbol': symbol,
+                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
+                'index_symbol': index_symbol or ('^TWII' if symbol == '0050.TW' else '^IXIC'),
+                'winning_strategy': {'name': 'none', 'confidence': 0.0, 'expected_return': 0.0, 'max_drawdown': 0.0, 'sharpe_ratio': 0.0},
+                'signals': {'position': 'NEUTRAL', 'entry_price': 0.0, 'target_price': 0.0, 'stop_loss': 0.0, 'position_size': 0.0},
+                'dynamic_params': {},
+                'strategy_version': '2.0'
+            }
 
         results = {}
         best_results = {}
@@ -255,6 +272,10 @@ class StrategyEngine:
         return weight_stock_info
 
     def _plot_composite_index(self, symbol, composite_index_df, timeframe):
+        if symbol not in ['QQQ', '0050.TW']:
+            logger.info(f"{symbol} 非主要交易標的，跳過圖表生成")
+            return
+
         fig, ax1 = plt.subplots(figsize=(14, 8))
 
         ax1.plot(composite_index_df.index, composite_index_df['Price'], label=f'{symbol} 價格', color='black')
@@ -287,6 +308,9 @@ class StrategyEngine:
                 df = pd.read_csv(file_path)
                 df['date'] = pd.to_datetime(df['date'])
                 df.set_index('date', inplace=True)
+                if df.empty or 'close' not in df.columns:
+                    logger.warning(f"{symbol} 數據無效，跳過播報")
+                    continue
                 latest = df.iloc[-1]
                 ma_short = calculate_ma(df['close'], 5)
                 ma_mid = calculate_ma(df['close'], 20)
@@ -306,26 +330,49 @@ class StrategyEngine:
         logger.info(f"市場總結儲存至: {summary_dir}/market_summary.json")
 
     def _trend_analysis(self, symbol, data, timeframe):
+        if not isinstance(data, pd.DataFrame) or data.empty or 'close' not in data.columns:
+            logger.error(f"{symbol} 數據格式錯誤或缺少 close 欄位，收到 {type(data)}")
+            return {
+                'symbol': symbol,
+                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
+                'trend': 'Unknown',
+                'rsi': 0.0,
+                'signals': {'position': 'NEUTRAL'}
+            }
+
         df = data.copy()
-        ma_short = calculate_ma(df['close'], 5)
-        ma_mid = calculate_ma(df['close'], 20)
-        ma_long = calculate_ma(df['close'], 60)
-        trend = 'Bullish' if is_bullish(ma_short, ma_mid, ma_long).iloc[-1] else 'Bearish'
-        rsi = ta.momentum.RSIIndicator(df['close'], window=14).rsi().iloc[-1]
-        return {
-            'symbol': symbol,
-            'analysis_date': datetime.today().strftime('%Y-%m-%d'),
-            'trend': trend,
-            'rsi': rsi,
-            'signals': {'position': 'NEUTRAL'}
-        }
+        try:
+            df['date'] = pd.to_datetime(df['date'])
+            df.set_index('date', inplace=True)
+            ma_short = calculate_ma(df['close'], 5)
+            ma_mid = calculate_ma(df['close'], 20)
+            ma_long = calculate_ma(df['close'], 60)
+            trend = 'Bullish' if is_bullish(ma_short, ma_mid, ma_long).iloc[-1] else 'Bearish'
+            rsi = ta.momentum.RSIIndicator(df['close'], window=14).rsi().iloc[-1]
+            return {
+                'symbol': symbol,
+                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
+                'trend': trend,
+                'rsi': float(rsi) if not np.isnan(rsi) else 0.0,
+                'signals': {'position': 'NEUTRAL'}
+            }
+        except Exception as e:
+            logger.error(f"{symbol} 趨勢分析失敗: {str(e)}")
+            return {
+                'symbol': symbol,
+                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
+                'trend': 'Unknown',
+                'rsi': 0.0,
+                'signals': {'position': 'NEUTRAL'}
+            }
 
     def _load_sentiment_score(self, symbol, timeframe):
         sentiment_file = f"{config['data_paths']['sentiment']}/{datetime.today().strftime('%Y-%m-%d')}/social_metrics.json"
         try:
             with open(sentiment_file, 'r', encoding='utf-8') as f:
                 sentiment_data = json.load(f)
-            return pd.Series(sentiment_data.get('symbols', {}).get(symbol, {}).get('sentiment_score', 0.0), index=pd.date_range(start='2025-01-01', end='2025-09-09'))
+            score = sentiment_data.get('symbols', {}).get(symbol, {}).get('sentiment_score', 0.0)
+            return pd.Series(score, index=pd.date_range(start='2025-01-01', end='2025-09-09'))
         except Exception as e:
             logger.error(f"載入情緒數據失敗: {str(e)}")
             return pd.Series(0.0, index=pd.date_range(start='2025-01-01', end='2025-09-09'))
