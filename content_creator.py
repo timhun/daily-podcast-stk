@@ -78,9 +78,13 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     市場情緒：{sentiment_str}
     市場分析：{market_analysis_str or '無市場分析'}
     策略分析：{strategy_str or '無有效策略分析'}
-    結尾：投資金句 (例如: 投資如馬拉松，穩健前行才能致勝)。
+    結尾：投資金句 (選用 - 科斯托蘭尼 André Kostolany)。
     
-    輸出應為純文字稿，無額外格式。記得你是專業的財經主播。
+    注意 (1) 輸出應為純文字稿，無額外格式。記得你是專業的財經主播。
+        (2) 不要播出股票代碼而是直接用股票名稱，如 TWII 為加權指數，2330為台積電
+        (3) 不要播報技術指標數字，而是說出數字所代表的意思
+        (4) 產業新聞只取半導體及AI相關
+        (5) 最後要明確指出 QQQ 和 0050 的買賣策略及大盤多空方向
     """
 
     try:
