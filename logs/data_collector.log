@@ -3737,3 +3737,92 @@
 2025-09-10 06:44:15.533 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-09-10 06:44:15.687 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250910 集數
 2025-09-10 06:44:15.801 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250910 集數
+2025-09-10 21:42:08.766 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_GSPC.csv
+2025-09-10 21:42:08.768 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_GSPC.csv
+2025-09-10 21:42:08.996 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_QQQ.csv
+2025-09-10 21:42:08.998 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_QQQ.csv
+2025-09-10 21:42:09.197 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_NVDA.csv
+2025-09-10 21:42:09.199 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_NVDA.csv
+2025-09-10 21:42:09.366 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_DJI.csv
+2025-09-10 21:42:09.368 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_DJI.csv
+2025-09-10 21:42:09.556 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_IXIC.csv
+2025-09-10 21:42:09.558 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_IXIC.csv
+2025-09-10 21:42:09.811 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_SPY.csv
+2025-09-10 21:42:09.812 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_SPY.csv
+2025-09-10 21:42:10.051 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_AAPL.csv
+2025-09-10 21:42:10.053 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_AAPL.csv
+2025-09-10 21:42:10.249 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_GOOG.csv
+2025-09-10 21:42:10.250 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_GOOG.csv
+2025-09-10 21:42:10.472 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_META.csv
+2025-09-10 21:42:10.473 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_META.csv
+2025-09-10 21:42:10.701 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_MSFT.csv
+2025-09-10 21:42:10.703 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_MSFT.csv
+2025-09-10 21:42:10.864 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TSLA.csv
+2025-09-10 21:42:10.865 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TSLA.csv
+2025-09-10 21:42:11.305 | ERROR    | data_collector:fetch_market_data:58 - BRK.B 每日數據無回應
+2025-09-10 21:42:11.439 | ERROR    | data_collector:fetch_market_data:105 - BRK.B 每小時數據無回應
+2025-09-10 21:42:11.440 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_BRK_B.csv
+2025-09-10 21:42:11.441 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_BRK_B.csv
+2025-09-10 21:42:11.605 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_VIX.csv
+2025-09-10 21:42:11.608 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_VIX.csv
+2025-09-10 21:42:11.783 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_BTC-USD.csv
+2025-09-10 21:42:11.786 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_BTC-USD.csv
+2025-09-10 21:42:11.948 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_GC=F.csv
+2025-09-10 21:42:11.951 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_GC=F.csv
+2025-09-10 21:42:12.146 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_CL=F.csv
+2025-09-10 21:42:12.149 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_CL=F.csv
+2025-09-10 21:42:13.820 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-09-10/us_news.json
+2025-09-10 21:42:16.834 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-09-10/social_metrics.json
+2025-09-10 21:42:16.834 | INFO     | data_collector:collect_data:252 - us 數據收集完成: 16 個標的, 3 則新聞, 品質分數: 1.0
+2025-09-10 21:42:16.941 | INFO     | strategy_mastermind:run_strategy_tournament:126 - ^GSPC 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:16.941 | ERROR    | strategy_mastermind:_trend_analysis:334 - ^GSPC 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:16.947 | INFO     | market_analyst:analyze_market:76 - ^GSPC 市場分析完成
+2025-09-10 21:42:16.949 | ERROR    | strategy_mastermind:run_strategy_tournament:130 - QQQ 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:16.955 | INFO     | market_analyst:analyze_market:76 - QQQ 市場分析完成
+2025-09-10 21:42:16.957 | INFO     | strategy_mastermind:run_strategy_tournament:126 - NVDA 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:16.957 | ERROR    | strategy_mastermind:_trend_analysis:334 - NVDA 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:16.963 | INFO     | market_analyst:analyze_market:76 - NVDA 市場分析完成
+2025-09-10 21:42:16.965 | INFO     | strategy_mastermind:run_strategy_tournament:126 - ^DJI 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:16.965 | ERROR    | strategy_mastermind:_trend_analysis:334 - ^DJI 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:16.970 | INFO     | market_analyst:analyze_market:76 - ^DJI 市場分析完成
+2025-09-10 21:42:16.972 | INFO     | strategy_mastermind:run_strategy_tournament:126 - ^IXIC 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:16.972 | ERROR    | strategy_mastermind:_trend_analysis:334 - ^IXIC 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:16.978 | INFO     | market_analyst:analyze_market:76 - ^IXIC 市場分析完成
+2025-09-10 21:42:16.980 | INFO     | strategy_mastermind:run_strategy_tournament:126 - SPY 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:16.980 | ERROR    | strategy_mastermind:_trend_analysis:334 - SPY 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:16.985 | INFO     | market_analyst:analyze_market:76 - SPY 市場分析完成
+2025-09-10 21:42:16.987 | INFO     | strategy_mastermind:run_strategy_tournament:126 - AAPL 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:16.987 | ERROR    | strategy_mastermind:_trend_analysis:334 - AAPL 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:16.993 | INFO     | market_analyst:analyze_market:76 - AAPL 市場分析完成
+2025-09-10 21:42:16.995 | INFO     | strategy_mastermind:run_strategy_tournament:126 - GOOG 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:16.995 | ERROR    | strategy_mastermind:_trend_analysis:334 - GOOG 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:17.001 | INFO     | market_analyst:analyze_market:76 - GOOG 市場分析完成
+2025-09-10 21:42:17.003 | INFO     | strategy_mastermind:run_strategy_tournament:126 - META 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:17.003 | ERROR    | strategy_mastermind:_trend_analysis:334 - META 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:17.008 | INFO     | market_analyst:analyze_market:76 - META 市場分析完成
+2025-09-10 21:42:17.010 | INFO     | strategy_mastermind:run_strategy_tournament:126 - MSFT 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:17.010 | ERROR    | strategy_mastermind:_trend_analysis:334 - MSFT 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:17.016 | INFO     | market_analyst:analyze_market:76 - MSFT 市場分析完成
+2025-09-10 21:42:17.018 | INFO     | strategy_mastermind:run_strategy_tournament:126 - TSLA 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:17.018 | ERROR    | strategy_mastermind:_trend_analysis:334 - TSLA 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:17.023 | INFO     | market_analyst:analyze_market:76 - TSLA 市場分析完成
+2025-09-10 21:42:17.025 | INFO     | strategy_mastermind:run_strategy_tournament:126 - BRK.B 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:17.025 | ERROR    | strategy_mastermind:_trend_analysis:334 - BRK.B 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:17.026 | ERROR    | market_analyst:analyze_market:32 - BRK.B daily 數據不足: 實際 1 筆，需 20 筆
+2025-09-10 21:42:17.028 | INFO     | strategy_mastermind:run_strategy_tournament:126 - ^VIX 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:17.028 | ERROR    | strategy_mastermind:_trend_analysis:334 - ^VIX 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:17.034 | INFO     | market_analyst:analyze_market:76 - ^VIX 市場分析完成
+2025-09-10 21:42:17.036 | INFO     | strategy_mastermind:run_strategy_tournament:126 - BTC-USD 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:17.036 | ERROR    | strategy_mastermind:_trend_analysis:334 - BTC-USD 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:17.042 | INFO     | market_analyst:analyze_market:76 - BTC-USD 市場分析完成
+2025-09-10 21:42:17.043 | INFO     | strategy_mastermind:run_strategy_tournament:126 - GC=F 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:17.044 | ERROR    | strategy_mastermind:_trend_analysis:334 - GC=F 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:17.049 | INFO     | market_analyst:analyze_market:76 - GC=F 市場分析完成
+2025-09-10 21:42:17.051 | INFO     | strategy_mastermind:run_strategy_tournament:126 - CL=F 非主要交易標的，僅用於趨勢分析或播報
+2025-09-10 21:42:17.051 | ERROR    | strategy_mastermind:_trend_analysis:334 - CL=F 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-10 21:42:17.057 | INFO     | market_analyst:analyze_market:76 - CL=F 市場分析完成
+2025-09-10 21:42:52.114 | INFO     | content_creator:generate_script:96 - 成功生成播客文字稿
+2025-09-10 21:43:19.352 | INFO     | podcast_distributor:generate_rss:127 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-09-10 21:43:19.941 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-09-10 21:43:20.194 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250911 集數
+2025-09-10 21:43:20.425 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250911 集數
