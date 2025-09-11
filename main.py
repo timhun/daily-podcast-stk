@@ -3,7 +3,7 @@ import datetime
 import os
 from dotenv import load_dotenv
 import pandas as pd
-from data_collector import collect_data
+from data_collector import DataCollector  # Import the class
 from content_creator import generate_script
 from voice_producer import generate_audio
 from cloud_manager import upload_episode
