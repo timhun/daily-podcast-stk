@@ -35,6 +35,7 @@
     "min_data_length_ml": 50
   },
   "strategy_params": {
+    "max_drawdown_threshold": 0.15,
     "sharpe_annualization_daily": 252,
     "sharpe_annualization_hourly": 1638,
     "expected_return_annualization_daily": 252,
@@ -46,7 +47,7 @@
   },
   "logging": {
     "file": "logs/strategy_mastermind.log",
-    "rotation": "1 MB"
+    "rotation": "10 MB"
   },
   "quality_thresholds": {
     "freshness_hours": 24,
