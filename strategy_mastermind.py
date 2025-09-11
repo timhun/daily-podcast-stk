@@ -8,6 +8,7 @@ from copy import deepcopy
 from strategies.technical_strategy import TechnicalStrategy
 from strategies.ml_strategy import MLStrategy
 from strategies.bigline_strategy import BigLineStrategy
+from strategies.simple_trend_strategy import SimpleTrendStrategy  # 新增
 from strategies.utils import get_param_combinations
 import pandas as pd
 import numpy as np
@@ -121,6 +122,20 @@ class StrategyEngine:
             }
         self.models['bigline'] = BigLineStrategy(config, bigline_params)
 
+        # Load Simple Trend strategy
+        try:
+            with open('strategies/simple_trend_strategy.json', 'r', encoding='utf-8') as f:
+                simple_trend_params = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError) as e:
+            logger.error(f"載入 simple_trend_strategy.json 失敗: {str(e)}，使用預設參數")
+            simple_trend_params = {
+                "ma_window": 20,
+                "vol_window": 20,
+                "breakout_price": 53.0,
+                "min_data_length": 20
+            }
+        self.models['simple_trend'] = SimpleTrendStrategy(config, simple_trend_params)
+        
     def run_strategy_tournament(self, symbol, data, timeframe='daily', index_symbol=None):
         if symbol not in ['QQQ', '0050.TW']:
             logger.info(f"{symbol} 非主要交易標的，僅用於趨勢分析或播報")
