@@ -36,9 +36,9 @@ class DataCollector:
                 logger.error(f"{symbol} {timeframe} data empty")
                 return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
             data = data.reset_index()
-            data['date'] = pd.to_datetime(data['Date'])
+            data['date'] = pd.to_datetime(data['date'])
             data['symbol'] = symbol
-            data['change'] = data['Close'].pct_change()
+            data['change'] = data['close'].pct_change()
             data = data[['date', 'symbol', 'open', 'high', 'Low', 'close', 'change', 'volume']]
             data.columns = ['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume']
             return data
