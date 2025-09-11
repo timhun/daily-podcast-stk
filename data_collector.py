@@ -39,7 +39,7 @@ class DataCollector:
             data['date'] = pd.to_datetime(data['Date'])
             data['symbol'] = symbol
             data['change'] = data['Close'].pct_change()
-            data = data[['date', 'symbol', 'Open', 'High', 'Low', 'Close', 'change', 'Volume']]
+            data = data[['date', 'symbol', 'open', 'high', 'Low', 'close', 'change', 'volume']]
             data.columns = ['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume']
             return data
         except Exception as e:
