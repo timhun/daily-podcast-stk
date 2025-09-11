@@ -77,23 +77,19 @@ class DataCollector:
         market_data = {'market': {}, 'news': {}, 'sentiment': {}}
 
         for symbol in symbols:
-            # Fetch and save daily data
             daily_data = self.fetch_market_data(symbol, 'daily')
             file_path = f"{self.config['data_paths']['market']}/daily_{symbol.replace('^', '').replace('.', '_').replace('-', '_')}.csv"
             os.makedirs(os.path.dirname(file_path), exist_ok=True)
             daily_data.to_csv(file_path, index=False)
             logger.info(f"Daily data saved to: {file_path}")
 
-            # Fetch and save hourly data
             hourly_data = self.fetch_market_data(symbol, 'hourly')
             hourly_path = f"{self.config['data_paths']['market']}/hourly_{symbol.replace('^', '').replace('.', '_').replace('-', '_')}.csv"
             hourly_data.to_csv(hourly_path, index=False)
             logger.info(f"Hourly data saved to: {hourly_path}")
 
-            # Store latest data
             market_data['market'][symbol] = {'latest': daily_data.iloc[-1].to_dict() if not daily_data.empty else {}}
 
-        # Fetch news
         news = self.fetch_news(mode)
         news_path = f"{self.config['data_paths']['news']}/{datetime.now(self.TW_TZ).strftime('%Y-%m-%d')}/{mode}_news.json"
         os.makedirs(os.path.dirname(news_path), exist_ok=True)
@@ -102,7 +98,6 @@ class DataCollector:
         logger.info(f"News data saved to: {news_path}")
         market_data['news'] = news
 
-        # Analyze sentiment
         sentiment = self.analyze_sentiment(news, symbols)
         sentiment_path = f"{self.config['data_paths']['sentiment']}/{datetime.now(self.TW_TZ).strftime('%Y-%m-%d')}/social_metrics.json"
         os.makedirs(os.path.dirname(sentiment_path), exist_ok=True)
@@ -111,7 +106,6 @@ class DataCollector:
         logger.info(f"Sentiment data saved to: {sentiment_path}")
         market_data['sentiment'] = sentiment
 
-        # Validate data quality
         quality_score = 1.0
         for symbol in symbols:
             file_path = f"{self.config['data_paths']['market']}/daily_{symbol.replace('^', '').replace('.', '_').replace('-', '_')}.csv"
