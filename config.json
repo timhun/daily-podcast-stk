@@ -1,6 +1,6 @@
 {
   "symbols": {
-    "us": ["^GSPC", "QQQ", "NVDA", "^DJI", "^IXIC", "SPY", "AAPL","GOOG","META","MSFT","TSLA","BRK.B", "^VIX", "BTC-USD", "GC=F", "CL=F"],
+    "us": ["^GSPC", "QQQ", "NVDA", "^DJI", "^IXIC", "SPY", "AAPL","GOOG","META","MSFT","TSLA","TSM", "^VIX", "BTC-USD", "GC=F", "CL=F"],
     "tw": ["^TWII", "0050.TW", "2330.TW", "2454.TW", "2308.TW"]
   },
   "news_sources": {
