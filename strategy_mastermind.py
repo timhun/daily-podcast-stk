@@ -301,18 +301,19 @@ class StrategyEngine:
         chat = client.chat.create(model="grok-3-mini")
         chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on expected return, ensuring max drawdown < 15%."))
 
+        # User prompt
         prompt = (
             f"為 {symbol} 選擇最佳策略（時間框架: {timeframe}，大盤參考: {index_symbol}）。以下是回測結果：\n"
             f"{json.dumps(results, ensure_ascii=False, indent=2)}\n"
             f"最佳參數：\n{json.dumps(best_results, ensure_ascii=False, indent=2)}\n"
             "要求：\n"
-            f"- 選擇預期報酬最高的策略，且最大回撤 < {config['strategy_params']['max_drawdown_threshold']}。\n"
+            f"- 選擇預期報酬最高的策略，且最大回撤 < {self.config.get('strategy_params', {}).get('max_drawdown_threshold', 0.15)}。\n"
             "- 提供最佳策略名稱、信心分數、預期報酬、最大回撤、夏普比率、交易信號和動態參數。\n"
             "- 格式為 JSON:\n"
             "```json\n"
             "{\n"
             f'  "symbol": "{symbol}",\n'
-            f'  "analysis_date": "{datetime.datetime.now(pytz.timezone('Asia/Taipei')).strftime('%Y-%m-%d')}",\n'
+            f'  "analysis_date": "{datetime.datetime.now(pytz.timezone("Asia/Taipei")).strftime("%Y-%m-%d")}",\n'
             f'  "index_symbol": "{index_symbol}",\n'
             '  "winning_strategy": {\n'
             '    "name": "strategy_name",\n'
