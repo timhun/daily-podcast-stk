@@ -3,7 +3,7 @@ import datetime
 import os
 from dotenv import load_dotenv
 import pandas as pd
-from data_collector import DataCollector  # Import the class
+from data_collector import DataCollector
 from content_creator import generate_script
 from voice_producer import generate_audio
 from cloud_manager import upload_episode
@@ -14,11 +14,11 @@ from loguru import logger
 import json
 import pytz
 
-# 載入 config.json
+# Load config.json
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
-# 設置日誌
+# Configure logging
 logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
 load_dotenv()
@@ -28,10 +28,11 @@ def main(mode):
     today = datetime.datetime.now(TW_TZ).strftime("%Y%m%d")
     logger.info(f"開始生成 {mode.upper()} 版 podcast，日期 {today}...")
 
-    # 步驟 1：收集新聞和情緒數據
-    market_data = collect_data(mode)  # 僅用於新聞和情緒數據
+    # Step 1: Collect news and sentiment data
+    data_collector = DataCollector(config)  # Instantiate DataCollector
+    market_data = data_collector.collect_data(mode)  # Call class method
 
-    # 步驟 2：從 CSV 載入市場數據並執行策略分析
+    # Step 2: Load market data from CSV and run strategy analysis
     strategy_engine = StrategyEngine()
     analyst = MarketAnalyst(config)
     strategy_results = {}
@@ -39,7 +40,7 @@ def main(mode):
     symbols = config['symbols'][mode] + config['symbols']['commodities']
 
     for symbol in symbols:
-        # 從 CSV 載入歷史數據
+        # Load historical data from CSV
         file_path = f"{config['data_paths']['market']}/daily_{symbol.replace('^', '').replace('.', '_').replace('-', '_')}.csv"
         try:
             if os.path.exists(file_path):
@@ -57,7 +58,22 @@ def main(mode):
             df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
 
         try:
-            strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, df, mode=mode)
+            # Run strategy only for QQQ and 0050.TW
+            if symbol in ['QQQ', '0050.TW']:
+                strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, df)
+            else:
+                # Trend analysis for other symbols
+                strategy_results[symbol] = {
+                    'symbol': symbol,
+                    'analysis_date': datetime.datetime.now(TW_TZ).strftime('%Y-%m-%d'),
+                    'index_symbol': '^TWII' if symbol in config['symbols']['tw'] else '^IXIC',
+                    'winning_strategy': {'name': 'none', 'confidence': 0.0, 'expected_return': 0.0, 'max_drawdown': 0.0, 'sharpe_ratio': 0.0},
+                    'signals': {'position': 'NEUTRAL', 'entry_price': 0.0, 'target_price': 0.0, 'stop_loss': 0.0, 'position_size': 0.0},
+                    'dynamic_params': {},
+                    'strategy_version': '2.0',
+                    'trend': 'Unknown',
+                    'rsi': 0.0
+                }
             market_analysis[symbol] = analyst.analyze_market(symbol)
             logger.info(f"{symbol} 策略和市場分析完成")
         except Exception as e:
@@ -65,7 +81,7 @@ def main(mode):
             strategy_results[symbol] = {
                 'symbol': symbol,
                 'analysis_date': datetime.datetime.now(TW_TZ).strftime('%Y-%m-%d'),
-                'index_symbol': '^TWII' if mode == 'tw' else '^IXIC',
+                'index_symbol': '^TWII' if symbol in config['symbols']['tw'] else '^IXIC',
                 'winning_strategy': {'name': 'none', 'confidence': 0.0, 'expected_return': 0.0, 'max_drawdown': 0.0, 'sharpe_ratio': 0.0},
                 'signals': {'position': 'NEUTRAL', 'entry_price': 0.0, 'target_price': 0.0, 'stop_loss': 0.0, 'position_size': 0.0},
                 'dynamic_params': {},
@@ -73,14 +89,14 @@ def main(mode):
             }
             market_analysis[symbol] = {'trend': 'Unknown', 'rsi': 0.0}
 
-    # 儲存策略結果
+    # Save strategy results
     output_dir = f"{config['data_paths']['strategy']}/{datetime.datetime.now(TW_TZ).strftime('%Y-%m-%d')}"
     os.makedirs(output_dir, exist_ok=True)
     with open(f"{output_dir}/strategy_results.json", 'w', encoding='utf-8') as f:
         json.dump(strategy_results, f, ensure_ascii=False, indent=2)
     logger.info(f"策略結果儲存至：{output_dir}/strategy_results.json")
 
-    # 步驟 3：生成文字稿
+    # Step 3: Generate script
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
     script_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.txt"
     script_path = f"{podcast_dir}/{script_filename}"
@@ -90,20 +106,20 @@ def main(mode):
         f.write(script)
     logger.info(f"文字稿儲存至：{script_path}")
 
-    # 步驟 4：生成音頻
+    # Step 4: Generate audio
     audio_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.mp3"
     audio_path = f"{podcast_dir}/{audio_filename}"
     os.makedirs(os.path.dirname(audio_path), exist_ok=True)
     generate_audio(script_path, audio_path)
     logger.info(f"音頻儲存至：{audio_path}")
 
-    # 步驟 5：上傳至 B2
+    # Step 5: Upload to B2
     files = {'script': script_path, 'audio': audio_path}
     uploaded_urls = upload_episode(today, mode, files)
     audio_url = uploaded_urls['audio']
     logger.info(f"已上傳至 B2：{audio_url}")
 
-    # 步驟 6：生成 RSS 和 Slack 通知
+    # Step 6: Generate RSS and notify Slack
     generate_rss(today, mode, script, audio_url)
     notify_slack(today, mode, audio_url)
     logger.info("Podcast 生成完成！")
