@@ -1,7 +1,8 @@
 {
   "symbols": {
-    "us": ["^GSPC", "QQQ", "NVDA", "^DJI", "^IXIC", "SPY", "AAPL","GOOG","META","MSFT","TSLA","TSM", "^VIX", "BTC-USD", "GC=F", "CL=F"],
-    "tw": ["^TWII", "0050.TW", "2330.TW", "2454.TW", "2308.TW"]
+    "us": ["^GSPC", "QQQ", "NVDA", "^DJI", "^IXIC", "SPY", "AAPL","GOOG","META","MSFT","TSLA","TSM", "^VIX"],
+    "tw": ["^TWII", "0050.TW", "2330.TW", "2317.TW", "2454.TW", "2308.TW", "2881.TW", "2412.TW", "2382.TW", "2882.TW", "2891.TW", "3711.TW"],
+    "commodities": ["BTC-USD", "GC=F", "CL=F"]
   },
   "news_sources": {
     "us": [
