@@ -53,7 +53,7 @@ class DataCollector:
                 {'title': f'{mode.upper()} 科技股波動加劇', 'timestamp': datetime.now(self.TW_TZ).strftime('%Y-%m-%d')},
                 {'title': f'{mode.upper()} 投資者關注大盤趨勢', 'timestamp': datetime.now(self.TW_TZ).strftime('%Y-%m-%d')}
             ]
-            time.sleep(2)
+            time.sleep(2)  # 避免 API 限制
             return news
         except Exception as e:
             logger.error(f"抓取新聞失敗: {str(e)}")
@@ -63,14 +63,18 @@ class DataCollector:
         try:
             client = Client(api_key=self.api_key)
             chat = client.chat.create(model="grok-3-mini")
-            prompt = f"分析以下新聞對 {', '.join(symbols)} 的情緒影響：{json.dumps(news)}"
+            prompt = f"分析以下新聞對 {', '.join(symbols)} 的情緒影響，返回 JSON 格式，包含 overall_score, bullish_ratio 和每個標的的 sentiment_score：{json.dumps(news)}"
             chat.append({"role": "user", "content": prompt})
             response = chat.sample()
             sentiment = json.loads(response.content)
             return sentiment
         except:
             logger.error("情緒分析失敗")
-            return {'overall_score': 0.0, 'bullish_ratio': 0.0, 'symbols': {s: {'sentiment_score': 0.0} for s in symbols}}
+            return {
+                'overall_score': 0.0,
+                'bullish_ratio': 0.0,
+                'symbols': {s: {'sentiment_score': 0.0} for s in symbols}
+            }
 
     def collect_data(self, mode):
         symbols = self.config['symbols'][mode] + self.config['symbols']['commodities']
