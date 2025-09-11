@@ -57,7 +57,7 @@ def main(mode):
             df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
 
         try:
-            strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, df)
+            strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, df, mode=mode)
             market_analysis[symbol] = analyst.analyze_market(symbol)
             logger.info(f"{symbol} 策略和市場分析完成")
         except Exception as e:
@@ -65,7 +65,7 @@ def main(mode):
             strategy_results[symbol] = {
                 'symbol': symbol,
                 'analysis_date': datetime.datetime.now(TW_TZ).strftime('%Y-%m-%d'),
-                'index_symbol': '^TWII' if symbol == '0050.TW' else '^IXIC',
+                'index_symbol': '^TWII' if mode == 'tw' else '^IXIC',
                 'winning_strategy': {'name': 'none', 'confidence': 0.0, 'expected_return': 0.0, 'max_drawdown': 0.0, 'sharpe_ratio': 0.0},
                 'signals': {'position': 'NEUTRAL', 'entry_price': 0.0, 'target_price': 0.0, 'stop_loss': 0.0, 'position_size': 0.0},
                 'dynamic_params': {},
