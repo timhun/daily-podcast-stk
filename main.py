@@ -36,25 +36,16 @@ def main(mode):
     analyst = MarketAnalyst(config)
     strategy_results = {}
     market_analysis = {}
-    symbols = config['symbols'][mode] + config['symbols']['commodities']
-
-    for symbol in symbols:
-        # 從 CSV 載入歷史數據
-        file_path = f"{config['data_paths']['market']}/daily_{symbol.replace('^', '').replace('.', '_').replace('-', '_')}.csv"
-        try:
-            if os.path.exists(file_path):
-                df = pd.read_csv(file_path)
-                df['date'] = pd.to_datetime(df['date'])
-                df.set_index('date', inplace=True)
-                if df.empty or 'close' not in df.columns:
-                    logger.warning(f"{symbol} CSV 為空或缺少 'close' 欄位")
-                    df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-            else:
-                logger.warning(f"找不到 {symbol} 的 CSV 檔案：{file_path}")
-                df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-        except Exception as e:
-            logger.error(f"載入 {symbol} CSV 失敗：{str(e)}")
-            df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
+   for symbol in market_data['market']:
+        # Load the full DataFrame from CSV for historical data
+        file_path = f"{config['data_paths']['market']}/daily_{symbol.replace('^', '').replace('.', '_')}.csv"
+        if os.path.exists(file_path):
+            df = pd.read_csv(file_path)
+            df['date'] = pd.to_datetime(df['date'])
+            df.set_index('date', inplace=True)
+        else:
+            df = pd.DataFrame()
+            print(f"Warning: No data for {symbol}, using empty DataFrame")
 
         try:
             strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, df)
