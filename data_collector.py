@@ -27,34 +27,34 @@ class DataCollector:
         }
 
     def fetch_market_data(self, symbol, timeframe='daily'):
-    try:
-        ticker = yf.Ticker(symbol)
-        period = '1y' if timeframe == 'daily' else '14d'
-        interval = '1d' if timeframe == 'daily' else '1h'
-        data = ticker.history(period=period, interval=interval, auto_adjust=True)
-        if data.empty:
-            logger.error(f"{symbol} {timeframe} 數據為空")
+        try:
+            ticker = yf.Ticker(symbol)
+            period = '1y' if timeframe == 'daily' else '14d'
+            interval = '1d' if timeframe == 'daily' else '1h'
+            data = ticker.history(period=period, interval=interval, auto_adjust=True)
+            if data.empty:
+                logger.error(f"{symbol} {timeframe} 數據為空")
+                return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
+            data = data.reset_index()
+            # 檢查 Date 欄位
+            if 'Date' not in data.columns:
+                logger.warning(f"{symbol} {timeframe} 缺少 'Date' 欄位，使用索引")
+                data['date'] = pd.to_datetime(data.index, utc=True)
+            else:
+                data['date'] = pd.to_datetime(data['Date'], utc=True)
+            data['symbol'] = symbol
+            data['change'] = data['Close'].pct_change()
+            data = data[['date', 'symbol', 'Open', 'High', 'Low', 'Close', 'change', 'Volume']]
+            data.columns = ['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume']
+            if not all(col in data.columns for col in ['open', 'close', 'volume']):
+                logger.error(f"{symbol} {timeframe} 數據缺少必要欄位: {list(data.columns)}")
+                return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
+            logger.info(f"{symbol} {timeframe} 數據獲取成功: {len(data)} 行")
+            return data
+        except Exception as e:
+            logger.error(f"{symbol} {timeframe} 數據獲取失敗: {str(e)}")
             return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-        data = data.reset_index()
-        # 檢查 Date 欄位
-        if 'Date' not in data.columns:
-            logger.warning(f"{symbol} {timeframe} 缺少 'Date' 欄位，使用索引")
-            data['date'] = pd.to_datetime(data.index, utc=True)
-        else:
-            data['date'] = pd.to_datetime(data['Date'], utc=True)
-        data['symbol'] = symbol
-        data['change'] = data['Close'].pct_change()
-        data = data[['date', 'symbol', 'Open', 'High', 'Low', 'Close', 'change', 'Volume']]
-        data.columns = ['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume']
-        if not all(col in data.columns for col in ['open', 'close', 'volume']):
-            logger.error(f"{symbol} {timeframe} 數據缺少必要欄位: {list(data.columns)}")
-            return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-        logger.info(f"{symbol} {timeframe} 數據獲取成功: {len(data)} 行")
-        return data
-    except Exception as e:
-        logger.error(f"{symbol} {timeframe} 數據獲取失敗: {str(e)}")
-        return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-    
+        
     def fetch_news(self, mode):
         try:
             news = [
