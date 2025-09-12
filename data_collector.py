@@ -27,7 +27,7 @@ class DataCollector:
         }
 
     def fetch_market_data(self, symbol, timeframe='daily'):
-       try:
+    try:
         ticker = yf.Ticker(symbol)
         period = '1y' if timeframe == 'daily' else '14d'
         interval = '1d' if timeframe == 'daily' else '1h'
@@ -36,9 +36,9 @@ class DataCollector:
             logger.error(f"{symbol} {timeframe} 數據為空")
             return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
         data = data.reset_index()
-        # 檢查 Date 欄位是否存在，若無則使用索引
+        # 檢查 Date 欄位
         if 'Date' not in data.columns:
-            logger.warning(f"{symbol} {timeframe} 數據缺少 'Date' 欄位，使用索引作為時間戳")
+            logger.warning(f"{symbol} {timeframe} 缺少 'Date' 欄位，使用索引")
             data['date'] = pd.to_datetime(data.index, utc=True)
         else:
             data['date'] = pd.to_datetime(data['Date'], utc=True)
@@ -54,7 +54,7 @@ class DataCollector:
     except Exception as e:
         logger.error(f"{symbol} {timeframe} 數據獲取失敗: {str(e)}")
         return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-
+    
     def fetch_news(self, mode):
         try:
             news = [
