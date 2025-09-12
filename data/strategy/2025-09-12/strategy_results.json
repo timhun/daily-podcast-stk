@@ -1,8 +1,8 @@
 {
-  "^GSPC": {
-    "symbol": "^GSPC",
+  "^TWII": {
+    "symbol": "^TWII",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
@@ -22,10 +22,10 @@
     "trend": "Unknown",
     "rsi": 0.0
   },
-  "QQQ": {
-    "symbol": "QQQ",
-    "analysis_date": "2025-09-11",
-    "index_symbol": "^IXIC",
+  "0050.TW": {
+    "symbol": "0050.TW",
+    "analysis_date": "2025-09-12",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "bigline",
       "confidence": 0.0,
@@ -54,10 +54,10 @@
     },
     "strategy_version": "2.0"
   },
-  "NVDA": {
-    "symbol": "NVDA",
+  "2330.TW": {
+    "symbol": "2330.TW",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
@@ -77,10 +77,10 @@
     "trend": "Unknown",
     "rsi": 0.0
   },
-  "^DJI": {
-    "symbol": "^DJI",
+  "2317.TW": {
+    "symbol": "2317.TW",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
@@ -100,10 +100,10 @@
     "trend": "Unknown",
     "rsi": 0.0
   },
-  "^IXIC": {
-    "symbol": "^IXIC",
+  "2454.TW": {
+    "symbol": "2454.TW",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
@@ -123,10 +123,10 @@
     "trend": "Unknown",
     "rsi": 0.0
   },
-  "SPY": {
-    "symbol": "SPY",
+  "2308.TW": {
+    "symbol": "2308.TW",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
@@ -146,10 +146,10 @@
     "trend": "Unknown",
     "rsi": 0.0
   },
-  "AAPL": {
-    "symbol": "AAPL",
+  "2881.TW": {
+    "symbol": "2881.TW",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
@@ -169,10 +169,10 @@
     "trend": "Unknown",
     "rsi": 0.0
   },
-  "GOOG": {
-    "symbol": "GOOG",
+  "2412.TW": {
+    "symbol": "2412.TW",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
@@ -192,10 +192,10 @@
     "trend": "Unknown",
     "rsi": 0.0
   },
-  "META": {
-    "symbol": "META",
+  "2382.TW": {
+    "symbol": "2382.TW",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
@@ -215,10 +215,10 @@
     "trend": "Unknown",
     "rsi": 0.0
   },
-  "MSFT": {
-    "symbol": "MSFT",
+  "2882.TW": {
+    "symbol": "2882.TW",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
@@ -238,10 +238,10 @@
     "trend": "Unknown",
     "rsi": 0.0
   },
-  "TSLA": {
-    "symbol": "TSLA",
+  "2891.TW": {
+    "symbol": "2891.TW",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
@@ -261,148 +261,10 @@
     "trend": "Unknown",
     "rsi": 0.0
   },
-  "TSM": {
-    "symbol": "TSM",
+  "3711.TW": {
+    "symbol": "3711.TW",
     "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
-    "winning_strategy": {
-      "name": "none",
-      "confidence": 0.0,
-      "expected_return": 0.0,
-      "max_drawdown": 0.0,
-      "sharpe_ratio": 0.0
-    },
-    "signals": {
-      "position": "NEUTRAL",
-      "entry_price": 0.0,
-      "target_price": 0.0,
-      "stop_loss": 0.0,
-      "position_size": 0.0
-    },
-    "dynamic_params": {},
-    "strategy_version": "2.0",
-    "trend": "Unknown",
-    "rsi": 0.0
-  },
-  "AMZN": {
-    "symbol": "AMZN",
-    "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
-    "winning_strategy": {
-      "name": "none",
-      "confidence": 0.0,
-      "expected_return": 0.0,
-      "max_drawdown": 0.0,
-      "sharpe_ratio": 0.0
-    },
-    "signals": {
-      "position": "NEUTRAL",
-      "entry_price": 0.0,
-      "target_price": 0.0,
-      "stop_loss": 0.0,
-      "position_size": 0.0
-    },
-    "dynamic_params": {},
-    "strategy_version": "2.0",
-    "trend": "Unknown",
-    "rsi": 0.0
-  },
-  "ORCL": {
-    "symbol": "ORCL",
-    "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
-    "winning_strategy": {
-      "name": "none",
-      "confidence": 0.0,
-      "expected_return": 0.0,
-      "max_drawdown": 0.0,
-      "sharpe_ratio": 0.0
-    },
-    "signals": {
-      "position": "NEUTRAL",
-      "entry_price": 0.0,
-      "target_price": 0.0,
-      "stop_loss": 0.0,
-      "position_size": 0.0
-    },
-    "dynamic_params": {},
-    "strategy_version": "2.0",
-    "trend": "Unknown",
-    "rsi": 0.0
-  },
-  "JPM": {
-    "symbol": "JPM",
-    "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
-    "winning_strategy": {
-      "name": "none",
-      "confidence": 0.0,
-      "expected_return": 0.0,
-      "max_drawdown": 0.0,
-      "sharpe_ratio": 0.0
-    },
-    "signals": {
-      "position": "NEUTRAL",
-      "entry_price": 0.0,
-      "target_price": 0.0,
-      "stop_loss": 0.0,
-      "position_size": 0.0
-    },
-    "dynamic_params": {},
-    "strategy_version": "2.0",
-    "trend": "Unknown",
-    "rsi": 0.0
-  },
-  "WMT": {
-    "symbol": "WMT",
-    "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
-    "winning_strategy": {
-      "name": "none",
-      "confidence": 0.0,
-      "expected_return": 0.0,
-      "max_drawdown": 0.0,
-      "sharpe_ratio": 0.0
-    },
-    "signals": {
-      "position": "NEUTRAL",
-      "entry_price": 0.0,
-      "target_price": 0.0,
-      "stop_loss": 0.0,
-      "position_size": 0.0
-    },
-    "dynamic_params": {},
-    "strategy_version": "2.0",
-    "trend": "Unknown",
-    "rsi": 0.0
-  },
-  "LLY": {
-    "symbol": "LLY",
-    "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
-    "winning_strategy": {
-      "name": "none",
-      "confidence": 0.0,
-      "expected_return": 0.0,
-      "max_drawdown": 0.0,
-      "sharpe_ratio": 0.0
-    },
-    "signals": {
-      "position": "NEUTRAL",
-      "entry_price": 0.0,
-      "target_price": 0.0,
-      "stop_loss": 0.0,
-      "position_size": 0.0
-    },
-    "dynamic_params": {},
-    "strategy_version": "2.0",
-    "trend": "Unknown",
-    "rsi": 0.0
-  },
-  "^VIX": {
-    "symbol": "^VIX",
-    "analysis_date": "2025-09-12",
-    "index_symbol": "^IXIC",
+    "index_symbol": "^TWII",
     "winning_strategy": {
       "name": "none",
       "confidence": 0.0,
