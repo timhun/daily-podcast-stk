@@ -45,7 +45,7 @@ def main(mode):
         try:
             if os.path.exists(file_path):
                 df = pd.read_csv(file_path)
-                df['date'] = pd.to_datetime(df['date'])
+                df['date'] = pd.to_datetime(df['date'], utc=True)
                 df.set_index('date', inplace=True)
                 if df.empty or 'close' not in df.columns:
                     logger.warning(f"{symbol} CSV 為空或缺少 'close' 欄位")
