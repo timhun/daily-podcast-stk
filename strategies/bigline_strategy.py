@@ -35,8 +35,10 @@ class BigLineStrategy(BaseStrategy):
             logger.info(f"{symbol} 非主要交易標的，跳過回測")
             return self._default_results()
 
-        if not all(col in data for col in ['close', 'volume', 'composite_index', 'sentiment_score']):
-            logger.error(f"{symbol} 數據缺少必要欄位")
+        required_columns = ['open', 'close', 'volume']
+        missing_columns = [col for col in required_columns if col not in data.columns]
+        if missing_columns:
+            logger.error(f"{symbol} 缺少必要欄位: {missing_columns}, 實際欄位: {list(data.columns)}, 數據長度: {len(data)}")
             return self._default_results()
 
         df = data.copy()
