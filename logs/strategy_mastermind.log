@@ -12829,3 +12829,137 @@
 2025-09-12 23:27:54.208 | INFO     | __main__:main:125 - Podcast 生成完成！
 2025-09-12 23:27:54.208 | INFO     | __main__:main:125 - Podcast 生成完成！
 2025-09-12 23:27:54.208 | INFO     | __main__:main:125 - Podcast 生成完成！
+2025-09-13 14:16:46.732 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-09-13 14:16:46.732 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-09-13 14:16:46.734 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-09-13 14:16:46.734 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-09-13 14:16:46.955 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-09-13 14:16:46.955 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-09-13 14:16:46.957 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-09-13 14:16:46.957 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-09-13 14:16:47.178 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-09-13 14:16:47.178 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-09-13 14:16:47.179 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-09-13 14:16:47.179 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-09-13 14:16:47.418 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2317_TW.csv
+2025-09-13 14:16:47.418 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2317_TW.csv
+2025-09-13 14:16:47.419 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2317_TW.csv
+2025-09-13 14:16:47.419 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2317_TW.csv
+2025-09-13 14:16:47.630 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-09-13 14:16:47.630 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-09-13 14:16:47.631 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-09-13 14:16:47.631 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-09-13 14:16:47.828 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2308_TW.csv
+2025-09-13 14:16:47.828 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2308_TW.csv
+2025-09-13 14:16:47.830 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2308_TW.csv
+2025-09-13 14:16:47.830 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2308_TW.csv
+2025-09-13 14:16:48.052 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2881_TW.csv
+2025-09-13 14:16:48.052 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2881_TW.csv
+2025-09-13 14:16:48.054 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2881_TW.csv
+2025-09-13 14:16:48.054 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2881_TW.csv
+2025-09-13 14:16:48.275 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2412_TW.csv
+2025-09-13 14:16:48.275 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2412_TW.csv
+2025-09-13 14:16:48.276 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2412_TW.csv
+2025-09-13 14:16:48.276 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2412_TW.csv
+2025-09-13 14:16:48.467 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2382_TW.csv
+2025-09-13 14:16:48.467 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2382_TW.csv
+2025-09-13 14:16:48.468 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2382_TW.csv
+2025-09-13 14:16:48.468 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2382_TW.csv
+2025-09-13 14:16:48.658 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2882_TW.csv
+2025-09-13 14:16:48.658 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2882_TW.csv
+2025-09-13 14:16:48.659 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2882_TW.csv
+2025-09-13 14:16:48.659 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2882_TW.csv
+2025-09-13 14:16:48.863 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2891_TW.csv
+2025-09-13 14:16:48.863 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2891_TW.csv
+2025-09-13 14:16:48.865 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2891_TW.csv
+2025-09-13 14:16:48.865 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2891_TW.csv
+2025-09-13 14:16:49.089 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_3711_TW.csv
+2025-09-13 14:16:49.089 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_3711_TW.csv
+2025-09-13 14:16:49.090 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_3711_TW.csv
+2025-09-13 14:16:49.090 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_3711_TW.csv
+2025-09-13 14:16:50.075 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-09-13/tw_news.json
+2025-09-13 14:16:50.075 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-09-13/tw_news.json
+2025-09-13 14:16:52.720 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-09-13/social_metrics.json
+2025-09-13 14:16:52.720 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-09-13/social_metrics.json
+2025-09-13 14:16:52.720 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 12 個標的, 3 則新聞, 品質分數: 1.0
+2025-09-13 14:16:52.720 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 12 個標的, 3 則新聞, 品質分數: 1.0
+2025-09-13 14:16:52.883 | INFO     | strategy_mastermind:run_strategy_tournament:126 - ^TWII 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.883 | INFO     | strategy_mastermind:run_strategy_tournament:126 - ^TWII 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.885 | ERROR    | strategy_mastermind:_trend_analysis:334 - ^TWII 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.885 | ERROR    | strategy_mastermind:_trend_analysis:334 - ^TWII 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.899 | INFO     | market_analyst:analyze_market:76 - ^TWII 市場分析完成
+2025-09-13 14:16:52.899 | INFO     | market_analyst:analyze_market:76 - ^TWII 市場分析完成
+2025-09-13 14:16:52.904 | ERROR    | strategy_mastermind:run_strategy_tournament:130 - 0050.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.904 | ERROR    | strategy_mastermind:run_strategy_tournament:130 - 0050.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.914 | INFO     | market_analyst:analyze_market:76 - 0050.TW 市場分析完成
+2025-09-13 14:16:52.914 | INFO     | market_analyst:analyze_market:76 - 0050.TW 市場分析完成
+2025-09-13 14:16:52.918 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2330.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.918 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2330.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.918 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2330.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.918 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2330.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.928 | INFO     | market_analyst:analyze_market:76 - 2330.TW 市場分析完成
+2025-09-13 14:16:52.928 | INFO     | market_analyst:analyze_market:76 - 2330.TW 市場分析完成
+2025-09-13 14:16:52.930 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2317.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.930 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2317.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.931 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2317.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.931 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2317.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.941 | INFO     | market_analyst:analyze_market:76 - 2317.TW 市場分析完成
+2025-09-13 14:16:52.941 | INFO     | market_analyst:analyze_market:76 - 2317.TW 市場分析完成
+2025-09-13 14:16:52.944 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2454.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.944 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2454.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.944 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2454.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.944 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2454.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.954 | INFO     | market_analyst:analyze_market:76 - 2454.TW 市場分析完成
+2025-09-13 14:16:52.954 | INFO     | market_analyst:analyze_market:76 - 2454.TW 市場分析完成
+2025-09-13 14:16:52.958 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2308.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.958 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2308.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.958 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2308.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.958 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2308.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.967 | INFO     | market_analyst:analyze_market:76 - 2308.TW 市場分析完成
+2025-09-13 14:16:52.967 | INFO     | market_analyst:analyze_market:76 - 2308.TW 市場分析完成
+2025-09-13 14:16:52.970 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2881.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.970 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2881.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:52.970 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2881.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.970 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2881.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:52.996 | INFO     | market_analyst:analyze_market:76 - 2881.TW 市場分析完成
+2025-09-13 14:16:52.996 | INFO     | market_analyst:analyze_market:76 - 2881.TW 市場分析完成
+2025-09-13 14:16:53.020 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2412.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:53.020 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2412.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:53.024 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2412.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:53.024 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2412.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:53.057 | INFO     | market_analyst:analyze_market:76 - 2412.TW 市場分析完成
+2025-09-13 14:16:53.057 | INFO     | market_analyst:analyze_market:76 - 2412.TW 市場分析完成
+2025-09-13 14:16:53.068 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2382.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:53.068 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2382.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:53.069 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2382.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:53.069 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2382.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:53.100 | INFO     | market_analyst:analyze_market:76 - 2382.TW 市場分析完成
+2025-09-13 14:16:53.100 | INFO     | market_analyst:analyze_market:76 - 2382.TW 市場分析完成
+2025-09-13 14:16:53.104 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2882.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:53.104 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2882.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:53.104 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2882.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:53.104 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2882.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:53.114 | INFO     | market_analyst:analyze_market:76 - 2882.TW 市場分析完成
+2025-09-13 14:16:53.114 | INFO     | market_analyst:analyze_market:76 - 2882.TW 市場分析完成
+2025-09-13 14:16:53.118 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2891.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:53.118 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2891.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:53.118 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2891.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:53.118 | ERROR    | strategy_mastermind:_trend_analysis:334 - 2891.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:53.128 | INFO     | market_analyst:analyze_market:76 - 2891.TW 市場分析完成
+2025-09-13 14:16:53.128 | INFO     | market_analyst:analyze_market:76 - 2891.TW 市場分析完成
+2025-09-13 14:16:53.131 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 3711.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:53.131 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 3711.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-13 14:16:53.131 | ERROR    | strategy_mastermind:_trend_analysis:334 - 3711.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:53.131 | ERROR    | strategy_mastermind:_trend_analysis:334 - 3711.TW 數據格式錯誤或缺少 close 欄位，收到 <class 'dict'>
+2025-09-13 14:16:53.141 | INFO     | market_analyst:analyze_market:76 - 3711.TW 市場分析完成
+2025-09-13 14:16:53.141 | INFO     | market_analyst:analyze_market:76 - 3711.TW 市場分析完成
+2025-09-13 14:17:19.006 | INFO     | content_creator:generate_script:96 - 成功生成播客文字稿
+2025-09-13 14:17:19.006 | INFO     | content_creator:generate_script:96 - 成功生成播客文字稿
+2025-09-13 14:18:06.088 | INFO     | podcast_distributor:generate_rss:127 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-09-13 14:18:06.088 | INFO     | podcast_distributor:generate_rss:127 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-09-13 14:18:06.734 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-09-13 14:18:06.734 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-09-13 14:18:06.861 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250913 集數
+2025-09-13 14:18:06.861 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250913 集數
+2025-09-13 14:18:06.988 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250913 集數
+2025-09-13 14:18:06.988 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250913 集數
