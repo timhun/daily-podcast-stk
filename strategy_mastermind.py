@@ -12,6 +12,7 @@ from strategies.utils import get_param_combinations
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import ta
 
 # Load config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -20,6 +21,50 @@ with open('config.json', 'r', encoding='utf-8') as f:
 # Configure logging
 logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
+# 計算移動平均線
+def calculate_ma(prices, window):
+    if not isinstance(prices, pd.Series):
+        raise ValueError(f"prices 必須是 pandas.Series，收到 {type(prices)}")
+    return prices.rolling(window=window).mean()
+
+# 判斷三線多頭
+def is_bullish(ma_short, ma_mid, ma_long):
+    return (ma_short > ma_mid) & (ma_mid > ma_long)
+
+# 計算強化指數
+def composite_index_with_weights(prices, volume, weight_stock_info, weights=[0.4, 0.35, 0.25]):
+    if not isinstance(prices, pd.Series) or not isinstance(volume, pd.Series):
+        raise ValueError(f"prices 和 volume 必須是 pandas.Series，收到 prices: {type(prices)}, volume: {type(volume)}")
+    ma_short = calculate_ma(prices, 5)
+    ma_mid = calculate_ma(prices, 20)
+    ma_long = calculate_ma(prices, 60)
+    
+    three_line_bullish = is_bullish(ma_short, ma_mid, ma_long)
+
+    base_line = weights[0] * ma_short + weights[1] * ma_mid + weights[2] * ma_long
+
+    max_vol = volume.rolling(window=60).max()
+    vol_factor = 1 + (volume / (max_vol + 1e-9)) / 1e6  # 縮放成交量
+
+    weighted_sum = 0
+    for stock_name, info in weight_stock_info.items():
+        bullish_binary = info['bullish'].astype(int)
+        weighted_sum += info['alpha'] * bullish_binary * (info['weighted_ma'] / info['price'])
+
+    final_index = base_line * vol_factor * (1 + weighted_sum)
+
+    return pd.DataFrame({
+        'Price': prices,
+        'MA_5': ma_short,
+        'MA_20': ma_mid,
+        'MA_60': ma_long,
+        'Three_Line_Bullish': three_line_bullish,
+        'Base_Line': base_line,
+        'Vol_Factor': vol_factor,
+        'Weighted_Stock_Sum': weighted_sum,
+        'Final_Index': final_index
+    }, index=prices.index)
+
 class StrategyEngine:
     def __init__(self):
         self.api_key = os.getenv("GROK_API_KEY")
@@ -27,12 +72,11 @@ class StrategyEngine:
         self._load_strategies()
 
     def _load_strategies(self):
-        # Technical Strategy
         try:
             with open('strategies/technical_strategy.json', 'r', encoding='utf-8') as f:
                 tech_params = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            logger.error(f"Failed to load technical_strategy.json: {str(e)}, using default params")
+            logger.error(f"載入 technical_strategy.json 失敗: {str(e)}，使用預設參數")
             tech_params = {
                 "rsi_window": 14,
                 "rsi_buy_threshold": 30,
@@ -44,13 +88,12 @@ class StrategyEngine:
                 "min_data_length_rsi_sma": 20
             }
         self.models['technical'] = TechnicalStrategy(config, tech_params)
-
-        # ML Strategy
+        
         try:
             with open('strategies/ml_strategy.json', 'r', encoding='utf-8') as f:
                 ml_params = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            logger.error(f"Failed to load ml_strategy.json: {str(e)}, using default params")
+            logger.error(f"載入 ml_strategy.json 失敗: {str(e)}，使用預設參數")
             ml_params = {
                 "n_estimators": [50, 100, 200],
                 "max_depth": [None, 10, 20],
@@ -63,72 +106,51 @@ class StrategyEngine:
             }
         self.models['ml'] = MLStrategy(config, ml_params)
 
-        # BigLine Strategy (Trend-Following)
         try:
             with open('strategies/bigline_strategy.json', 'r', encoding='utf-8') as f:
                 bigline_params = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError) as e:
-            logger.error(f"Failed to load bigline_strategy.json: {str(e)}, using default params")
+            logger.error(f"載入 bigline_strategy.json 失敗: {str(e)}，使用預設參數")
             bigline_params = {
-                "ma_window": 20,
-                "vol_window": 20,
-                "breakout_price": 53.0,
-                "min_data_length": 20
+                "weights": [[0.4, 0.35, 0.25], [0.5, 0.3, 0.2], [0.3, 0.4, 0.3]],
+                "ma_short": 5,
+                "ma_mid": 20,
+                "ma_long": 60,
+                "vol_window": 60,
+                "rsi_window": 14
             }
         self.models['bigline'] = BigLineStrategy(config, bigline_params)
 
-    def _trend_analysis(self, symbol, data, timeframe='daily'):
-        if data.empty or len(data) < 20:
-            logger.warning(f"{symbol} data insufficient for trend analysis")
-            return {'trend': 'Unknown', 'rsi': 0.0}
-
-        try:
-            df = data.copy()
-            df['MA20'] = df['close'].rolling(window=20).mean()
-            df['RSI'] = 100 - (100 / (1 + (df['close'].diff().clip(lower=0) / df['close'].diff().clip(upper=0).abs()).rolling(window=14).mean()))
-            trend = 'Bullish' if df['close'].iloc[-1] > df['MA20'].iloc[-1] and df['MA20'].iloc[-1] > df['MA20'].iloc[-2] else 'Bearish'
-            rsi = df['RSI'].iloc[-1] if not df['RSI'].empty else 0.0
-            return {'trend': trend, 'rsi': rsi}
-        except Exception as e:
-            logger.error(f"{symbol} trend analysis failed: {str(e)}")
-            return {'trend': 'Unknown', 'rsi': 0.0}
-
     def run_strategy_tournament(self, symbol, data, timeframe='daily', index_symbol=None):
-        index_symbol = index_symbol or ('^TWII' if symbol in config['symbols']['tw'] else '^IXIC')
-        index_file_path = f"{config['data_paths']['market']}/{timeframe}_{index_symbol.replace('^', '').replace('.', '_')}.csv"
-        index_df = pd.read_csv(index_file_path) if os.path.exists(index_file_path) else pd.DataFrame()
-
-        # Non-trading symbols: trend analysis only
         if symbol not in ['QQQ', '0050.TW']:
-            logger.info(f"{symbol} is not a trading symbol, performing trend analysis only")
-            trend_result = self._trend_analysis(symbol, data, timeframe)
+            logger.info(f"{symbol} 非主要交易標的，僅用於趨勢分析或播報")
+            return self._trend_analysis(symbol, data, timeframe)
+
+        if not isinstance(data, pd.DataFrame) or data.empty or 'close' not in data.columns:
+            logger.error(f"{symbol} 數據格式錯誤或缺少 close 欄位，收到 {type(data)}")
             return {
                 'symbol': symbol,
                 'analysis_date': datetime.today().strftime('%Y-%m-%d'),
-                'index_symbol': index_symbol,
-                'winning_strategy': {
-                    'name': 'none',
-                    'confidence': 0.0,
-                    'expected_return': 0.0,
-                    'max_drawdown': 0.0,
-                    'sharpe_ratio': 0.0
-                },
-                'signals': {
-                    'position': 'NEUTRAL',
-                    'entry_price': 0.0,
-                    'target_price': 0.0,
-                    'stop_loss': 0.0,
-                    'position_size': 0.0
-                },
+                'index_symbol': index_symbol or ('^TWII' if symbol == '0050.TW' else '^IXIC'),
+                'winning_strategy': {'name': 'none', 'confidence': 0.0, 'expected_return': 0.0, 'max_drawdown': 0.0, 'sharpe_ratio': 0.0},
+                'signals': {'position': 'NEUTRAL', 'entry_price': 0.0, 'target_price': 0.0, 'stop_loss': 0.0, 'position_size': 0.0},
                 'dynamic_params': {},
-                'strategy_version': '2.0',
-                'trend': trend_result['trend'],
-                'rsi': trend_result['rsi']
+                'strategy_version': '2.0'
             }
 
-        # Trading symbols: run strategy tournament
         results = {}
         best_results = {}
+        index_symbol = index_symbol or ('^TWII' if symbol == '0050.TW' else '^IXIC')
+        index_file_path = f"{config['data_paths']['market']}/{timeframe}_{index_symbol.replace('^', '').replace('.', '_')}.csv"
+        index_df = pd.read_csv(index_file_path) if os.path.exists(index_file_path) else pd.DataFrame()
+
+        weight_stock_info = self._prepare_weight_stock_info(timeframe, index_symbol)
+        composite_index_df = composite_index_with_weights(
+            index_df['close'] if not index_df.empty else data['close'],
+            index_df['volume'] if not index_df.empty else data['volume'],
+            weight_stock_info
+        )
+
         for name, strategy in self.models.items():
             best_score = -float('inf')
             best_params = None
@@ -140,7 +162,10 @@ class StrategyEngine:
                 strategy.params = params
 
                 try:
-                    result = strategy.backtest(symbol, data, timeframe)
+                    strategy_data = data.copy()
+                    strategy_data['composite_index'] = composite_index_df['Final_Index']
+                    strategy_data['sentiment_score'] = self._load_sentiment_score(symbol, timeframe)
+                    result = strategy.backtest(symbol, strategy_data, timeframe)
                     score = result['expected_return'] if result['max_drawdown'] < config['strategy_params']['max_drawdown_threshold'] else -float('inf')
 
                     if score > best_score:
@@ -148,9 +173,9 @@ class StrategyEngine:
                         best_params = params
                         best_result = result
 
-                    logger.info(f"{symbol} {name} strategy params {params} backtest completed, Expected Return: {result['expected_return']:.4f}, Sharpe: {result['sharpe_ratio']:.2f}")
+                    logger.info(f"{symbol} {name} 策略參數 {params} 回測完成，Expected Return: {result['expected_return']:.4f}, Sharpe: {result['sharpe_ratio']:.2f}")
                 except Exception as e:
-                    logger.error(f"{symbol} {name} params {params} backtest failed: {str(e)}")
+                    logger.error(f"{symbol} {name} 參數 {params} 回測失敗: {str(e)}")
                 finally:
                     strategy.params = original_params
 
@@ -160,7 +185,10 @@ class StrategyEngine:
                 'expected_return': 0,
                 'signals': {}
             }
-            best_results[name] = {'params': best_params, 'result': best_result}
+            best_results[name] = {
+                'params': best_params,
+                'result': best_result
+            }
 
         new_strategy = self._generate_dynamic_strategy(symbol, results, best_results, timeframe)
         if new_strategy:
@@ -169,7 +197,7 @@ class StrategyEngine:
 
         optimized = self.optimize_with_grok(symbol, results, timeframe, best_results, index_symbol)
         if optimized is None:
-            logger.error(f"{symbol} optimization returned None, using default results")
+            logger.error(f"{symbol} 優化結果為 None，返回預設結果")
             optimized = {
                 'symbol': symbol,
                 'analysis_date': datetime.today().strftime('%Y-%m-%d'),
@@ -192,13 +220,162 @@ class StrategyEngine:
                 'strategy_version': '2.0'
             }
 
+        self._plot_composite_index(symbol, composite_index_df, timeframe)
+        self._generate_market_summary(timeframe)
+
         strategy_dir = f"{config['data_paths']['strategy']}/{datetime.today().strftime('%Y-%m-%d')}"
         os.makedirs(strategy_dir, exist_ok=True)
         with open(f"{strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json", 'w', encoding='utf-8') as f:
             json.dump(optimized, f, ensure_ascii=False, indent=2)
-        logger.info(f"Strategy results saved to: {strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json")
+        logger.info(f"策略結果儲存至: {strategy_dir}/{symbol.replace('^', '').replace('.', '_')}.json")
 
         return optimized
+
+    def _prepare_weight_stock_info(self, timeframe, index_symbol):
+        weight_stock_info = {}
+        stocks = ['NVDA', 'AAPL'] if index_symbol == '^IXIC' else ['0050.TW', '2330.TW']
+        for stock in stocks:
+            file_path = f"{config['data_paths']['market']}/{timeframe}_{stock.replace('.', '_')}.csv"
+            if os.path.exists(file_path):
+                df = pd.read_csv(file_path)
+                df['date'] = pd.to_datetime(df['date'])
+                df.set_index('date', inplace=True)
+                
+                price = df['close']
+                ma_short = calculate_ma(price, 5)
+                ma_mid = calculate_ma(price, 20)
+                ma_long = calculate_ma(price, 60)
+                bullish = is_bullish(ma_short, ma_mid, ma_long)
+                weighted_ma = 0.4 * ma_short + 0.35 * ma_mid + 0.25 * ma_long
+                
+                weight_stock_info[stock] = {
+                    'alpha': 0.3 if stock in ['0050.TW', 'NVDA'] else 0.2,
+                    'bullish': bullish,
+                    'weighted_ma': weighted_ma,
+                    'price': price
+                }
+            else:
+                logger.warning(f"找不到 {stock} 的數據，使用模擬數據")
+                dates = pd.date_range(start='2025-01-01', end='2025-09-09')
+                price = pd.Series(1000 + np.random.normal(0, 5, len(dates)), index=dates)
+                ma_short = calculate_ma(price, 5)
+                ma_mid = calculate_ma(price, 20)
+                ma_long = calculate_ma(price, 60)
+                bullish = is_bullish(ma_short, ma_mid, ma_long)
+                weighted_ma = 0.4 * ma_short + 0.35 * ma_mid + 0.25 * ma_long
+                weight_stock_info[stock] = {
+                    'alpha': 0.3 if stock in ['0050.TW', 'NVDA'] else 0.2,
+                    'bullish': bullish,
+                    'weighted_ma': weighted_ma,
+                    'price': price
+                }
+        return weight_stock_info
+
+    def _plot_composite_index(self, symbol, composite_index_df, timeframe):
+        if symbol not in ['QQQ', '0050.TW']:
+            logger.info(f"{symbol} 非主要交易標的，跳過圖表生成")
+            return
+
+        fig, ax1 = plt.subplots(figsize=(14, 8))
+
+        ax1.plot(composite_index_df.index, composite_index_df['Price'], label=f'{symbol} 價格', color='black')
+        ax1.plot(composite_index_df.index, composite_index_df['MA_5'], label='5日均線', linestyle='--', color='#1f77b4')
+        ax1.plot(composite_index_df.index, composite_index_df['MA_20'], label='20日均線', linestyle='--', color='#ff7f0e')
+        ax1.plot(composite_index_df.index, composite_index_df['MA_60'], label='60日均線', linestyle='--', color='#2ca02c')
+        ax1.fill_between(composite_index_df.index, composite_index_df['Price'].min(), composite_index_df['Price'].max(),
+                         where=composite_index_df['Three_Line_Bullish'], color='lightgreen', alpha=0.3, label='三線多頭區間')
+        ax1.set_xlabel('日期')
+        ax1.set_ylabel('價格')
+        ax1.legend(loc='upper left')
+        ax1.grid(True)
+
+        ax2 = ax1.twinx()
+        ax2.plot(composite_index_df.index, composite_index_df['Final_Index'], label='強化大盤線', color='red', linewidth=2)
+        ax2.set_ylabel('強化指數')
+        ax2.legend(loc='upper right')
+
+        plt.title(f'{symbol} 強化版大盤線與三線架構 ({timeframe})')
+        chart_dir = f"charts/{datetime.today().strftime('%Y-%m-%d')}"
+        os.makedirs(chart_dir, exist_ok=True)
+        plt.savefig(f"{chart_dir}/{symbol.replace('.', '_')}_{timeframe}.png")
+        plt.close()
+
+    def _generate_market_summary(self, timeframe):
+        summary = {'date': datetime.today().strftime('%Y-%m-%d'), 'symbols': {}}
+        for symbol in config['symbols']['commodities']:
+            file_path = f"{config['data_paths']['market']}/{timeframe}_{symbol.replace('-', '_').replace('.', '_')}.csv"
+            if os.path.exists(file_path):
+                df = pd.read_csv(file_path)
+                df['date'] = pd.to_datetime(df['date'])
+                df.set_index('date', inplace=True)
+                if df.empty or 'close' not in df.columns:
+                    logger.warning(f"{symbol} 數據無效，跳過播報")
+                    continue
+                latest = df.iloc[-1]
+                ma_short = calculate_ma(df['close'], 5)
+                ma_mid = calculate_ma(df['close'], 20)
+                ma_long = calculate_ma(df['close'], 60)
+                trend = 'Bullish' if is_bullish(ma_short, ma_mid, ma_long).iloc[-1] else 'Bearish'
+                summary['symbols'][symbol] = {
+                    'price': latest['close'],
+                    'change': latest['change'],
+                    'trend': trend
+                }
+            else:
+                logger.warning(f"找不到 {symbol} 的數據，跳過播報")
+        summary_dir = f"{config['data_paths']['market']}/{datetime.today().strftime('%Y-%m-%d')}"
+        os.makedirs(summary_dir, exist_ok=True)
+        with open(f"{summary_dir}/market_summary.json", 'w', encoding='utf-8') as f:
+            json.dump(summary, f, ensure_ascii=False, indent=2)
+        logger.info(f"市場總結儲存至: {summary_dir}/market_summary.json")
+
+    def _trend_analysis(self, symbol, data, timeframe):
+        if not isinstance(data, pd.DataFrame) or data.empty or 'close' not in data.columns:
+            logger.error(f"{symbol} 數據格式錯誤或缺少 close 欄位，收到 {type(data)}")
+            return {
+                'symbol': symbol,
+                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
+                'trend': 'Unknown',
+                'rsi': 0.0,
+                'signals': {'position': 'NEUTRAL'}
+            }
+
+        df = data.copy()
+        try:
+            df['date'] = pd.to_datetime(df['date'])
+            df.set_index('date', inplace=True)
+            ma_short = calculate_ma(df['close'], 5)
+            ma_mid = calculate_ma(df['close'], 20)
+            ma_long = calculate_ma(df['close'], 60)
+            trend = 'Bullish' if is_bullish(ma_short, ma_mid, ma_long).iloc[-1] else 'Bearish'
+            rsi = ta.momentum.RSIIndicator(df['close'], window=14).rsi().iloc[-1]
+            return {
+                'symbol': symbol,
+                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
+                'trend': trend,
+                'rsi': float(rsi) if not np.isnan(rsi) else 0.0,
+                'signals': {'position': 'NEUTRAL'}
+            }
+        except Exception as e:
+            logger.error(f"{symbol} 趨勢分析失敗: {str(e)}")
+            return {
+                'symbol': symbol,
+                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
+                'trend': 'Unknown',
+                'rsi': 0.0,
+                'signals': {'position': 'NEUTRAL'}
+            }
+
+    def _load_sentiment_score(self, symbol, timeframe):
+        sentiment_file = f"{config['data_paths']['sentiment']}/{datetime.today().strftime('%Y-%m-%d')}/social_metrics.json"
+        try:
+            with open(sentiment_file, 'r', encoding='utf-8') as f:
+                sentiment_data = json.load(f)
+            score = sentiment_data.get('symbols', {}).get(symbol, {}).get('sentiment_score', 0.0)
+            return pd.Series(score, index=pd.date_range(start='2025-01-01', end='2025-09-09'))
+        except Exception as e:
+            logger.error(f"載入情緒數據失敗: {str(e)}")
+            return pd.Series(0.0, index=pd.date_range(start='2025-01-01', end='2025-09-09'))
 
     def _generate_dynamic_strategy(self, symbol, results, best_results, timeframe):
         best_expected_return = -float('inf')
@@ -223,13 +400,13 @@ class StrategyEngine:
         chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on expected return, ensuring max drawdown < 15%."))
 
         prompt = (
-            f"Select the best strategy for {symbol} (timeframe: {timeframe}, index: {index_symbol}). Backtest results:\n"
+            f"為 {symbol} 選擇最佳策略（時間框架: {timeframe}，大盤參考: {index_symbol}）。以下是回測結果：\n"
             f"{json.dumps(results, ensure_ascii=False, indent=2)}\n"
-            f"Best parameters:\n{json.dumps(best_results, ensure_ascii=False, indent=2)}\n"
-            "Requirements:\n"
-            f"- Choose the strategy with the highest expected return and max drawdown < {config['strategy_params']['max_drawdown_threshold']}.\n"
-            "- Provide strategy name, confidence, expected return, max drawdown, sharpe ratio, signals, and dynamic params.\n"
-            "- Format as JSON:\n"
+            f"最佳參數：\n{json.dumps(best_results, ensure_ascii=False, indent=2)}\n"
+            "要求：\n"
+            f"- 選擇預期報酬最高的策略，且最大回撤 < {config['strategy_params']['max_drawdown_threshold']}。\n"
+            "- 提供最佳策略名稱、信心分數、預期報酬、最大回撤、夏普比率、交易信號和動態參數。\n"
+            "- 格式為 JSON:\n"
             "```json\n"
             "{\n"
             f'  "symbol": "{symbol}",\n'
@@ -261,5 +438,5 @@ class StrategyEngine:
             optimized = json.loads(response.content.strip('```json\n').strip('\n```'))
             return optimized
         except json.JSONDecodeError:
-            logger.error("Grok response JSON parsing failed")
+            logger.error("Grok 回應 JSON 解析失敗")
             return None
