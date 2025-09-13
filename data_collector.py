@@ -26,34 +26,106 @@ class DataCollector:
             'score': score
         }
 
-    def fetch_market_data(self, symbol, timeframe='daily'):
-        try:
-            ticker = yf.Ticker(symbol)
-            period = '1y' if timeframe == 'daily' else '14d'
-            interval = '1d' if timeframe == 'daily' else '1h'
-            data = ticker.history(period=period, interval=interval, auto_adjust=True)
-            if data.empty:
-                logger.error(f"{symbol} {timeframe} 數據為空")
-                return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-            data = data.reset_index()
-            # 檢查 Date 欄位
-            if 'Date' not in data.columns:
-                logger.warning(f"{symbol} {timeframe} 缺少 'Date' 欄位，使用索引")
-                data['date'] = pd.to_datetime(data.index, utc=True)
-            else:
-                data['date'] = pd.to_datetime(data['Date'], utc=True)
-            data['symbol'] = symbol
-            data['change'] = data['Close'].pct_change()
-            data = data[['date', 'symbol', 'Open', 'High', 'Low', 'Close', 'change', 'Volume']]
-            data.columns = ['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume']
-            if not all(col in data.columns for col in ['open', 'close', 'volume']):
-                logger.error(f"{symbol} {timeframe} 數據缺少必要欄位: {list(data.columns)}")
-                return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-            logger.info(f"{symbol} {timeframe} 數據獲取成功: {len(data)} 行")
-            return data
-        except Exception as e:
-            logger.error(f"{symbol} {timeframe} 數據獲取失敗: {str(e)}")
-            return pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
+    def fetch_market_data(symbol):
+        ticker = yf.Ticker(symbol)
+        
+        # 每日數據（365 天）
+        hist_daily = ticker.history(period='1y')
+        if hist_daily.empty:
+            logger.error(f"{symbol} 每日數據無回應")
+            daily_data = {
+                'open': 0,
+                'high': 0,
+                'low': 0,
+                'close': 0, 
+                'change': 0, 
+                'volume': 0, 
+                'timestamp': datetime.datetime.now(datetime.timezone.utc)
+            }
+            daily_df = pd.DataFrame([{
+                'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d'),
+                'symbol': symbol,
+                'open': 0,
+                'high': 0,
+                'low': 0,
+                'close': 0,
+                'change': 0,
+                'volume': 0
+            }])
+        else:
+            if hist_daily.index.tz is None:
+                hist_daily.index = hist_daily.index.tz_localize('Asia/Taipei')
+            hist_daily.index = hist_daily.index.tz_convert('UTC')
+            daily_data = {
+                'open': hist_daily['Open'].iloc[-1],
+                'high': hist_daily['High'].iloc[-1],
+                'low': hist_daily['Low'].iloc[-1],
+                'close': hist_daily['Close'].iloc[-1],
+                'change': hist_daily['Close'].pct_change().iloc[-1] * 100 if len(hist_daily) > 1 else 0,
+                'volume': hist_daily['Volume'].iloc[-1],
+                'timestamp': hist_daily.index[-1]
+            }
+            daily_df = pd.DataFrame({
+                'date': hist_daily.index.strftime('%Y-%m-%d'),
+                'symbol': symbol,
+                'open': hist_daily['Open'],
+                'high': hist_daily['High'],
+                'low': hist_daily['Low'],
+                'close': hist_daily['Close'],
+                'change': hist_daily['Close'].pct_change() * 100,
+                'volume': hist_daily['Volume']
+            }).dropna()
+    
+        # 每小時數據（14 天）
+        hist_hourly = ticker.history(period='14d', interval='1h')
+        if hist_hourly.empty:
+            logger.error(f"{symbol} 每小時數據無回應")
+            hourly_data = {
+                'open': 0,
+                'high': 0,
+                'low': 0,
+                'close': 0, 
+                'change': 0, 
+                'volume': 0, 
+                'timestamp': datetime.datetime.now(datetime.timezone.utc)
+            }
+            hourly_df = pd.DataFrame([{
+                'date': datetime.datetime.now(datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
+                'symbol': symbol,
+                'open': 0,
+                'high': 0,
+                'low': 0,
+                'close': 0,
+                'change': 0,
+                'volume': 0
+            }])
+        else:
+            if hist_hourly.index.tz is None:
+                hist_hourly.index = hist_hourly.index.tz_localize('Asia/Taipei')
+            hist_hourly.index = hist_hourly.index.tz_convert('UTC')
+            hourly_data = {
+                'open': hist_hourly['Open'].iloc[-1],
+                'high': hist_hourly['High'].iloc[-1],
+                'low': hist_hourly['Low'].iloc[-1],
+                'close': hist_hourly['Close'].iloc[-1],
+                'change': hist_hourly['Close'].pct_change().iloc[-1] * 100 if len(hist_hourly) > 1 else 0,
+                'volume': hist_hourly['Volume'].iloc[-1],
+                'timestamp': hist_hourly.index[-1]
+            }
+            hourly_df = pd.DataFrame({
+                'date': hist_hourly.index.strftime('%Y-%m-%d %H:%M:%S'),
+                'symbol': symbol,
+                'open': hist_hourly['Open'],
+                'high': hist_hourly['High'],
+                'low': hist_hourly['Low'],
+                'close': hist_hourly['Close'],
+                'change': hist_hourly['Close'].pct_change() * 100,
+                'volume': hist_hourly['Volume']
+            }).dropna()
+    
+        return daily_data, daily_df, hourly_data, hourly_df    
+        
+    @retry(tries=3, delay=1, backoff=2)
         
     def fetch_news(self, mode):
         try:
