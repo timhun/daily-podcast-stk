@@ -1,102 +1,51 @@
 import argparse
 import datetime
 import os
+import pandas as pd  # Added pandas import
 from dotenv import load_dotenv
-import pandas as pd
-from data_collector import DataCollector
+from data_collector import collect_data
 from content_creator import generate_script
 from voice_producer import generate_audio
 from cloud_manager import upload_episode
 from podcast_distributor import generate_rss, notify_slack
 from strategy_mastermind import StrategyEngine
-from market_analyst import MarketAnalyst
-from loguru import logger
-import json
+from market_analyst import MarketAnalyst  # 修改：從 market_analyst 匯入 MarketAnalyst
 import pytz
+import json
 
-# Load config.json
+# 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
-
-# Configure logging
-logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
 load_dotenv()
 
 def main(mode):
     TW_TZ = pytz.timezone("Asia/Taipei")
     today = datetime.datetime.now(TW_TZ).strftime("%Y%m%d")
-    logger.info(f"開始生成 {mode.upper()} 版 podcast，日期 {today}...")
+    print(f"開始生成 {mode.upper()} 版 podcast，日期 {today}...")
 
-    # Step 1: Collect news and sentiment data
-    data_collector = DataCollector(config)  # Instantiate DataCollector
-    market_data = data_collector.collect_data(mode)  # Call class method
+    # 步驟1: 收集數據
+    market_data = collect_data(mode)
 
-    # Step 2: Load market data from CSV and run strategy analysis
+    # 步驟2: 執行策略分析
     strategy_engine = StrategyEngine()
-    analyst = MarketAnalyst(config)
     strategy_results = {}
-    market_analysis = {}
-    symbols = config['symbols'][mode] + config['symbols']['commodities']
-
-    for symbol in symbols:
-        # Load historical data from CSV
-        file_path = f"{config['data_paths']['market']}/daily_{symbol.replace('^', '').replace('.', '_').replace('-', '_')}.csv"
-        try:
-            if os.path.exists(file_path):
-                df = pd.read_csv(file_path)
-                df['date'] = pd.to_datetime(df['date'], utc=True)
-                df.set_index('date', inplace=True)
-                if df.empty or 'close' not in df.columns:
-                    logger.warning(f"{symbol} CSV 為空或缺少 'close' 欄位")
-                    df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-            else:
-                logger.warning(f"找不到 {symbol} 的 CSV 檔案：{file_path}")
-                df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-        except Exception as e:
-            logger.error(f"載入 {symbol} CSV 失敗：{str(e)}")
-            df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
-
-        try:
-            # Run strategy only for QQQ and 0050.TW
-            if symbol in ['QQQ', '0050.TW']:
-                strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, df)
-            else:
-                # Trend analysis for other symbols
-                strategy_results[symbol] = {
-                    'symbol': symbol,
-                    'analysis_date': datetime.datetime.now(TW_TZ).strftime('%Y-%m-%d'),
-                    'index_symbol': '^TWII' if symbol in config['symbols']['tw'] else '^IXIC',
-                    'winning_strategy': {'name': 'none', 'confidence': 0.0, 'expected_return': 0.0, 'max_drawdown': 0.0, 'sharpe_ratio': 0.0},
-                    'signals': {'position': 'NEUTRAL', 'entry_price': 0.0, 'target_price': 0.0, 'stop_loss': 0.0, 'position_size': 0.0},
-                    'dynamic_params': {},
-                    'strategy_version': '2.0',
-                    'trend': 'Unknown',
-                    'rsi': 0.0
-                }
-            market_analysis[symbol] = analyst.analyze_market(symbol)
-            logger.info(f"{symbol} 策略和市場分析完成")
-        except Exception as e:
-            logger.error(f"{symbol} 策略執行失敗：{str(e)}")
-            strategy_results[symbol] = {
-                'symbol': symbol,
-                'analysis_date': datetime.datetime.now(TW_TZ).strftime('%Y-%m-%d'),
-                'index_symbol': '^TWII' if symbol in config['symbols']['tw'] else '^IXIC',
-                'winning_strategy': {'name': 'none', 'confidence': 0.0, 'expected_return': 0.0, 'max_drawdown': 0.0, 'sharpe_ratio': 0.0},
-                'signals': {'position': 'NEUTRAL', 'entry_price': 0.0, 'target_price': 0.0, 'stop_loss': 0.0, 'position_size': 0.0},
-                'dynamic_params': {},
-                'strategy_version': '2.0'
-            }
-            market_analysis[symbol] = {'trend': 'Unknown', 'rsi': 0.0}
-
-    # Save strategy results
-    output_dir = f"{config['data_paths']['strategy']}/{datetime.datetime.now(TW_TZ).strftime('%Y-%m-%d')}"
-    os.makedirs(output_dir, exist_ok=True)
-    with open(f"{output_dir}/strategy_results.json", 'w', encoding='utf-8') as f:
-        json.dump(strategy_results, f, ensure_ascii=False, indent=2)
-    logger.info(f"策略結果儲存至：{output_dir}/strategy_results.json")
-
-    # Step 3: Generate script
+    market_analysis = {}  # 新增市場分析結果
+    analyst = MarketAnalyst(config)  # 修改：傳遞 config 參數以符合 MarketAnalyst 初始化
+    for symbol in market_data['market']:
+        # Load the full DataFrame from CSV for historical data
+        file_path = f"{config['data_paths']['market']}/daily_{symbol.replace('^', '').replace('.', '_')}.csv"
+        if os.path.exists(file_path):
+            df = pd.read_csv(file_path)
+            df['date'] = pd.to_datetime(df['date'])
+            df.set_index('date', inplace=True)
+        else:
+            df = pd.DataFrame()
+            print(f"Warning: No data for {symbol}, using empty DataFrame")
+        strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, market_data['market'][symbol])
+        market_analysis[symbol] = analyst.analyze_market(symbol)  # 新增市場分析
+    
+    # 步驟3: 生成文字稿
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
     script_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.txt"
     script_path = f"{podcast_dir}/{script_filename}"
@@ -104,28 +53,27 @@ def main(mode):
     script = generate_script(market_data, mode, strategy_results, market_analysis)
     with open(script_path, 'w', encoding='utf-8') as f:
         f.write(script)
-    logger.info(f"文字稿儲存至：{script_path}")
 
-    # Step 4: Generate audio
+    # 步驟4: 生成音頻
     audio_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.mp3"
     audio_path = f"{podcast_dir}/{audio_filename}"
     os.makedirs(os.path.dirname(audio_path), exist_ok=True)
     generate_audio(script_path, audio_path)
-    logger.info(f"音頻儲存至：{audio_path}")
 
-    # Step 5: Upload to B2
+    # 步驟5: 上傳到 B2
     files = {'script': script_path, 'audio': audio_path}
     uploaded_urls = upload_episode(today, mode, files)
     audio_url = uploaded_urls['audio']
-    logger.info(f"已上傳至 B2：{audio_url}")
 
-    # Step 6: Generate RSS and notify Slack
+    # 步驟6: 生成 RSS + Slack 通知
     generate_rss(today, mode, script, audio_url)
     notify_slack(today, mode, audio_url)
-    logger.info("Podcast 生成完成！")
+
+    print("Podcast 製作完成！")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", required=True, choices=['us', 'tw'])
     args = parser.parse_args()
     main(args.mode)
+
