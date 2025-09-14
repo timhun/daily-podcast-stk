@@ -156,6 +156,12 @@ class StrategyEngine:
             best_params = None
             best_result = None
 
+            if name == 'bigline':
+                param_combinations = [strategy.params]  # 限制 bigline 策略使用固定參數
+            else:
+                param_combinations = get_param_combinations(strategy.params)
+            for params in param_combinations:
+            
             param_combinations = get_param_combinations(strategy.params)
             for params in param_combinations:
                 original_params = deepcopy(strategy.params)
