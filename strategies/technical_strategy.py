@@ -4,13 +4,30 @@ from .base_strategy import BaseStrategy
 from .utils import generate_performance_chart
 import ta
 from loguru import logger
+import json
 
 class TechnicalStrategy(BaseStrategy):
     def __init__(self, config, params=None):
         super().__init__(config, params)
+        if not params:
+            try:
+                with open('strategies/technical_strategy.json', 'r', encoding='utf-8') as f:
+                    self.params = json.load(f)
+            except (FileNotFoundError, json.JSONDecodeError) as e:
+                logger.error(f"Failed to load technical_strategy.json: {str(e)}, using default params")
+                self.params = {
+                    "rsi_window": 14,
+                    "rsi_buy_threshold": 30,
+                    "rsi_sell_threshold": 70,
+                    "sma_window": 20,
+                    "macd_fast": 12,  # 預設值
+                    "macd_slow": 26,  # 預設值
+                    "macd_signal": 9,  # 預設值
+                    "min_data_length_rsi_sma": 20
+                }
 
     def _load_sentiment_score(self, symbol, timeframe):
-        # Placeholder for sentiment score loading (as in original)
+        # Placeholder for sentiment score loading
         return 0.0  # Replace with actual sentiment loading logic if needed
 
     def backtest(self, symbol, data, timeframe='daily'):
@@ -19,22 +36,36 @@ class TechnicalStrategy(BaseStrategy):
             return self._default_results()
 
         try:
+            # 確保參數存在
+            macd_fast = self.params.get('macd_fast', 12)
+            macd_slow = self.params.get('macd_slow', 26)
+            macd_signal = self.params.get('macd_signal', 9)
+            rsi_window = self.params.get('rsi_window', 14)
+            rsi_buy_threshold = self.params.get('rsi_buy_threshold', 30)
+            rsi_sell_threshold = self.params.get('rsi_sell_threshold', 70)
+            sma_window = self.params.get('sma_window', 20)
+            min_data_length = self.params.get('min_data_length_rsi_sma', 20)
+
+            if len(df) < min_data_length:
+                logger.warning(f"{symbol} data insufficient or empty")
+                return self._default_results()
+
             # Calculate technical indicators
-            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=self.params['rsi_window']).rsi()
-            df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=self.params['sma_window']).sma_indicator()
-            df['macd'] = ta.trend.MACD(df['close'], window_fast=self.params['macd_fast'], window_slow=self.params['macd_slow'], window_sign=self.params['macd_signal']).macd()
-            df['macd_signal'] = ta.trend.MACD(df['close'], window_fast=self.params['macd_fast'], window_slow=self.params['macd_slow'], window_sign=self.params['macd_signal']).macd_signal()
+            df['rsi'] = ta.momentum.RSIIndicator(df['close'], window=rsi_window).rsi()
+            df['sma_20'] = ta.trend.SMAIndicator(df['close'], window=sma_window).sma_indicator()
+            df['macd'] = ta.trend.MACD(df['close'], window_fast=macd_fast, window_slow=macd_slow, window_sign=macd_signal).macd()
+            df['macd_signal'] = ta.trend.MACD(df['close'], window_fast=macd_fast, window_slow=macd_slow, window_sign=macd_signal).macd_signal()
             df['bollinger_hband'] = ta.volatility.BollingerBands(df['close']).bollinger_hband()
             df['bollinger_lband'] = ta.volatility.BollingerBands(df['close']).bollinger_lband()
             sentiment_score = self._load_sentiment_score(symbol, timeframe)
 
             # Generate signals
             df['signal'] = 0
-            df.loc[(df['rsi'] < self.params['rsi_buy_threshold']) &
+            df.loc[(df['rsi'] < rsi_buy_threshold) &
                    (df['macd'] > df['macd_signal']) &
                    (df['close'] <= df['bollinger_lband']) &
                    (sentiment_score > 0.5), 'signal'] = 1
-            df.loc[(df['rsi'] > self.params['rsi_sell_threshold']) &
+            df.loc[(df['rsi'] > rsi_sell_threshold) &
                    (df['macd'] < df['macd_signal']) &
                    (df['close'] >= df['bollinger_hband']) &
                    (sentiment_score < -0.5), 'signal'] = -1
