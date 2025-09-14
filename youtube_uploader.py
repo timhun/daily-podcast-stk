@@ -7,11 +7,12 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from loguru import logger
 from datetime import datetime
+import json
 
 # 配置
 CLIENT_SECRETS_FILE = 'client_secrets.json'  # 從 Google Cloud 下載
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
-PLAYLIST_ID = 'YOUR_PODCAST_PLAYLIST_ID'  # YouTube Podcast 播放清單 ID
+PLAYLIST_ID = os.getenv('YOUTUBE_PLAYLIST_ID', 'YOUR_PODCAST_PLAYLIST_ID')  # 從 .env 或 config.json 讀取
 
 def get_authenticated_service():
     """取得 YouTube API 服務實例"""
@@ -40,8 +41,8 @@ def upload_to_youtube(title, description, file_path, playlist_id=PLAYLIST_ID, ca
             'snippet': {
                 'title': title,
                 'description': description,
-                'tags': ['podcast', 'market', 'analysis', 'finance'],
-                'categoryId': category_id
+                'tags': ['podcast', 'market', 'analysis', 'finance', 'stock'],
+                'categoryId': category_id  # 22 = People & Blogs
             },
             'status': {
                 'privacyStatus': privacy_status
@@ -56,7 +57,7 @@ def upload_to_youtube(title, description, file_path, playlist_id=PLAYLIST_ID, ca
         logger.info(f"影片上傳成功，ID: {video_id}")
 
         # 添加到播放清單
-        if playlist_id:
+        if playlist_id and playlist_id != 'YOUR_PODCAST_PLAYLIST_ID':
             playlist_request = youtube.playlistItems().insert(
                 part='snippet',
                 body={
@@ -79,9 +80,9 @@ def upload_to_youtube(title, description, file_path, playlist_id=PLAYLIST_ID, ca
 
 if __name__ == "__main__":
     # 範例使用
-    title = "Market Podcast - 2025-09-12"
-    description = "Weekly market analysis and trends."
-    file_path = "data/podcast/20250912_us.mp3"  # 您的音頻檔案路徑
+    title = "Market Podcast - 2025-09-13"
+    description = "Weekly market analysis and trends for stocks and commodities."
+    file_path = "data/podcast/20250913_us.mp3"  # 您的音頻檔案路徑
     video_id = upload_to_youtube(title, description, file_path)
     if video_id:
         print(f"上傳成功！YouTube 連結: https://youtu.be/{video_id}")
