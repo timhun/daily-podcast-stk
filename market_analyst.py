@@ -11,7 +11,22 @@ with open('strategies/technical_strategy.json', 'r', encoding='utf-8') as f:
 class MarketAnalyst:
     def __init__(self, config):
         self.config = config
-        self.params = tech_params  # 使用 technical_strategy.json 的參數
+        # 確保 tech_params 包含 MACD 參數，若缺失則添加預設值
+        self.params = tech_params.copy()  # 創建副本避免修改原始 JSON
+        default_params = {
+            "rsi_window": 14,
+            "rsi_buy_threshold": 30,
+            "rsi_sell_threshold": 70,
+            "sma_window": 20,
+            "macd_fast": 12,  # 預設值
+            "macd_slow": 26,  # 預設值
+            "macd_signal": 9,  # 預設值
+            "min_data_length_rsi_sma": 20
+        }
+        for key, value in default_params.items():
+            if key not in self.params:
+                self.params[key] = value
+                logger.warning(f"技術參數 {key} 缺失，使用預設值 {value}")
         self.min_data_length = self.params.get('min_data_length_rsi_sma', 20)
 
     def analyze_market(self, symbol, timeframe='daily'):
