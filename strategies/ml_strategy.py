@@ -22,7 +22,7 @@ class MLStrategy(BaseStrategy):
                     "macd_fast": 12,
                     "macd_slow": 26,
                     "macd_signal": 9,
-                    "min_data_length": 50,
+                    "min_data_length": 30,
                     "return_threshold": 0.01
                 }
 
