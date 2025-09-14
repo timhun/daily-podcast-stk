@@ -55,7 +55,13 @@ class BigLineStrategy(BaseStrategy):
             if df.empty or len(df) < self.params['ma_long'] or index_df.empty or len(index_df) < self.params['ma_long']:
                 logger.error(f"{symbol} 或大盤 {index_symbol} {timeframe} 數據不足")
                 return self._default_results()
-            
+
+            if 'date' in df.columns:
+                df = df.sort_values('date')
+                df.set_index('date', inplace=True)
+            else:
+                logger.warning(f"{symbol} 'date' 欄位不存在，跳過排序，使用現有索引")
+    
             df = df.sort_values('date').set_index('date')
             index_df = index_df.sort_values('date').set_index('date')
             df = df.join(index_df[['close', 'volume']], rsuffix='_index', how='inner')
