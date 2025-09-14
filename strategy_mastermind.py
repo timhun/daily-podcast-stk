@@ -334,42 +334,34 @@ class StrategyEngine:
             json.dump(summary, f, ensure_ascii=False, indent=2)
         logger.info(f"市場總結儲存至: {summary_dir}/market_summary.json")
 
-    def _trend_analysis(self, symbol, data, timeframe):
-        if not isinstance(data, pd.DataFrame) or data.empty or 'close' not in data.columns:
-            logger.error(f"{symbol} 數據格式錯誤或缺少 close 欄位，收到 {type(data)}")
-            return {
-                'symbol': symbol,
-                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
-                'trend': 'Unknown',
-                'rsi': 0.0,
-                'signals': {'position': 'NEUTRAL'}
-            }
-
-        df = data.copy()
+    def _trend_analysis(self, symbol, data, timeframe='daily'):
         try:
-            df['date'] = pd.to_datetime(df['date'])
-            df.set_index('date', inplace=True)
-            ma_short = calculate_ma(df['close'], 5)
-            ma_mid = calculate_ma(df['close'], 20)
-            ma_long = calculate_ma(df['close'], 60)
-            trend = 'Bullish' if is_bullish(ma_short, ma_mid, ma_long).iloc[-1] else 'Bearish'
-            rsi = ta.momentum.RSIIndicator(df['close'], window=14).rsi().iloc[-1]
-            return {
-                'symbol': symbol,
-                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
-                'trend': trend,
-                'rsi': float(rsi) if not np.isnan(rsi) else 0.0,
-                'signals': {'position': 'NEUTRAL'}
-            }
+            # 檢查 data 是否為 DataFrame 並重置索引
+            if not isinstance(data, pd.DataFrame):
+                logger.error(f"{symbol} 數據格式錯誤，收到 {type(data)}")
+                return None
+            if 'date' not in data.columns:
+                if data.index.name == 'date':
+                    data = data.reset_index()
+                else:
+                    logger.error(f"{symbol} 數據缺少 'date' 欄位")
+                    return None
+    
+            # 確保 'close' 欄位存在
+            if 'close' not in data.columns:
+                logger.error(f"{symbol} 數據缺少 'close' 欄位")
+                return None
+    
+            # 趨勢分析邏輯
+            df = data.copy()
+            df['ma_short'] = df['close'].rolling(window=20).mean()
+            df['ma_long'] = df['close'].rolling(window=50).mean()
+            trend = 'UP' if df['ma_short'].iloc[-1] > df['ma_long'].iloc[-1] else 'DOWN'
+            logger.info(f"{symbol} 趨勢分析: {trend}")
+            return {'trend': trend, 'confidence': 0.7}  # 預設信心值
         except Exception as e:
             logger.error(f"{symbol} 趨勢分析失敗: {str(e)}")
-            return {
-                'symbol': symbol,
-                'analysis_date': datetime.today().strftime('%Y-%m-%d'),
-                'trend': 'Unknown',
-                'rsi': 0.0,
-                'signals': {'position': 'NEUTRAL'}
-            }
+            return None
 
     def _load_sentiment_score(self, symbol, timeframe):
         sentiment_file = f"{config['data_paths']['sentiment']}/{datetime.today().strftime('%Y-%m-%d')}/social_metrics.json"
