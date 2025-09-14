@@ -161,8 +161,7 @@ class StrategyEngine:
             else:
                 param_combinations = get_param_combinations(strategy.params)
             for params in param_combinations:
-            
-            param_combinations = get_param_combinations(strategy.params)
+                param_combinations = get_param_combinations(strategy.params)
             for params in param_combinations:
                 original_params = deepcopy(strategy.params)
                 strategy.params = params
