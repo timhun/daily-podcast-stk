@@ -3,8 +3,5 @@
   "rsi_buy_threshold": 30,
   "rsi_sell_threshold": 70,
   "sma_window": 20,
-  "macd_fast": 12,
-  "macd_slow": 26,
-  "macd_signal": 9,
   "min_data_length_rsi_sma": 20
 }
