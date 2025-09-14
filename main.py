@@ -33,18 +33,25 @@ def main(mode):
     market_analysis = {}  # 新增市場分析結果
     analyst = MarketAnalyst(config)  # 修改：傳遞 config 參數以符合 MarketAnalyst 初始化
     for symbol in market_data['market']:
-        # Load the full DataFrame from CSV for historical data
-        file_path = f"{config['data_paths']['market']}/daily_{symbol.replace('^', '').replace('.', '_')}.csv"
-        if os.path.exists(file_path):
-            df = pd.read_csv(file_path)
-            df['date'] = pd.to_datetime(df['date'])
-            df.set_index('date', inplace=True)
-        else:
-            df = pd.DataFrame()
-            print(f"Warning: No data for {symbol}, using empty DataFrame")
-        strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, market_data['market'][symbol])
-        market_analysis[symbol] = analyst.analyze_market(symbol)  # 新增市場分析
+        file_path = f"{config['data_paths']['market']}/daily_{symbol.replace('^', '').replace('.', '_').replace('-', '_')}.csv"
+        try:
+            if os.path.exists(file_path):
+                df = pd.read_csv(file_path)
+                df['date'] = pd.to_datetime(df['date'], utc=True)
+                df.set_index('date', inplace=True)
+                if df.empty or 'close' not in df.columns:
+                    logger.warning(f"{symbol} CSV 為空或缺少 'close' 欄位")
+                    df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
+            else:
+                logger.warning(f"找不到 {symbol} 的 CSV 檔案：{file_path}")
+                df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
+        except Exception as e:
+            logger.error(f"載入 {symbol} CSV 失敗：{str(e)}")
+            df = pd.DataFrame(columns=['date', 'symbol', 'open', 'high', 'low', 'close', 'change', 'volume'])
     
+        strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, df)  # 使用 df 而非 market_data['market'][symbol]
+        market_analysis[symbol] = analyst.analyze_market(symbol)
+        
     # 步驟3: 生成文字稿
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
     script_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.txt"
