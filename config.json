@@ -7,10 +7,12 @@
   "news_sources": {
     "us": [
       "https://feeds.bloomberg.com/technology/news.rss",
+      "https://www.theinformation.com/feed",
       "https://www.reddit.com/r/investing/.rss"
     ],
     "tw": [
       "https://tw.stock.yahoo.com/rss?category=news",
+      "https://www.theinformation.com/feed",
       "https://www.moneydj.com/rss/feed.xml"
     ]
   },
