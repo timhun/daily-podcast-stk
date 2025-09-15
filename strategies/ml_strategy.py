@@ -120,17 +120,17 @@ class MLStrategy(BaseStrategy):
         delta = series.diff()
         gain = delta.where(delta > 0, 0)
         loss = -delta.where(delta < 0, 0)
-        avg_gain = gain.rolling(window=window).mean()
-        avg_loss = loss.rolling(window=window).mean()
+        avg_gain = gain.rolling(window=window, min_periods=1).mean()
+        avg_loss = loss.rolling(window=window, min_periods=1).mean()
         rs = avg_gain / avg_loss
         rsi = 100 - (100 / (1 + rs))
-        return rsi
+        return rsi.fillna(50)  # Neutral fill for early NaN
 
     def _calculate_macd(self, series, fast, slow, signal):
-        ema_fast = series.ewm(span=fast, min_periods=fast).mean()
-        ema_slow = series.ewm(span=slow, min_periods=slow).mean()
+        ema_fast = series.ewm(span=fast, min_periods=1).mean()
+        ema_slow = series.ewm(span=slow, min_periods=1).mean()
         macd = ema_fast - ema_slow
-        macd_signal = macd.ewm(span=signal, min_periods=signal).mean()
+        macd_signal = macd.ewm(span=signal, min_periods=1).mean()
         return macd - macd_signal
 
     def _default_results(self):
