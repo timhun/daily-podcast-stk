@@ -34,11 +34,16 @@ class BigLineStrategy(BaseStrategy):
             logger.info(f"{symbol} 非主要交易標的，跳過回測")
             return self._default_results()
 
-        if not all(col in data for col in ['close', 'volume', 'composite_index', 'sentiment_score']):
-            logger.error(f"{symbol} 數據缺少必要欄位")
-            return self._default_results()
-
         df = data.copy()
+        if 'date' not in df.columns:
+            if df.index.name == 'date':
+                df = df.reset_index()  # Reset if already indexed
+            else:
+                logger.error(f"{symbol} 數據缺少 'date' 欄位或索引")
+                return self._default_results()
+        
+        df = df.sort_values('date').set_index('date')
+        
         index_symbol = '^TWII' if symbol == '0050.TW' else '^IXIC'
         index_file_path = f"{self.config['data_paths']['market']}/{timeframe}_{index_symbol.replace('^', '').replace('.', '_')}.csv"
         
