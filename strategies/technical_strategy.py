@@ -27,8 +27,16 @@ class TechnicalStrategy(BaseStrategy):
                 }
 
     def _load_sentiment_score(self, symbol, timeframe):
-        # Placeholder for sentiment score loading
-        return 0.0  # Replace with actual sentiment loading logic if needed
+        sentiment_file = f"{self.config['data_paths']['sentiment']}/{datetime.today().strftime('%Y-%m-%d')}/social_metrics.json"
+        try:
+            with open(sentiment_file, 'r', encoding='utf-8') as f:
+                sentiment_data = json.load(f)
+            score = sentiment_data.get('symbols', {}).get(symbol, {}).get('sentiment_score', 0.0)
+            logger.info(f"{symbol} 情緒分數: {score}")
+            return score
+        except Exception as e:
+            logger.error(f"載入 {symbol} 情緒數據失敗: {str(e)}")
+            return 0.0
 
     def backtest(self, symbol, data, timeframe='daily'):
         df = self.load_data(symbol, timeframe)
