@@ -27,7 +27,7 @@ class MLStrategy(BaseStrategy):
                 }
 
     def backtest(self, symbol, data, timeframe='daily'):
-        if data.empty or len(data) < self.params['min_data_length']:
+        if data.empty or len(data) < 30:
             logger.warning(f"{symbol} data insufficient or empty")
             return self._default_results()
 
@@ -47,9 +47,11 @@ class MLStrategy(BaseStrategy):
 
             # Create labels (1 for positive return, 0 for negative)
             df['label'] = (df['returns'].shift(-1) > self.params['return_threshold']).astype(int)
+            logger.info(f"{symbol} 特徵工程前數據長度: {len(df)}")
             df = df.dropna()
+            logger.info(f"{symbol} 特徵工程後數據長度: {len(df)}")
 
-            if len(df) < 50:
+            if len(df) < 30:
                 logger.warning(f"{symbol} insufficient data after feature engineering")
                 return self._default_results()
 
