@@ -49,11 +49,11 @@ class DataQualityChecker:
         return quality_score, checks
 
 @retry(tries=3, delay=1, backoff=2)
-def fetch_market_data(symbol):
+def fetch_market_data(symbol, period='1y'):
     ticker = yf.Ticker(symbol)
     
-    # 每日數據（365 天）
-    hist_daily = ticker.history(period='1y')
+    # 每日數據（可變period）
+    hist_daily = ticker.history(period=period)  # e.g., '2y' or '5y'
     if hist_daily.empty:
         logger.error(f"{symbol} 每日數據無回應")
         daily_data = {
