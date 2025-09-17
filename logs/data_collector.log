@@ -293,3 +293,830 @@
 2025-09-16 21:47:14.536 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-09-16 21:47:14.766 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250917 集數
 2025-09-16 21:47:14.991 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，us 版 20250917 集數
+2025-09-17 14:50:21.563 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-09-17 14:50:21.565 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-09-17 14:50:21.800 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-09-17 14:50:21.802 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-09-17 14:50:22.045 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-09-17 14:50:22.047 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-09-17 14:50:22.445 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2317_TW.csv
+2025-09-17 14:50:22.446 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2317_TW.csv
+2025-09-17 14:50:22.725 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-09-17 14:50:22.726 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-09-17 14:50:22.972 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2308_TW.csv
+2025-09-17 14:50:22.973 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2308_TW.csv
+2025-09-17 14:50:23.212 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2881_TW.csv
+2025-09-17 14:50:23.213 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2881_TW.csv
+2025-09-17 14:50:23.450 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2412_TW.csv
+2025-09-17 14:50:23.452 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2412_TW.csv
+2025-09-17 14:50:23.704 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2382_TW.csv
+2025-09-17 14:50:23.706 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2382_TW.csv
+2025-09-17 14:50:23.953 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2882_TW.csv
+2025-09-17 14:50:23.954 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2882_TW.csv
+2025-09-17 14:50:24.178 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2891_TW.csv
+2025-09-17 14:50:24.180 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2891_TW.csv
+2025-09-17 14:50:24.413 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_3711_TW.csv
+2025-09-17 14:50:24.414 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_3711_TW.csv
+2025-09-17 14:50:24.948 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-09-17 14:50:25.675 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-09-17/tw_news.json
+2025-09-17 14:50:28.497 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-09-17/social_metrics.json
+2025-09-17 14:50:28.497 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 12 個標的, 3 則新聞, 品質分數: 1.0
+2025-09-17 14:50:28.844 | INFO     | strategy_mastermind:run_strategy_tournament:126 - ^TWII 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:28.846 | INFO     | strategy_mastermind:_trend_analysis:360 - ^TWII 趨勢分析: UP
+2025-09-17 14:50:28.856 | INFO     | market_analyst:analyze_market:91 - ^TWII 市場分析完成
+2025-09-17 14:50:28.885 | ERROR    | strategies.technical_strategy:backtest:113 - 0050.TW daily 回測失敗: name 'datetime' is not defined
+2025-09-17 14:50:28.886 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW technical 策略參數 {'rsi_window': 14, 'rsi_buy_threshold': 30, 'rsi_sell_threshold': 70, 'sma_window': 20, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length_rsi_sma': 20} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.893 | INFO     | strategies.ml_strategy:backtest:50 - 0050.TW 特徵工程前數據長度: 242
+2025-09-17 14:50:28.894 | INFO     | strategies.ml_strategy:backtest:52 - 0050.TW 特徵工程後數據長度: 0
+2025-09-17 14:50:28.895 | WARNING  | strategies.ml_strategy:backtest:55 - 0050.TW insufficient data after feature engineering
+2025-09-17 14:50:28.895 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW ml 策略參數 {'n_estimators': 50, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 20, 'return_threshold': 0.01} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.902 | INFO     | strategies.ml_strategy:backtest:50 - 0050.TW 特徵工程前數據長度: 242
+2025-09-17 14:50:28.906 | INFO     | strategies.ml_strategy:backtest:52 - 0050.TW 特徵工程後數據長度: 0
+2025-09-17 14:50:28.906 | WARNING  | strategies.ml_strategy:backtest:55 - 0050.TW insufficient data after feature engineering
+2025-09-17 14:50:28.906 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW ml 策略參數 {'n_estimators': 50, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 20, 'return_threshold': 0.01} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.913 | INFO     | strategies.ml_strategy:backtest:50 - 0050.TW 特徵工程前數據長度: 242
+2025-09-17 14:50:28.915 | INFO     | strategies.ml_strategy:backtest:52 - 0050.TW 特徵工程後數據長度: 0
+2025-09-17 14:50:28.915 | WARNING  | strategies.ml_strategy:backtest:55 - 0050.TW insufficient data after feature engineering
+2025-09-17 14:50:28.915 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW ml 策略參數 {'n_estimators': 50, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 20, 'return_threshold': 0.01} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.922 | INFO     | strategies.ml_strategy:backtest:50 - 0050.TW 特徵工程前數據長度: 242
+2025-09-17 14:50:28.924 | INFO     | strategies.ml_strategy:backtest:52 - 0050.TW 特徵工程後數據長度: 0
+2025-09-17 14:50:28.924 | WARNING  | strategies.ml_strategy:backtest:55 - 0050.TW insufficient data after feature engineering
+2025-09-17 14:50:28.924 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW ml 策略參數 {'n_estimators': 100, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 20, 'return_threshold': 0.01} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.932 | INFO     | strategies.ml_strategy:backtest:50 - 0050.TW 特徵工程前數據長度: 242
+2025-09-17 14:50:28.933 | INFO     | strategies.ml_strategy:backtest:52 - 0050.TW 特徵工程後數據長度: 0
+2025-09-17 14:50:28.933 | WARNING  | strategies.ml_strategy:backtest:55 - 0050.TW insufficient data after feature engineering
+2025-09-17 14:50:28.933 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW ml 策略參數 {'n_estimators': 100, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 20, 'return_threshold': 0.01} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.940 | INFO     | strategies.ml_strategy:backtest:50 - 0050.TW 特徵工程前數據長度: 242
+2025-09-17 14:50:28.941 | INFO     | strategies.ml_strategy:backtest:52 - 0050.TW 特徵工程後數據長度: 0
+2025-09-17 14:50:28.942 | WARNING  | strategies.ml_strategy:backtest:55 - 0050.TW insufficient data after feature engineering
+2025-09-17 14:50:28.942 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW ml 策略參數 {'n_estimators': 100, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 20, 'return_threshold': 0.01} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.949 | INFO     | strategies.ml_strategy:backtest:50 - 0050.TW 特徵工程前數據長度: 242
+2025-09-17 14:50:28.950 | INFO     | strategies.ml_strategy:backtest:52 - 0050.TW 特徵工程後數據長度: 0
+2025-09-17 14:50:28.950 | WARNING  | strategies.ml_strategy:backtest:55 - 0050.TW insufficient data after feature engineering
+2025-09-17 14:50:28.950 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW ml 策略參數 {'n_estimators': 200, 'max_depth': None, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 20, 'return_threshold': 0.01} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.956 | INFO     | strategies.ml_strategy:backtest:50 - 0050.TW 特徵工程前數據長度: 242
+2025-09-17 14:50:28.957 | INFO     | strategies.ml_strategy:backtest:52 - 0050.TW 特徵工程後數據長度: 0
+2025-09-17 14:50:28.957 | WARNING  | strategies.ml_strategy:backtest:55 - 0050.TW insufficient data after feature engineering
+2025-09-17 14:50:28.957 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW ml 策略參數 {'n_estimators': 200, 'max_depth': 10, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 20, 'return_threshold': 0.01} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.962 | INFO     | strategies.ml_strategy:backtest:50 - 0050.TW 特徵工程前數據長度: 242
+2025-09-17 14:50:28.963 | INFO     | strategies.ml_strategy:backtest:52 - 0050.TW 特徵工程後數據長度: 0
+2025-09-17 14:50:28.963 | WARNING  | strategies.ml_strategy:backtest:55 - 0050.TW insufficient data after feature engineering
+2025-09-17 14:50:28.963 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW ml 策略參數 {'n_estimators': 200, 'max_depth': 20, 'rsi_window': 14, 'macd_fast': 12, 'macd_slow': 26, 'macd_signal': 9, 'min_data_length': 20, 'return_threshold': 0.01} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.964 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:28.968 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:28.968 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.969 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:28.973 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:28.973 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.975 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:28.978 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:28.979 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.981 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:28.986 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:28.986 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.988 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:28.993 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:28.993 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:28.995 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:28.999 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:28.999 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.001 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.005 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.005 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.007 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.011 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.011 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.012 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.016 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.017 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.018 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.022 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.022 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.023 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.027 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.028 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.029 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.034 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.034 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.036 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.039 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.040 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.042 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.046 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.046 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.048 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.054 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.054 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.056 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.060 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.060 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.062 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.066 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.066 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.067 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.071 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.071 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.073 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.076 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.077 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.078 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.082 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.082 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.084 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.089 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.089 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.091 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.095 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.095 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.097 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.101 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.101 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.103 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.106 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.107 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.108 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.112 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.112 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.114 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.120 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.120 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.123 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.127 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.128 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.129 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.134 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.134 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.136 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.140 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.141 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.142 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.147 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.147 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.149 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.153 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.153 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.155 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.159 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.159 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.161 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.165 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.166 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.167 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.171 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.172 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.173 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.177 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.177 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.178 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.181 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.182 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.183 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.186 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.186 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.188 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.190 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.191 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.192 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.195 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.195 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.197 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.200 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.201 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.202 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.206 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.207 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.208 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.213 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.213 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.215 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.219 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.219 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.221 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.225 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.225 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.226 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.230 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.230 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.232 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.236 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.236 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.238 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.243 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.243 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.245 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.250 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.250 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.4, 0.35, 0.25], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.252 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.258 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.258 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.261 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.267 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.267 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.270 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.275 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.275 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.277 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.281 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.281 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.282 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.286 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.286 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.288 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.291 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.292 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.293 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.297 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.298 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.300 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.304 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.304 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.306 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.309 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.310 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.311 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.314 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.314 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.316 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.319 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.319 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.320 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.324 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.324 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.325 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.328 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.328 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.330 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.333 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.334 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.335 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.340 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.341 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.343 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.346 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.347 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.348 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.351 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.351 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.352 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.355 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.355 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.357 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.359 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.360 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.361 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.364 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.364 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.365 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.368 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.368 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.370 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.373 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.373 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.374 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.377 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.377 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.378 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.382 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.382 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.385 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.389 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.389 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.390 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.394 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.394 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.396 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.400 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.400 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.401 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.405 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.405 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.406 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.409 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.409 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.410 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.413 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.413 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.414 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.417 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.417 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.419 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.421 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.422 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.423 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.426 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.426 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.427 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.430 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.431 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.432 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.435 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.436 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.437 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.439 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.440 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.441 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.443 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.444 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.445 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.447 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.447 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.448 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.451 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.451 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.452 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.455 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.455 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.456 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.459 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.459 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.460 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.463 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.463 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.464 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.466 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.466 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.468 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.470 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.470 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.471 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.474 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.474 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.475 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.478 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.478 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.479 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.482 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.482 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.483 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.486 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.486 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.5, 0.3, 0.2], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.487 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.490 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.490 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.491 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.494 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.494 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.496 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.498 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.499 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.500 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.502 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.503 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.504 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.506 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.507 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.508 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.510 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.511 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.512 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.514 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.514 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.516 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.518 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.518 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.520 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.522 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.523 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.524 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.526 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.527 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.528 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.530 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.530 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.532 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.534 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.534 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.536 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.538 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.538 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.540 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.542 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.543 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.544 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.546 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.547 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.548 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.550 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.551 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.552 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.554 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.555 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.556 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.559 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.559 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.560 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.563 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.563 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.564 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.567 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.567 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.568 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.571 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.571 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.572 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.575 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.575 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.576 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.579 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.579 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.580 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.583 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.583 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.584 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.587 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.587 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.588 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.591 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.591 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.592 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.595 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.595 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.596 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.599 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.599 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.600 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.603 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.603 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.604 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.607 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.607 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.608 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.611 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.611 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.612 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.615 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.615 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.616 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.619 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.619 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.620 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.622 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.623 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.624 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.626 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.626 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.627 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.630 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.630 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.631 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.634 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.634 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.635 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.638 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.638 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.639 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.642 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.642 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.643 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.645 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.646 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.647 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.649 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.649 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.651 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.653 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.653 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.654 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.657 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.657 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.658 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.661 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.661 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.662 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.665 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.665 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.666 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.668 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.669 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.670 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.672 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.673 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.674 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.676 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.676 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.3, 0.4, 0.3], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.677 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.680 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.680 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.681 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.684 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.684 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.685 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.688 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.688 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.689 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.692 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.692 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.693 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.696 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.696 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.697 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.699 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.700 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.701 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.703 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.703 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.704 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.707 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.707 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.708 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.711 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.711 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.712 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.714 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.715 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.716 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.718 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.718 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.719 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.722 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.722 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.723 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.726 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.726 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.727 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.729 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.730 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.731 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.733 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.733 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.734 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.737 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.737 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.738 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.741 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.741 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.742 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.745 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.745 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.746 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.748 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.749 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.750 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.752 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.752 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.753 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.756 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.756 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.757 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.760 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.760 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.761 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.764 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.764 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.765 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.767 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.768 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.769 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.771 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.771 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.772 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.775 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.775 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.776 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.779 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.779 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.780 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.783 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.783 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.784 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.787 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.787 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.788 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.791 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.791 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.792 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.796 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.796 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.797 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.800 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.800 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.801 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.804 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.804 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.805 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.808 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.808 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.809 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.812 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.812 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.814 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.816 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.817 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.818 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.820 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.821 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.822 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.825 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.825 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.826 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.829 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.829 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.830 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.833 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.833 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.834 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.837 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.837 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.838 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.841 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.841 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.842 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.845 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.845 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.846 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.849 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.849 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.850 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.853 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.853 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.854 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.857 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.857 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.858 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.861 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.861 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.863 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.865 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.866 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.6, 0.3, 0.1], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.867 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.869 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.870 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.871 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.874 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.874 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.875 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.878 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.878 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.879 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.882 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.882 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.883 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.886 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.886 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.887 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.890 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.890 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.891 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.894 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.894 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.895 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.898 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.898 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.900 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.902 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.902 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.904 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.906 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.906 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.908 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.910 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.910 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.912 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.914 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.914 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.916 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.918 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.918 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.920 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.922 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.922 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.924 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.926 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.927 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.928 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.930 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.931 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 5, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.932 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.934 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.935 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.936 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.939 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.939 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.940 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.943 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.943 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.944 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.947 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.948 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.949 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.951 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.952 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.953 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.955 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.955 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.956 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.959 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.959 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.960 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.963 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.963 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.964 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.967 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.967 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.968 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.970 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.970 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.972 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.974 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.974 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.975 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.978 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.978 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.979 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.982 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.982 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.983 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.985 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.986 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.987 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.989 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.990 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.991 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.993 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.993 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 10, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.994 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:29.997 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:29.997 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:29.998 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.001 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.001 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.002 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.005 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.005 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.006 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.009 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.009 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.010 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.013 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.013 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.014 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.016 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.017 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.018 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.020 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.021 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.022 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.024 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.025 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 20, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.026 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.028 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.029 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.030 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.032 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.033 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.034 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.036 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.037 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.038 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.041 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.041 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 60, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.042 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.045 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.045 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.046 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.048 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.049 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 60, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.050 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.052 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.052 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 14} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:30.053 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-17 14:50:30.056 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-17 14:50:30.056 | INFO     | strategy_mastermind:run_strategy_tournament:181 - 0050.TW bigline 策略參數 {'weights': [0.2, 0.4, 0.4], 'ma_short': 15, 'ma_mid': 30, 'ma_long': 90, 'vol_window': 90, 'rsi_window': 21} 回測完成，Expected Return: 0.0000, Sharpe: 0.00
+2025-09-17 14:50:42.105 | INFO     | strategy_mastermind:_generate_market_summary:335 - 市場總結儲存至: data/market/2025-09-17/market_summary.json
+2025-09-17 14:50:42.105 | INFO     | strategy_mastermind:run_strategy_tournament:235 - 策略結果儲存至: data/strategy/2025-09-17/0050_TW.json
+2025-09-17 14:50:42.111 | INFO     | market_analyst:analyze_market:91 - 0050.TW 市場分析完成
+2025-09-17 14:50:42.113 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2330.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:42.114 | INFO     | strategy_mastermind:_trend_analysis:360 - 2330.TW 趨勢分析: UP
+2025-09-17 14:50:42.120 | INFO     | market_analyst:analyze_market:91 - 2330.TW 市場分析完成
+2025-09-17 14:50:42.122 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2317.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:42.124 | INFO     | strategy_mastermind:_trend_analysis:360 - 2317.TW 趨勢分析: UP
+2025-09-17 14:50:42.129 | INFO     | market_analyst:analyze_market:91 - 2317.TW 市場分析完成
+2025-09-17 14:50:42.131 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2454.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:42.133 | INFO     | strategy_mastermind:_trend_analysis:360 - 2454.TW 趨勢分析: UP
+2025-09-17 14:50:42.138 | INFO     | market_analyst:analyze_market:91 - 2454.TW 市場分析完成
+2025-09-17 14:50:42.140 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2308.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:42.141 | INFO     | strategy_mastermind:_trend_analysis:360 - 2308.TW 趨勢分析: UP
+2025-09-17 14:50:42.147 | INFO     | market_analyst:analyze_market:91 - 2308.TW 市場分析完成
+2025-09-17 14:50:42.149 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2881.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:42.150 | INFO     | strategy_mastermind:_trend_analysis:360 - 2881.TW 趨勢分析: UP
+2025-09-17 14:50:42.156 | INFO     | market_analyst:analyze_market:91 - 2881.TW 市場分析完成
+2025-09-17 14:50:42.158 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2412.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:42.159 | INFO     | strategy_mastermind:_trend_analysis:360 - 2412.TW 趨勢分析: UP
+2025-09-17 14:50:42.165 | INFO     | market_analyst:analyze_market:91 - 2412.TW 市場分析完成
+2025-09-17 14:50:42.167 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2382.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:42.168 | INFO     | strategy_mastermind:_trend_analysis:360 - 2382.TW 趨勢分析: DOWN
+2025-09-17 14:50:42.174 | INFO     | market_analyst:analyze_market:91 - 2382.TW 市場分析完成
+2025-09-17 14:50:42.176 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2882.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:42.177 | INFO     | strategy_mastermind:_trend_analysis:360 - 2882.TW 趨勢分析: UP
+2025-09-17 14:50:42.183 | INFO     | market_analyst:analyze_market:91 - 2882.TW 市場分析完成
+2025-09-17 14:50:42.185 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 2891.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:42.186 | INFO     | strategy_mastermind:_trend_analysis:360 - 2891.TW 趨勢分析: DOWN
+2025-09-17 14:50:42.192 | INFO     | market_analyst:analyze_market:91 - 2891.TW 市場分析完成
+2025-09-17 14:50:42.194 | INFO     | strategy_mastermind:run_strategy_tournament:126 - 3711.TW 非主要交易標的，僅用於趨勢分析或播報
+2025-09-17 14:50:42.195 | INFO     | strategy_mastermind:_trend_analysis:360 - 3711.TW 趨勢分析: UP
+2025-09-17 14:50:42.200 | INFO     | market_analyst:analyze_market:91 - 3711.TW 市場分析完成
+2025-09-17 14:51:02.245 | INFO     | content_creator:generate_script:96 - 成功生成播客文字稿
+2025-09-17 14:51:24.395 | INFO     | podcast_distributor:generate_rss:127 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-09-17 14:51:25.066 | INFO     | podcast_distributor:generate_rss:129 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-09-17 14:51:25.222 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250917 集數
+2025-09-17 14:51:25.424 | INFO     | podcast_distributor:notify_slack:140 - 已發送 Slack 通知，tw 版 20250917 集數
