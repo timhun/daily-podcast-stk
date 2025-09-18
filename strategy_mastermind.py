@@ -144,7 +144,7 @@ class StrategyEngine:
             logger.info("Defaulting to Grok AI client")
 
     def run_strategy_tournament(self, symbol, data, timeframe='daily', index_symbol=None):
-        """Run strategy backtests (unchanged logic, placeholder for original)"""
+        """Run strategy backtests"""
         results = {}
         best_results = {}
         index_symbol = index_symbol or ('^TWII' if symbol == '0050.TW' else '^IXIC')
@@ -264,35 +264,38 @@ class StrategyEngine:
     def _build_optimization_prompt(self, results, strategy_name, extended_data):
         """Build AI optimization prompt"""
         data_desc = f"using {len(extended_data)} rows of extended data" if extended_data is not None else "using existing data"
-        prompt = (
-            f"Optimize the {strategy_name} strategy ({data_desc}). Backtest results:\n"
-            f"{json.dumps(results, ensure_ascii=False, indent=2)}\n"
-            f"Requirements:\n"
-            f"- Select the strategy with the highest expected return, ensuring max drawdown < {config['strategy_params']['max_drawdown_threshold']}.\n"
-            f"- Focus on {strategy_name}-specific parameters (e.g., RSI thresholds for technical, n_estimators for ml).\n"
-            f"- Provide the best strategy name, confidence, expected return, max drawdown, Sharpe ratio, trading signals, and dynamic parameters.\n"
-            f"Output in JSON format:\n"
-            "{\n"
-            f'  "symbol": "{results.get('symbol', 'unknown')}",\n'
-            f'  "analysis_date": "{datetime.today().strftime('%Y-%m-%d')}",\n'
-            f'  "winning_strategy": {{\n'
-            f'    "name": "{strategy_name}",\n'
-            f'    "confidence": 0.0,\n'
-            f'    "expected_return": 0.0,\n'
-            f'    "max_drawdown": 0.0,\n'
-            f'    "sharpe_ratio": 0.0\n'
-            f'  }},\n'
-            f'  "signals": {{\n'
-            f'    "position": "LONG/NEUTRAL/SHORT",\n'
-            f'    "entry_price": 0.0,\n'
-            f'    "target_price": 0.0,\n'
-            f'    "stop_loss": 0.0,\n'
-            f'    "position_size": 0.0\n'
-            f'  }},\n'
-            f'  "dynamic_params": {{}},\n'
-            f'  "strategy_version": "2.0"\n'
+        symbol = results.get('symbol', 'unknown')
+        prompt_parts = [
+            f"Optimize the {strategy_name} strategy ({data_desc}).",
+            f"Backtest results:\n{json.dumps(results, ensure_ascii=False, indent=2)}",
+            f"Requirements:",
+            f"- Select the strategy with the highest expected return, ensuring max drawdown < {config['strategy_params']['max_drawdown_threshold']}.",
+            f"- Focus on {strategy_name}-specific parameters (e.g., RSI thresholds for technical, n_estimators for ml).",
+            f"- Provide the best strategy name, confidence, expected return, max drawdown, Sharpe ratio, trading signals, and dynamic parameters.",
+            f"Output in JSON format:",
+            '{',
+            f'  "symbol": "{symbol}",',
+            f'  "analysis_date": "{datetime.today().strftime("%Y-%m-%d")}",',
+            f'  "winning_strategy": {{',
+            f'    "name": "{strategy_name}",',
+            f'    "confidence": 0.0,',
+            f'    "expected_return": 0.0,',
+            f'    "max_drawdown": 0.0,',
+            f'    "sharpe_ratio": 0.0',
+            f'  }},',
+            f'  "signals": {{',
+            f'    "position": "LONG/NEUTRAL/SHORT",',
+            f'    "entry_price": 0.0,',
+            f'    "target_price": 0.0,',
+            f'    "stop_loss": 0.0,',
+            f'    "position_size": 0.0',
+            f'  }},',
+            f'  "dynamic_params": {{}},',
+            f'  "strategy_version": "2.0"',
             f'}}'
-        )
+        ]
+        prompt = '\n'.join(prompt_parts)
+        logger.debug(f"Generated optimization prompt for {strategy_name}:\n{prompt}")
         return prompt
 
     def optimize_with_grok(self, prompt):
