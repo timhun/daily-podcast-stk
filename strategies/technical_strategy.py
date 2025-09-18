@@ -25,7 +25,76 @@ class TechnicalStrategy(BaseStrategy):
                     "macd_signal": 9,  # 預設值
                     "min_data_length_rsi_sma": 20
                 }
+    def optimize(self, symbol, timeframe, period='1y', max_iterations=3):
+        """獨立優化：生成參數組合，回測，AI選擇最佳"""
+        # 載入長資料
+        df = self.load_data(symbol, timeframe, period=period)  # 修改load_data支援period
+        if df is None or len(df) < 50:
+            return None
 
+        # 生成參數組合（使用utils.get_param_combinations）
+        param_combos = get_param_combinations(self.params, num_combos=5 if self.is_weekday() else 10)  # 平日5, 假日10
+
+        backtest_results = {}
+        for params in param_combos:
+            temp_strategy = TechnicalStrategy(self.config, params)  # 臨時實例
+            result = temp_strategy.backtest(symbol, df, timeframe)
+            backtest_results[str(params)] = result
+
+        # AI迭代優化（3-5輪）
+        best_params = self._ai_optimize(backtest_results, max_iterations)
+        return {'parameters': best_params}
+
+    def _ai_optimize(self, results, max_iterations):
+        """使用Grok/Gemini/Claude迭代選擇最佳params"""
+        current_best = max(results.items(), key=lambda x: x[1]['expected_return'])
+        for i in range(max_iterations):
+            prompt = f"基於回測結果 {json.dumps(results)}，優化technical策略參數 (RSI window/thresholds等)。當前最佳: {current_best}。建議新組合: JSON格式 {{'rsi_window': int, 'rsi_buy_threshold': int, ...}}"
+
+            # 輪詢AI
+            ais = ['grok', 'gemini', 'groq']
+            suggestions = []
+            for ai in ais:
+                if ai == 'grok' and self.api_key:
+                    # Grok prompt (類似原有optimize_with_grok)
+                    client = Client(api_key=self.api_key)
+                    chat = client.chat.create(model="grok-3-mini")
+                    chat.append(system("You are a strategy optimizer. Suggest improved params."))
+                    chat.append(user(prompt))
+                    response = chat.sample().content
+                    try:
+                        suggestion = json.loads(response)
+                        suggestions.append(suggestion)
+                    except:
+                        pass
+                elif ai == 'gemini' and self.gemini_key:
+                    model = genai.GenerativeModel('gemini-pro')
+                    response = model.generate_content(prompt)
+                    try:
+                        suggestion = json.loads(response.text)
+                        suggestions.append(suggestion)
+                    except:
+                        pass
+                elif ai == 'groq' and self.groq_client:
+                    response = self.groq_client.messages.create(
+                        model="openai/gpt-oss-20b",
+                        max_tokens=1000,
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    try:
+                        suggestion = json.loads(response.content[0].text)
+                        suggestions.append(suggestion)
+                    except:
+                        pass
+
+            # 選擇平均/投票最佳
+            if suggestions:
+                # 簡單平均 (可擴展)
+                avg_params = {k: np.mean([s.get(k, 0) for s in suggestions]) for k in set().union(*[s.keys() for s in suggestions])}
+                current_best = avg_params  # 更新
+
+        return current_best
+    
     def _load_sentiment_score(self, symbol, timeframe):
         sentiment_file = f"{self.config['data_paths']['sentiment']}/{datetime.today().strftime('%Y-%m-%d')}/social_metrics.json"
         try:
