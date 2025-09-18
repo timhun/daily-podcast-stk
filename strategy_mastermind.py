@@ -237,14 +237,14 @@ class StrategyEngine:
         prompt = self._build_optimization_prompt(results, strategy_name, extended_data)
 
         if default_ai == 'grok':
-            return self.optimize_with_grok(prompt)
+            return self.optimize_with_grok(symbol=results.get('symbol', 'unknown'), results=results, timeframe='daily', best_results=results, index_symbol='^TWII')
         elif default_ai == 'gemini' and self.gemini_model:
             try:
                 response = self.gemini_model.generate_content(prompt)
                 return json.loads(response.text.strip('```json\n').strip('```\n'))
             except Exception as e:
                 logger.error(f"Gemini optimization failed: {e}")
-                return self.optimize_with_grok(prompt)
+                return self.optimize_with_grok(symbol=results.get('symbol', 'unknown'), results=results, timeframe='daily', best_results=results, index_symbol='^TWII')
         elif default_ai == 'groq' and self.groq_client:
             try:
                 chat_completion = self.groq_client.chat.completions.create(
@@ -256,10 +256,10 @@ class StrategyEngine:
                 return json.loads(response_text.strip('```json\n').strip('```\n'))
             except Exception as e:
                 logger.error(f"Groq optimization failed: {e}")
-                return self.optimize_with_grok(prompt)
+                return self.optimize_with_grok(symbol=results.get('symbol', 'unknown'), results=results, timeframe='daily', best_results=results, index_symbol='^TWII')
         else:
             logger.warning(f"No valid AI for {default_ai}, falling back to Grok")
-            return self.optimize_with_grok(prompt)
+            return self.optimize_with_grok(symbol=results.get('symbol', 'unknown'), results=results, timeframe='daily', best_results=results, index_symbol='^TWII')
 
     def _build_optimization_prompt(self, results, strategy_name, extended_data):
         """Build AI optimization prompt"""
@@ -298,11 +298,43 @@ class StrategyEngine:
         logger.debug(f"Generated optimization prompt for {strategy_name}:\n{prompt}")
         return prompt
 
-    def optimize_with_grok(self, prompt):
+    def optimize_with_grok(self, symbol, results, timeframe, best_results, index_symbol):
         """Grok optimization"""
         client = Client(api_key=self.api_key, timeout=3600)
         chat = client.chat.create(model="grok-3-mini")
         chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on expected return, ensuring max drawdown < 15%."))
+
+        prompt = [
+            f"Select the best strategy for {symbol} (timeframe: {timeframe}, index: {index_symbol}).",
+            f"Backtest results:\n{json.dumps(results, ensure_ascii=False, indent=2)}",
+            f"Best parameters:\n{json.dumps(best_results, ensure_ascii=False, indent=2)}",
+            f"Requirements:",
+            f"- Select the strategy with the highest expected return, max drawdown < {config['strategy_params']['max_drawdown_threshold']}.",
+            f"- Provide best strategy name, confidence, expected return, max drawdown, Sharpe ratio, trading signals, and dynamic parameters.",
+            f"Output in JSON format:",
+            '{',
+            f'  "symbol": "{symbol}",',
+            f'  "analysis_date": "{datetime.today().strftime("%Y-%m-%d")}",',
+            f'  "index_symbol": "{index_symbol}",',
+            f'  "winning_strategy": {{',
+            f'    "name": "strategy_name",',
+            f'    "confidence": 0.0,',
+            f'    "expected_return": 0.0,',
+            f'    "max_drawdown": 0.0,',
+            f'    "sharpe_ratio": 0.0',
+            f'  }},',
+            f'  "signals": {{',
+            f'    "position": "LONG/NEUTRAL/SHORT",',
+            f'    "entry_price": 0.0,',
+            f'    "target_price": 0.0,',
+            f'    "stop_loss": 0.0,',
+            f'    "position_size": 0.0',
+            f'  }},',
+            f'  "dynamic_params": {{}},',
+            f'  "strategy_version": "2.0"',
+            f'}}'
+        ]
+        prompt = '\n'.join(prompt)
         chat.append(user(prompt))
         response = chat.sample()
         try:
