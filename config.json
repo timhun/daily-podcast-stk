@@ -47,6 +47,19 @@
     "stop_loss_ratio": 0.9,
     "position_size": 0.1
   },
+  "ai_optimizer": {
+    "default_ai": "grok",
+    "api_keys": {
+      "gemini": "GEMINI_API_KEY",
+      "groq": "GROQ_API_KEY"
+      }
+  },
+  "optimization": {
+    "weekday_data_period": "2y",
+    "weekend_data_period": "5y",
+    "weekday_iterations": 1,
+    "weekend_iterations": 3
+  },
   "logging": {
     "file": "logs/strategy_mastermind.log",
     "rotation": "10 MB"
