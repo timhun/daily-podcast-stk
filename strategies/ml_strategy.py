@@ -31,6 +31,10 @@ class MLStrategy(BaseStrategy):
             logger.warning(f"{symbol} data insufficient or empty")
             return self._default_results()
 
+        if symbol not in ['QQQ', '0050.TW']:
+            logger.info(f"{symbol} 非主要交易標的，跳過回測")
+            return self._default_results()
+
         try:
             required_columns = ['open', 'close', 'volume']
             missing_columns = [col for col in required_columns if col not in data.columns]
