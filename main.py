@@ -7,11 +7,12 @@ from data_collector import collect_data
 from content_creator import generate_script
 from voice_producer import generate_audio
 from cloud_manager import upload_episode
-from podcast_distributor import generate_rss, notify_slack
+from podcast_distributor import generate_rss, notify_slack_enhanced  # 修改：匯入enhanced版本
 from strategy_mastermind import StrategyEngine
 from market_analyst import MarketAnalyst  # 修改：從 market_analyst 匯入 MarketAnalyst
 import pytz
 import json
+from loguru import logger  # 新增：確保logger可用
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -74,7 +75,7 @@ def main(mode):
 
     # 步驟6: 生成 RSS + Slack 通知
     generate_rss(today, mode, script, audio_url)
-    notify_slack(today, mode, audio_url)
+    notify_slack_enhanced(strategy_results, mode)  # 修改：使用enhanced版本
 
     print("Podcast 製作完成！")
 
