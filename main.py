@@ -52,7 +52,16 @@ def main(mode):
     
         strategy_results[symbol] = strategy_engine.run_strategy_tournament(symbol, df)  # 使用 df 而非 market_data['market'][symbol]
         market_analysis[symbol] = analyst.analyze_market(symbol)
-        
+    
+        # Step 2.5: Optimize strategies (background)
+        if is_weekday:
+            strategy_engine.optimize_all_strategies(strategy_results, mode, iterations=1, background=True)
+        else:
+            strategy_engine.optimize_all_strategies(strategy_results, mode, iterations=3, extended_data=True, background=True)
+            
+                
+                    
+                            
     # 步驟3: 生成文字稿
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
     script_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.txt"
