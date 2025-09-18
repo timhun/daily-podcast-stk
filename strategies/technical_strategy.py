@@ -114,6 +114,11 @@ class TechnicalStrategy(BaseStrategy):
         if df is None:
             return self._default_results()
 
+
+        if symbol not in ['QQQ', '0050.TW']:
+            logger.info(f"{symbol} 非主要交易標的，跳過回測")
+            return self._default_results()
+            
         try:
             # 確保參數存在
             macd_fast = self.params.get('macd_fast', 12)
