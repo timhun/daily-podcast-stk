@@ -13,10 +13,10 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import ta
-import yfinance as yf  # 新增，用於載入更多數據
-from threading import Thread  # 新增，背景運行優化
+import yfinance as yf  # For extended data
+from threading import Thread  # For background optimization
 
-# 條件導入 AI 庫（避免 ModuleNotFoundError）
+# Conditional imports to handle missing packages
 try:
     import google.generativeai as genai  # Gemini
 except ImportError:
@@ -35,20 +35,20 @@ with open('config.json', 'r', encoding='utf-8') as f:
 # Configure logging
 logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
-# 計算移動平均線
+# Calculate moving average
 def calculate_ma(prices, window):
     if not isinstance(prices, pd.Series):
-        raise ValueError(f"prices 必須是 pandas.Series，收到 {type(prices)}")
-    return prices.rolling(window=window).mean()
+        raise ValueError(f"prices must be pandas.Series, got {type(prices)}")
+    return prices.rolling(window=window, min_periods=1).mean()
 
-# 判斷三線多頭
+# Check for three-line bullish pattern
 def is_bullish(ma_short, ma_mid, ma_long):
     return (ma_short > ma_mid) & (ma_mid > ma_long)
 
-# 計算強化指數
+# Calculate composite index
 def composite_index_with_weights(prices, volume, weight_stock_info, weights=[0.4, 0.35, 0.25]):
     if not isinstance(prices, pd.Series) or not isinstance(volume, pd.Series):
-        raise ValueError(f"prices 和 volume 必須是 pandas.Series，收到 prices: {type(prices)}, volume: {type(volume)}")
+        raise ValueError(f"prices and volume must be pandas.Series, got prices: {type(prices)}, volume: {type(volume)}")
     ma_short = calculate_ma(prices, 5)
     ma_mid = calculate_ma(prices, 20)
     ma_long = calculate_ma(prices, 60)
@@ -57,8 +57,8 @@ def composite_index_with_weights(prices, volume, weight_stock_info, weights=[0.4
 
     base_line = weights[0] * ma_short + weights[1] * ma_mid + weights[2] * ma_long
 
-    max_vol = volume.rolling(window=60).max()
-    vol_factor = 1 + (volume / (max_vol + 1e-9)) / 1e6  # 縮放成交量
+    max_vol = volume.rolling(window=60, min_periods=1).max()
+    vol_factor = 1 + (volume / (max_vol + 1e-9)) / 1e6  # Scale volume
 
     weighted_sum = 0
     for stock_name, info in weight_stock_info.items():
@@ -83,38 +83,37 @@ class StrategyEngine:
     def __init__(self):
         self.api_key = os.getenv("GROK_API_KEY")
         self.models = {}
-        self.ai_config = config.get('ai_optimizer', {'default_ai': 'grok'})  # 確保有 fallback
+        self.ai_config = config.get('ai_optimizer', {'default_ai': 'grok'})
         self.gemini_model = None
         self.groq_client = None
         self._load_strategies()
         self._init_ai_clients()
 
     def _load_strategies(self):
-        """載入策略，優先使用優化 params"""
+        """Load strategies, prioritize optimized params"""
         strategy_classes = {
             'technical': TechnicalStrategy,
             'ml': MLStrategy,
             'bigline': BigLineStrategy
         }
         for name, strategy_class in strategy_classes.items():
-            # 優先載入優化 params
             optimized_path = f"{config['data_paths']['strategy']}/{name}_optimized.json"
             params = self._load_json_params(optimized_path) or self._load_default_params(name)
             strategy = strategy_class(config, params)
             self.models[name] = strategy
-            logger.info(f"{name} 策略載入完成 (優化 params: {os.path.exists(optimized_path)})")
+            logger.info(f"{name} strategy loaded (optimized params: {os.path.exists(optimized_path)})")
 
     def _load_default_params(self, name):
-        """載入預設 params"""
+        """Load default params"""
         try:
             with open(f'strategies/{name}_strategy.json', 'r', encoding='utf-8') as f:
                 return json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             logger.error(f"Failed to load {name}_strategy.json, using default params")
-            return {}  # 子類會處理預設
+            return {}
 
     def _load_json_params(self, path):
-        """載入 JSON params"""
+        """Load JSON params"""
         if os.path.exists(path):
             try:
                 with open(path, 'r', encoding='utf-8') as f:
@@ -124,7 +123,7 @@ class StrategyEngine:
         return None
 
     def _init_ai_clients(self):
-        """初始化 AI 客戶端，帶 fallback"""
+        """Initialize AI clients with fallback"""
         default_ai = self.ai_config.get('default_ai', 'grok')
         if default_ai == 'gemini' and genai is not None:
             try:
@@ -145,47 +144,71 @@ class StrategyEngine:
             logger.info("Defaulting to Grok AI client")
 
     def run_strategy_tournament(self, symbol, data, timeframe='daily', index_symbol=None):
-        """原有方法：基本回測，不變"""
-        # ... 您的原有 run_strategy_tournament 邏輯（從提供的內容推斷，假設完整）...
-        # 這裡省略，保留原樣，包括 get_param_combinations、backtest 循環、optimize_with_grok 等
-        # 優化調用移到外部（main.py）
+        """Run strategy backtests (unchanged logic, placeholder for original)"""
+        results = {}
+        best_results = {}
+        index_symbol = index_symbol or ('^TWII' if symbol == '0050.TW' else '^IXIC')
+        
+        for name, strategy in self.models.items():
+            param_combinations = get_param_combinations(strategy.params)
+            best_score = -float('inf')
+            best_param_result = None
+            
+            for params in param_combinations:
+                strategy.params = params
+                result = strategy.backtest(symbol, data, timeframe)
+                score = result.get('expected_return', 0) / (result.get('max_drawdown', 1) + 1e-9)
+                if score > best_score:
+                    best_score = score
+                    best_param_result = result
+                    best_param_result['params'] = params
+            
+            results[name] = best_param_result
+            best_results[name] = {'params': best_param_result['params']}
+
+        optimized = self.optimize_with_grok(symbol, results, timeframe, best_results, index_symbol)
+        if optimized:
+            for name, strategy in self.models.items():
+                if optimized['winning_strategy']['name'] == name:
+                    strategy.params = optimized.get('dynamic_params', strategy.params)
+        
+        return results
 
     def optimize_all_strategies(self, strategy_results, mode, iterations=1, extended_data=False, background=True):
-        """獨立優化每個策略，可背景運行"""
+        """Optimize each strategy independently, optionally in background"""
         def _optimize_thread():
             data_period = config['ai_optimizer']['optimization']['weekend_data_period'] if extended_data else config['ai_optimizer']['optimization']['weekday_data_period']
-            symbol = list(strategy_results.keys())[0]  # 使用第一個 symbol
+            symbol = list(strategy_results.keys())[0]  # Use first symbol
             extended_df = self._load_extended_data(symbol, data_period)
             for name, strategy in self.models.items():
-                logger.info(f"優化 {name} 策略 (迭代 {iterations} 次)...")
+                logger.info(f"Optimizing {name} strategy ({iterations} iterations)...")
                 for i in range(iterations):
-                    optimized = self.optimize_with_ai(strategy_results[name], name, extended_df)
+                    optimized = self.optimize_with_ai(strategy_results.get(name, {}), name, extended_df)
                     if optimized:
-                        # 更新 params
                         strategy.params.update(optimized.get('dynamic_params', {}))
                         self._save_optimized_params(name, strategy.params)
-                        logger.info(f"{name} 第 {i+1} 次優化完成: {optimized['winning_strategy']}")
+                        logger.info(f"{name} iteration {i+1} optimized: {optimized['winning_strategy']}")
 
         if background:
             thread = Thread(target=_optimize_thread)
             thread.daemon = True
             thread.start()
-            logger.info("優化在背景執行中...")
+            logger.info("Optimization running in background...")
         else:
             _optimize_thread()
 
     def _load_extended_data(self, symbol, period):
-        """載入更多歷史數據，快取到 CSV"""
+        """Load extended historical data, cache to CSV"""
         cache_path = f"{config['data_paths']['market']}/extended_{symbol.replace('^', '').replace('.', '_')}.csv"
         if os.path.exists(cache_path):
             df = pd.read_csv(cache_path)
             df['date'] = pd.to_datetime(df['date'])
-            logger.info(f"載入快取擴展數據: {len(df)} 筆")
+            logger.info(f"Loaded cached extended data: {len(df)} rows")
             return df
         ticker = yf.Ticker(symbol)
         hist = ticker.history(period=period)
         if hist.empty:
-            logger.warning(f"{symbol} 擴展數據載入失敗，使用現有數據")
+            logger.warning(f"{symbol} extended data load failed")
             return None
         df = pd.DataFrame({
             'date': hist.index,
@@ -197,19 +220,19 @@ class StrategyEngine:
         })
         os.makedirs(os.path.dirname(cache_path), exist_ok=True)
         df.to_csv(cache_path, index=False)
-        logger.info(f"擴展數據載入並快取: {len(df)} 筆")
+        logger.info(f"Extended data loaded and cached: {len(df)} rows")
         return df
 
     def _save_optimized_params(self, strategy_name, params):
-        """儲存優化 params"""
+        """Save optimized params"""
         path = f"{config['data_paths']['strategy']}/{strategy_name}_optimized.json"
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(params, f, ensure_ascii=False, indent=2)
-        logger.info(f"{strategy_name} 優化 params 儲存至: {path}")
+        logger.info(f"{strategy_name} optimized params saved to: {path}")
 
     def optimize_with_ai(self, results, strategy_name, extended_data=None):
-        """通用 AI 優化，支援 Grok/Gemini/Groq，fallback 到 Grok"""
+        """General AI optimization, supports Grok/Gemini/Groq with fallback"""
         default_ai = self.ai_config.get('default_ai', 'grok')
         prompt = self._build_optimization_prompt(results, strategy_name, extended_data)
 
@@ -220,7 +243,7 @@ class StrategyEngine:
                 response = self.gemini_model.generate_content(prompt)
                 return json.loads(response.text.strip('```json\n').strip('```\n'))
             except Exception as e:
-                logger.error(f"Gemini 優化失敗: {e}")
+                logger.error(f"Gemini optimization failed: {e}")
                 return self.optimize_with_grok(prompt)
         elif default_ai == 'groq' and self.groq_client:
             try:
@@ -232,38 +255,71 @@ class StrategyEngine:
                 response_text = chat_completion.choices[0].message.content
                 return json.loads(response_text.strip('```json\n').strip('```\n'))
             except Exception as e:
-                logger.error(f"Groq 優化失敗: {e}")
+                logger.error(f"Groq optimization failed: {e}")
                 return self.optimize_with_grok(prompt)
         else:
             logger.warning(f"No valid AI for {default_ai}, falling back to Grok")
             return self.optimize_with_grok(prompt)
 
     def _build_optimization_prompt(self, results, strategy_name, extended_data):
-        """建構 AI 提示"""
-        data_desc = f"使用 {len(extended_data)} 筆擴展數據" if extended_data is not None else "使用現有數據"
-        return f"""
-        為 {strategy_name} 策略優化（{data_desc}）。回測結果：{json.dumps(results, ensure_ascii=False, indent=2)}
-        要求：選擇預期報酬最高的策略，且最大回撤 < {config['strategy_params']['max_drawdown_threshold']}。聚焦 {strategy_name} 特定指標（如 RSI 閾值）。
-        提供最佳策略名稱、信心分數、預期報酬、最大回撤、夏普比率、交易信號和動態參數。
-        格式為 JSON：
-        ```json
-        {{
-          "symbol": "symbol",
-          "analysis_date": "{datetime.today().strftime('%Y-%m-%d')}",
-          "winning_strategy": {{
-            "name": "strategy_name",
-            "confidence": 0.0,
-            "expected_return": 0.0,
-            "max_drawdown": 0.0,
-            "sharpe_ratio": 0.0
-          }},
-          "signals": {{
-            "position": "LONG/NEUTRAL/SHORT",
-            "entry_price": 0.0,
-            "target_price": 0.0,
-            "stop_loss": 0.0,
-            "position_size": 0.0
-          }},
-          "dynamic_params": {{}},
-          "strategy_version": "2.0"
-        }}
+        """Build AI optimization prompt"""
+        data_desc = f"using {len(extended_data)} rows of extended data" if extended_data is not None else "using existing data"
+        prompt = (
+            f"Optimize the {strategy_name} strategy ({data_desc}). Backtest results:\n"
+            f"{json.dumps(results, ensure_ascii=False, indent=2)}\n"
+            f"Requirements:\n"
+            f"- Select the strategy with the highest expected return, ensuring max drawdown < {config['strategy_params']['max_drawdown_threshold']}.\n"
+            f"- Focus on {strategy_name}-specific parameters (e.g., RSI thresholds for technical, n_estimators for ml).\n"
+            f"- Provide the best strategy name, confidence, expected return, max drawdown, Sharpe ratio, trading signals, and dynamic parameters.\n"
+            f"Output in JSON format:\n"
+            "{\n"
+            f'  "symbol": "{results.get('symbol', 'unknown')}",\n'
+            f'  "analysis_date": "{datetime.today().strftime('%Y-%m-%d')}",\n'
+            f'  "winning_strategy": {{\n'
+            f'    "name": "{strategy_name}",\n'
+            f'    "confidence": 0.0,\n'
+            f'    "expected_return": 0.0,\n'
+            f'    "max_drawdown": 0.0,\n'
+            f'    "sharpe_ratio": 0.0\n'
+            f'  }},\n'
+            f'  "signals": {{\n'
+            f'    "position": "LONG/NEUTRAL/SHORT",\n'
+            f'    "entry_price": 0.0,\n'
+            f'    "target_price": 0.0,\n'
+            f'    "stop_loss": 0.0,\n'
+            f'    "position_size": 0.0\n'
+            f'  }},\n'
+            f'  "dynamic_params": {{}},\n'
+            f'  "strategy_version": "2.0"\n'
+            f'}}'
+        )
+        return prompt
+
+    def optimize_with_grok(self, prompt):
+        """Grok optimization"""
+        client = Client(api_key=self.api_key, timeout=3600)
+        chat = client.chat.create(model="grok-3-mini")
+        chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on expected return, ensuring max drawdown < 15%."))
+        chat.append(user(prompt))
+        response = chat.sample()
+        try:
+            optimized = json.loads(response.content.strip('```json\n').strip('```\n'))
+            return optimized
+        except json.JSONDecodeError:
+            logger.error("Grok response JSON parsing failed")
+            return None
+
+    def _get_best_strategy_params(self, best_results):
+        """Get best strategy parameters"""
+        name = max(best_results, key=lambda k: best_results[k].get('expected_return', 0))
+        best_params = best_results.get(name, {}).get('params', None)
+        return {'parameters': best_params} if best_params else None
+
+    def _apply_dynamic_strategy(self, symbol, strategy, timeframe):
+        """Apply dynamic strategy (placeholder)"""
+        return {
+            'sharpe_ratio': 0,
+            'max_drawdown': 0,
+            'expected_return': 0,
+            'signals': {}
+        }
