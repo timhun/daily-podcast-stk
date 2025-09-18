@@ -13,6 +13,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import ta
+import google.generativeai as genai  # Gemini
+from groq import groq  # Groq
+from threading import Thread  # 背景運行
 
 # Load config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -68,8 +71,42 @@ def composite_index_with_weights(prices, volume, weight_stock_info, weights=[0.4
 class StrategyEngine:
     def __init__(self):
         self.api_key = os.getenv("GROK_API_KEY")
-        self.models = {}
+        self.gemini_key = os.getenv("GEMINI_API_KEY")
+        self.groq_key = os.getenv("GROQ_API_KEY")
+        self.models = {} # technical, ml, bigline
         self._load_strategies()
+
+        genai.configure(api_key=self.gemini_key)  # Gemini init
+        self.groq_client = Groq(api_key=self.groq_key) if self.groq_key else None
+
+    def is_weekday(self):
+        today = datetime.now()
+        return today.weekday() < 5  # 0-4: 平日, 5-6: 假日
+
+    def optimize_strategies(self, symbols, timeframe='daily'):
+        """背景優化每個策略，不阻塞主流程"""
+        def run_optimization():
+            period = '2y' if self.is_weekday() else '5y'  # 平日2y, 假日5y
+            logger.info(f"開始策略優化: {'平日' if self.is_weekday() else '假日'}, period={period}")
+
+            for symbol in symbols:
+                for name, strategy in self.models.items():
+                    logger.info(f"優化 {symbol} 的 {name} 策略")
+                    optimized_params = strategy.optimize(symbol, timeframe, period=period, max_iterations=3 if self.is_weekday() else 5)
+                    if optimized_params:
+                        # 儲存JSON
+                        today_str = datetime.now().strftime("%Y%m%d")
+                        json_path = f"{config['data_paths']['strategy']}/optimized_{name}_{symbol}_{today_str}.json"
+                        with open(json_path, 'w', encoding='utf-8') as f:
+                            json.dump(optimized_params, f, ensure_ascii=False, indent=2)
+                        logger.info(f"{name} 優化參數儲存至: {json_path}")
+                        # 更新策略params
+                        strategy.params.update(optimized_params.get('parameters', {}))
+
+            logger.info("策略優化完成")
+
+        # 背景thread運行
+        Thread(target=run_optimization, daemon=True).start()
 
     def _load_strategies(self):
         try:
@@ -141,6 +178,10 @@ class StrategyEngine:
         results = {}
         best_results = {}
         index_symbol = index_symbol or ('^TWII' if symbol == '0050.TW' else '^IXIC')
+        # 優化觸發（條件：僅對主要符號，且非測試模式）
+        if symbol in ['QQQ', '0050.TW'] and not os.getenv('TEST_MODE'):  # 加env變數控制
+            self.optimize_strategies([symbol], timeframe)
+        return results  # 原結果不變
         index_file_path = f"{config['data_paths']['market']}/{timeframe}_{index_symbol.replace('^', '').replace('.', '_')}.csv"
         index_df = pd.read_csv(index_file_path) if os.path.exists(index_file_path) else pd.DataFrame()
 
