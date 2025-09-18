@@ -5,6 +5,8 @@ from .utils import generate_performance_chart
 import ta
 from loguru import logger
 import json
+import datetime
+
 
 class TechnicalStrategy(BaseStrategy):
     def __init__(self, config, params=None):
