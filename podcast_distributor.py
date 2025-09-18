@@ -128,7 +128,7 @@ def generate_rss(date, mode, script, audio_url):
         logger.info(f"✅ 已產生 RSS Feed：{RSS_FILE}")
         rss_url = upload_rss(RSS_FILE)
         logger.info(f"RSS 上傳至 B2: {rss_url}")
-        notify_slack(date, mode, audio_url)
+        notify_slack_enhanced(strategy_results, mode)
     except Exception as e:
         logger.error(f"⚠️ 產生 RSS 檔案失敗: {e}")
         raise IOError(f"⚠️ 產生 RSS 檔案失敗: {e}")
