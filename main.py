@@ -87,7 +87,7 @@ def main(mode):
     audio_url = uploaded_urls['audio']
 
     # 步驟6: 生成 RSS + Slack 通知
-    generate_rss(today, mode, script, audio_url)
+    generate_rss(today, mode, script, audio_url,strategy_results)
     notify_slack_enhanced(strategy_results, mode)
 
     print("Podcast 製作完成！")
