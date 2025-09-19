@@ -53,7 +53,7 @@ def parse_existing_rss(rss_path):
             logger.warning(f"RSS 解析錯誤: {e}，重新創建 RSS。")
     return existing_entries
 
-def generate_rss(date, mode, script, audio_url):
+def generate_rss(date, mode, script, audio_url, strategy_results):
     # 初始化 Feed
     fg = FeedGenerator()
     fg.load_extension("podcast")
