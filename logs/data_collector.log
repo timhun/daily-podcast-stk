@@ -5538,3 +5538,606 @@
 2025-09-19 21:47:54.536 | INFO     | podcast_distributor:generate_rss:128 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
 2025-09-19 21:47:55.184 | INFO     | podcast_distributor:generate_rss:130 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-09-19 21:47:55.301 | INFO     | podcast_distributor:notify_slack_enhanced:201 - 已發送增強 Slack 通知，us 版 2025/09/20（六）
+2025-09-20 06:41:20.591 | WARNING  | strategy_mastermind:<module>:24 - google.generativeai not installed. Gemini unavailable.
+2025-09-20 06:41:20.592 | WARNING  | strategy_mastermind:<module>:29 - groq not installed. Groq unavailable.
+2025-09-20 06:41:21.340 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-09-20 06:41:21.341 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-09-20 06:41:21.604 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-09-20 06:41:21.606 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-09-20 06:41:21.910 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-09-20 06:41:21.911 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-09-20 06:41:22.249 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2317_TW.csv
+2025-09-20 06:41:22.250 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2317_TW.csv
+2025-09-20 06:41:22.545 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-09-20 06:41:22.547 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-09-20 06:41:22.874 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2308_TW.csv
+2025-09-20 06:41:22.875 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2308_TW.csv
+2025-09-20 06:41:23.156 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2881_TW.csv
+2025-09-20 06:41:23.158 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2881_TW.csv
+2025-09-20 06:41:23.458 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2412_TW.csv
+2025-09-20 06:41:23.459 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2412_TW.csv
+2025-09-20 06:41:23.835 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2382_TW.csv
+2025-09-20 06:41:23.837 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2382_TW.csv
+2025-09-20 06:41:24.199 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2882_TW.csv
+2025-09-20 06:41:24.200 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2882_TW.csv
+2025-09-20 06:41:24.498 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2891_TW.csv
+2025-09-20 06:41:24.499 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2891_TW.csv
+2025-09-20 06:41:24.786 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_3711_TW.csv
+2025-09-20 06:41:24.787 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_3711_TW.csv
+2025-09-20 06:41:25.409 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-09-20 06:41:25.940 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-09-20/tw_news.json
+2025-09-20 06:41:29.693 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-09-20/social_metrics.json
+2025-09-20 06:41:29.693 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 12 個標的, 3 則新聞, 品質分數: 1.0
+2025-09-20 06:41:29.698 | INFO     | strategy_mastermind:_load_strategies:104 - technical strategy loaded (optimized params: False)
+2025-09-20 06:41:29.708 | INFO     | strategy_mastermind:_load_strategies:104 - ml strategy loaded (optimized params: False)
+2025-09-20 06:41:29.709 | INFO     | strategy_mastermind:_load_strategies:104 - bigline strategy loaded (optimized params: False)
+2025-09-20 06:41:29.709 | INFO     | strategy_mastermind:_init_ai_clients:144 - Defaulting to Grok AI client
+2025-09-20 06:41:29.714 | INFO     | strategies.technical_strategy:backtest:119 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.714 | INFO     | strategies.ml_strategy:backtest:35 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.714 | INFO     | strategies.ml_strategy:backtest:35 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.714 | INFO     | strategies.ml_strategy:backtest:35 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.714 | INFO     | strategies.ml_strategy:backtest:35 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.714 | INFO     | strategies.ml_strategy:backtest:35 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.715 | INFO     | strategies.ml_strategy:backtest:35 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.715 | INFO     | strategies.ml_strategy:backtest:35 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.715 | INFO     | strategies.ml_strategy:backtest:35 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.715 | INFO     | strategies.ml_strategy:backtest:35 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.715 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.715 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.715 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.715 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.716 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.716 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.716 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.716 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.716 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.716 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.716 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.716 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.716 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.717 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.717 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.717 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.717 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.717 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.717 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.717 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.717 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.717 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.718 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.718 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.718 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.718 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.718 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.718 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.718 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.718 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.718 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.719 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.719 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.719 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.719 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.719 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.719 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.719 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.719 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.719 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.719 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.720 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.720 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.720 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.720 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.720 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.720 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.720 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.720 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.720 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.720 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.721 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.721 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.721 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.721 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.721 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.721 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.721 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.721 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.721 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.721 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.722 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.722 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.722 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.722 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.722 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.722 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.722 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.722 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.722 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.722 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.723 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.723 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.723 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.723 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.723 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.723 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.723 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.723 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.724 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.724 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.724 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.724 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.724 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.724 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.724 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.724 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.724 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.725 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.725 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.725 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.725 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.725 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.725 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.725 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.725 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.725 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.726 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.726 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.726 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.726 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.726 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.726 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.726 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.726 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.726 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.727 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.727 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.727 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.727 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.727 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.727 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.727 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.727 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.727 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.728 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.728 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.728 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.728 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.728 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.728 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.728 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.728 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.728 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.729 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.729 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.729 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.729 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.729 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.729 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.729 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.729 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.729 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.729 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.730 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.730 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.730 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.730 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.730 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.730 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.730 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.730 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.730 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.730 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.731 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.731 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.731 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.731 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.731 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.731 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.731 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.731 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.731 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.732 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.732 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.732 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.732 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.732 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.732 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.732 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.732 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.732 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.733 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.733 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.733 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.733 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.733 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.733 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.733 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.733 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.733 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.733 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.734 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.734 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.734 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.734 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.734 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.734 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.734 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.734 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.734 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.735 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.735 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.735 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.735 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.735 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.735 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.735 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.735 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.735 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.736 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.736 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.736 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.736 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.736 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.736 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.736 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.736 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.736 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.737 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.737 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.737 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.737 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.737 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.737 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.737 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.737 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.737 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.738 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.738 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.738 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.738 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.738 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.738 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.738 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.738 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.738 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.738 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.739 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.739 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.739 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.739 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.739 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.739 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.739 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.739 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.739 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.740 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.740 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.740 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.740 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.740 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.740 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.740 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.740 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.740 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.741 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.741 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.741 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.741 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.741 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.741 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.741 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.741 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.741 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.741 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.742 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.742 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.742 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.742 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.742 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.742 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.742 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.742 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.742 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.743 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.743 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.743 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.743 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.743 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.743 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.743 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.743 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.743 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.744 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.744 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.744 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.744 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.744 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.744 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.744 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.744 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.744 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.745 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.745 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.745 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.745 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.745 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.745 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.745 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.745 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.745 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.745 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.746 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.746 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.746 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.746 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.746 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.746 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.746 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.746 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.746 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.747 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.747 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.747 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.747 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.747 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.747 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.747 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.747 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.747 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.748 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.748 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.748 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.748 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.748 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.748 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.748 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.748 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.748 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.749 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.749 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.749 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.749 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.749 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.749 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.749 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.749 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.749 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.749 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.750 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.750 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.750 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.750 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.750 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.750 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.750 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.750 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.750 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.751 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.751 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.751 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.751 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.751 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.751 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.751 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.751 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.751 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.752 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.752 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.752 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.752 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.752 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.752 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.752 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.752 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.752 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.753 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.753 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.753 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.753 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.753 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.753 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.753 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.753 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.753 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.754 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.755 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.755 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.755 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.755 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.755 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.755 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.755 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.755 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.755 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.755 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.756 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.757 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.758 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.758 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.758 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.758 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.758 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.758 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.758 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.758 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.758 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.758 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.759 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.760 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.760 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.760 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.760 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.760 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.760 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.760 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.760 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.760 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.760 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.761 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.761 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.761 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.761 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.761 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.761 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.761 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.761 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.761 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.761 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.762 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.762 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.762 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.762 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.762 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.762 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.762 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.762 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.762 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.762 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.763 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.763 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.763 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.763 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.763 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.763 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.763 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.763 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.763 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.763 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.764 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.764 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.764 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.764 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.764 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.764 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.764 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.764 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.764 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.764 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.765 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.765 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.765 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.765 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.765 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.765 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:29.765 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: ^TWII, 時間框架: daily
+2025-09-20 06:41:29.765 | INFO     | strategies.bigline_strategy:backtest:34 - ^TWII 非主要交易標的，跳過回測
+2025-09-20 06:41:37.192 | INFO     | market_analyst:analyze_market:91 - ^TWII 市場分析完成
+2025-09-20 06:41:37.197 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:41:37.205 | ERROR    | strategies.technical_strategy:backtest:189 - 0050.TW daily 回測失敗: module 'datetime' has no attribute 'today'
+2025-09-20 06:41:37.208 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-09-20 06:41:37.209 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-09-20 06:41:37.409 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 198, 1: 45}
+2025-09-20 06:41:37.409 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-09-20 06:41:37.410 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-20 06:41:37.412 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-20 06:41:37.413 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-20 06:41:37.415 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-20 06:41:37.415 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 0050.TW, 時間框架: daily
+2025-09-20 06:41:37.418 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-09-20 06:41:45.940 | INFO     | market_analyst:analyze_market:91 - 0050.TW 市場分析完成
+2025-09-20 06:41:45.941 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:41:45.945 | INFO     | strategies.technical_strategy:backtest:119 - 2330.TW 非主要交易標的，跳過回測
+2025-09-20 06:41:45.945 | INFO     | strategies.ml_strategy:backtest:35 - 2330.TW 非主要交易標的，跳過回測
+2025-09-20 06:41:45.945 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 2330.TW, 時間框架: daily
+2025-09-20 06:41:45.946 | INFO     | strategies.bigline_strategy:backtest:34 - 2330.TW 非主要交易標的，跳過回測
+2025-09-20 06:41:57.281 | INFO     | market_analyst:analyze_market:91 - 2330.TW 市場分析完成
+2025-09-20 06:41:57.281 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:41:57.286 | INFO     | strategies.technical_strategy:backtest:119 - 2317.TW 非主要交易標的，跳過回測
+2025-09-20 06:41:57.286 | INFO     | strategies.ml_strategy:backtest:35 - 2317.TW 非主要交易標的，跳過回測
+2025-09-20 06:41:57.286 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 2317.TW, 時間框架: daily
+2025-09-20 06:41:57.286 | INFO     | strategies.bigline_strategy:backtest:34 - 2317.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:07.375 | INFO     | market_analyst:analyze_market:91 - 2317.TW 市場分析完成
+2025-09-20 06:42:07.375 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:42:07.380 | INFO     | strategies.technical_strategy:backtest:119 - 2454.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:07.380 | INFO     | strategies.ml_strategy:backtest:35 - 2454.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:07.380 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 2454.TW, 時間框架: daily
+2025-09-20 06:42:07.380 | INFO     | strategies.bigline_strategy:backtest:34 - 2454.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:16.207 | INFO     | market_analyst:analyze_market:91 - 2454.TW 市場分析完成
+2025-09-20 06:42:16.208 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:42:16.212 | INFO     | strategies.technical_strategy:backtest:119 - 2308.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:16.213 | INFO     | strategies.ml_strategy:backtest:35 - 2308.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:16.213 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 2308.TW, 時間框架: daily
+2025-09-20 06:42:16.213 | INFO     | strategies.bigline_strategy:backtest:34 - 2308.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:26.767 | INFO     | market_analyst:analyze_market:91 - 2308.TW 市場分析完成
+2025-09-20 06:42:26.767 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:42:26.772 | INFO     | strategies.technical_strategy:backtest:119 - 2881.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:26.772 | INFO     | strategies.ml_strategy:backtest:35 - 2881.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:26.772 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 2881.TW, 時間框架: daily
+2025-09-20 06:42:26.772 | INFO     | strategies.bigline_strategy:backtest:34 - 2881.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:37.826 | INFO     | market_analyst:analyze_market:91 - 2881.TW 市場分析完成
+2025-09-20 06:42:37.827 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:42:37.831 | INFO     | strategies.technical_strategy:backtest:119 - 2412.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:37.831 | INFO     | strategies.ml_strategy:backtest:35 - 2412.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:37.831 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 2412.TW, 時間框架: daily
+2025-09-20 06:42:37.831 | INFO     | strategies.bigline_strategy:backtest:34 - 2412.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:48.569 | INFO     | market_analyst:analyze_market:91 - 2412.TW 市場分析完成
+2025-09-20 06:42:48.570 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:42:48.574 | INFO     | strategies.technical_strategy:backtest:119 - 2382.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:48.574 | INFO     | strategies.ml_strategy:backtest:35 - 2382.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:48.575 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 2382.TW, 時間框架: daily
+2025-09-20 06:42:48.575 | INFO     | strategies.bigline_strategy:backtest:34 - 2382.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:59.704 | INFO     | market_analyst:analyze_market:91 - 2382.TW 市場分析完成
+2025-09-20 06:42:59.705 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:42:59.709 | INFO     | strategies.technical_strategy:backtest:119 - 2882.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:59.709 | INFO     | strategies.ml_strategy:backtest:35 - 2882.TW 非主要交易標的，跳過回測
+2025-09-20 06:42:59.710 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 2882.TW, 時間框架: daily
+2025-09-20 06:42:59.710 | INFO     | strategies.bigline_strategy:backtest:34 - 2882.TW 非主要交易標的，跳過回測
+2025-09-20 06:43:13.445 | INFO     | market_analyst:analyze_market:91 - 2882.TW 市場分析完成
+2025-09-20 06:43:13.445 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:43:13.450 | INFO     | strategies.technical_strategy:backtest:119 - 2891.TW 非主要交易標的，跳過回測
+2025-09-20 06:43:13.450 | INFO     | strategies.ml_strategy:backtest:35 - 2891.TW 非主要交易標的，跳過回測
+2025-09-20 06:43:13.450 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 2891.TW, 時間框架: daily
+2025-09-20 06:43:13.450 | INFO     | strategies.bigline_strategy:backtest:34 - 2891.TW 非主要交易標的，跳過回測
+2025-09-20 06:43:22.509 | INFO     | market_analyst:analyze_market:91 - 2891.TW 市場分析完成
+2025-09-20 06:43:22.509 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:43:22.513 | INFO     | strategies.technical_strategy:backtest:119 - 3711.TW 非主要交易標的，跳過回測
+2025-09-20 06:43:22.514 | INFO     | strategies.ml_strategy:backtest:35 - 3711.TW 非主要交易標的，跳過回測
+2025-09-20 06:43:22.514 | INFO     | strategies.bigline_strategy:backtest:31 - 開始回測 BigLine 策略: 3711.TW, 時間框架: daily
+2025-09-20 06:43:22.514 | INFO     | strategies.bigline_strategy:backtest:34 - 3711.TW 非主要交易標的，跳過回測
+2025-09-20 06:43:30.054 | INFO     | market_analyst:analyze_market:91 - 3711.TW 市場分析完成
+2025-09-20 06:43:30.054 | INFO     | strategy_mastermind:optimize_all_strategies:196 - Optimization running in background...
+2025-09-20 06:43:44.151 | INFO     | content_creator:generate_script:96 - 成功生成播客文字稿
+2025-09-20 06:44:06.593 | INFO     | podcast_distributor:generate_rss:128 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-09-20 06:44:08.372 | INFO     | podcast_distributor:generate_rss:130 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-09-20 06:44:08.684 | INFO     | podcast_distributor:notify_slack_enhanced:201 - 已發送增強 Slack 通知，tw 版 2025/09/20（六）
