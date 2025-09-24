@@ -177,13 +177,19 @@ class StrategyEngine:
     def optimize_all_strategies(self, strategy_results, mode, iterations=1, extended_data=False, background=True):
         """Optimize each strategy independently, optionally in background"""
         def _optimize_thread():
-            data_period = config['ai_optimizer']['optimization']['weekend_data_period'] if extended_data else config['ai_optimizer']['optimization']['weekday_data_period']
-            symbol = list(strategy_results.keys())[0]  # Use first symbol
+            data_period = (
+                config['optimization']['weekend_data_period'] if extended_data else config['optimization']['weekday_data_period']
+            )
+            if not strategy_results:
+                logger.warning("No strategy_results provided for optimization; skipping.")
+                return
+            symbol = list(strategy_results.keys())[0]
             extended_df = self._load_extended_data(symbol, data_period)
+            sym_results = strategy_results.get(symbol, {})
             for name, strategy in self.models.items():
                 logger.info(f"Optimizing {name} strategy ({iterations} iterations)...")
                 for i in range(iterations):
-                    optimized = self.optimize_with_ai(strategy_results.get(name, {}), name, extended_df)
+                    optimized = self.optimize_with_ai(sym_results, name, extended_df)
                     if optimized:
                         strategy.params.update(optimized.get('dynamic_params', {}))
                         self._save_optimized_params(name, strategy.params)
