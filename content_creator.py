@@ -16,16 +16,42 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     if not XAI_API_KEY:
         logger.warning("XAI_API_KEY not set, using fallback script")
         market = market_data.get('market', {})
-        analysis = "\n".join([f"{symbol}: 收盤 {info['close']:.2f}, 漲跌 {info['change']:.2f}%"
-                             for symbol, info in market.items() if 'close' in info and 'change' in info])
+        analysis = "\n".join([
+            f"{symbol}: 收盤 {info.get('close', 0):.2f}, 漲跌 {info.get('change', 0):.2f}%"
+            for symbol, info in market.items()
+        ])
         news = market_data.get('news', [])
-        news_str = "\n".join([f"新聞: {item.get('title', '無')} - {item.get('description', '無')}"
-                              for item in news[:3]])
+        news_str = "\n".join([
+            f"新聞: {item.get('title', '無')} - {item.get('description', '無')}" for item in news[:3]
+        ])
         sentiment = market_data.get('sentiment', {})
-        sentiment_str = f"市場情緒: 整體分數 {sentiment.get('overall_score', 0):.2f}, 看漲比例 {sentiment.get('bullish_ratio', 0):.2f}"
-        strategy_str = "\n".join([f"{symbol}: 最佳策略 {result['winning_strategy']['name']}, 預期回報 {result['winning_strategy']['expected_return']:.2f}%"
-                                 for symbol, result in strategy_results.items()
-                                 if result is not None and result.get('winning_strategy') and result['winning_strategy'].get('name') != 'none'])
+        sentiment_str = (
+            f"市場情緒: 整體分數 {sentiment.get('overall_score', 0):.2f}, 看漲比例 {sentiment.get('bullish_ratio', 0):.2f}"
+        )
+
+        # 市場分析摘要
+        market_analysis_str = "\n".join([
+            f"{symbol}: 趨勢 {result.get('trend', 'NEUTRAL')}, 波動性 {result.get('volatility', 0):.2f}%, {result.get('report', '無')}"
+            for symbol, result in (market_analysis or {}).items()
+        ])
+
+        # 策略摘要：挑選每個標的期望報酬最高的策略
+        def summarize_best_strategies(all_results):
+            lines = []
+            for sym, sym_results in (all_results or {}).items():
+                if not isinstance(sym_results, dict) or not sym_results:
+                    continue
+                best_name, best_ret = None, None
+                for name, res in sym_results.items():
+                    er = (res or {}).get('expected_return', 0) or 0
+                    if best_ret is None or er > best_ret:
+                        best_name, best_ret = name, er
+                if best_name is not None:
+                    lines.append(f"{sym}: 最佳策略 {best_name}, 預期回報 {best_ret:.2f}%")
+            return "\n".join(lines)
+
+        strategy_str = summarize_best_strategies(strategy_results)
+
         today = datetime.date.today().strftime('%Y年%m月%d日')
         return f"""
         生成 {mode.upper()} 版播客文字稿，長度控制在{config['podcast']['script_length_limit']}字內，風格專業親和，使用台灣用語。
@@ -57,10 +83,22 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     sentiment = market_data.get('sentiment', {})
     sentiment_str = f"市場情緒: 整體分數 {sentiment.get('overall_score', 0):.2f}, 看漲比例 {sentiment.get('bullish_ratio', 0):.2f}"
 
-    # 策略分析
-    strategy_str = "\n".join([f"{symbol}: 最佳策略 {result['winning_strategy']['name']}, 預期回報 {result['winning_strategy']['expected_return']:.2f}%"
-                             for symbol, result in strategy_results.items()
-                             if result is not None and result.get('winning_strategy') and result['winning_strategy'].get('name') != 'none'])
+    # 策略分析：挑選每個標的期望報酬最高的策略
+    def summarize_best_strategies(all_results):
+        lines = []
+        for sym, sym_results in (all_results or {}).items():
+            if not isinstance(sym_results, dict) or not sym_results:
+                continue
+            best_name, best_ret = None, None
+            for name, res in sym_results.items():
+                er = (res or {}).get('expected_return', 0) or 0
+                if best_ret is None or er > best_ret:
+                    best_name, best_ret = name, er
+            if best_name is not None:
+                lines.append(f"{sym}: 最佳策略 {best_name}, 預期回報 {best_ret:.2f}%")
+        return "\n".join(lines)
+
+    strategy_str = summarize_best_strategies(strategy_results)
 
     # 市場分析
     market_analysis_str = "\n".join([f"{symbol}: 趨勢 {result['trend']}, 波動性 {result['volatility']:.2f}%, {result['report']}"

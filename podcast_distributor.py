@@ -2,12 +2,18 @@ import os
 import datetime
 import pytz
 import xml.etree.ElementTree as ET
-from mutagen.mp3 import MP3
+try:
+    from mutagen.mp3 import MP3
+except Exception:
+    MP3 = None
 from feedgen.feed import FeedGenerator
 from loguru import logger
 import json
 from cloud_manager import upload_rss
-from slack_sdk import WebClient
+try:
+    from slack_sdk import WebClient
+except Exception:
+    WebClient = None
 import pandas as pd  # 新增：用於計算報酬
 
 # 載入 config.json
@@ -94,6 +100,8 @@ def generate_rss(date, mode, script, audio_url, strategy_results):
 
     # 提取音頻時長
     try:
+        if MP3 is None:
+            raise RuntimeError("mutagen not available")
         mp3 = MP3(audio)
         duration = int(mp3.info.length)
     except Exception as e:
@@ -128,13 +136,18 @@ def generate_rss(date, mode, script, audio_url, strategy_results):
         logger.info(f"✅ 已產生 RSS Feed：{RSS_FILE}")
         rss_url = upload_rss(RSS_FILE)
         logger.info(f"RSS 上傳至 B2: {rss_url}")
-        notify_slack_enhanced(strategy_results, mode)
+        if WebClient is not None:
+            notify_slack_enhanced(strategy_results, mode)
+        else:
+            logger.warning("Slack SDK not available; skipping Slack notification.")
     except Exception as e:
         logger.error(f"⚠️ 產生 RSS 檔案失敗: {e}")
         raise IOError(f"⚠️ 產生 RSS 檔案失敗: {e}")
 
 def notify_slack_simple(date, mode, audio_url):  # 原notify_slack，重命名
     try:
+        if WebClient is None:
+            raise RuntimeError("Slack SDK not available")
         client = WebClient(token=os.getenv('SLACK_BOT_TOKEN'))
         message = f"New {mode.upper()} podcast episode for {date} is ready! Audio: {audio_url}"
         client.chat_postMessage(channel=os.getenv('SLACK_CHANNEL'), text=message)
@@ -148,6 +161,8 @@ def notify_slack_simple(date, mode, audio_url):  # 原notify_slack，重命名
 def notify_slack_enhanced(strategy_results, mode):
     """增強Slack通知：動態生成指定格式"""
     try:
+        if WebClient is None:
+            raise RuntimeError("Slack SDK not available")
         client = WebClient(token=os.getenv('SLACK_BOT_TOKEN'))
         
         # 日期格式
