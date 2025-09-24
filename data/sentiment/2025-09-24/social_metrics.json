@@ -1,0 +1,42 @@
+{
+  "overall_score": -0.8860651055971781,
+  "bullish_ratio": 0.0,
+  "symbols": {
+    "^TWII": {
+      "sentiment_score": 0.0
+    },
+    "0050.TW": {
+      "sentiment_score": 0.0
+    },
+    "2330.TW": {
+      "sentiment_score": 0.0
+    },
+    "2317.TW": {
+      "sentiment_score": 0.0
+    },
+    "2454.TW": {
+      "sentiment_score": 0.0
+    },
+    "2308.TW": {
+      "sentiment_score": 0.0
+    },
+    "2881.TW": {
+      "sentiment_score": 0.0
+    },
+    "2412.TW": {
+      "sentiment_score": 0.0
+    },
+    "2382.TW": {
+      "sentiment_score": 0.0
+    },
+    "2882.TW": {
+      "sentiment_score": 0.0
+    },
+    "2891.TW": {
+      "sentiment_score": 0.0
+    },
+    "3711.TW": {
+      "sentiment_score": 0.0
+    }
+  }
+}
