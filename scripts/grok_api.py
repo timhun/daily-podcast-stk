@@ -90,7 +90,7 @@ def ask_grok(prompt: str, role: str = "user", model: str = "grok-4") -> str:
                 )
                 # Update last request timestamp
                 with _grok_last_ts_lock:
-                    global _grok_last_request_ts
+                    #global _grok_last_request_ts
                     _grok_last_request_ts = time.time()
 
                 if response.status_code == 429:
