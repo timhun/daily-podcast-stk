@@ -164,12 +164,17 @@ class StrategyEngine:
                     best_param_result['params'] = params
             
             results[name] = best_param_result
-            best_results[name] = {'params': best_param_result['params']}
+            if best_param_result and 'params' in best_param_result:
+                best_results[name] = {'params': best_param_result['params']}
 
-        optimized = self.optimize_with_grok(symbol, results, timeframe, best_results, index_symbol)
+        try:
+            optimized = self.optimize_with_grok(symbol, results, timeframe, best_results, index_symbol)
+        except Exception as e:
+            logger.warning(f"Optimization skipped due to error: {e}")
+            optimized = None
         if optimized:
             for name, strategy in self.models.items():
-                if optimized['winning_strategy']['name'] == name:
+                if optimized.get('winning_strategy', {}).get('name') == name:
                     strategy.params = optimized.get('dynamic_params', strategy.params)
         
         return results
@@ -305,7 +310,10 @@ class StrategyEngine:
         return prompt
 
     def optimize_with_grok(self, symbol, results, timeframe, best_results, index_symbol):
-        """Grok optimization"""
+        """Grok optimization (safe, optional)"""
+        if not self.api_key:
+            logger.warning("Grok API key not set; skipping optimization.")
+            return None
         client = Client(api_key=self.api_key, timeout=3600)
         chat = client.chat.create(model="grok-3-mini")
         chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on expected return, ensuring max drawdown < 15%."))
@@ -342,12 +350,16 @@ class StrategyEngine:
         ]
         prompt = '\n'.join(prompt)
         chat.append(user(prompt))
-        response = chat.sample()
         try:
-            optimized = json.loads(response.content.strip('```json\n').strip('```\n'))
-            return optimized
-        except json.JSONDecodeError:
-            logger.error("Grok response JSON parsing failed")
+            response = chat.sample()
+            try:
+                optimized = json.loads(response.content.strip('```json\n').strip('```\n'))
+                return optimized
+            except json.JSONDecodeError:
+                logger.error("Grok response JSON parsing failed")
+                return None
+        except Exception as e:
+            logger.error(f"Grok optimization call failed: {e}")
             return None
 
     def _get_best_strategy_params(self, best_results):
