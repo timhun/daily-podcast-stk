@@ -1,4 +1,4 @@
-import json
+THIS SHOULD BE A LINTER ERRORimport json
 import os
 from datetime import datetime
 from loguru import logger
@@ -32,6 +32,7 @@ with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
 # Configure logging
+os.makedirs(os.path.dirname(config['logging']['file']), exist_ok=True)
 logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
 # Calculate moving average
@@ -305,6 +306,10 @@ class StrategyEngine:
 
     def optimize_with_grok(self, symbol, results, timeframe, best_results, index_symbol):
         """Grok optimization via HTTP helper returning parsed JSON"""
+        # Skip in dry-run or when API key not available
+        if os.getenv("DRY_RUN", "0").lower() in ("1", "true", "yes") or not self.api_key:
+            logger.info("Skipping Grok optimization (dry-run or missing API key)")
+            return None
         prompt_lines = [
             f"Select the best strategy for {symbol} (timeframe: {timeframe}, index: {index_symbol}).",
             f"Backtest results:\n{json.dumps(results, ensure_ascii=False, indent=2)}",

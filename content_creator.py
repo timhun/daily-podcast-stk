@@ -1,9 +1,16 @@
 import os
 import json
-from xai_sdk import Client
-from xai_sdk.chat import user, system
 import datetime
 from loguru import logger
+try:
+    from xai_sdk import Client
+    from xai_sdk.chat import user, system
+except Exception:
+    Client = None
+    def user(x):
+        return x
+    def system(x):
+        return x
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -13,7 +20,7 @@ with open('config.json', 'r', encoding='utf-8') as f:
 XAI_API_KEY = os.getenv("GROK_API_KEY")
 
 def generate_script(market_data, mode, strategy_results, market_analysis):
-    if not XAI_API_KEY:
+    if not XAI_API_KEY or Client is None:
         logger.warning("XAI_API_KEY not set, using fallback script")
         market = market_data.get('market', {})
         analysis = "\n".join([
