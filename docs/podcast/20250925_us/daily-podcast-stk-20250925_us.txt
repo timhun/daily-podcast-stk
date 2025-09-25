@@ -1,0 +1,68 @@
+
+        生成 US 版播客文字稿，長度控制在3000字內，風格專業親和，使用台灣用語。
+        文字稿必須是連貫的敘述性文字，適合直接轉換成語音。不要包含任何結構標記如 '-' 或 '*'，不要包含橋段標題或解釋（如 '開場:' 或 '市場概況:'），只需生成完整的、流暢的播客內容。
+        
+        基於以下內容生成：
+        開場白：歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2025年09月25日。
+        市場概況：^GSPC: 收盤 6637.97, 漲跌 -0.28%
+QQQ: 收盤 596.10, 漲跌 -0.35%
+NVDA: 收盤 176.97, 漲跌 -0.82%
+^DJI: 收盤 46121.28, 漲跌 -0.37%
+^IXIC: 收盤 22497.86, 漲跌 -0.33%
+SPY: 收盤 661.10, 漲跌 -0.32%
+AAPL: 收盤 252.31, 漲跌 -0.83%
+GOOG: 收盤 247.83, 漲跌 -1.79%
+META: 收盤 760.66, 漲跌 0.70%
+MSFT: 收盤 510.15, 漲跌 0.18%
+TSLA: 收盤 442.79, 漲跌 3.98%
+TSM: 收盤 280.71, 漲跌 -0.71%
+AMZN: 收盤 220.21, 漲跌 -0.23%
+ORCL: 收盤 308.46, 漲跌 -1.71%
+JPM: 收盤 313.42, 漲跌 0.22%
+WMT: 收盤 102.73, 漲跌 0.20%
+LLY: 收盤 741.85, 漲跌 -0.69%
+^VIX: 收盤 16.18, 漲跌 -2.76%
+        產業動態：新聞: Taiwan Weaponizes Chip Sector to Deter China on World Stage - For years, Taiwan has viewed its dominance in supplying countries with cutting-edge chips as a shield from Chinese aggression. Now, officials are testing out semiconductors as a diplomatic sword.
+新聞: Alibaba’s AI Ambitions Make It Top-Performing China Tech Stock - Growing enthusiasm for artificial intelligence plans at Alibaba Group Holding Ltd. has once again made it China’s hottest technology stock, as investors rush back into the $420 billion internet titan.
+新聞: Australia Unveils Crypto Fines in Proposed Rules for Industry - Australia will slap penalties of as much as 10% of annual turnover on digital asset platform operators that breach proposed rules, under long-awaited draft legislation released Thursday.
+        市場情緒：市場情緒: 整體分數 0.00, 看漲比例 0.00
+        市場分析：^GSPC: 趨勢 BULLISH, 波動性 0.46%, ^GSPC 市場分析：趨勢 BULLISH，波動性 0.46%，RSI 64.14，MACD 67.58。
+QQQ: 趨勢 BULLISH, 波動性 0.60%, QQQ 市場分析：趨勢 BULLISH，波動性 0.60%，RSI 65.89，MACD 7.87。
+NVDA: 趨勢 BULLISH, 波動性 2.13%, NVDA 市場分析：趨勢 BULLISH，波動性 2.13%，RSI 51.68，MACD 0.86。
+^DJI: 趨勢 BULLISH, 波動性 0.50%, ^DJI 市場分析：趨勢 BULLISH，波動性 0.50%，RSI 59.92，MACD 356.23。
+^IXIC: 趨勢 BULLISH, 波動性 0.66%, ^IXIC 市場分析：趨勢 BULLISH，波動性 0.66%，RSI 65.40，MACD 338.59。
+SPY: 趨勢 BULLISH, 波動性 0.46%, SPY 市場分析：趨勢 BULLISH，波動性 0.46%，RSI 64.22，MACD 6.94。
+AAPL: 趨勢 BULLISH, 波動性 1.81%, AAPL 市場分析：趨勢 BULLISH，波動性 1.81%，RSI 68.92，MACD 6.72。
+GOOG: 趨勢 BULLISH, 波動性 2.33%, GOOG 市場分析：趨勢 BULLISH，波動性 2.33%，RSI 70.80，MACD 12.28。
+META: 趨勢 BULLISH, 波動性 1.12%, META 市場分析：趨勢 BULLISH，波動性 1.12%，RSI 51.42，MACD 5.15。
+MSFT: 趨勢 BULLISH, 波動性 1.02%, MSFT 市場分析：趨勢 BULLISH，波動性 1.02%，RSI 51.37，MACD 0.85。
+TSLA: 趨勢 BULLISH, 波動性 2.81%, TSLA 市場分析：趨勢 BULLISH，波動性 2.81%，RSI 76.22，MACD 27.19。
+TSM: 趨勢 BULLISH, 波動性 1.83%, TSM 市場分析：趨勢 BULLISH，波動性 1.83%，RSI 75.04，MACD 10.50。
+AMZN: 趨勢 BULLISH, 波動性 1.72%, AMZN 市場分析：趨勢 BULLISH，波動性 1.72%，RSI 39.13，MACD -0.50。
+ORCL: 趨勢 BULLISH, 波動性 8.78%, ORCL 市場分析：趨勢 BULLISH，波動性 8.78%，RSI 61.65，MACD 19.91。
+JPM: 趨勢 BULLISH, 波動性 1.03%, JPM 市場分析：趨勢 BULLISH，波動性 1.03%，RSI 67.21，MACD 5.18。
+WMT: 趨勢 BULLISH, 波動性 1.01%, WMT 市場分析：趨勢 BULLISH，波動性 1.01%，RSI 56.72，MACD 1.07。
+LLY: 趨勢 BEARISH, 波動性 1.05%, LLY 市場分析：趨勢 BEARISH，波動性 1.05%，RSI 49.75，MACD 6.49。
+^VIX: 趨勢 BEARISH, 波動性 4.49%, ^VIX 市場分析：趨勢 BEARISH，波動性 4.49%，RSI 53.10，MACD 0.10。
+        策略分析：^GSPC: 最佳策略 technical, 預期回報 0.00%
+QQQ: 最佳策略 ml, 預期回報 1.11%
+NVDA: 最佳策略 technical, 預期回報 0.00%
+^DJI: 最佳策略 technical, 預期回報 0.00%
+^IXIC: 最佳策略 technical, 預期回報 0.00%
+SPY: 最佳策略 technical, 預期回報 0.00%
+AAPL: 最佳策略 technical, 預期回報 0.00%
+GOOG: 最佳策略 technical, 預期回報 0.00%
+META: 最佳策略 technical, 預期回報 0.00%
+MSFT: 最佳策略 technical, 預期回報 0.00%
+TSLA: 最佳策略 technical, 預期回報 0.00%
+TSM: 最佳策略 technical, 預期回報 0.00%
+AMZN: 最佳策略 technical, 預期回報 0.00%
+ORCL: 最佳策略 technical, 預期回報 0.00%
+JPM: 最佳策略 technical, 預期回報 0.00%
+WMT: 最佳策略 technical, 預期回報 0.00%
+LLY: 最佳策略 technical, 預期回報 0.00%
+^VIX: 最佳策略 technical, 預期回報 0.00%
+        結尾：投資如馬拉松，穩健前行才能致勝。
+        
+        輸出應為純文字稿，無額外格式。記得你是專業的財經主播。
+        

@@ -28,6 +28,7 @@ def ask_grok(prompt: str, role: str = "user", model: str = "grok-4") -> str:
     """
     呼叫 xAI Grok API，取得純文字回應（適用 script）
     """
+    global _grok_last_request_ts
     if not GROK_API_KEY:
         logger.error("未找到 GROK_API_KEY 環境變數")
         raise EnvironmentError("❌ 請設定 GROK_API_KEY 環境變數")
@@ -90,7 +91,6 @@ def ask_grok(prompt: str, role: str = "user", model: str = "grok-4") -> str:
                 )
                 # Update last request timestamp
                 with _grok_last_ts_lock:
-                    global _grok_last_request_ts
                     _grok_last_request_ts = time.time()
 
                 if response.status_code == 429:

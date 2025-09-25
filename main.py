@@ -5,9 +5,6 @@ import pandas as pd
 from dotenv import load_dotenv
 from data_collector import collect_data
 from content_creator import generate_script
-from voice_producer import generate_audio
-from cloud_manager import upload_episode
-from podcast_distributor import generate_rss, notify_slack_enhanced
 from strategy_mastermind import StrategyEngine
 from market_analyst import MarketAnalyst
 import pytz
@@ -26,10 +23,12 @@ def is_weekday():
     today = datetime.datetime.now(TW_TZ)
     return today.weekday() < 5  # Monday (0) to Friday (4) are weekdays
 
-def main(mode):
+def main(mode, dry_run=False):
     TW_TZ = pytz.timezone("Asia/Taipei")
     today = datetime.datetime.now(TW_TZ).strftime("%Y%m%d")
     print(f"開始生成 {mode.upper()} 版 podcast，日期 {today}...")
+    if dry_run:
+        os.environ["DRY_RUN"] = "1"
 
     # 步驟1: 收集數據
     market_data = collect_data(mode)
@@ -60,11 +59,12 @@ def main(mode):
         market_analysis[symbol] = analyst.analyze_market(symbol)
     
         # Step 2.5: Optimize strategies (background)
-        is_weekday_result = is_weekday()  # Call the function to check if today is a weekday
-        if is_weekday_result:
-            strategy_engine.optimize_all_strategies(strategy_results, mode, iterations=1, background=True)
-        else:
-            strategy_engine.optimize_all_strategies(strategy_results, mode, iterations=3, extended_data=True, background=True)
+        if not dry_run:
+            is_weekday_result = is_weekday()  # Call the function to check if today is a weekday
+            if is_weekday_result:
+                strategy_engine.optimize_all_strategies(strategy_results, mode, iterations=1, background=True)
+            else:
+                strategy_engine.optimize_all_strategies(strategy_results, mode, iterations=3, extended_data=True, background=True)
             
     # 步驟3: 生成文字稿
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
@@ -75,19 +75,35 @@ def main(mode):
     with open(script_path, 'w', encoding='utf-8') as f:
         f.write(script)
 
+    if dry_run:
+        print("Dry-run: 已生成文字稿，略過音頻、上傳與 RSS。")
+        print(f"文字稿路徑: {script_path}")
+        return
     # 步驟4: 生成音頻
     audio_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.mp3"
     audio_path = f"{podcast_dir}/{audio_filename}"
     os.makedirs(os.path.dirname(audio_path), exist_ok=True)
+    try:
+        from voice_producer import generate_audio
+    except Exception as e:
+        raise RuntimeError(f"缺少語音依賴或安裝失敗: {e}")
     generate_audio(script_path, audio_path)
 
     # 步驟5: 上傳到 B2
     files = {'script': script_path, 'audio': audio_path}
+    try:
+        from cloud_manager import upload_episode
+    except Exception as e:
+        raise RuntimeError(f"缺少B2依賴或安裝失敗: {e}")
     uploaded_urls = upload_episode(today, mode, files)
     audio_url = uploaded_urls['audio']
 
     # 步驟6: 生成 RSS + Slack 通知
-    generate_rss(today, mode, script, audio_url,strategy_results)
+    try:
+        from podcast_distributor import generate_rss, notify_slack_enhanced
+    except Exception as e:
+        raise RuntimeError(f"缺少RSS/Slack依賴或安裝失敗: {e}")
+    generate_rss(today, mode, script, audio_url, strategy_results)
     #notify_slack_enhanced(strategy_results, mode)
 
     print("Podcast 製作完成！")
@@ -95,5 +111,6 @@ def main(mode):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--mode", required=True, choices=['us', 'tw'])
+    parser.add_argument("--dry-run", action="store_true", help="Skip audio/upload/RSS and external services")
     args = parser.parse_args()
-    main(args.mode)
+    main(args.mode, args.dry_run)

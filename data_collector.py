@@ -6,7 +6,6 @@ import json
 import datetime
 from loguru import logger
 from retry import retry
-from transformers import pipeline
 import pandas as pd
 
 # 載入 config.json
@@ -14,6 +13,7 @@ with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
     
 # 配置日誌
+os.makedirs("logs", exist_ok=True)
 logger.add("logs/data_collector.log", rotation="1 MB")
 
 SYMBOLS = config['symbols']
@@ -205,39 +205,48 @@ def collect_data(mode):
         json.dump(data['news'], f, ensure_ascii=False, indent=2)
     logger.info(f"新聞數據儲存至: {news_path}")
 
-    # 新聞標題情緒分析
-    try:
-        sentiment_analyzer = pipeline("sentiment-analysis", model="ProsusAI/finbert")
-        # 整體市場情緒
-        headlines = [item['title'] for item in data['news']]
-        sentiments = sentiment_analyzer(headlines)
-        overall_score = sum(s['score'] if s['label'] == 'positive' else -s['score'] for s in sentiments) / len(sentiments) if sentiments else 0
-        bullish_ratio = sum(1 for s in sentiments if s['label'] == 'positive') / len(sentiments) if sentiments else 0
-        
-        # 個別股票情緒
-        sentiment_data = {
-            'overall_score': overall_score,
-            'bullish_ratio': bullish_ratio,
-            'symbols': {}
-        }
-        for symbol in SYMBOLS.get(mode, []):
-            symbol_headlines = [item['title'] for item in news_by_symbol[symbol]]
-            if symbol_headlines:
-                symbol_sentiments = sentiment_analyzer(symbol_headlines)
-                symbol_score = sum(s['score'] if s['label'] == 'positive' else -s['score'] for s in symbol_sentiments) / len(symbol_sentiments) if symbol_sentiments else 0
-            else:
-                symbol_score = 0.0  # 若無相關新聞，設為中性
-            sentiment_data['symbols'][symbol] = {'sentiment_score': symbol_score}
-        
-        data['sentiment'] = sentiment_data
-        # 儲存情緒分析到 JSON
-        sentiment_path = f"data/sentiment/{today}/social_metrics.json"
-        os.makedirs(os.path.dirname(sentiment_path), exist_ok=True)
-        with open(sentiment_path, 'w', encoding='utf-8') as f:
-            json.dump(sentiment_data, f, ensure_ascii=False, indent=2)
-        logger.info(f"情緒數據儲存至: {sentiment_path}")
-    except Exception as e:
-        logger.error(f"情緒分析失敗: {str(e)}")
+    # 新聞標題情緒分析（可透過環境變數 SKIP_SENTIMENT 跳過）
+    skip_sentiment = os.getenv("SKIP_SENTIMENT", "0").lower() in ("1", "true", "yes")
+    if not skip_sentiment:
+        try:
+            from transformers import pipeline
+            sentiment_analyzer = pipeline("sentiment-analysis", model="ProsusAI/finbert")
+            # 整體市場情緒
+            headlines = [item['title'] for item in data['news']]
+            sentiments = sentiment_analyzer(headlines)
+            overall_score = sum(s['score'] if s['label'] == 'positive' else -s['score'] for s in sentiments) / len(sentiments) if sentiments else 0
+            bullish_ratio = sum(1 for s in sentiments if s['label'] == 'positive') / len(sentiments) if sentiments else 0
+            
+            # 個別股票情緒
+            sentiment_data = {
+                'overall_score': overall_score,
+                'bullish_ratio': bullish_ratio,
+                'symbols': {}
+            }
+            for symbol in SYMBOLS.get(mode, []):
+                symbol_headlines = [item['title'] for item in news_by_symbol[symbol]]
+                if symbol_headlines:
+                    symbol_sentiments = sentiment_analyzer(symbol_headlines)
+                    symbol_score = sum(s['score'] if s['label'] == 'positive' else -s['score'] for s in symbol_sentiments) / len(symbol_sentiments) if symbol_sentiments else 0
+                else:
+                    symbol_score = 0.0  # 若無相關新聞，設為中性
+                sentiment_data['symbols'][symbol] = {'sentiment_score': symbol_score}
+            
+            data['sentiment'] = sentiment_data
+            # 儲存情緒分析到 JSON
+            sentiment_path = f"data/sentiment/{today}/social_metrics.json"
+            os.makedirs(os.path.dirname(sentiment_path), exist_ok=True)
+            with open(sentiment_path, 'w', encoding='utf-8') as f:
+                json.dump(sentiment_data, f, ensure_ascii=False, indent=2)
+            logger.info(f"情緒數據儲存至: {sentiment_path}")
+        except Exception as e:
+            logger.error(f"情緒分析失敗: {str(e)}")
+            data['sentiment'] = {
+                'overall_score': 0,
+                'bullish_ratio': 0,
+                'symbols': {symbol: {'sentiment_score': 0.0} for symbol in SYMBOLS.get(mode, [])}
+            }
+    else:
         data['sentiment'] = {
             'overall_score': 0,
             'bullish_ratio': 0,

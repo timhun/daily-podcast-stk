@@ -21,6 +21,7 @@ with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
 # 設置日誌
+os.makedirs(os.path.dirname(config['logging']['file']), exist_ok=True)
 logger.add(config['logging']['file'], rotation=config['logging']['rotation'])
 
 # 基本常數
