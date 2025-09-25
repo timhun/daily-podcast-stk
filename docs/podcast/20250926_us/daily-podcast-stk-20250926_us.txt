@@ -1,0 +1,63 @@
+
+        歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2025年09月25日。
+        市場概況：^GSPC: 收盤 6604.72, 漲跌 -0.50%
+QQQ: 收盤 593.53, 漲跌 -0.43%
+NVDA: 收盤 177.69, 漲跌 0.41%
+^DJI: 收盤 45947.32, 漲跌 -0.38%
+^IXIC: 收盤 22384.70, 漲跌 -0.50%
+SPY: 收盤 658.05, 漲跌 -0.46%
+AAPL: 收盤 256.87, 漲跌 1.81%
+GOOG: 收盤 246.57, 漲跌 -0.51%
+META: 收盤 748.91, 漲跌 -1.54%
+MSFT: 收盤 507.03, 漲跌 -0.61%
+TSLA: 收盤 423.39, 漲跌 -4.38%
+TSM: 收盤 276.66, 漲跌 -1.44%
+AMZN: 收盤 218.15, 漲跌 -0.94%
+ORCL: 收盤 291.33, 漲跌 -5.55%
+JPM: 收盤 313.45, 漲跌 0.01%
+WMT: 收盤 103.05, 漲跌 0.31%
+LLY: 收盤 714.59, 漲跌 -3.67%
+^VIX: 收盤 16.74, 漲跌 3.46%
+        產業動態：新聞: Trump Signs TikTok Order With US App Valued at $14 Billion - President Donald Trump advanced plans for American investors to buy TikTok’s US operations from its Chinese owner ByteDance Ltd., with officials setting a potential value of $14 billion and outlining measures to ensure security of the new venture.
+新聞: Google-Linked Crypto Miner Plans $3 Billion Debt for Data Center - TeraWulf Inc. is expected to raise approximately $3 billion to support the build-out of its data centers via a structure supported by Google Inc., according to Patrick Fleury, the crypto miner’s finance chief.
+新聞: Why Apple Still Hasn’t Cracked AI - <p>The company has long been the king of consumer gadgets. <em>Bloomberg Originals</em> shows how its shortcomings in artificial intelligence could&nbsp;put that at risk.</p>
+        市場情緒：市場情緒: 整體分數 -0.34, 看漲比例 0.33
+        市場分析: ^GSPC: 趨勢 BULLISH, 波動性 0.48%, ^GSPC 市場分析：趨勢 BULLISH，波動性 0.48%，RSI 58.66，MACD 62.20。
+QQQ: 趨勢 BULLISH, 波動性 0.62%, QQQ 市場分析：趨勢 BULLISH，波動性 0.62%，RSI 62.04，MACD 7.46。
+NVDA: 趨勢 BULLISH, 波動性 2.14%, NVDA 市場分析：趨勢 BULLISH，波動性 2.14%，RSI 52.62，MACD 0.88。
+^DJI: 趨勢 BULLISH, 波動性 0.50%, ^DJI 市場分析：趨勢 BULLISH，波動性 0.50%，RSI 56.01，MACD 325.00。
+^IXIC: 趨勢 BULLISH, 波動性 0.68%, ^IXIC 市場分析：趨勢 BULLISH，波動性 0.68%，RSI 61.35，MACD 317.93。
+SPY: 趨勢 BULLISH, 波動性 0.48%, SPY 市場分析：趨勢 BULLISH，波動性 0.48%，RSI 59.21，MACD 6.41。
+AAPL: 趨勢 BULLISH, 波動性 1.83%, AAPL 市場分析：趨勢 BULLISH，波動性 1.83%，RSI 71.98，MACD 7.28。
+GOOG: 趨勢 BULLISH, 波動性 2.34%, GOOG 市場分析：趨勢 BULLISH，波動性 2.34%，RSI 68.41，MACD 11.42。
+META: 趨勢 BULLISH, 波動性 1.16%, META 市場分析：趨勢 BULLISH，波動性 1.16%，RSI 46.06，MACD 3.62。
+MSFT: 趨勢 BULLISH, 波動性 1.01%, MSFT 市場分析：趨勢 BULLISH，波動性 1.01%，RSI 48.39，MACD 0.57。
+TSLA: 趨勢 BULLISH, 波動性 3.06%, TSLA 市場分析：趨勢 BULLISH，波動性 3.06%，RSI 65.56，MACD 26.34。
+TSM: 趨勢 BULLISH, 波動性 1.90%, TSM 市場分析：趨勢 BULLISH，波動性 1.90%，RSI 69.61，MACD 10.59。
+AMZN: 趨勢 BULLISH, 波動性 1.73%, AMZN 市場分析：趨勢 BULLISH，波動性 1.73%，RSI 37.07，MACD -1.24。
+ORCL: 趨勢 BULLISH, 波動性 8.93%, ORCL 市場分析：趨勢 BULLISH，波動性 8.93%，RSI 54.77，MACD 17.93。
+JPM: 趨勢 BULLISH, 波動性 1.04%, JPM 市場分析：趨勢 BULLISH，波動性 1.04%，RSI 67.24，MACD 5.13。
+WMT: 趨勢 BULLISH, 波動性 1.01%, WMT 市場分析：趨勢 BULLISH，波動性 1.01%，RSI 57.98，MACD 1.04。
+LLY: 趨勢 BEARISH, 波動性 1.34%, LLY 市場分析：趨勢 BEARISH，波動性 1.34%，RSI 39.84，MACD 3.26。
+^VIX: 趨勢 BEARISH, 波動性 4.53%, ^VIX 市場分析：趨勢 BEARISH，波動性 4.53%，RSI 56.41，MACD 0.17。
+        策略分析：^GSPC: 最佳策略 technical, 預期回報 0.00%
+QQQ: 最佳策略 ml, 預期回報 1.23%
+NVDA: 最佳策略 technical, 預期回報 0.00%
+^DJI: 最佳策略 technical, 預期回報 0.00%
+^IXIC: 最佳策略 technical, 預期回報 0.00%
+SPY: 最佳策略 technical, 預期回報 0.00%
+AAPL: 最佳策略 technical, 預期回報 0.00%
+GOOG: 最佳策略 technical, 預期回報 0.00%
+META: 最佳策略 technical, 預期回報 0.00%
+MSFT: 最佳策略 technical, 預期回報 0.00%
+TSLA: 最佳策略 technical, 預期回報 0.00%
+TSM: 最佳策略 technical, 預期回報 0.00%
+AMZN: 最佳策略 technical, 預期回報 0.00%
+ORCL: 最佳策略 technical, 預期回報 0.00%
+JPM: 最佳策略 technical, 預期回報 0.00%
+WMT: 最佳策略 technical, 預期回報 0.00%
+LLY: 最佳策略 technical, 預期回報 0.00%
+^VIX: 最佳策略 technical, 預期回報 0.00%
+        結尾：投資如馬拉松，穩健前行才能致勝。
+        (備註：API 調用失敗，無法生成完整內容)
+        
