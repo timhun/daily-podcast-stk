@@ -2,8 +2,7 @@ import json
 import os
 from datetime import datetime
 from loguru import logger
-from xai_sdk import Client
-from xai_sdk.chat import user, system
+from scripts.grok_api import ask_grok_json
 from copy import deepcopy
 from strategies.technical_strategy import TechnicalStrategy
 from strategies.ml_strategy import MLStrategy
@@ -305,49 +304,43 @@ class StrategyEngine:
         return prompt
 
     def optimize_with_grok(self, symbol, results, timeframe, best_results, index_symbol):
-        """Grok optimization"""
-        client = Client(api_key=self.api_key, timeout=3600)
-        chat = client.chat.create(model="grok-3-mini")
-        chat.append(system("You are an AI-driven financial strategy optimizer. Analyze strategy backtest results and select the best strategy based on expected return, ensuring max drawdown < 15%."))
-
-        prompt = [
+        """Grok optimization via HTTP helper returning parsed JSON"""
+        prompt_lines = [
             f"Select the best strategy for {symbol} (timeframe: {timeframe}, index: {index_symbol}).",
             f"Backtest results:\n{json.dumps(results, ensure_ascii=False, indent=2)}",
             f"Best parameters:\n{json.dumps(best_results, ensure_ascii=False, indent=2)}",
-            f"Requirements:",
+            "Requirements:",
             f"- Select the strategy with the highest expected return, max drawdown < {config['strategy_params']['max_drawdown_threshold']}.",
-            f"- Provide best strategy name, confidence, expected return, max drawdown, Sharpe ratio, trading signals, and dynamic parameters.",
-            f"Output in JSON format:",
+            "- Provide best strategy name, confidence, expected return, max drawdown, Sharpe ratio, trading signals, and dynamic parameters.",
+            "Output in strictly valid JSON format:",
             '{',
             f'  "symbol": "{symbol}",',
             f'  "analysis_date": "{datetime.today().strftime("%Y-%m-%d")}",',
             f'  "index_symbol": "{index_symbol}",',
-            f'  "winning_strategy": {{',
-            f'    "name": "strategy_name",',
-            f'    "confidence": 0.0,',
-            f'    "expected_return": 0.0,',
-            f'    "max_drawdown": 0.0,',
-            f'    "sharpe_ratio": 0.0',
-            f'  }},',
-            f'  "signals": {{',
-            f'    "position": "LONG/NEUTRAL/SHORT",',
-            f'    "entry_price": 0.0,',
-            f'    "target_price": 0.0,',
-            f'    "stop_loss": 0.0,',
-            f'    "position_size": 0.0',
-            f'  }},',
-            f'  "dynamic_params": {{}},',
-            f'  "strategy_version": "2.0"',
-            f'}}'
+            '  "winning_strategy": {',
+            '    "name": "strategy_name",',
+            '    "confidence": 0.0,',
+            '    "expected_return": 0.0,',
+            '    "max_drawdown": 0.0,',
+            '    "sharpe_ratio": 0.0',
+            '  },',
+            '  "signals": {',
+            '    "position": "LONG/NEUTRAL/SHORT",',
+            '    "entry_price": 0.0,',
+            '    "target_price": 0.0,',
+            '    "stop_loss": 0.0,',
+            '    "position_size": 0.0',
+            '  },',
+            '  "dynamic_params": {},',
+            '  "strategy_version": "2.0"',
+            '}'
         ]
-        prompt = '\n'.join(prompt)
-        chat.append(user(prompt))
-        response = chat.sample()
+        prompt = '\n'.join(prompt_lines)
         try:
-            optimized = json.loads(response.content.strip('```json\n').strip('```\n'))
+            optimized = ask_grok_json(prompt, role="user", model=os.getenv("GROK_MODEL", "grok-4"))
             return optimized
-        except json.JSONDecodeError:
-            logger.error("Grok response JSON parsing failed")
+        except Exception as e:
+            logger.error(f"Grok optimization failed: {e}")
             return None
 
     def _get_best_strategy_params(self, best_results):
