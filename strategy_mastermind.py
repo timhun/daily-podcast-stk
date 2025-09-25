@@ -1,4 +1,4 @@
-THIS SHOULD BE A LINTER ERRORimport json
+import json
 import os
 from datetime import datetime
 from loguru import logger
