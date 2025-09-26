@@ -1,0 +1,63 @@
+
+        歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2025年09月26日。
+        市場概況：^GSPC: 收盤 6643.70, 漲跌 0.59%
+QQQ: 收盤 595.97, 漲跌 0.41%
+NVDA: 收盤 178.19, 漲跌 0.28%
+^DJI: 收盤 46247.29, 漲跌 0.65%
+^IXIC: 收盤 22484.07, 漲跌 0.44%
+SPY: 收盤 661.82, 漲跌 0.57%
+AAPL: 收盤 255.46, 漲跌 -0.55%
+GOOG: 收盤 247.18, 漲跌 0.25%
+META: 收盤 743.75, 漲跌 -0.69%
+MSFT: 收盤 511.46, 漲跌 0.87%
+TSLA: 收盤 440.40, 漲跌 4.02%
+TSM: 收盤 273.36, 漲跌 -1.19%
+AMZN: 收盤 219.78, 漲跌 0.75%
+ORCL: 收盤 283.46, 漲跌 -2.70%
+JPM: 收盤 316.06, 漲跌 0.83%
+WMT: 收盤 103.16, 漲跌 0.11%
+LLY: 收盤 724.54, 漲跌 1.39%
+^VIX: 收盤 15.29, 漲跌 -8.66%
+        產業動態：新聞: Oracle’s Role as Protector of TikTok Data Panned as Rehash of Earlier Plan - <p>Deal announced for US purchase of app relies on software company’s expertise</p>
+新聞: US Labor Board Withdraws Claims That Apple CEO Violated Workers’ Rights - The US labor board has abandoned its allegations that Apple Inc. Chief Executive Officer Tim Cook violated federal labor law, one of many cases where the agency is adopting a more business-friendly approach under President Donald Trump.
+新聞: Google Ad Tech Under Fire: What the DOJ Wants a Judge to Do - For the past four days, the Justice Department has sought to persuade a federal judge in Virginia to force Alphabet Inc.’s Google to sell off part of the company and change the way it does business to improve competition for online display advertising.
+        市場情緒：市場情緒: 整體分數 -0.77, 看漲比例 0.00
+        市場分析: ^GSPC: 趨勢 BULLISH, 波動性 0.49%, ^GSPC 市場分析：趨勢 BULLISH，波動性 0.49%，RSI 62.69，MACD 60.38。
+QQQ: 趨勢 BULLISH, 波動性 0.61%, QQQ 市場分析：趨勢 BULLISH，波動性 0.61%，RSI 64.18，MACD 7.26。
+NVDA: 趨勢 BULLISH, 波動性 2.13%, NVDA 市場分析：趨勢 BULLISH，波動性 2.13%，RSI 53.30，MACD 0.92。
+^DJI: 趨勢 BULLISH, 波動性 0.52%, ^DJI 市場分析：趨勢 BULLISH，波動性 0.52%，RSI 60.77，MACD 320.75。
+^IXIC: 趨勢 BULLISH, 波動性 0.68%, ^IXIC 市場分析：趨勢 BULLISH，波動性 0.68%，RSI 63.49，MACD 306.05。
+SPY: 趨勢 BULLISH, 波動性 0.49%, SPY 市場分析：趨勢 BULLISH，波動性 0.49%，RSI 63.05，MACD 6.22。
+AAPL: 趨勢 BULLISH, 波動性 1.85%, AAPL 市場分析：趨勢 BULLISH，波動性 1.85%，RSI 69.69，MACD 7.53。
+GOOG: 趨勢 BULLISH, 波動性 2.33%, GOOG 市場分析：趨勢 BULLISH，波動性 2.33%，RSI 68.95，MACD 10.67。
+META: 趨勢 BULLISH, 波動性 1.16%, META 市場分析：趨勢 BULLISH，波動性 1.16%，RSI 43.89，MACD 1.96。
+MSFT: 趨勢 BULLISH, 波動性 1.02%, MSFT 市場分析：趨勢 BULLISH，波動性 1.02%，RSI 52.59，MACD 0.71。
+TSLA: 趨勢 BULLISH, 波動性 3.09%, TSLA 市場分析：趨勢 BULLISH，波動性 3.09%，RSI 69.58，MACD 26.73。
+TSM: 趨勢 BULLISH, 波動性 1.93%, TSM 市場分析：趨勢 BULLISH，波動性 1.93%，RSI 65.45，MACD 10.28。
+AMZN: 趨勢 BULLISH, 波動性 1.72%, AMZN 市場分析：趨勢 BULLISH，波動性 1.72%，RSI 39.77，MACD -1.67。
+ORCL: 趨勢 BULLISH, 波動性 8.97%, ORCL 市場分析：趨勢 BULLISH，波動性 8.97%，RSI 51.90，MACD 15.55。
+JPM: 趨勢 BULLISH, 波動性 1.04%, JPM 市場分析：趨勢 BULLISH，波動性 1.04%，RSI 70.23，MACD 5.24。
+WMT: 趨勢 BULLISH, 波動性 1.01%, WMT 市場分析：趨勢 BULLISH，波動性 1.01%，RSI 58.43，MACD 1.01。
+LLY: 趨勢 BEARISH, 波動性 1.38%, LLY 市場分析：趨勢 BEARISH，波動性 1.38%，RSI 44.21，MACD 1.48。
+^VIX: 趨勢 BEARISH, 波動性 4.94%, ^VIX 市場分析：趨勢 BEARISH，波動性 4.94%，RSI 47.12，MACD 0.10。
+        策略分析：^GSPC: 最佳策略 technical, 預期回報 0.00%
+QQQ: 最佳策略 ml, 預期回報 1.17%
+NVDA: 最佳策略 technical, 預期回報 0.00%
+^DJI: 最佳策略 technical, 預期回報 0.00%
+^IXIC: 最佳策略 technical, 預期回報 0.00%
+SPY: 最佳策略 technical, 預期回報 0.00%
+AAPL: 最佳策略 technical, 預期回報 0.00%
+GOOG: 最佳策略 technical, 預期回報 0.00%
+META: 最佳策略 technical, 預期回報 0.00%
+MSFT: 最佳策略 technical, 預期回報 0.00%
+TSLA: 最佳策略 technical, 預期回報 0.00%
+TSM: 最佳策略 technical, 預期回報 0.00%
+AMZN: 最佳策略 technical, 預期回報 0.00%
+ORCL: 最佳策略 technical, 預期回報 0.00%
+JPM: 最佳策略 technical, 預期回報 0.00%
+WMT: 最佳策略 technical, 預期回報 0.00%
+LLY: 最佳策略 technical, 預期回報 0.00%
+^VIX: 最佳策略 technical, 預期回報 0.00%
+        結尾：投資如馬拉松，穩健前行才能致勝。
+        (備註：API 調用失敗，無法生成完整內容)
+        
