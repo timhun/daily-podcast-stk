@@ -54,7 +54,7 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
 
         today = datetime.date.today().strftime('%Y年%m月%d日')
         return f"""
-        生成 {mode.upper()} 版播客文字稿，長度控制在{config['podcast']['script_length_limit']}字內，風格專業親和，使用台灣用語。
+        生成 {mode.upper()} 投資大師的文字稿，長度控制在{config['podcast']['script_length_limit']}字內，風格專業親和，使用台灣用語。
         文字稿必須是連貫的敘述性文字，適合直接轉換成語音。不要包含任何結構標記如 '-' 或 '*'，不要包含橋段標題或解釋（如 '開場:' 或 '市場概況:'），只需生成完整的、流暢的播客內容。
         
         基於以下內容生成：
@@ -106,7 +106,7 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     
     today = datetime.date.today().strftime('%Y年%m月%d日')
     prompt = f"""
-    生成 {mode.upper()} 版播客文字稿，長度控制在{config['podcast']['script_length_limit']}字內，風格專業親和，使用台灣用語。
+    生成 {mode.upper()} 投資大師文字稿，長度控制在{config['podcast']['script_length_limit']}字內，風格專業親和，使用台灣用語。
     文字稿必須是連貫的敘述性文字，適合直接轉換成語音。不要包含任何結構標記如 '-' 或 '*'，不要包含橋段標題或解釋（如 '開場:' 或 '市場概況:'），只需生成完整的、流暢的播客內容。
     
     基於以下內容生成：
