@@ -19,7 +19,7 @@ def optimize_script_with_grok(initial_script, api_key, model="grok-4", max_retri
         return initial_script
 
     prompt = (
-        "你是一位專業財經科技主持人，名叫幫幫忙，請根據以下初始逐字稿，使用繁體中文撰寫一段約10分鐘的Podcast播報逐字稿，"
+        "你是一位專業投資大師，名叫幫幫忙，請根據以下初始逐字稿，使用繁體中文撰寫一段約10分鐘的Podcast播報逐字稿，"
         "風格需更口語化、自然，適合廣播節目，控制在3000字以內。請保留所有市場數據（包括收盤價和成交金額，單位為台幣億元），"
         "並融入專業分析，確保內容符合台灣慣用語，保留英文術語（如 Nvidia、Fed）。\n\n"
         f"初始逐字稿：\n{initial_script}\n\n"
