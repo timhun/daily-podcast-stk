@@ -118,7 +118,7 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     策略分析：{strategy_str or '無有效策略分析'}
     結尾：投資金句 (選用 - 科斯托蘭尼 André Kostolany)。
     
-    注意 (1) 輸出應為純文字稿，無額外格式。記得你是專業的財經主播。
+    注意 (1) 輸出應為純文字稿，無額外格式。記得你是專業投資大師主播。
         (2) 不要播出股票代碼而是直接用股票名稱，如 TWII 為加權指數，2330為台積電
         (3) 不要播報技術指標數字，而是說出數字所代表的意思
         (4) 產業新聞只取半導體及AI相關
