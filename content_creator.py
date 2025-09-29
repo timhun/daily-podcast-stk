@@ -1,32 +1,116 @@
 import os
 import json
-from xai_sdk import Client
-from xai_sdk.chat import user, system
-import datetime
 from loguru import logger
+import datetime
+
+# 支援多種 LLM 供應商
+XAI_API_KEY = os.getenv("GROK_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
+
+def call_xai_api(prompt):
+    """呼叫 xAI Grok API"""
+    try:
+        from xai_sdk import Client
+        from xai_sdk.chat import user, system
+        
+        client = Client(api_key=XAI_API_KEY, timeout=120)
+        chat = client.chat.create(model="grok-3-mini")
+        chat.append(system(
+            "You are Grok, a highly intelligent AI assistant created by xAI, "
+            "specializing in generating professional and engaging podcast scripts in Traditional Chinese."
+        ))
+        chat.append(user(prompt))
+        response = chat.sample()
+        logger.info("成功使用 xAI API 生成文字稿")
+        return response.content
+    except Exception as e:
+        error_msg = str(e).replace('{', '{{').replace('}', '}}')
+        logger.warning(f"xAI API 失敗: {error_msg}")
+        raise
+
+def call_openai_api(prompt):
+    """呼叫 OpenAI API"""
+    try:
+        from openai import OpenAI
+        
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",  # 使用較便宜的模型
+            messages=[
+                {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=2000
+        )
+        logger.info("成功使用 OpenAI API 生成文字稿")
+        return response.choices[0].message.content
+    except Exception as e:
+        error_msg = str(e).replace('{', '{{').replace('}', '}}')
+        logger.warning(f"OpenAI API 失敗: {error_msg}")
+        raise
+
+def call_anthropic_api(prompt):
+    """呼叫 Anthropic Claude API"""
+    try:
+        import anthropic
+        
+        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+        message = client.messages.create(
+            model="claude-3-5-haiku-20241022",  # 使用較便宜的模型
+            max_tokens=2000,
+            messages=[
+                {"role": "user", "content": prompt}
+            ],
+            system="你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"
+        )
+        logger.info("成功使用 Anthropic API 生成文字稿")
+        return message.content[0].text
+    except Exception as e:
+        error_msg = str(e).replace('{', '{{').replace('}', '}}')
+        logger.warning(f"Anthropic API 失敗: {error_msg}")
+        raise
+
+def generate_script_with_llm(prompt):
+    """
+    使用多個 LLM 供應商生成文字稿（自動備援）
     
-# Environment variables for xAI API
-XAI_API_KEY = os.getenv("GROK_API_KEY")
+    優先順序: xAI -> OpenAI -> Anthropic -> Fallback
+    """
+    # 嘗試 xAI
+    if XAI_API_KEY:
+        try:
+            return call_xai_api(prompt)
+        except Exception:
+            logger.info("xAI 不可用，嘗試其他供應商...")
+    
+    # 嘗試 OpenAI
+    if OPENAI_API_KEY:
+        try:
+            return call_openai_api(prompt)
+        except Exception:
+            logger.info("OpenAI 不可用，嘗試其他供應商...")
+    
+    # 嘗試 Anthropic
+    if ANTHROPIC_API_KEY:
+        try:
+            return call_anthropic_api(prompt)
+        except Exception:
+            logger.info("Anthropic 不可用，使用本地備用方案...")
+    
+    # 所有 API 都失敗，返回 None
+    logger.warning("所有 LLM API 皆不可用")
+    return None
 
 def generate_script(market_data, mode, strategy_results, market_analysis):
-    """
-    生成投資播客文字稿
+    """生成投資播客文字稿（多 LLM 備援版本）"""
     
-    Args:
-        market_data: 市場數據字典
-        mode: 播客模式
-        strategy_results: 策略分析結果
-        market_analysis: 市場分析結果
-    
-    Returns:
-        str: 生成的播客文字稿
-    """
-    
-    # 共同數據處理區塊 (Common Data Processing)
+    # 數據處理（與原程式碼相同）
     market = market_data.get('market', {})
     analysis = "\n".join([
         f"{symbol}: 收盤 {info.get('close', 0):.2f}, 漲跌 {info.get('change', 0):.2f}%"
@@ -53,7 +137,6 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     ])
 
     def summarize_best_strategies(all_results):
-        """總結最佳投資策略"""
         lines = []
         for sym, sym_results in (all_results or {}).items():
             if not isinstance(sym_results, dict) or not sym_results:
@@ -69,30 +152,6 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
 
     strategy_str = summarize_best_strategies(strategy_results)
     today = datetime.date.today().strftime('%Y年%m月%d日')
-
-    # 如果 XAI_API_KEY 未設定，使用 fallback
-    if not XAI_API_KEY:
-        logger.warning("XAI_API_KEY not set, using fallback script")
-        return f"""歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是{today}。
-
-市場概況：
-{analysis or '暫無市場數據'}
-
-產業動態：
-{news_str}
-
-市場情緒：
-{sentiment_str}
-
-市場分析：
-{market_analysis_str or '無市場分析'}
-
-策略分析：
-{strategy_str}
-
-投資如馬拉松，穩健前行才能致勝。感謝收聽，我們下次見。
-
-(備註：API Key 未設定，使用簡化版本)"""
 
     # 構建 Prompt
     prompt = f"""生成 {mode.upper()} 投資大師文字稿，長度控制在{config['podcast']['script_length_limit']}字內，風格專業親和，使用台灣用語。
@@ -127,69 +186,33 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
 (4) 產業新聞只取半導體及AI相關。
 (5) 最後要明確指出 QQQ 和 0050 的買賣策略及大盤多空方向。"""
 
-    try:
-        # 創建 xAI 客戶端，設定合理的 timeout
-        client = Client(api_key=XAI_API_KEY, timeout=120)
-        chat = client.chat.create(model="grok-3-mini")
-        
-        # 添加系統和用戶訊息
-        chat.append(system(
-            "You are Grok, a highly intelligent AI assistant created by xAI, "
-            "specializing in generating professional and engaging podcast scripts in Traditional Chinese."
-        ))
-        chat.append(user(prompt))
-        
-        # 生成回應
-        response = chat.sample()
-        logger.info("成功生成播客文字稿")
-        return response.content
-        
-    except TimeoutError:
-        logger.error("API 請求超時")
-        return generate_fallback_script(today, analysis, news_str, sentiment_str, 
-                                       market_analysis_str, strategy_str, 
-                                       error_msg="API 請求超時")
-    except Exception as e:
-        logger.error(f"API 錯誤: {str(e)}", exc_info=True)
-        return generate_fallback_script(today, analysis, news_str, sentiment_str, 
-                                       market_analysis_str, strategy_str, 
-                                       error_msg=f"API 調用失敗: {str(e)}")
-
+    # 嘗試使用 LLM 生成
+    script = generate_script_with_llm(prompt)
+    
+    if script:
+        return script
+    
+    # 所有 API 都失敗，使用本地備用方案
+    logger.warning("使用本地備用文字稿")
+    return generate_fallback_script(today, analysis, news_str, sentiment_str, 
+                                   market_analysis_str, strategy_str, 
+                                   error_msg="所有 LLM API 皆不可用")
 
 def generate_fallback_script(today, analysis, news_str, sentiment_str, 
                              market_analysis_str, strategy_str, error_msg=""):
-    """
-    生成備用文字稿
-    
-    Args:
-        today: 今日日期
-        analysis: 市場分析
-        news_str: 新聞字串
-        sentiment_str: 市場情緒
-        market_analysis_str: 市場分析字串
-        strategy_str: 策略字串
-        error_msg: 錯誤訊息
-    
-    Returns:
-        str: 備用文字稿
-    """
+    """生成備用文字稿"""
     return f"""歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是{today}。
 
-市場概況：
-{analysis or '暫無市場數據'}
+讓我們來看看今天的市場狀況。{analysis or '今日市場數據暫時無法取得'}
 
-產業動態：
-{news_str}
+在產業動態方面，{news_str}
 
-市場情緒：
 {sentiment_str}
 
-市場分析：
-{market_analysis_str or '無市場分析'}
+市場分析顯示，{market_analysis_str or '今日市場分析資料尚未完整'}
 
-策略分析：
-{strategy_str}
+根據我們的策略分析，{strategy_str}
 
-投資如馬拉松，穩健前行才能致勝。感謝收聽，我們下次見。
+投資就像馬拉松，不是短跑衝刺。保持穩健的投資策略，長期來看才能獲得穩定的回報。感謝收聽今天的節目，我們下次見。
 
-(備註：{error_msg or 'API 調用失敗，使用備用版本'})"""
+(系統備註：{error_msg or 'API 調用失敗，使用備用版本'})"""
