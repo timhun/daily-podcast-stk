@@ -6,7 +6,7 @@ import datetime
 # 支援多種 LLM 供應商
 XAI_API_KEY = os.getenv("GROK_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+ANTHROPIC_API_KEY = os.getenv("GROQ_API_KEY")
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
