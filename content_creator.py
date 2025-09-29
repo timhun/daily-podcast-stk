@@ -116,7 +116,6 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     prompt = f"""
     生成 {mode.upper()} 投資大師文字稿，長度控制在{config['podcast']['script_length_limit']}字內，風格專業親和，使用台灣用語。
     文字稿必須是連貫的敘述性文字，適合直接轉換成語音。不要包含任何結構標記如 '-' 或 '*'，不要包含橋段標題或解釋（如 '開場:' 或 '市場概況:'），只需生成完整的、流暢的播客內容。
-    
     基於以下內容生成：
     開場白：歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是{today}。
     市場概況：{analysis}
@@ -125,7 +124,6 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     市場分析：{market_analysis_str or '無市場分析'}
     策略分析：{strategy_str or '無有效策略分析'}
     結尾：投資金句 (選用 - 科斯托蘭尼 André Kostolany)。
-    
     注意 (1) 輸出應為純文字稿，無額外格式。記得你是專業投資大師主播。
         (2) 不要播出股票代碼而是直接用股票名稱，如 TWII 為加權指數，2330為台積電
         (3) 不要播報技術指標數字，而是說出數字所代表的意思
