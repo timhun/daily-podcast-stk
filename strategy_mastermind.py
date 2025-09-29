@@ -234,7 +234,7 @@ class StrategyEngine:
         os.makedirs(os.path.dirname(path), exist_ok=True)
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(params, f, ensure_ascii=False, indent=2)
-        logger.info(f"{strategy_name} optimized params saved to: {path}")
+        #logger.info(f"{strategy_name} optimized params saved to: {path}")
 
     def optimize_with_ai(self, results, strategy_name, extended_data=None):
         """General AI optimization, supports Grok/Gemini/Groq with fallback"""
@@ -300,7 +300,7 @@ class StrategyEngine:
             f'}}'
         ]
         prompt = '\n'.join(prompt_parts)
-        logger.debug(f"Generated optimization prompt for {strategy_name}:\n{prompt}")
+        #logger.debug(f"Generated optimization prompt for {strategy_name}:\n{prompt}")
         return prompt
 
     def optimize_with_grok(self, symbol, results, timeframe, best_results, index_symbol):
@@ -340,7 +340,7 @@ class StrategyEngine:
             optimized = ask_grok_json(prompt, role="user", model=os.getenv("GROK_MODEL", "grok-4"))
             return optimized
         except Exception as e:
-            logger.error(f"Grok optimization failed: {e}")
+            #logger.error(f"Grok optimization failed: {e}")
             return None
 
     def _get_best_strategy_params(self, best_results):
