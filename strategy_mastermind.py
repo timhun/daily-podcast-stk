@@ -79,6 +79,9 @@ def composite_index_with_weights(prices, volume, weight_stock_info, weights=[0.4
     }, index=prices.index)
 
 class StrategyEngine:
+    # 定義需要執行策略的 symbols
+    ALLOWED_SYMBOLS = {'QQQ', '0050.TW'}
+    
     def __init__(self):
         self.api_key = os.getenv("GROK_API_KEY")
         self.models = {}
@@ -143,10 +146,16 @@ class StrategyEngine:
             logger.info("Defaulting to Grok AI client")
 
     def run_strategy_tournament(self, symbol, data, timeframe='daily', index_symbol=None):
-        """Run strategy backtests"""
+        """Run strategy backtests - 僅對特定 symbols 執行"""
+        # 檢查 symbol 是否在允許列表中
+        if symbol not in self.ALLOWED_SYMBOLS:
+            logger.info(f"Symbol {symbol} not in allowed list {self.ALLOWED_SYMBOLS}, skipping strategy tournament")
+            return {}
+            
         results = {}
         best_results = {}
         index_symbol = index_symbol or ('^TWII' if symbol == '0050.TW' else '^IXIC')
+        logger.info(f"Running strategy tournament for {symbol}")
         
         for name, strategy in self.models.items():
             param_combinations = get_param_combinations(strategy.params)
@@ -174,7 +183,7 @@ class StrategyEngine:
         return results
 
     def optimize_all_strategies(self, strategy_results, mode, iterations=1, extended_data=False, background=True):
-        """Optimize each strategy independently, optionally in background"""
+       """Optimize each strategy independently - 僅對特定 symbols 執行"""
         def _optimize_thread():
             data_period = (
                 config['optimization']['weekend_data_period'] if extended_data else config['optimization']['weekday_data_period']
@@ -182,7 +191,16 @@ class StrategyEngine:
             if not strategy_results:
                 logger.warning("No strategy_results provided for optimization; skipping.")
                 return
+            
             symbol = list(strategy_results.keys())[0]
+            
+            # 檢查 symbol 是否在允許列表中
+            if symbol not in self.ALLOWED_SYMBOLS:
+                logger.info(f"Symbol {symbol} not in allowed list {self.ALLOWED_SYMBOLS}, skipping optimization")
+                return
+            
+            logger.info(f"Starting optimization for {symbol}")
+            
             extended_df = self._load_extended_data(symbol, data_period)
             sym_results = strategy_results.get(symbol, {})
             for name, strategy in self.models.items():
