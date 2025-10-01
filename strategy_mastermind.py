@@ -100,7 +100,7 @@ class StrategyEngine:
             params = self._load_json_params(optimized_path) or self._load_default_params(name)
             strategy = strategy_class(config, params)
             self.models[name] = strategy
-            logger.info(f"{name} strategy loaded (optimized params: {os.path.exists(optimized_path)})")
+            #logger.info(f"{name} strategy loaded (optimized params: {os.path.exists(optimized_path)})")
 
     def _load_default_params(self, name):
         """Load default params"""
@@ -164,7 +164,7 @@ class StrategyEngine:
             
             results[name] = best_param_result
             best_results[name] = {'params': best_param_result['params']}
-
+     
         optimized = self.optimize_with_grok(symbol, results, timeframe, best_results, index_symbol)
         if optimized:
             for name, strategy in self.models.items():
@@ -192,13 +192,13 @@ class StrategyEngine:
                     if optimized:
                         strategy.params.update(optimized.get('dynamic_params', {}))
                         self._save_optimized_params(name, strategy.params)
-                        logger.info(f"{name} iteration {i+1} optimized: {optimized['winning_strategy']}")
+                        #logger.info(f"{name} iteration {i+1} optimized: {optimized['winning_strategy']}")
 
         if background:
             thread = Thread(target=_optimize_thread)
             thread.daemon = True
             thread.start()
-            logger.info("Optimization running in background...")
+            #logger.info("Optimization running in background...")
         else:
             _optimize_thread()
 
@@ -208,7 +208,7 @@ class StrategyEngine:
         if os.path.exists(cache_path):
             df = pd.read_csv(cache_path)
             df['date'] = pd.to_datetime(df['date'])
-            logger.info(f"Loaded cached extended data: {len(df)} rows")
+            #logger.info(f"Loaded cached extended data: {len(df)} rows")
             return df
         ticker = yf.Ticker(symbol)
         hist = ticker.history(period=period)
@@ -225,7 +225,7 @@ class StrategyEngine:
         })
         os.makedirs(os.path.dirname(cache_path), exist_ok=True)
         df.to_csv(cache_path, index=False)
-        logger.info(f"Extended data loaded and cached: {len(df)} rows")
+        #logger.info(f"Extended data loaded and cached: {len(df)} rows")
         return df
 
     def _save_optimized_params(self, strategy_name, params):
