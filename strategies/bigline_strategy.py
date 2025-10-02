@@ -31,7 +31,7 @@ class BigLineStrategy(BaseStrategy):
         #logger.info(f"開始回測 BigLine 策略: {symbol}, 時間框架: {timeframe}")
         
         if symbol not in ['QQQ', '0050.TW']:
-            logger.info(f"{symbol} 非主要交易標的，跳過回測")
+            #logger.info(f"{symbol} 非主要交易標的，跳過回測")
             return self._default_results()
 
         df = data.copy()
@@ -130,7 +130,7 @@ class BigLineStrategy(BaseStrategy):
                 'signals': signals
             }
         except Exception as e:
-            logger.error(f"{symbol} {timeframe} 回測失敗: {str(e)}")
+            #logger.error(f"{symbol} {timeframe} 回測失敗: {str(e)}")
             return self._default_results()
 
     def _load_sentiment_score(self, symbol, timeframe):
