@@ -5056,3 +5056,287 @@
 2025-10-02 13:08:57.614 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-10-02 13:08:57.872 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/10/02（四）
 2025-10-02 13:08:57.872 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/10/02（四）
+2025-10-02 13:53:25.571 | WARNING  | strategy_mastermind:<module>:23 - google.generativeai not installed. Gemini unavailable.
+2025-10-02 13:53:25.571 | WARNING  | strategy_mastermind:<module>:28 - groq not installed. Groq unavailable.
+2025-10-02 13:53:26.360 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_GSPC.csv
+2025-10-02 13:53:26.360 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_GSPC.csv
+2025-10-02 13:53:26.362 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_GSPC.csv
+2025-10-02 13:53:26.362 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_GSPC.csv
+2025-10-02 13:53:26.657 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_QQQ.csv
+2025-10-02 13:53:26.657 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_QQQ.csv
+2025-10-02 13:53:26.658 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_QQQ.csv
+2025-10-02 13:53:26.658 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_QQQ.csv
+2025-10-02 13:53:26.968 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_NVDA.csv
+2025-10-02 13:53:26.968 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_NVDA.csv
+2025-10-02 13:53:26.970 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_NVDA.csv
+2025-10-02 13:53:26.970 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_NVDA.csv
+2025-10-02 13:53:27.218 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_DJI.csv
+2025-10-02 13:53:27.218 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_DJI.csv
+2025-10-02 13:53:27.220 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_DJI.csv
+2025-10-02 13:53:27.220 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_DJI.csv
+2025-10-02 13:53:27.518 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_IXIC.csv
+2025-10-02 13:53:27.518 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_IXIC.csv
+2025-10-02 13:53:27.520 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_IXIC.csv
+2025-10-02 13:53:27.520 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_IXIC.csv
+2025-10-02 13:53:27.866 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_SPY.csv
+2025-10-02 13:53:27.866 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_SPY.csv
+2025-10-02 13:53:27.868 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_SPY.csv
+2025-10-02 13:53:27.868 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_SPY.csv
+2025-10-02 13:53:28.254 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_AAPL.csv
+2025-10-02 13:53:28.254 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_AAPL.csv
+2025-10-02 13:53:28.256 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_AAPL.csv
+2025-10-02 13:53:28.256 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_AAPL.csv
+2025-10-02 13:53:28.530 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_GOOG.csv
+2025-10-02 13:53:28.530 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_GOOG.csv
+2025-10-02 13:53:28.532 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_GOOG.csv
+2025-10-02 13:53:28.532 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_GOOG.csv
+2025-10-02 13:53:28.859 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_META.csv
+2025-10-02 13:53:28.859 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_META.csv
+2025-10-02 13:53:28.861 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_META.csv
+2025-10-02 13:53:28.861 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_META.csv
+2025-10-02 13:53:29.170 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_MSFT.csv
+2025-10-02 13:53:29.170 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_MSFT.csv
+2025-10-02 13:53:29.171 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_MSFT.csv
+2025-10-02 13:53:29.171 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_MSFT.csv
+2025-10-02 13:53:29.419 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TSLA.csv
+2025-10-02 13:53:29.419 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TSLA.csv
+2025-10-02 13:53:29.421 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TSLA.csv
+2025-10-02 13:53:29.421 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TSLA.csv
+2025-10-02 13:53:29.738 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TSM.csv
+2025-10-02 13:53:29.738 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TSM.csv
+2025-10-02 13:53:29.739 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TSM.csv
+2025-10-02 13:53:29.739 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TSM.csv
+2025-10-02 13:53:29.970 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_AMZN.csv
+2025-10-02 13:53:29.970 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_AMZN.csv
+2025-10-02 13:53:29.972 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_AMZN.csv
+2025-10-02 13:53:29.972 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_AMZN.csv
+2025-10-02 13:53:30.348 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_ORCL.csv
+2025-10-02 13:53:30.348 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_ORCL.csv
+2025-10-02 13:53:30.350 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_ORCL.csv
+2025-10-02 13:53:30.350 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_ORCL.csv
+2025-10-02 13:53:30.727 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_JPM.csv
+2025-10-02 13:53:30.727 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_JPM.csv
+2025-10-02 13:53:30.728 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_JPM.csv
+2025-10-02 13:53:30.728 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_JPM.csv
+2025-10-02 13:53:31.118 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_WMT.csv
+2025-10-02 13:53:31.118 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_WMT.csv
+2025-10-02 13:53:31.119 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_WMT.csv
+2025-10-02 13:53:31.119 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_WMT.csv
+2025-10-02 13:53:31.508 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_LLY.csv
+2025-10-02 13:53:31.508 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_LLY.csv
+2025-10-02 13:53:31.509 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_LLY.csv
+2025-10-02 13:53:31.509 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_LLY.csv
+2025-10-02 13:53:32.075 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_VIX.csv
+2025-10-02 13:53:32.075 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_VIX.csv
+2025-10-02 13:53:32.078 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_VIX.csv
+2025-10-02 13:53:32.078 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_VIX.csv
+2025-10-02 13:53:32.942 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-10-02 13:53:32.942 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-10-02 13:53:33.108 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.reddit.com/r/investing/.rss 失敗: 429 Client Error: Too Many Requests for url: https://www.reddit.com/r/investing/.rss
+2025-10-02 13:53:33.108 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.reddit.com/r/investing/.rss 失敗: 429 Client Error: Too Many Requests for url: https://www.reddit.com/r/investing/.rss
+2025-10-02 13:53:33.109 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-10-02/us_news.json
+2025-10-02 13:53:33.109 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-10-02/us_news.json
+2025-10-02 13:53:36.792 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-10-02/social_metrics.json
+2025-10-02 13:53:36.792 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-10-02/social_metrics.json
+2025-10-02 13:53:36.792 | INFO     | data_collector:collect_data:252 - us 數據收集完成: 18 個標的, 3 則新聞, 品質分數: 1.0
+2025-10-02 13:53:36.792 | INFO     | data_collector:collect_data:252 - us 數據收集完成: 18 個標的, 3 則新聞, 品質分數: 1.0
+2025-10-02 13:53:36.798 | INFO     | strategy_mastermind:_init_ai_clients:145 - Defaulting to Grok AI client
+2025-10-02 13:53:36.798 | INFO     | strategy_mastermind:_init_ai_clients:145 - Defaulting to Grok AI client
+2025-10-02 13:53:36.801 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:36.801 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:36.808 | INFO     | market_analyst:analyze_market:91 - ^GSPC 市場分析完成
+2025-10-02 13:53:36.808 | INFO     | market_analyst:analyze_market:91 - ^GSPC 市場分析完成
+2025-10-02 13:53:36.808 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:36.808 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:36.810 | INFO     | strategy_mastermind:run_strategy_tournament:158 - Running strategy tournament for QQQ
+2025-10-02 13:53:36.810 | INFO     | strategy_mastermind:run_strategy_tournament:158 - Running strategy tournament for QQQ
+2025-10-02 13:53:36.816 | ERROR    | strategies.technical_strategy:backtest:189 - QQQ daily 回測失敗: module 'datetime' has no attribute 'today'
+2025-10-02 13:53:36.816 | ERROR    | strategies.technical_strategy:backtest:189 - QQQ daily 回測失敗: module 'datetime' has no attribute 'today'
+2025-10-02 13:53:36.819 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:36.819 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:36.819 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:36.819 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:36.876 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:36.876 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:36.877 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:36.877 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:36.880 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:36.880 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:36.880 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:36.880 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:36.977 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:36.977 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:36.978 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:36.978 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:36.991 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:36.991 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:36.993 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:36.993 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:37.131 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:37.131 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:37.132 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:37.132 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:37.137 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:37.137 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:37.138 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:37.138 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:37.419 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:37.419 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:37.423 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:37.423 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:37.428 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:37.428 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:37.429 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:37.429 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:37.696 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:37.696 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:37.696 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:37.696 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:37.701 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:37.701 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:37.702 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:37.702 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:37.847 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:37.847 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 211, 1: 38}
+2025-10-02 13:53:37.847 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:37.847 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:37.851 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:37.851 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:37.851 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:37.851 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:38.063 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 209, 1: 40}
+2025-10-02 13:53:38.063 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 209, 1: 40}
+2025-10-02 13:53:38.063 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:38.063 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:38.066 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:38.066 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:38.067 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:38.067 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:38.272 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 209, 1: 40}
+2025-10-02 13:53:38.272 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 209, 1: 40}
+2025-10-02 13:53:38.273 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:38.273 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:38.276 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:38.276 | INFO     | strategies.ml_strategy:backtest:54 - QQQ 特徵工程前數據長度: 250
+2025-10-02 13:53:38.277 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:38.277 | INFO     | strategies.ml_strategy:backtest:56 - QQQ 特徵工程後數據長度: 249
+2025-10-02 13:53:38.482 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 209, 1: 40}
+2025-10-02 13:53:38.482 | INFO     | strategies.ml_strategy:backtest:110 - QQQ 信號分佈: {-1: 209, 1: 40}
+2025-10-02 13:53:38.482 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:38.482 | INFO     | strategies.ml_strategy:backtest:111 - QQQ 回報標準差: 0.014
+2025-10-02 13:53:39.029 | INFO     | market_analyst:analyze_market:91 - QQQ 市場分析完成
+2025-10-02 13:53:39.029 | INFO     | market_analyst:analyze_market:91 - QQQ 市場分析完成
+2025-10-02 13:53:39.030 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.030 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.032 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol NVDA not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.032 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol NVDA not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.038 | INFO     | market_analyst:analyze_market:91 - NVDA 市場分析完成
+2025-10-02 13:53:39.038 | INFO     | market_analyst:analyze_market:91 - NVDA 市場分析完成
+2025-10-02 13:53:39.038 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.038 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.040 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^DJI not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.040 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^DJI not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.046 | INFO     | market_analyst:analyze_market:91 - ^DJI 市場分析完成
+2025-10-02 13:53:39.046 | INFO     | market_analyst:analyze_market:91 - ^DJI 市場分析完成
+2025-10-02 13:53:39.046 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.046 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.048 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^IXIC not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.048 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^IXIC not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.054 | INFO     | market_analyst:analyze_market:91 - ^IXIC 市場分析完成
+2025-10-02 13:53:39.054 | INFO     | market_analyst:analyze_market:91 - ^IXIC 市場分析完成
+2025-10-02 13:53:39.054 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.054 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.056 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol SPY not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.056 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol SPY not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.062 | INFO     | market_analyst:analyze_market:91 - SPY 市場分析完成
+2025-10-02 13:53:39.062 | INFO     | market_analyst:analyze_market:91 - SPY 市場分析完成
+2025-10-02 13:53:39.063 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.063 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.065 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol AAPL not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.065 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol AAPL not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.070 | INFO     | market_analyst:analyze_market:91 - AAPL 市場分析完成
+2025-10-02 13:53:39.070 | INFO     | market_analyst:analyze_market:91 - AAPL 市場分析完成
+2025-10-02 13:53:39.071 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.071 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.073 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol GOOG not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.073 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol GOOG not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.079 | INFO     | market_analyst:analyze_market:91 - GOOG 市場分析完成
+2025-10-02 13:53:39.079 | INFO     | market_analyst:analyze_market:91 - GOOG 市場分析完成
+2025-10-02 13:53:39.079 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.079 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.081 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol META not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.081 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol META not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.087 | INFO     | market_analyst:analyze_market:91 - META 市場分析完成
+2025-10-02 13:53:39.087 | INFO     | market_analyst:analyze_market:91 - META 市場分析完成
+2025-10-02 13:53:39.087 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.087 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.089 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol MSFT not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.089 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol MSFT not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.095 | INFO     | market_analyst:analyze_market:91 - MSFT 市場分析完成
+2025-10-02 13:53:39.095 | INFO     | market_analyst:analyze_market:91 - MSFT 市場分析完成
+2025-10-02 13:53:39.095 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.095 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.097 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol TSLA not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.097 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol TSLA not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.103 | INFO     | market_analyst:analyze_market:91 - TSLA 市場分析完成
+2025-10-02 13:53:39.103 | INFO     | market_analyst:analyze_market:91 - TSLA 市場分析完成
+2025-10-02 13:53:39.103 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.103 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.105 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol TSM not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.105 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol TSM not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.111 | INFO     | market_analyst:analyze_market:91 - TSM 市場分析完成
+2025-10-02 13:53:39.111 | INFO     | market_analyst:analyze_market:91 - TSM 市場分析完成
+2025-10-02 13:53:39.111 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.111 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.114 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol AMZN not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.114 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol AMZN not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.119 | INFO     | market_analyst:analyze_market:91 - AMZN 市場分析完成
+2025-10-02 13:53:39.119 | INFO     | market_analyst:analyze_market:91 - AMZN 市場分析完成
+2025-10-02 13:53:39.120 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.120 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.122 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ORCL not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.122 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ORCL not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.128 | INFO     | market_analyst:analyze_market:91 - ORCL 市場分析完成
+2025-10-02 13:53:39.128 | INFO     | market_analyst:analyze_market:91 - ORCL 市場分析完成
+2025-10-02 13:53:39.128 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.128 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.130 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol JPM not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.130 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol JPM not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.136 | INFO     | market_analyst:analyze_market:91 - JPM 市場分析完成
+2025-10-02 13:53:39.136 | INFO     | market_analyst:analyze_market:91 - JPM 市場分析完成
+2025-10-02 13:53:39.137 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.137 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.139 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol WMT not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.139 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol WMT not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.144 | INFO     | market_analyst:analyze_market:91 - WMT 市場分析完成
+2025-10-02 13:53:39.144 | INFO     | market_analyst:analyze_market:91 - WMT 市場分析完成
+2025-10-02 13:53:39.145 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.145 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.147 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol LLY not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.147 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol LLY not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.153 | INFO     | market_analyst:analyze_market:91 - LLY 市場分析完成
+2025-10-02 13:53:39.153 | INFO     | market_analyst:analyze_market:91 - LLY 市場分析完成
+2025-10-02 13:53:39.153 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.153 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.155 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^VIX not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.155 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^VIX not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:53:39.161 | INFO     | market_analyst:analyze_market:91 - ^VIX 市場分析完成
+2025-10-02 13:53:39.161 | INFO     | market_analyst:analyze_market:91 - ^VIX 市場分析完成
+2025-10-02 13:53:39.161 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.161 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^GSPC not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:53:39.161 | DEBUG    | content_creator:generate_script_with_llm:137 - xAI API key 未設置，跳過
+2025-10-02 13:53:39.161 | DEBUG    | content_creator:generate_script_with_llm:137 - xAI API key 未設置，跳過
+2025-10-02 13:53:39.162 | DEBUG    | content_creator:generate_script_with_llm:137 - Groq API key 未設置，跳過
+2025-10-02 13:53:39.162 | DEBUG    | content_creator:generate_script_with_llm:137 - Groq API key 未設置，跳過
+2025-10-02 13:53:39.162 | DEBUG    | content_creator:generate_script_with_llm:137 - OpenAI API key 未設置，跳過
+2025-10-02 13:53:39.162 | DEBUG    | content_creator:generate_script_with_llm:137 - OpenAI API key 未設置，跳過
+2025-10-02 13:53:39.162 | WARNING  | content_creator:generate_script_with_llm:152 - 所有 LLM API 皆不可用
+2025-10-02 13:53:39.162 | WARNING  | content_creator:generate_script_with_llm:152 - 所有 LLM API 皆不可用
+2025-10-02 13:53:39.162 | WARNING  | content_creator:generate_script:241 - 使用本地備用文字稿
+2025-10-02 13:53:39.162 | WARNING  | content_creator:generate_script:241 - 使用本地備用文字稿
+2025-10-02 13:54:08.574 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-10-02 13:54:08.574 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-10-02 13:54:09.805 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-10-02 13:54:09.805 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-10-02 13:54:10.101 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，us 版 2025/10/02（四）
+2025-10-02 13:54:10.101 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，us 版 2025/10/02（四）
