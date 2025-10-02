@@ -4348,3 +4348,711 @@
 2025-09-30 06:46:18.111 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-09-30 06:46:18.279 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/09/30（二）
 2025-09-30 06:46:18.279 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/09/30（二）
+2025-10-02 13:08:12.223 | WARNING  | strategy_mastermind:<module>:23 - google.generativeai not installed. Gemini unavailable.
+2025-10-02 13:08:12.224 | WARNING  | strategy_mastermind:<module>:28 - groq not installed. Groq unavailable.
+2025-10-02 13:08:12.745 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-10-02 13:08:12.745 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-10-02 13:08:12.746 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-10-02 13:08:12.746 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-10-02 13:08:12.979 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-10-02 13:08:12.979 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-10-02 13:08:12.980 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-10-02 13:08:12.980 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-10-02 13:08:13.225 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-10-02 13:08:13.225 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-10-02 13:08:13.227 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-10-02 13:08:13.227 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-10-02 13:08:13.522 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2317_TW.csv
+2025-10-02 13:08:13.522 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2317_TW.csv
+2025-10-02 13:08:13.523 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2317_TW.csv
+2025-10-02 13:08:13.523 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2317_TW.csv
+2025-10-02 13:08:13.792 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-10-02 13:08:13.792 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2454_TW.csv
+2025-10-02 13:08:13.793 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-10-02 13:08:13.793 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2454_TW.csv
+2025-10-02 13:08:14.077 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2308_TW.csv
+2025-10-02 13:08:14.077 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2308_TW.csv
+2025-10-02 13:08:14.078 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2308_TW.csv
+2025-10-02 13:08:14.078 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2308_TW.csv
+2025-10-02 13:08:14.394 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2881_TW.csv
+2025-10-02 13:08:14.394 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2881_TW.csv
+2025-10-02 13:08:14.395 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2881_TW.csv
+2025-10-02 13:08:14.395 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2881_TW.csv
+2025-10-02 13:08:14.719 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2412_TW.csv
+2025-10-02 13:08:14.719 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2412_TW.csv
+2025-10-02 13:08:14.720 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2412_TW.csv
+2025-10-02 13:08:14.720 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2412_TW.csv
+2025-10-02 13:08:15.016 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2382_TW.csv
+2025-10-02 13:08:15.016 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2382_TW.csv
+2025-10-02 13:08:15.017 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2382_TW.csv
+2025-10-02 13:08:15.017 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2382_TW.csv
+2025-10-02 13:08:15.256 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2882_TW.csv
+2025-10-02 13:08:15.256 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2882_TW.csv
+2025-10-02 13:08:15.258 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2882_TW.csv
+2025-10-02 13:08:15.258 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2882_TW.csv
+2025-10-02 13:08:15.488 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2891_TW.csv
+2025-10-02 13:08:15.488 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2891_TW.csv
+2025-10-02 13:08:15.489 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2891_TW.csv
+2025-10-02 13:08:15.489 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2891_TW.csv
+2025-10-02 13:08:15.732 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_3711_TW.csv
+2025-10-02 13:08:15.732 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_3711_TW.csv
+2025-10-02 13:08:15.733 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_3711_TW.csv
+2025-10-02 13:08:15.733 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_3711_TW.csv
+2025-10-02 13:08:16.159 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-10-02 13:08:16.159 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-10-02 13:08:16.641 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-10-02/tw_news.json
+2025-10-02 13:08:16.641 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-10-02/tw_news.json
+2025-10-02 13:08:20.141 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-10-02/social_metrics.json
+2025-10-02 13:08:20.141 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-10-02/social_metrics.json
+2025-10-02 13:08:20.141 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 12 個標的, 3 則新聞, 品質分數: 1.0
+2025-10-02 13:08:20.141 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 12 個標的, 3 則新聞, 品質分數: 1.0
+2025-10-02 13:08:20.159 | INFO     | strategy_mastermind:_init_ai_clients:145 - Defaulting to Grok AI client
+2025-10-02 13:08:20.159 | INFO     | strategy_mastermind:_init_ai_clients:145 - Defaulting to Grok AI client
+2025-10-02 13:08:20.167 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:20.167 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:20.184 | INFO     | market_analyst:analyze_market:91 - ^TWII 市場分析完成
+2025-10-02 13:08:20.184 | INFO     | market_analyst:analyze_market:91 - ^TWII 市場分析完成
+2025-10-02 13:08:20.184 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:20.184 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:20.190 | INFO     | strategy_mastermind:run_strategy_tournament:158 - Running strategy tournament for 0050.TW
+2025-10-02 13:08:20.190 | INFO     | strategy_mastermind:run_strategy_tournament:158 - Running strategy tournament for 0050.TW
+2025-10-02 13:08:20.202 | ERROR    | strategies.technical_strategy:backtest:189 - 0050.TW daily 回測失敗: module 'datetime' has no attribute 'today'
+2025-10-02 13:08:20.202 | ERROR    | strategies.technical_strategy:backtest:189 - 0050.TW daily 回測失敗: module 'datetime' has no attribute 'today'
+2025-10-02 13:08:20.209 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:20.209 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:20.212 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:20.212 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:20.343 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 199, 1: 44}
+2025-10-02 13:08:20.343 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 199, 1: 44}
+2025-10-02 13:08:20.344 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:20.344 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:20.349 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:20.349 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:20.354 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:20.354 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:20.484 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 202, 1: 41}
+2025-10-02 13:08:20.484 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 202, 1: 41}
+2025-10-02 13:08:20.485 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:20.485 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:20.491 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:20.491 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:20.494 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:20.494 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:20.640 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 199, 1: 44}
+2025-10-02 13:08:20.640 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 199, 1: 44}
+2025-10-02 13:08:20.641 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:20.641 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:20.646 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:20.646 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:20.648 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:20.648 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:20.904 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 198, 1: 45}
+2025-10-02 13:08:20.904 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 198, 1: 45}
+2025-10-02 13:08:20.904 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:20.904 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:20.909 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:20.909 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:20.910 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:20.910 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:21.074 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 200, 1: 43}
+2025-10-02 13:08:21.074 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 200, 1: 43}
+2025-10-02 13:08:21.075 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:21.075 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:21.079 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:21.079 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:21.080 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:21.080 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:21.223 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 198, 1: 45}
+2025-10-02 13:08:21.223 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 198, 1: 45}
+2025-10-02 13:08:21.223 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:21.223 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:21.226 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:21.226 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:21.227 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:21.227 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:21.450 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 199, 1: 44}
+2025-10-02 13:08:21.450 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 199, 1: 44}
+2025-10-02 13:08:21.450 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:21.450 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:21.453 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:21.453 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:21.454 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:21.454 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:21.661 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 200, 1: 43}
+2025-10-02 13:08:21.661 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 200, 1: 43}
+2025-10-02 13:08:21.661 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:21.661 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:21.664 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:21.664 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 244
+2025-10-02 13:08:21.665 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:21.665 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 243
+2025-10-02 13:08:21.873 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 199, 1: 44}
+2025-10-02 13:08:21.873 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 199, 1: 44}
+2025-10-02 13:08:21.873 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:21.873 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-02 13:08:21.877 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.877 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.879 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.879 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.882 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.882 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.884 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.884 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.887 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.887 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.889 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.889 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.892 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.892 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.894 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.894 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.897 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.897 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.899 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.899 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.902 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.902 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.904 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.904 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.906 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.906 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.909 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.909 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.913 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.913 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.915 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.915 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.918 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.918 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.920 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.920 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.923 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.923 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.925 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.925 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.927 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.927 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.930 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.930 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.932 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.932 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.935 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.935 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.937 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.937 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.940 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.940 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.942 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.942 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.944 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.944 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.947 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.947 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.949 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.949 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.952 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.952 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.954 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.954 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.957 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.957 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.960 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.960 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.963 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.963 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.965 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.965 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.968 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.968 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.970 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.970 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.973 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.973 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.975 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.975 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.978 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.978 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.981 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.981 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.984 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.984 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.986 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.986 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.989 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.989 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.991 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.991 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.994 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.994 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.996 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.996 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.999 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:21.999 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.001 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.001 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.003 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.003 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.006 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.006 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.009 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.009 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.012 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.012 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.014 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.014 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.017 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.017 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.019 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.019 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.022 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.022 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.024 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.024 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.026 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.026 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.029 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.029 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.031 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.031 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.034 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.034 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.036 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.036 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.039 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.039 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.041 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.041 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.044 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.044 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.046 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.046 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.048 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.048 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.051 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.051 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.054 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.054 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.057 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.057 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.059 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.059 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.062 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.062 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.064 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.064 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.067 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.067 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.069 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.069 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.071 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.071 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.074 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.074 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.076 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.076 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.079 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.079 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.081 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.081 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.084 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.084 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.087 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.087 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.090 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.090 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.092 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.092 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.094 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.094 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.097 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.097 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.099 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.099 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.102 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.102 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.105 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.105 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.108 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.108 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.110 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.110 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.113 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.113 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.115 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.115 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.117 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.117 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.120 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.120 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.122 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.122 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.125 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.125 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.127 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.127 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.129 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.129 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.132 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.132 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.134 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.134 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.137 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.137 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.139 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.139 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.141 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.141 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.144 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.144 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.146 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.146 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.149 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.149 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.152 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.152 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.154 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.154 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.157 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.157 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.159 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.159 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.161 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.161 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.164 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.164 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.166 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.166 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.168 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.168 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.171 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.171 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.173 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.173 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.176 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.176 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.178 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.178 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.180 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.180 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.183 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.183 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.185 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.185 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.188 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.188 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.190 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.190 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.193 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.193 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.195 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.195 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.197 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.197 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.200 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.200 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.202 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.202 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.205 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.205 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.207 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.207 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.209 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.209 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.212 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.212 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.214 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.214 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.217 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.217 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.219 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.219 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.222 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.222 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.224 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.224 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.227 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.227 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.229 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.229 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.232 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.232 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.234 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.234 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.237 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.237 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.239 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.239 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.241 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.241 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.244 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.244 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.246 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.246 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.249 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.249 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.251 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.251 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.254 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.254 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.256 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.256 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.259 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.259 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.261 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.261 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.264 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.264 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.266 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.266 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.269 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.269 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.271 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.271 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.274 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.274 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.276 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.276 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.278 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.278 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.281 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.281 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.283 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.283 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.286 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.286 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.288 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.288 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.291 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.291 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.293 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.293 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.296 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.296 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.298 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.298 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.300 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.300 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.303 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.303 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.305 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.305 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.308 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.308 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.310 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.310 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.313 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.313 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.315 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.315 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.318 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.318 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.320 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.320 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.323 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.323 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.325 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.325 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.328 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.328 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.330 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.330 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.332 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.332 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.335 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.335 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.337 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.337 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.340 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.340 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.343 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.343 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.345 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.345 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.348 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.348 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.350 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.350 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.353 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.353 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.356 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.356 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.358 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.358 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.361 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.361 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.363 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.363 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.366 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.366 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.368 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.368 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.371 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.371 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.373 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.373 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.376 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.376 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.378 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.378 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.381 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.381 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.383 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.383 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.385 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.385 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.388 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.388 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.390 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.390 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.393 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.393 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.395 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.395 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.398 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.398 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.400 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.400 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.403 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.403 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.406 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.406 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.409 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.409 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.412 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.412 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.414 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.414 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.416 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.416 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.419 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.419 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.421 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.421 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.424 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.424 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.426 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.426 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.429 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.429 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.431 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.431 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.433 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.433 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.436 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.436 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.438 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.438 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.440 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.440 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.443 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.443 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.445 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.445 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.448 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.448 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.450 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.450 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.452 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.452 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.455 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.455 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.458 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.458 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.461 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.461 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.463 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.463 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.465 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.465 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.468 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.468 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.470 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.470 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.473 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.473 | ERROR    | strategies.bigline_strategy:backtest:133 - 0050.TW daily 回測失敗: "None of ['date'] are in the columns"
+2025-10-02 13:08:22.479 | INFO     | market_analyst:analyze_market:91 - 0050.TW 市場分析完成
+2025-10-02 13:08:22.479 | INFO     | market_analyst:analyze_market:91 - 0050.TW 市場分析完成
+2025-10-02 13:08:22.480 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.480 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.482 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2330.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.482 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2330.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.488 | INFO     | market_analyst:analyze_market:91 - 2330.TW 市場分析完成
+2025-10-02 13:08:22.488 | INFO     | market_analyst:analyze_market:91 - 2330.TW 市場分析完成
+2025-10-02 13:08:22.488 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.488 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.490 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2317.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.490 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2317.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.495 | INFO     | market_analyst:analyze_market:91 - 2317.TW 市場分析完成
+2025-10-02 13:08:22.495 | INFO     | market_analyst:analyze_market:91 - 2317.TW 市場分析完成
+2025-10-02 13:08:22.496 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.496 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.498 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2454.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.498 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2454.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.504 | INFO     | market_analyst:analyze_market:91 - 2454.TW 市場分析完成
+2025-10-02 13:08:22.504 | INFO     | market_analyst:analyze_market:91 - 2454.TW 市場分析完成
+2025-10-02 13:08:22.505 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.505 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.507 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2308.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.507 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2308.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.512 | INFO     | market_analyst:analyze_market:91 - 2308.TW 市場分析完成
+2025-10-02 13:08:22.512 | INFO     | market_analyst:analyze_market:91 - 2308.TW 市場分析完成
+2025-10-02 13:08:22.513 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.513 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.515 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2881.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.515 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2881.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.521 | INFO     | market_analyst:analyze_market:91 - 2881.TW 市場分析完成
+2025-10-02 13:08:22.521 | INFO     | market_analyst:analyze_market:91 - 2881.TW 市場分析完成
+2025-10-02 13:08:22.521 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.521 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.523 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2412.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.523 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2412.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.529 | INFO     | market_analyst:analyze_market:91 - 2412.TW 市場分析完成
+2025-10-02 13:08:22.529 | INFO     | market_analyst:analyze_market:91 - 2412.TW 市場分析完成
+2025-10-02 13:08:22.529 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.529 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.531 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2382.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.531 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2382.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.537 | INFO     | market_analyst:analyze_market:91 - 2382.TW 市場分析完成
+2025-10-02 13:08:22.537 | INFO     | market_analyst:analyze_market:91 - 2382.TW 市場分析完成
+2025-10-02 13:08:22.537 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.537 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.539 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2882.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.539 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2882.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.545 | INFO     | market_analyst:analyze_market:91 - 2882.TW 市場分析完成
+2025-10-02 13:08:22.545 | INFO     | market_analyst:analyze_market:91 - 2882.TW 市場分析完成
+2025-10-02 13:08:22.545 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.545 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.548 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2891.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.548 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2891.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.555 | INFO     | market_analyst:analyze_market:91 - 2891.TW 市場分析完成
+2025-10-02 13:08:22.555 | INFO     | market_analyst:analyze_market:91 - 2891.TW 市場分析完成
+2025-10-02 13:08:22.555 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.555 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.557 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 3711.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.557 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 3711.TW not in allowed list {'0050.TW', 'QQQ'}, skipping strategy tournament
+2025-10-02 13:08:22.563 | INFO     | market_analyst:analyze_market:91 - 3711.TW 市場分析完成
+2025-10-02 13:08:22.563 | INFO     | market_analyst:analyze_market:91 - 3711.TW 市場分析完成
+2025-10-02 13:08:22.563 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.563 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'0050.TW', 'QQQ'}, skipping optimization
+2025-10-02 13:08:22.735 | WARNING  | content_creator:call_xai_api:33 - xAI API 失敗: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.INVALID_ARGUMENT
+	details = "Incorrect API key provided: xa***Ud. You can obtain an API key from https://console.x.ai."
+	debug_error_string = "UNKNOWN:Error received from peer  {{grpc_status:3, grpc_message:"Incorrect API key provided: xa***Ud. You can obtain an API key from https://console.x.ai."}}"
+>
+2025-10-02 13:08:22.735 | WARNING  | content_creator:call_xai_api:33 - xAI API 失敗: <_InactiveRpcError of RPC that terminated with:
+	status = StatusCode.INVALID_ARGUMENT
+	details = "Incorrect API key provided: xa***Ud. You can obtain an API key from https://console.x.ai."
+	debug_error_string = "UNKNOWN:Error received from peer  {{grpc_status:3, grpc_message:"Incorrect API key provided: xa***Ud. You can obtain an API key from https://console.x.ai."}}"
+>
+2025-10-02 13:08:22.736 | INFO     | content_creator:generate_script_with_llm:90 - xAI 不可用，嘗試其他供應商...
+2025-10-02 13:08:22.736 | INFO     | content_creator:generate_script_with_llm:90 - xAI 不可用，嘗試其他供應商...
+2025-10-02 13:08:22.736 | WARNING  | content_creator:generate_script_with_llm:107 - 所有 LLM API 皆不可用
+2025-10-02 13:08:22.736 | WARNING  | content_creator:generate_script_with_llm:107 - 所有 LLM API 皆不可用
+2025-10-02 13:08:22.736 | WARNING  | content_creator:generate_script:196 - 使用本地備用文字稿
+2025-10-02 13:08:22.736 | WARNING  | content_creator:generate_script:196 - 使用本地備用文字稿
+2025-10-02 13:08:56.672 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-10-02 13:08:56.672 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-10-02 13:08:57.614 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-10-02 13:08:57.614 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-10-02 13:08:57.872 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/10/02（四）
+2025-10-02 13:08:57.872 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/10/02（四）
