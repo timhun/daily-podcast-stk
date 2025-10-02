@@ -28,7 +28,7 @@ class BigLineStrategy(BaseStrategy):
                 }
 
     def backtest(self, symbol, data, timeframe='daily'):
-        logger.info(f"開始回測 BigLine 策略: {symbol}, 時間框架: {timeframe}")
+        #logger.info(f"開始回測 BigLine 策略: {symbol}, 時間框架: {timeframe}")
         
         if symbol not in ['QQQ', '0050.TW']:
             logger.info(f"{symbol} 非主要交易標的，跳過回測")
