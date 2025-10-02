@@ -3,10 +3,11 @@ import json
 from loguru import logger
 import datetime
 
-# 支援多種 LLM 供應商
-XAI_API_KEY = os.getenv("GROK_API_KEY")
+# 支援多種 LLM 供應商 - 修正環境變數名稱
+XAI_API_KEY = os.getenv("XAI_API_KEY")  # 修正：從 GROK_API_KEY 改為 XAI_API_KEY
+GROK_API_KEY = os.getenv("XAI_API_KEY")  # 新增：真正的 Grok API
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-ANTHROPIC_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # 新增：Groq API
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -14,6 +15,10 @@ with open('config.json', 'r', encoding='utf-8') as f:
 
 def call_xai_api(prompt):
     """呼叫 xAI Grok API"""
+    if not XAI_API_KEY:
+        logger.warning("XAI_API_KEY 未設置")
+        raise ValueError("XAI_API_KEY not set")
+    
     try:
         from xai_sdk import Client
         from xai_sdk.chat import user, system
@@ -32,15 +37,48 @@ def call_xai_api(prompt):
         error_msg = str(e).replace('{', '{{').replace('}', '}}')
         logger.warning(f"xAI API 失敗: {error_msg}")
         raise
+        
+def call_grok_api(prompt):
+    """呼叫 Grok API（通過 OpenAI 兼容接口）"""
+    if not GROK_API_KEY:
+        logger.warning("GROK_API_KEY 未設置")
+        raise ValueError("GROK_API_KEY not set")
+    
+    try:
+        from openai import OpenAI
+        
+        client = OpenAI(
+            api_key=GROK_API_KEY,
+            base_url="https://api.x.ai/v1"
+        )
+        response = client.chat.completions.create(
+            model="grok-beta",
+            messages=[
+                {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=2000
+        )
+        logger.info("成功使用 Grok API 生成文字稿")
+        return response.choices[0].message.content
+    except Exception as e:
+        error_msg = str(e).replace('{', '{{').replace('}', '}}')
+        logger.warning(f"Grok API 失敗: {error_msg}")
+        raise
 
 def call_openai_api(prompt):
     """呼叫 OpenAI API"""
+    if not OPENAI_API_KEY:
+        logger.warning("OPENAI_API_KEY 未設置")
+        raise ValueError("OPENAI_API_KEY not set")
+    
     try:
         from openai import OpenAI
         
         client = OpenAI(api_key=OPENAI_API_KEY)
         response = client.chat.completions.create(
-            model="gpt-4o-mini",  # 使用較便宜的模型
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
                 {"role": "user", "content": prompt}
@@ -55,62 +93,69 @@ def call_openai_api(prompt):
         logger.warning(f"OpenAI API 失敗: {error_msg}")
         raise
 
-def call_anthropic_api(prompt):
-    """呼叫 Anthropic Claude API"""
+def call_groq_api(prompt):
+    """呼叫 Groq API"""
+    if not GROQ_API_KEY:
+        logger.warning("GROQ_API_KEY 未設置")
+        raise ValueError("GROQ_API_KEY not set")
+    
     try:
-        import anthropic
+        from groq import Groq
         
-        client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
-        message = client.messages.create(
-            model="claude-3-5-haiku-20241022",  # 使用較便宜的模型
-            max_tokens=2000,
+        client = Groq(api_key=GROQ_API_KEY)
+        chat_completion = client.chat.completions.create(
             messages=[
+                {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
                 {"role": "user", "content": prompt}
             ],
-            system="你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"
+            model="llama-3.3-70b-versatile",
+            temperature=0.7,
+            max_tokens=2000
         )
-        logger.info("成功使用 Anthropic API 生成文字稿")
-        return message.content[0].text
+        logger.info("成功使用 Groq API 生成文字稿")
+        return chat_completion.choices[0].message.content
     except Exception as e:
         error_msg = str(e).replace('{', '{{').replace('}', '}}')
-        logger.warning(f"Anthropic API 失敗: {error_msg}")
+        logger.warning(f"Groq API 失敗: {error_msg}")
         raise
 
 def generate_script_with_llm(prompt):
     """
     使用多個 LLM 供應商生成文字稿（自動備援）
     
-    優先順序: xAI -> OpenAI -> Anthropic -> Fallback
+    優先順序: Grok -> OpenAI -> Groq -> Anthropic -> xAI -> Fallback
     """
-    # 嘗試 xAI
-    if XAI_API_KEY:
-        try:
-            return call_xai_api(prompt)
-        except Exception:
-            logger.info("xAI 不可用，嘗試其他供應商...")
+    # 定義 API 調用順序和對應函數
+    api_providers = [
+        ("xAI", XAI_API_KEY, call_xai_api),
+        ("Groq", GROQ_API_KEY, call_groq_api),
+        ("OpenAI", OPENAI_API_KEY, call_openai_api),
+    ]
     
-    # 嘗試 OpenAI
-    if OPENAI_API_KEY:
+    for provider_name, api_key, api_func in api_providers:
+        if not api_key:
+            logger.debug(f"{provider_name} API key 未設置，跳過")
+            continue
+        
         try:
-            return call_openai_api(prompt)
-        except Exception:
-            logger.info("OpenAI 不可用，嘗試其他供應商...")
+            logger.info(f"嘗試使用 {provider_name} API...")
+            result = api_func(prompt)
+            if result:
+                logger.info(f"✓ 成功使用 {provider_name} 生成文字稿")
+                return result
+        except Exception as e:
+            error_msg = str(e).replace('{', '{{').replace('}', '}}')
+            logger.warning(f"{provider_name} API 失敗: {error_msg}，嘗試下一個供應商...")
+            continue
     
-    # 嘗試 Anthropic
-    if ANTHROPIC_API_KEY:
-        try:
-            return call_anthropic_api(prompt)
-        except Exception:
-            logger.info("Anthropic 不可用，使用本地備用方案...")
-    
-    # 所有 API 都失敗，返回 None
+    # 所有 API 都失敗
     logger.warning("所有 LLM API 皆不可用")
     return None
 
 def generate_script(market_data, mode, strategy_results, market_analysis):
     """生成投資播客文字稿（多 LLM 備援版本）"""
     
-    # 數據處理（與原程式碼相同）
+    # 數據處理
     market = market_data.get('market', {})
     analysis = "\n".join([
         f"{symbol}: 收盤 {info.get('close', 0):.2f}, 漲跌 {info.get('change', 0):.2f}%"
