@@ -21,7 +21,7 @@ try:
 import google.generativeai as genai  # Gemini
 except ImportError:
 genai = None
-logger.warning(“google.generativeai not installed. Gemini unavailable.”)
+#logger.warning(“google.generativeai not installed. Gemini unavailable.”)
 try:
 from groq import Groq  # Groq
 except ImportError:
