@@ -26,7 +26,7 @@ try:
 from groq import Groq  # Groq
 except ImportError:
 Groq = None
-logger.warning(“groq not installed. Groq unavailable.”)
+#logger.warning(“groq not installed. Groq unavailable.”)
 
 # Load config.json
 
