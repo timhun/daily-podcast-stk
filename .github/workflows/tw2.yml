@@ -7,6 +7,16 @@ on:
 jobs:
   produce:
     runs-on: ubuntu-latest
+    env:
+        GROK_API_KEY: ${{ secrets.XAI_API_KEY }}
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        GROK_API_URL: ${{ secrets.GROK_API_URL }}
+        B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+        B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+        B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+        EMAIL: ${{ secrets.EMAIL }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
@@ -16,15 +26,6 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: pip install -r requirements.txt
       - run: python main.py --mode tw
-        env:
-          GROK_API_KEY: ${{ secrets.GROK_API_KEY }}
-          GROK_API_URL: ${{ secrets.GROK_API_URL }}
-          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
-          B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
-          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-          SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-          EMAIL: ${{ secrets.EMAIL }}
       - run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
