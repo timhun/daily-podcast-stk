@@ -5624,3 +5624,139 @@
 2025-10-02 21:43:46.476 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-10-02 21:43:46.751 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，us 版 2025/10/03（五）
 2025-10-02 21:43:46.751 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，us 版 2025/10/03（五）
+2025-10-03 06:41:42.946 | WARNING  | strategy_mastermind:<module>:23 - google.generativeai not installed. Gemini unavailable.
+2025-10-03 06:41:42.947 | WARNING  | strategy_mastermind:<module>:28 - groq not installed. Groq unavailable.
+2025-10-03 06:41:47.638 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-10-03 06:41:47.638 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-10-03 06:41:47.640 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-10-03 06:41:47.640 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-10-03 06:41:47.845 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-10-03 06:41:47.845 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-10-03 06:41:47.846 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-10-03 06:41:47.846 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-10-03 06:41:48.047 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-10-03 06:41:48.047 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-10-03 06:41:48.049 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-10-03 06:41:48.049 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-10-03 06:41:48.636 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-10-03 06:41:48.636 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-10-03 06:41:49.302 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-10-03/tw_news.json
+2025-10-03 06:41:49.302 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-10-03/tw_news.json
+2025-10-03 06:41:52.013 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-10-03/social_metrics.json
+2025-10-03 06:41:52.013 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-10-03/social_metrics.json
+2025-10-03 06:41:52.013 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 3 個標的, 3 則新聞, 品質分數: 1.0
+2025-10-03 06:41:52.013 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 3 個標的, 3 則新聞, 品質分數: 1.0
+2025-10-03 06:41:52.498 | INFO     | strategy_mastermind:_init_ai_clients:145 - Defaulting to Grok AI client
+2025-10-03 06:41:52.498 | INFO     | strategy_mastermind:_init_ai_clients:145 - Defaulting to Grok AI client
+2025-10-03 06:41:52.504 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^TWII not in allowed list {'QQQ', '0050.TW'}, skipping strategy tournament
+2025-10-03 06:41:52.504 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol ^TWII not in allowed list {'QQQ', '0050.TW'}, skipping strategy tournament
+2025-10-03 06:41:52.519 | INFO     | market_analyst:analyze_market:91 - ^TWII 市場分析完成
+2025-10-03 06:41:52.519 | INFO     | market_analyst:analyze_market:91 - ^TWII 市場分析完成
+2025-10-03 06:41:52.520 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'QQQ', '0050.TW'}, skipping optimization
+2025-10-03 06:41:52.520 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'QQQ', '0050.TW'}, skipping optimization
+2025-10-03 06:41:52.526 | INFO     | strategy_mastermind:run_strategy_tournament:158 - Running strategy tournament for 0050.TW
+2025-10-03 06:41:52.526 | INFO     | strategy_mastermind:run_strategy_tournament:158 - Running strategy tournament for 0050.TW
+2025-10-03 06:41:52.539 | ERROR    | strategies.technical_strategy:backtest:189 - 0050.TW daily 回測失敗: module 'datetime' has no attribute 'today'
+2025-10-03 06:41:52.539 | ERROR    | strategies.technical_strategy:backtest:189 - 0050.TW daily 回測失敗: module 'datetime' has no attribute 'today'
+2025-10-03 06:41:52.550 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:52.550 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:52.551 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:52.551 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:52.692 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:52.692 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:52.693 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:52.693 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:52.699 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:52.699 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:52.700 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:52.700 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:52.804 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:52.804 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:52.805 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:52.805 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:52.813 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:52.813 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:52.815 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:52.815 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:52.926 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:52.926 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:52.926 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:52.926 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:52.931 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:52.931 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:52.932 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:52.932 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:53.141 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:53.141 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:53.141 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:53.141 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:53.146 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:53.146 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:53.147 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:53.147 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:53.249 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:53.249 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:53.250 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:53.250 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:53.252 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:53.252 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:53.253 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:53.253 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:53.376 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:53.376 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 193, 1: 51}
+2025-10-03 06:41:53.377 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:53.377 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:53.380 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:53.380 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:53.380 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:53.380 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:53.588 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 194, 1: 50}
+2025-10-03 06:41:53.588 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 194, 1: 50}
+2025-10-03 06:41:53.588 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:53.588 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:53.592 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:53.592 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:53.593 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:53.593 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:53.800 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 195, 1: 49}
+2025-10-03 06:41:53.800 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 195, 1: 49}
+2025-10-03 06:41:53.801 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:53.801 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:53.804 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:53.804 | INFO     | strategies.ml_strategy:backtest:54 - 0050.TW 特徵工程前數據長度: 245
+2025-10-03 06:41:53.804 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:53.804 | INFO     | strategies.ml_strategy:backtest:56 - 0050.TW 特徵工程後數據長度: 244
+2025-10-03 06:41:54.008 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 194, 1: 50}
+2025-10-03 06:41:54.008 | INFO     | strategies.ml_strategy:backtest:110 - 0050.TW 信號分佈: {-1: 194, 1: 50}
+2025-10-03 06:41:54.008 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:54.008 | INFO     | strategies.ml_strategy:backtest:111 - 0050.TW 回報標準差: 0.015
+2025-10-03 06:41:54.534 | INFO     | market_analyst:analyze_market:91 - 0050.TW 市場分析完成
+2025-10-03 06:41:54.534 | INFO     | market_analyst:analyze_market:91 - 0050.TW 市場分析完成
+2025-10-03 06:41:54.534 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'QQQ', '0050.TW'}, skipping optimization
+2025-10-03 06:41:54.534 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'QQQ', '0050.TW'}, skipping optimization
+2025-10-03 06:41:54.536 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2330.TW not in allowed list {'QQQ', '0050.TW'}, skipping strategy tournament
+2025-10-03 06:41:54.536 | INFO     | strategy_mastermind:run_strategy_tournament:151 - Symbol 2330.TW not in allowed list {'QQQ', '0050.TW'}, skipping strategy tournament
+2025-10-03 06:41:54.542 | INFO     | market_analyst:analyze_market:91 - 2330.TW 市場分析完成
+2025-10-03 06:41:54.542 | INFO     | market_analyst:analyze_market:91 - 2330.TW 市場分析完成
+2025-10-03 06:41:54.542 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'QQQ', '0050.TW'}, skipping optimization
+2025-10-03 06:41:54.542 | INFO     | strategy_mastermind:_optimize_thread:199 - Symbol ^TWII not in allowed list {'QQQ', '0050.TW'}, skipping optimization
+2025-10-03 06:41:54.543 | DEBUG    | content_creator:generate_script_with_llm:137 - xAI API key 未設置，跳過
+2025-10-03 06:41:54.543 | DEBUG    | content_creator:generate_script_with_llm:137 - xAI API key 未設置，跳過
+2025-10-03 06:41:54.543 | INFO     | content_creator:generate_script_with_llm:141 - 嘗試使用 Groq API...
+2025-10-03 06:41:54.543 | INFO     | content_creator:generate_script_with_llm:141 - 嘗試使用 Groq API...
+2025-10-03 06:41:54.543 | WARNING  | content_creator:call_groq_api:119 - Groq API 失敗: No module named 'groq'
+2025-10-03 06:41:54.543 | WARNING  | content_creator:call_groq_api:119 - Groq API 失敗: No module named 'groq'
+2025-10-03 06:41:54.543 | WARNING  | content_creator:generate_script_with_llm:148 - Groq API 失敗: No module named 'groq'，嘗試下一個供應商...
+2025-10-03 06:41:54.543 | WARNING  | content_creator:generate_script_with_llm:148 - Groq API 失敗: No module named 'groq'，嘗試下一個供應商...
+2025-10-03 06:41:54.543 | DEBUG    | content_creator:generate_script_with_llm:137 - OpenAI API key 未設置，跳過
+2025-10-03 06:41:54.543 | DEBUG    | content_creator:generate_script_with_llm:137 - OpenAI API key 未設置，跳過
+2025-10-03 06:41:54.544 | WARNING  | content_creator:generate_script_with_llm:152 - 所有 LLM API 皆不可用
+2025-10-03 06:41:54.544 | WARNING  | content_creator:generate_script_with_llm:152 - 所有 LLM API 皆不可用
+2025-10-03 06:41:54.544 | WARNING  | content_creator:generate_script:241 - 使用本地備用文字稿
+2025-10-03 06:41:54.544 | WARNING  | content_creator:generate_script:241 - 使用本地備用文字稿
+2025-10-03 06:42:07.189 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-10-03 06:42:07.189 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-10-03 06:42:07.733 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-10-03 06:42:07.733 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-10-03 06:42:07.874 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/10/03（五）
+2025-10-03 06:42:07.874 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/10/03（五）
