@@ -7,3 +7,6 @@ data/market/*.json
 data/news/
 data/sentiment/
 data/strategy/
+docs/
+logs/
+reports/
