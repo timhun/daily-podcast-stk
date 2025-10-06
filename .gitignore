@@ -1,12 +1,7 @@
 __pycache__/
 *.pyc
 audio/temp.mp3
-data/charts/
-data/market/*.csv
-data/market/*.json
-data/news/
-data/sentiment/
-data/strategy/
+data/
 docs/
 logs/
 reports/
