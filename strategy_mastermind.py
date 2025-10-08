@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime
 from loguru import logger
-from grok_api import ask_grok_json
+#from grok_api import ask_grok_json
 from copy import deepcopy
 from strategies.technical_strategy import TechnicalStrategy
 from strategies.ml_strategy import MLStrategy
