@@ -16,6 +16,7 @@ scikit-learn
 torch
 transformers
 matplotlib
+google-generativeai
 
 # 技術分析
 ta==0.10.2
