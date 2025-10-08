@@ -1,37 +1,35 @@
 import pandas as pd
-import numpy as np
 import os
+import json
 from loguru import logger
 
 class BaseStrategy:
     def __init__(self, config, params=None):
         self.config = config
         self.params = params or {}
-        self.min_data_length = self.params.get('min_data_length_rsi_sma', 20)
+        self.data_paths = config.get('data_paths', {})
 
     def load_data(self, symbol, timeframe='daily'):
-        file_path = f"{self.config['data_paths']['market']}/{timeframe}_{symbol.replace('^', '').replace('.', '_')}.csv"
-        if not os.path.exists(file_path):
-            logger.error(f"{symbol} {timeframe} 歷史數據檔案不存在: {file_path}")
-            return None
+        file_path = f"{self.data_paths.get('market', 'data/market')}/daily_{symbol.replace('^', '').replace('.', '_')}.csv"
         try:
             df = pd.read_csv(file_path)
             df['date'] = pd.to_datetime(df['date'])
-            if df.empty or len(df) < self.min_data_length:
-                logger.error(f"{symbol} {timeframe} 數據不足: 實際 {len(df)} 筆，需 {self.min_data_length} 筆")
-                return None
+            df.set_index('date', inplace=True)
             return df
         except Exception as e:
-            logger.error(f"{symbol} 數據載入失敗: {str(e)}")
+            logger.error(f"Failed to load data for {symbol}: {e}")
             return None
 
     def backtest(self, symbol, data, timeframe='daily'):
-        raise NotImplementedError("Subclasses must implement backtest method")
-
-    def _default_results(self):
         return {
             'sharpe_ratio': 0,
             'max_drawdown': 0,
             'expected_return': 0,
-            'signals': {}
+            'signals': {
+                'position': 'NEUTRAL',
+                'entry_price': 0.0,
+                'target_price': 0.0,
+                'stop_loss': 0.0,
+                'position_size': 0.0
+            }
         }
