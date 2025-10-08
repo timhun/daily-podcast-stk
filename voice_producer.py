@@ -5,7 +5,8 @@ from pydub import AudioSegment
 from loguru import logger
 from dotenv import load_dotenv
 
-load_dotenv()
+#load_dotenv()
+api_key = os.getenv("ELEVENLABS_API_KEY")
 
 def generate_audio(text_path, output_path):
     """Generate audio from text using ElevenLabs API and apply post-processing."""
