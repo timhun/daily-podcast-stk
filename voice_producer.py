@@ -1,18 +1,54 @@
-#voice_producer.py
-import asyncio
-import edge_tts
+import os
+from elevenlabs import generate, save
 from pydub import AudioSegment
+from loguru import logger
+from dotenv import load_dotenv
 
-async def async_generate_audio(text_path, output_path):
-    with open(text_path, 'r', encoding='utf-8') as f:
-        text = f.read()
-    communicate = edge_tts.Communicate(text, "zh-TW-HsiaoChenNeural", rate="+10%", pitch="+0Hz")
-    await communicate.save(output_path)
-    # 簡單後製: 音量正常化
-    audio = AudioSegment.from_mp3(output_path)
-    audio = audio.normalize()
-    audio = audio.set_frame_rate(44100).set_channels(2)  # 設置 44.1kHz 取樣率與立體聲
-    audio.export(output_path, format="mp3", bitrate="128k")  # 設置 128kbps 位元率
+load_dotenv()
 
 def generate_audio(text_path, output_path):
-    asyncio.run(async_generate_audio(text_path, output_path))
+    """Generate audio from text using ElevenLabs API and apply post-processing."""
+    # 檢查 ElevenLabs API 密鑰
+    api_key = os.getenv("ELEVENLABS_API_KEY")
+    if not api_key:
+        logger.error("ELEVENLABS_API_KEY 未設置")
+        raise ValueError("ELEVENLABS_API_KEY not set")
+
+    # 讀取文字檔案
+    try:
+        with open(text_path, 'r', encoding='utf-8') as f:
+            text = f.read()
+    except Exception as e:
+        logger.error(f"無法讀取文字檔案 {text_path}: {str(e)}")
+        raise
+
+    # 使用 ElevenLabs 生成音頻
+    try:
+        audio = generate(
+            text=text,
+            voice="Aria",  # 使用 Aria 語音（支援多語言，包括中文）
+            model="eleven_multilingual_v2",
+            api_key=api_key
+        )
+        logger.info(f"成功使用 ElevenLabs API 生成音頻: {output_path}")
+
+        # 保存音頻到臨時檔案
+        temp_path = output_path + ".tmp.mp3"
+        save(audio, temp_path)
+    except Exception as e:
+        logger.error(f"ElevenLabs API 失敗: {str(e)}")
+        raise
+
+    # 後製處理：音量正常化、設置取樣率和位元率
+    try:
+        audio_segment = AudioSegment.from_mp3(temp_path)
+        audio_segment = audio_segment.normalize()
+        audio_segment = audio_segment.set_frame_rate(44100).set_channels(2)  # 設置 44.1kHz 取樣率與立體聲
+        audio_segment.export(output_path, format="mp3", bitrate="128k")  # 設置 128kbps 位元率
+        logger.info(f"音頻後製完成: {output_path}")
+
+        # 刪除臨時檔案
+        os.remove(temp_path)
+    except Exception as e:
+        logger.error(f"音頻後製失敗: {str(e)}")
+        raise
