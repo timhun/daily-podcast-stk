@@ -103,53 +103,34 @@ def call_groq_api(prompt):
         from groq import Groq
         
         client = Groq(api_key=GROQ_API_KEY)
-        chat_completion = client.chat.completions.create(
+        response = client.chat.completions.create(
+            model="llama3-8b-8192",
             messages=[
                 {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
                 {"role": "user", "content": prompt}
             ],
-            model="llama-3.3-70b-versatile",
             temperature=0.7,
             max_tokens=2000
         )
         logger.info("成功使用 Groq API 生成文字稿")
-        return chat_completion.choices[0].message.content
+        return response.choices[0].message.content
     except Exception as e:
         error_msg = str(e).replace('{', '{{').replace('}', '}}')
         logger.warning(f"Groq API 失敗: {error_msg}")
         raise
 
 def generate_script_with_llm(prompt):
-    """
-    使用多個 LLM 供應商生成文字稿（自動備援）
+    """嘗試使用多 LLM 生成文字稿"""
     
-    優先順序: Grok -> OpenAI -> Groq -> Anthropic -> xAI -> Fallback
-    """
-    # 定義 API 調用順序和對應函數
-    api_providers = [
-        ("xAI", XAI_API_KEY, call_xai_api),
-        ("Groq", GROQ_API_KEY, call_groq_api),
-        ("OpenAI", OPENAI_API_KEY, call_openai_api),
-    ]
+    llm_funcs = [call_xai_api, call_grok_api, call_openai_api, call_groq_api]
     
-    for provider_name, api_key, api_func in api_providers:
-        if not api_key:
-            logger.debug(f"{provider_name} API key 未設置，跳過")
-            continue
-        
+    for func in llm_funcs:
         try:
-            logger.info(f"嘗試使用 {provider_name} API...")
-            result = api_func(prompt)
-            if result:
-                logger.info(f"✓ 成功使用 {provider_name} 生成文字稿")
-                return result
+            return func(prompt)
         except Exception as e:
-            error_msg = str(e).replace('{', '{{').replace('}', '}}')
-            logger.warning(f"{provider_name} API 失敗: {error_msg}，嘗試下一個供應商...")
-            continue
+            logger.warning(f"LLM 嘗試失敗: {func.__name__}")
     
-    # 所有 API 都失敗
-    logger.warning("所有 LLM API 皆不可用")
+    logger.error("所有 LLM API 皆不可用")
     return None
 
 def generate_script(market_data, mode, strategy_results, market_analysis):
@@ -184,15 +165,11 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     def summarize_best_strategies(all_results):
         lines = []
         for sym, sym_results in (all_results or {}).items():
-            if not isinstance(sym_results, dict) or not sym_results:
+            if not isinstance(sym_results, dict):
                 continue
-            best_name, best_ret = None, None
-            for name, res in sym_results.items():
-                er = (res or {}).get('expected_return', 0) or 0
-                if best_ret is None or er > best_ret:
-                    best_name, best_ret = name, er
-            if best_name is not None:
-                lines.append(f"{sym}: 最佳策略 {best_name}, 預期回報 {best_ret:.2f}%")
+            expected_return = sym_results.get('expected_return', 0)
+            position = sym_results.get('signals', {}).get('position', 'NEUTRAL')
+            lines.append(f"{sym}: 預期回報 {expected_return:.2f}%, 當前訊號 {position}")
         return "\n".join(lines) if lines else "暫無策略分析"
 
     strategy_str = summarize_best_strategies(strategy_results)
