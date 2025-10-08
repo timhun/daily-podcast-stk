@@ -1,5 +1,6 @@
 import os
-from elevenlabs import generate, save
+from elevenlabs.client import ElevenLabs
+from elevenlabs import save
 from pydub import AudioSegment
 from loguru import logger
 from dotenv import load_dotenv
@@ -14,6 +15,9 @@ def generate_audio(text_path, output_path):
         logger.error("ELEVENLABS_API_KEY 未設置")
         raise ValueError("ELEVENLABS_API_KEY not set")
 
+    # 初始化 ElevenLabs 客戶端
+    client = ElevenLabs(api_key=api_key)
+
     # 讀取文字檔案
     try:
         with open(text_path, 'r', encoding='utf-8') as f:
@@ -24,11 +28,10 @@ def generate_audio(text_path, output_path):
 
     # 使用 ElevenLabs 生成音頻
     try:
-        audio = generate(
+        audio = client.generate(
             text=text,
             voice="Aria",  # 使用 Aria 語音（支援多語言，包括中文）
-            model="eleven_multilingual_v2",
-            api_key=api_key
+            model="eleven_multilingual_v2"
         )
         logger.info(f"成功使用 ElevenLabs API 生成音頻: {output_path}")
 
