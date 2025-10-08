@@ -25,6 +25,7 @@ TA-Lib
 # 語音處理
 edge-tts
 pydub
+elevenlabs
 
 # 雲端服務
 b2sdk
