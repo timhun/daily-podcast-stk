@@ -3,11 +3,10 @@ import json
 from loguru import logger
 import datetime
 
-# 支援多種 LLM 供應商 - 修正環境變數名稱
-XAI_API_KEY = os.getenv("XAI_API_KEY")  # 修正：從 GROK_API_KEY 改為 XAI_API_KEY
-GROK_API_KEY = os.getenv("XAI_API_KEY")  # 新增：真正的 Grok API
+# 支援多種 LLM 供應商
+XAI_API_KEY = os.getenv("XAI_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")  # 新增：Groq API
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -17,38 +16,14 @@ def call_xai_api(prompt):
     """呼叫 xAI Grok API"""
     if not XAI_API_KEY:
         logger.warning("XAI_API_KEY 未設置")
-        raise ValueError("XAI_API_KEY not set")
+        return None  # 改為返回 None 而不是拋出異常
     
     try:
-        from xai_sdk import Client
-        from xai_sdk.chat import user, system
-        
-        client = Client(api_key=XAI_API_KEY, timeout=120)
-        chat = client.chat.create(model="grok-3-mini")
-        chat.append(system(
-            "You are Grok, a highly intelligent AI assistant created by xAI, "
-            "specializing in generating professional and engaging podcast scripts in Traditional Chinese."
-        ))
-        chat.append(user(prompt))
-        response = chat.sample()
-        logger.info("成功使用 xAI API 生成文字稿")
-        return response.content
-    except Exception as e:
-        error_msg = str(e).replace('{', '{{').replace('}', '}}')
-        logger.warning(f"xAI API 失敗: {error_msg}")
-        raise
-        
-def call_grok_api(prompt):
-    """呼叫 Grok API（通過 OpenAI 兼容接口）"""
-    if not GROK_API_KEY:
-        logger.warning("GROK_API_KEY 未設置")
-        raise ValueError("GROK_API_KEY not set")
-    
-    try:
+        # 嘗試使用 OpenAI 兼容接口（xAI 支持 OpenAI SDK）
         from openai import OpenAI
         
         client = OpenAI(
-            api_key=GROK_API_KEY,
+            api_key=XAI_API_KEY,
             base_url="https://api.x.ai/v1"
         )
         response = client.chat.completions.create(
@@ -58,25 +33,28 @@ def call_grok_api(prompt):
                 {"role": "user", "content": prompt}
             ],
             temperature=0.7,
-            max_tokens=2000
+            max_tokens=2000,
+            timeout=120
         )
-        logger.info("成功使用 Grok API 生成文字稿")
+        logger.info("成功使用 xAI API 生成文字稿")
         return response.choices[0].message.content
+    except ImportError as e:
+        logger.warning(f"xAI API 導入失敗: {e}")
+        return None
     except Exception as e:
-        error_msg = str(e).replace('{', '{{').replace('}', '}}')
-        logger.warning(f"Grok API 失敗: {error_msg}")
-        raise
+        logger.warning(f"xAI API 失敗: {type(e).__name__}: {str(e)}")
+        return None
 
 def call_openai_api(prompt):
     """呼叫 OpenAI API"""
     if not OPENAI_API_KEY:
         logger.warning("OPENAI_API_KEY 未設置")
-        raise ValueError("OPENAI_API_KEY not set")
+        return None
     
     try:
         from openai import OpenAI
         
-        client = OpenAI(api_key=OPENAI_API_KEY)
+        client = OpenAI(api_key=OPENAI_API_KEY, timeout=120)
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -88,23 +66,25 @@ def call_openai_api(prompt):
         )
         logger.info("成功使用 OpenAI API 生成文字稿")
         return response.choices[0].message.content
+    except ImportError as e:
+        logger.warning(f"OpenAI API 導入失敗: {e}")
+        return None
     except Exception as e:
-        error_msg = str(e).replace('{', '{{').replace('}', '}}')
-        logger.warning(f"OpenAI API 失敗: {error_msg}")
-        raise
+        logger.warning(f"OpenAI API 失敗: {type(e).__name__}: {str(e)}")
+        return None
 
 def call_groq_api(prompt):
     """呼叫 Groq API"""
     if not GROQ_API_KEY:
         logger.warning("GROQ_API_KEY 未設置")
-        raise ValueError("GROQ_API_KEY not set")
+        return None
     
     try:
         from groq import Groq
         
         client = Groq(api_key=GROQ_API_KEY)
         response = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-70b-versatile",  # 更新到更好的模型
             messages=[
                 {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
                 {"role": "user", "content": prompt}
@@ -114,21 +94,37 @@ def call_groq_api(prompt):
         )
         logger.info("成功使用 Groq API 生成文字稿")
         return response.choices[0].message.content
+    except ImportError as e:
+        logger.warning(f"Groq API 導入失敗: {e}")
+        return None
     except Exception as e:
-        error_msg = str(e).replace('{', '{{').replace('}', '}}')
-        logger.warning(f"Groq API 失敗: {error_msg}")
-        raise
+        logger.warning(f"Groq API 失敗: {type(e).__name__}: {str(e)}")
+        return None
 
 def generate_script_with_llm(prompt):
     """嘗試使用多 LLM 生成文字稿"""
     
-    llm_funcs = [call_xai_api, call_grok_api, call_openai_api, call_groq_api]
+    # 定義 API 順序（按優先級）
+    llm_configs = [
+        ("OpenAI", call_openai_api),
+        ("xAI", call_xai_api),
+        ("Groq", call_groq_api)
+    ]
     
-    for func in llm_funcs:
+    logger.info("開始嘗試使用 LLM API 生成文字稿...")
+    
+    for name, func in llm_configs:
         try:
-            return func(prompt)
+            logger.info(f"嘗試使用 {name} API...")
+            result = func(prompt)
+            if result:
+                logger.success(f"✓ {name} API 成功生成文字稿")
+                return result
+            else:
+                logger.warning(f"✗ {name} API 返回空結果")
         except Exception as e:
-            logger.warning(f"LLM 嘗試失敗: {func.__name__}")
+            logger.error(f"✗ {name} API 異常: {type(e).__name__}: {str(e)}")
+            continue
     
     logger.error("所有 LLM API 皆不可用")
     return None
@@ -237,4 +233,4 @@ def generate_fallback_script(today, analysis, news_str, sentiment_str,
 
 投資就像馬拉松，不是短跑衝刺。保持穩健的投資策略，長期來看才能獲得穩定的回報。感謝收聽今天的節目，我們下次見。
 
-(系統備註：{error_msg or 'API 調用失敗，使用備用版本'})"""
+(系統備註：{error_msg or 'API 調用失敗，使用備用版本'})
