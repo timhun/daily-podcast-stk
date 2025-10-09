@@ -1,7 +1,4 @@
 __pycache__/
 *.pyc
 audio/temp.mp3
-data/
-docs/
-logs/
-reports/
+
