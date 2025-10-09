@@ -233,4 +233,4 @@ def generate_fallback_script(today, analysis, news_str, sentiment_str,
 
 投資就像馬拉松，不是短跑衝刺。保持穩健的投資策略，長期來看才能獲得穩定的回報。感謝收聽今天的節目，我們下次見。
 
-(系統備註：{error_msg or 'API 調用失敗，使用備用版本'})
+(系統備註：{error_msg or 'API 調用失敗，使用備用版本'})"""
