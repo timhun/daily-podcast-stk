@@ -8,9 +8,9 @@ jobs:
   produce:
     runs-on: ubuntu-latest
     env:
-        GROK_API_KEY: ${{ secrets.XAI_API_KEY }}
+        XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+        OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        GROK_API_URL: ${{ secrets.GROK_API_URL }}
         B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
         B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
         B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
