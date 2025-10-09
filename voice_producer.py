@@ -5,8 +5,7 @@ from pydub import AudioSegment
 from loguru import logger
 from dotenv import load_dotenv
 
-#load_dotenv()
-api_key = os.getenv("ELEVENLABS_API_KEY")
+load_dotenv()
 
 def generate_audio(text_path, output_path):
     """Generate audio from text using ElevenLabs API and apply post-processing."""
@@ -29,10 +28,10 @@ def generate_audio(text_path, output_path):
 
     # 使用 ElevenLabs 生成音頻
     try:
-        audio = client.generate(
+        audio = client.text_to_speech.convert(
+            voice_id="Aria",  # 使用 Aria 語音（支援多語言，包括中文）
             text=text,
-            voice="Aria",  # 使用 Aria 語音（支援多語言，包括中文）
-            model="eleven_multilingual_v2"
+            model_id="eleven_multilingual_v2"
         )
         logger.info(f"成功使用 ElevenLabs API 生成音頻: {output_path}")
 
