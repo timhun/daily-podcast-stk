@@ -1,0 +1,68 @@
+歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2025年10月09日。
+
+讓我們來看看今天的市場狀況。^GSPC: 收盤 6735.11, 漲跌 -0.28%
+QQQ: 收盤 610.70, 漲跌 -0.12%
+NVDA: 收盤 192.57, 漲跌 1.83%
+^DJI: 收盤 46358.42, 漲跌 -0.52%
+^IXIC: 收盤 23024.62, 漲跌 -0.08%
+SPY: 收盤 671.16, 漲跌 -0.29%
+AAPL: 收盤 254.04, 漲跌 -1.56%
+GOOG: 收盤 242.21, 漲跌 -1.32%
+META: 收盤 733.51, 漲跌 2.18%
+MSFT: 收盤 522.40, 漲跌 -0.47%
+TSLA: 收盤 435.54, 漲跌 -0.72%
+TSM: 收盤 299.88, 漲跌 -1.52%
+AMZN: 收盤 227.74, 漲跌 1.12%
+ORCL: 收盤 296.96, 漲跌 2.89%
+JPM: 收盤 305.53, 漲跌 0.49%
+WMT: 收盤 101.77, 漲跌 -1.10%
+LLY: 收盤 855.35, 漲跌 1.14%
+^VIX: 收盤 16.43, 漲跌 0.80%
+
+在產業動態方面，新聞: EM Currencies Edge Lower As Global Politics Send Dollar Soaring - A gauge of emerging-market currencies slid for a third day on Thursday, with the dollar rallying as traders monitor political turmoil in Europe and Japan while they navigate the market without US economic data.
+新聞: DoorDash Adds Serve Robotics as Autonomous Delivery Partner - DoorDash Inc. is partnering with sidewalk-robot developer Serve Robotics Inc. for autonomous deliveries across the US, adding to an array of methods the company is exploring to complement human couriers.
+新聞: Bloomberg Screentime Special | Bloomberg Tech 10/9/2025 - Bloomberg Tech's Caroline Hyde and Ed Ludlow are live in LA for Bloomberg Screentime 2025, speaking with celebrities, entrepreneurs and leaders across the media, gaming and streaming landscape. NPR CEO Katherine Maher discusses the state of media under the Trump administration, Twitch CEO Dan Clancy and Scopely COO Eunice Lee weigh in on the gaming landscape, while streamer Imane Anys - aka “Pokimane” - dives into the business of streaming and building a following. (Source: Bloomberg)
+
+市場情緒: 整體分數 -0.91, 看漲比例 0.00
+
+市場分析顯示，^GSPC: 趨勢 BULLISH, 波動性 0.38%, ^GSPC 市場分析：趨勢 BULLISH，波動性 0.38%，RSI 66.05，MACD 62.93。
+QQQ: 趨勢 BULLISH, 波動性 0.54%, QQQ 市場分析：趨勢 BULLISH，波動性 0.54%，RSI 69.47，MACD 8.01。
+NVDA: 趨勢 BULLISH, 波動性 1.84%, NVDA 市場分析：趨勢 BULLISH，波動性 1.84%，RSI 67.03，MACD 3.70。
+^DJI: 趨勢 BULLISH, 波動性 0.36%, ^DJI 市場分析：趨勢 BULLISH，波動性 0.36%，RSI 56.48，MACD 301.13。
+^IXIC: 趨勢 BULLISH, 波動性 0.58%, ^IXIC 市場分析：趨勢 BULLISH，波動性 0.58%，RSI 68.70，MACD 311.61。
+SPY: 趨勢 BULLISH, 波動性 0.38%, SPY 市場分析：趨勢 BULLISH，波動性 0.38%，RSI 66.37，MACD 6.46。
+AAPL: 趨勢 BULLISH, 波動性 1.40%, AAPL 市場分析：趨勢 BULLISH，波動性 1.40%，RSI 60.87，MACD 6.29。
+GOOG: 趨勢 BULLISH, 波動性 1.40%, GOOG 市場分析：趨勢 BULLISH，波動性 1.40%，RSI 53.18，MACD 5.20。
+META: 趨勢 BULLISH, 波動性 1.32%, META 市場分析：趨勢 BULLISH，波動性 1.32%，RSI 47.05，MACD -9.30。
+MSFT: 趨勢 BULLISH, 波動性 0.99%, MSFT 市場分析：趨勢 BULLISH，波動性 0.99%，RSI 57.70，MACD 4.06。
+TSLA: 趨勢 BULLISH, 波動性 3.40%, TSLA 市場分析：趨勢 BULLISH，波動性 3.40%，RSI 57.84，MACD 19.77。
+TSM: 趨勢 BULLISH, 波動性 1.99%, TSM 市場分析：趨勢 BULLISH，波動性 1.99%，RSI 69.04，MACD 13.41。
+AMZN: 趨勢 BULLISH, 波動性 1.21%, AMZN 市場分析：趨勢 BULLISH，波動性 1.21%，RSI 54.59，MACD -1.23。
+ORCL: 趨勢 BULLISH, 波動性 3.17%, ORCL 市場分析：趨勢 BULLISH，波動性 3.17%，RSI 56.87，MACD 6.58。
+JPM: 趨勢 BULLISH, 波動性 0.69%, JPM 市場分析：趨勢 BULLISH，波動性 0.69%，RSI 49.22，MACD 1.84。
+WMT: 趨勢 BULLISH, 波動性 0.61%, WMT 市場分析：趨勢 BULLISH，波動性 0.61%，RSI 48.59，MACD 0.45。
+LLY: 趨勢 BEARISH, 波動性 2.49%, LLY 市場分析：趨勢 BEARISH，波動性 2.49%，RSI 73.76，MACD 29.35。
+^VIX: 趨勢 BEARISH, 波動性 3.89%, ^VIX 市場分析：趨勢 BEARISH，波動性 3.89%，RSI 52.28，MACD 0.24。
+
+根據我們的策略分析，^GSPC: 預期回報 0.00%, 當前訊號 NEUTRAL
+QQQ: 預期回報 0.00%, 當前訊號 NEUTRAL
+NVDA: 預期回報 0.00%, 當前訊號 NEUTRAL
+^DJI: 預期回報 0.00%, 當前訊號 NEUTRAL
+^IXIC: 預期回報 0.00%, 當前訊號 NEUTRAL
+SPY: 預期回報 0.00%, 當前訊號 NEUTRAL
+AAPL: 預期回報 0.00%, 當前訊號 NEUTRAL
+GOOG: 預期回報 0.00%, 當前訊號 NEUTRAL
+META: 預期回報 0.00%, 當前訊號 NEUTRAL
+MSFT: 預期回報 0.00%, 當前訊號 NEUTRAL
+TSLA: 預期回報 0.00%, 當前訊號 NEUTRAL
+TSM: 預期回報 0.00%, 當前訊號 NEUTRAL
+AMZN: 預期回報 0.00%, 當前訊號 NEUTRAL
+ORCL: 預期回報 0.00%, 當前訊號 NEUTRAL
+JPM: 預期回報 0.00%, 當前訊號 NEUTRAL
+WMT: 預期回報 0.00%, 當前訊號 NEUTRAL
+LLY: 預期回報 0.00%, 當前訊號 NEUTRAL
+^VIX: 預期回報 0.00%, 當前訊號 NEUTRAL
+
+投資就像馬拉松，不是短跑衝刺。保持穩健的投資策略，長期來看才能獲得穩定的回報。感謝收聽今天的節目，我們下次見。
+
+(系統備註：所有 LLM API 皆不可用)
