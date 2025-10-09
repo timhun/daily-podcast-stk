@@ -28,8 +28,46 @@ def generate_audio(text_path, output_path):
 
     # 使用 ElevenLabs 生成音頻
     try:
+        # 使用預設的多語言語音或列出可用語音
+        # 常見的多語言語音 ID：
+        # "pNInz6obpgDQGcFmaJgB" - Adam (multilingual)
+        # "21m00Tcm4TlvDq8ikWAM" - Rachel (English, but clear)
+        
+        # 嘗試獲取可用語音列表並選擇支援中文的
+        try:
+            voices = client.voices.get_all()
+            # 尋找支援多語言的語音
+            multilingual_voice = None
+            for voice in voices.voices:
+                # 優先選擇名為 Aria 的語音（如果存在）
+                if voice.name.lower() == "aria":
+                    multilingual_voice = voice.voice_id
+                    logger.info(f"找到 Aria 語音: {voice.voice_id}")
+                    break
+            
+            # 如果沒找到 Aria，使用第一個多語言語音
+            if not multilingual_voice:
+                for voice in voices.voices:
+                    # 檢查語音是否支援多語言
+                    if hasattr(voice, 'labels') and voice.labels:
+                        if 'multilingual' in str(voice.labels).lower():
+                            multilingual_voice = voice.voice_id
+                            logger.info(f"使用多語言語音: {voice.name} ({voice.voice_id})")
+                            break
+            
+            # 如果還是沒找到，使用第一個可用語音
+            if not multilingual_voice and voices.voices:
+                multilingual_voice = voices.voices[0].voice_id
+                logger.warning(f"使用預設語音: {voices.voices[0].name} ({multilingual_voice})")
+            
+            voice_id = multilingual_voice or "pNInz6obpgDQGcFmaJgB"  # 備用 voice ID
+            
+        except Exception as e:
+            logger.warning(f"無法獲取語音列表: {str(e)}, 使用預設語音")
+            voice_id = "pNInz6obpgDQGcFmaJgB"  # Adam - 多語言語音
+        
         audio = client.text_to_speech.convert(
-            voice_id="Aria",  # 使用 Aria 語音（支援多語言，包括中文）
+            voice_id=voice_id,
             text=text,
             model_id="eleven_multilingual_v2"
         )
