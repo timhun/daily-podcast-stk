@@ -1,0 +1,68 @@
+歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2025年10月09日。
+
+讓我們來看看今天的市場狀況。^GSPC: 收盤 6727.83, 漲跌 -0.38%
+QQQ: 收盤 608.78, 漲跌 -0.44%
+NVDA: 收盤 193.60, 漲跌 2.37%
+^DJI: 收盤 46389.59, 漲跌 -0.46%
+^IXIC: 收盤 22941.50, 漲跌 -0.44%
+SPY: 收盤 670.42, 漲跌 -0.40%
+AAPL: 收盤 254.38, 漲跌 -1.43%
+GOOG: 收盤 239.84, 漲跌 -2.29%
+META: 收盤 723.62, 漲跌 0.81%
+MSFT: 收盤 518.58, 漲跌 -1.19%
+TSLA: 收盤 429.42, 漲跌 -2.11%
+TSM: 收盤 299.59, 漲跌 -1.62%
+AMZN: 收盤 223.14, 漲跌 -0.92%
+ORCL: 收盤 297.64, 漲跌 3.12%
+JPM: 收盤 304.07, 漲跌 0.01%
+WMT: 收盤 100.86, 漲跌 -1.98%
+LLY: 收盤 852.25, 漲跌 0.77%
+^VIX: 收盤 16.68, 漲跌 2.33%
+
+在產業動態方面，新聞: OpenAI Warns EU Antitrust Watchdogs of Big Tech’s Data Dominance - OpenAI has raised concerns with European Union antitrust enforcers over potentially harmful conduct by the likes of Alphabet Inc.’s Google, Microsoft Corp. and Apple Inc.
+新聞: Lyft Plans Fleet of Hundreds of Tensor Robocars From 2027 - Lyft Inc. is partnering with autonomous vehicle developer Tensor Auto Inc. to deploy a fleet of hundreds of robotaxis in Europe and North America starting in 2027.
+新聞: Meta’s $799 Display Glasses Give a Glimpse of the Future: Review - <p>The social networking giant has found a new category that consumers will need to take seriously.</p>
+
+市場情緒: 整體分數 -0.86, 看漲比例 0.00
+
+市場分析顯示，^GSPC: 趨勢 BULLISH, 波動性 0.38%, ^GSPC 市場分析：趨勢 BULLISH，波動性 0.38%，RSI 64.69，MACD 62.35。
+QQQ: 趨勢 BULLISH, 波動性 0.55%, QQQ 市場分析：趨勢 BULLISH，波動性 0.55%，RSI 66.54，MACD 7.86。
+NVDA: 趨勢 BULLISH, 波動性 1.86%, NVDA 市場分析：趨勢 BULLISH，波動性 1.86%，RSI 67.98，MACD 3.78。
+^DJI: 趨勢 BULLISH, 波動性 0.35%, ^DJI 市場分析：趨勢 BULLISH，波動性 0.35%，RSI 57.32，MACD 303.62。
+^IXIC: 趨勢 BULLISH, 波動性 0.60%, ^IXIC 市場分析：趨勢 BULLISH，波動性 0.60%，RSI 65.51，MACD 304.98。
+SPY: 趨勢 BULLISH, 波動性 0.39%, SPY 市場分析：趨勢 BULLISH，波動性 0.39%，RSI 64.99，MACD 6.40。
+AAPL: 趨勢 BULLISH, 波動性 1.39%, AAPL 市場分析：趨勢 BULLISH，波動性 1.39%，RSI 61.51，MACD 6.32。
+GOOG: 趨勢 BULLISH, 波動性 1.47%, GOOG 市場分析：趨勢 BULLISH，波動性 1.47%，RSI 49.78，MACD 5.01。
+META: 趨勢 BULLISH, 波動性 1.23%, META 市場分析：趨勢 BULLISH，波動性 1.23%，RSI 42.21，MACD -10.09。
+MSFT: 趨勢 BULLISH, 波動性 1.02%, MSFT 市場分析：趨勢 BULLISH，波動性 1.02%，RSI 53.81，MACD 3.76。
+TSLA: 趨勢 BULLISH, 波動性 3.44%, TSLA 市場分析：趨勢 BULLISH，波動性 3.44%，RSI 55.60，MACD 19.28。
+TSM: 趨勢 BULLISH, 波動性 2.00%, TSM 市場分析：趨勢 BULLISH，波動性 2.00%，RSI 68.76，MACD 13.39。
+AMZN: 趨勢 BULLISH, 波動性 1.19%, AMZN 市場分析：趨勢 BULLISH，波動性 1.19%，RSI 47.80，MACD -1.60。
+ORCL: 趨勢 BULLISH, 波動性 3.18%, ORCL 市場分析：趨勢 BULLISH，波動性 3.18%，RSI 57.14，MACD 6.63。
+JPM: 趨勢 BULLISH, 波動性 0.68%, JPM 市場分析：趨勢 BULLISH，波動性 0.68%，RSI 46.50，MACD 1.73。
+WMT: 趨勢 BULLISH, 波動性 0.72%, WMT 市場分析：趨勢 BULLISH，波動性 0.72%，RSI 44.08，MACD 0.38。
+LLY: 趨勢 BEARISH, 波動性 2.49%, LLY 市場分析：趨勢 BEARISH，波動性 2.49%，RSI 73.27，MACD 29.10。
+^VIX: 趨勢 BEARISH, 波動性 3.91%, ^VIX 市場分析：趨勢 BEARISH，波動性 3.91%，RSI 53.86，MACD 0.26。
+
+根據我們的策略分析，^GSPC: 預期回報 0.00%, 當前訊號 NEUTRAL
+QQQ: 預期回報 0.00%, 當前訊號 NEUTRAL
+NVDA: 預期回報 0.00%, 當前訊號 NEUTRAL
+^DJI: 預期回報 0.00%, 當前訊號 NEUTRAL
+^IXIC: 預期回報 0.00%, 當前訊號 NEUTRAL
+SPY: 預期回報 0.00%, 當前訊號 NEUTRAL
+AAPL: 預期回報 0.00%, 當前訊號 NEUTRAL
+GOOG: 預期回報 0.00%, 當前訊號 NEUTRAL
+META: 預期回報 0.00%, 當前訊號 NEUTRAL
+MSFT: 預期回報 0.00%, 當前訊號 NEUTRAL
+TSLA: 預期回報 0.00%, 當前訊號 NEUTRAL
+TSM: 預期回報 0.00%, 當前訊號 NEUTRAL
+AMZN: 預期回報 0.00%, 當前訊號 NEUTRAL
+ORCL: 預期回報 0.00%, 當前訊號 NEUTRAL
+JPM: 預期回報 0.00%, 當前訊號 NEUTRAL
+WMT: 預期回報 0.00%, 當前訊號 NEUTRAL
+LLY: 預期回報 0.00%, 當前訊號 NEUTRAL
+^VIX: 預期回報 0.00%, 當前訊號 NEUTRAL
+
+投資就像馬拉松，不是短跑衝刺。保持穩健的投資策略，長期來看才能獲得穩定的回報。感謝收聽今天的節目，我們下次見。
+
+(系統備註：所有 LLM API 皆不可用)
