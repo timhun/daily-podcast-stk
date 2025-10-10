@@ -24,10 +24,9 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - name: Install ffmpeg
+      - name: Install ffmpeg,TTS
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: pip install -r requirements.txt
-      - run: pip install -r TTS
       - run: python main.py --mode tw
       - run: |
           git config --local user.email "action@github.com"
