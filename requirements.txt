@@ -24,7 +24,9 @@ TA-Lib
 
 # 語音處理
 edge-tts
+TTS
 pydub
+torch
 elevenlabs
 
 # 雲端服務
