@@ -13,14 +13,38 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
+def call_gemini_api(prompt):
+    """呼叫 Google Gemini API"""
+    if not GEMINI_API_KEY:
+        logger.warning("GEMINI_API_KEY 未設置")
+        return None
+    
+    try:
+        from google import genai
+        
+        client = genai.Client(api_key=GEMINI_API_KEY)
+        
+        response = client.models.generate_content(
+            model="gemini-2.0-flash-exp",
+            contents=prompt
+        )
+        
+        logger.info("成功使用 Gemini API 生成文字稿")
+        return response.text
+    except ImportError as e:
+        logger.warning(f"Gemini API 導入失敗: {e}")
+        return None
+    except Exception as e:
+        logger.warning(f"Gemini API 失敗: {type(e).__name__}: {str(e)}")
+        return None
+
 def call_xai_api(prompt):
     """呼叫 xAI Grok API"""
     if not XAI_API_KEY:
         logger.warning("XAI_API_KEY 未設置")
-        return None  # 改為返回 None 而不是拋出異常
+        return None
     
     try:
-        # 嘗試使用 OpenAI 兼容接口（xAI 支持 OpenAI SDK）
         from openai import OpenAI
         
         client = OpenAI(
@@ -105,15 +129,28 @@ def call_groq_api(prompt):
 def generate_script_with_llm(prompt):
     """嘗試使用多 LLM 生成文字稿"""
     
-    llm_funcs = [call_xai_api, call_openai_api, call_groq_api]
+    # 定義 API 順序（按優先級）
+    llm_configs = [
+        ("Gemini", call_gemini_api),
+        ("Groq", call_groq_api),
+        ("OpenAI", call_openai_api),
+        ("xAI", call_xai_api)
+    ]
     
-    for func in llm_funcs:
+    logger.info("開始嘗試使用 LLM API 生成文字稿...")
+    
+    for name, func in llm_configs:
         try:
-            script = func(prompt)
-            if script:
-                return script
+            logger.info(f"嘗試使用 {name} API...")
+            result = func(prompt)
+            if result:
+                logger.success(f"✓ {name} API 成功生成文字稿")
+                return result
+            else:
+                logger.warning(f"✗ {name} API 返回空結果")
         except Exception as e:
-            logger.warning(f"LLM 嘗試失敗: {func.__name__}")
+            logger.error(f"✗ {name} API 異常: {type(e).__name__}: {str(e)}")
+            continue
     
     logger.error("所有 LLM API 皆不可用")
     return None
