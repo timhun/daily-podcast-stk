@@ -14,7 +14,7 @@ beautifulsoup4
 # 機器學習
 scikit-learn
 torch
-transformers
+#transformers
 matplotlib
 google-generativeai
 
@@ -24,7 +24,6 @@ TA-Lib
 
 # 語音處理
 edge-tts
-TTS
 pydub
 torch
 elevenlabs
