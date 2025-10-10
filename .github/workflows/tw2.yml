@@ -27,6 +27,7 @@ jobs:
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
       - run: pip install -r requirements.txt
+      - run: pip install -r TTS
       - run: python main.py --mode tw
       - run: |
           git config --local user.email "action@github.com"
