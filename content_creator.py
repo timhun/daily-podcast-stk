@@ -84,7 +84,7 @@ def call_groq_api(prompt):
         
         client = Groq(api_key=GROQ_API_KEY)
         response = client.chat.completions.create(
-            model="llama3-8b-8192",
+            model="llama-3.1-8b-instant",
             messages=[
                 {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
                 {"role": "user", "content": prompt}
