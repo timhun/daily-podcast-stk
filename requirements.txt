@@ -58,3 +58,4 @@ pytz
 xai_sdk
 huggingface_hub
 groq
+google-genai
