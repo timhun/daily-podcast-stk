@@ -1,10 +1,10 @@
-歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2025年10月09日。
+歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2025年10月10日。
 
 讓我們來看看今天的市場狀況。^GSPC: 收盤 6735.11, 漲跌 -0.28%
 QQQ: 收盤 610.70, 漲跌 -0.12%
 NVDA: 收盤 192.57, 漲跌 1.83%
 ^DJI: 收盤 46358.42, 漲跌 -0.52%
-^IXIC: 收盤 23024.62, 漲跌 -0.08%
+^IXIC: 收盤 23024.63, 漲跌 -0.08%
 SPY: 收盤 671.16, 漲跌 -0.29%
 AAPL: 收盤 254.04, 漲跌 -1.56%
 GOOG: 收盤 242.21, 漲跌 -1.32%
@@ -19,11 +19,11 @@ WMT: 收盤 101.77, 漲跌 -1.10%
 LLY: 收盤 855.35, 漲跌 1.14%
 ^VIX: 收盤 16.43, 漲跌 0.80%
 
-在產業動態方面，新聞: EM Currencies Edge Lower As Global Politics Send Dollar Soaring - A gauge of emerging-market currencies slid for a third day on Thursday, with the dollar rallying as traders monitor political turmoil in Europe and Japan while they navigate the market without US economic data.
-新聞: DoorDash Adds Serve Robotics as Autonomous Delivery Partner - DoorDash Inc. is partnering with sidewalk-robot developer Serve Robotics Inc. for autonomous deliveries across the US, adding to an array of methods the company is exploring to complement human couriers.
-新聞: Bloomberg Screentime Special | Bloomberg Tech 10/9/2025 - Bloomberg Tech's Caroline Hyde and Ed Ludlow are live in LA for Bloomberg Screentime 2025, speaking with celebrities, entrepreneurs and leaders across the media, gaming and streaming landscape. NPR CEO Katherine Maher discusses the state of media under the Trump administration, Twitch CEO Dan Clancy and Scopely COO Eunice Lee weigh in on the gaming landscape, while streamer Imane Anys - aka “Pokimane” - dives into the business of streaming and building a following. (Source: Bloomberg)
+在產業動態方面，新聞: TSMC, Samsung in Spotlight as US Pressure Grows in Chip Sector - Rising US scrutiny of the global chip industry puts the spotlight on Taiwan Semiconductor Manufacturing Co.’s and Samsung Electronics Co.’s earnings outlook next week.
+新聞: NZ’s Willis Says Chorus Divestment Is Smart Use of Balance Sheet - New Zealand’s plan to sell its non-voting stake in fiber optic network operator Chorus is an example of the government using its balance sheet smarter, according to Finance Minister Nicola Willis.
+新聞: Apple to Move Health, Fitness Divisions to Services in Reorganization - Apple Inc. is preparing to expand the roles of some top executives in response to the pending departure of longtime Chief Operating Officer Jeff Williams, according to people familiar with the matter.
 
-市場情緒: 整體分數 -0.91, 看漲比例 0.00
+市場情緒: 整體分數 -0.35, 看漲比例 0.33
 
 市場分析顯示，^GSPC: 趨勢 BULLISH, 波動性 0.38%, ^GSPC 市場分析：趨勢 BULLISH，波動性 0.38%，RSI 66.05，MACD 62.93。
 QQQ: 趨勢 BULLISH, 波動性 0.54%, QQQ 市場分析：趨勢 BULLISH，波動性 0.54%，RSI 69.47，MACD 8.01。
