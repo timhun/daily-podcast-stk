@@ -7,6 +7,7 @@ import datetime
 XAI_API_KEY = os.getenv("XAI_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
