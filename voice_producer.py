@@ -21,7 +21,7 @@ def generate_audio(text_path, output_path):
     # 使用 Coqui TTS 生成音頻
     try:
         from TTS.api import TTS
-        
+        os.environ["COQUI_TOS_AGREED"] = "1"
         logger.info("正在載入 Coqui TTS 模型...")
         
         # 使用支援中文的多語言模型
