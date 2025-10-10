@@ -21,14 +21,13 @@ google-generativeai
 ta==0.10.2
 TA-Lib
 
-# 語音處理
+# 語音處理 (Updated section in requirements.txt)
 edge-tts
 pydub
 torch
 elevenlabs
-TTS>=0.23.0 # Explicitly set minimum TTS version for XTTSv2
-# Note: Since the TTS dependency chain is complex, having these two pins
-# in requirements.txt is more robust than relying on separate upgrade commands.
+# Replace TTS>=0.23.0 with the following line:
+TTS @ git+https://github.com/coqui-ai/TTS.git@dev
 
 # 雲端服務
 b2sdk
