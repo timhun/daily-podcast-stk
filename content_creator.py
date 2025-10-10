@@ -84,7 +84,7 @@ def call_groq_api(prompt):
         
         client = Groq(api_key=GROQ_API_KEY)
         response = client.chat.completions.create(
-            model="llama-3.1-70b-versatile",  # 更新到更好的模型
+            model="llama3-8b-8192",
             messages=[
                 {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
                 {"role": "user", "content": prompt}
@@ -104,27 +104,15 @@ def call_groq_api(prompt):
 def generate_script_with_llm(prompt):
     """嘗試使用多 LLM 生成文字稿"""
     
-    # 定義 API 順序（按優先級）
-    llm_configs = [
-        ("OpenAI", call_openai_api),
-        ("xAI", call_xai_api),
-        ("Groq", call_groq_api)
-    ]
+    llm_funcs = [call_xai_api, call_openai_api, call_groq_api]
     
-    logger.info("開始嘗試使用 LLM API 生成文字稿...")
-    
-    for name, func in llm_configs:
+    for func in llm_funcs:
         try:
-            logger.info(f"嘗試使用 {name} API...")
-            result = func(prompt)
-            if result:
-                logger.success(f"✓ {name} API 成功生成文字稿")
-                return result
-            else:
-                logger.warning(f"✗ {name} API 返回空結果")
+            script = func(prompt)
+            if script:
+                return script
         except Exception as e:
-            logger.error(f"✗ {name} API 異常: {type(e).__name__}: {str(e)}")
-            continue
+            logger.warning(f"LLM 嘗試失敗: {func.__name__}")
     
     logger.error("所有 LLM API 皆不可用")
     return None
