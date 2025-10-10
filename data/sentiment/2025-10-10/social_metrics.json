@@ -1,6 +1,6 @@
 {
-  "overall_score": -0.34965091943740845,
-  "bullish_ratio": 0.3333333333333333,
+  "overall_score": 0.20133026440938315,
+  "bullish_ratio": 0.6666666666666666,
   "symbols": {
     "^GSPC": {
       "sentiment_score": 0.0
@@ -36,7 +36,7 @@
       "sentiment_score": 0.0
     },
     "TSM": {
-      "sentiment_score": 0.43739181756973267
+      "sentiment_score": -0.8605753779411316
     },
     "AMZN": {
       "sentiment_score": 0.0
