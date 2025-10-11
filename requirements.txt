@@ -13,7 +13,7 @@ beautifulsoup4
 # 機器學習
 scikit-learn
 torch
-transformers>=4.38.2 # Set minimum version for Coqui TTS compatibility (Fixes ImportError)
+transformers>=4.38.2  # Ensure a recent version with BeamSearchScorer
 matplotlib
 google-generativeai
 
@@ -26,8 +26,8 @@ edge-tts
 pydub
 torch
 elevenlabs
-# Replace TTS>=0.23.0 with the following line:
-TTS @ git+https://github.com/coqui-ai/TTS.git@dev
+# Install TTS directly from GitHub to get the latest version
+TTS @ git+https://github.com/coqui-ai/TTS.git@dev 
 
 # 雲端服務
 b2sdk
