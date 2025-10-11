@@ -19,6 +19,7 @@ jobs:
         EMAIL: ${{ secrets.EMAIL }}
         ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        COQUI_TOS_AGREED: 1 
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
@@ -26,7 +27,9 @@ jobs:
           python-version: '3.11'
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - run: pip install -r requirements.txt
+      # 2. Install all Python dependencies. This will now handle TTS from GitHub.
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
       - run: python main.py --mode us
         
       - run: |
