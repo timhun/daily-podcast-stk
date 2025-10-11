@@ -49,16 +49,29 @@ def generate_audio_edge_tts(text, output_path):
         import edge_tts
         
         async def generate_tts():
-            # 台灣中文女聲: zh-TW-HsiaoChenNeural (溫柔女聲)
-            # 台灣中文男聲: zh-TW-YunJheNeural (男聲)
-            communicate = edge_tts.Communicate(text, "zh-TW-HsiaoChenNeural")
+            # 使用穩定的語音選項
+            voices = [
+                "zh-TW-HsiaoChenNeural",  # 台灣中文女聲
+                "zh-CN-XiaoxiaoNeural",  # 中國普通話女聲（更穩定）
+            ]
+            
             temp_path = output_path + ".tmp.mp3"
-            await communicate.save(temp_path)
-            return temp_path
+            
+            for voice in voices:
+                try:
+                    logger.info(f"嘗試使用 Edge TTS 語音: {voice}")
+                    communicate = edge_tts.Communicate(text, voice)
+                    await communicate.save(temp_path)
+                    logger.info(f"✓ 成功使用 Edge TTS ({voice}) 生成音頻")
+                    return temp_path
+                except Exception as e:
+                    logger.warning(f"語音 {voice} 失敗: {str(e)}")
+                    continue
+            
+            return False
         
-        temp_path = asyncio.run(generate_tts())
-        logger.info("✓ 成功使用 Edge TTS 生成音頻")
-        return temp_path
+        result = asyncio.run(generate_tts())
+        return result
         
     except ImportError as e:
         logger.warning(f"Edge TTS 導入失敗: {e}")
@@ -67,31 +80,58 @@ def generate_audio_edge_tts(text, output_path):
         logger.warning(f"Edge TTS 失敗: {type(e).__name__}: {str(e)}")
         return False
 
-def generate_audio_coqui_tts(text, output_path):
-    """使用 Coqui TTS 生成音頻（方案3 - 最終備援）"""
+def generate_audio_gtts(text, output_path):
+    """使用 Google TTS 生成音頻（方案3 - 簡單備援）"""
     try:
-        from TTS.api import TTS
+        from gtts import gTTS
         
-        logger.info("正在載入 Coqui TTS 模型（首次使用需要下載模型）...")
+        temp_path = output_path + ".tmp.mp3"
         
-        tts = TTS(model_name="tts_models/multilingual/multi-dataset/xtts_v2")
+        # 使用 Google Text-to-Speech（簡單可靠）
+        tts = gTTS(text=text, lang='zh-TW', slow=False)
+        tts.save(temp_path)
         
-        temp_path = output_path + ".tmp.wav"
-        
-        tts.tts_to_file(
-            text=text,
-            file_path=temp_path,
-            language="zh-cn"
-        )
-        
-        logger.info("✓ 成功使用 Coqui TTS 生成音頻")
+        logger.info("✓ 成功使用 Google TTS 生成音頻")
         return temp_path
         
     except ImportError as e:
-        logger.warning(f"Coqui TTS 導入失敗: {e}")
+        logger.warning(f"Google TTS 導入失敗: {e}")
         return False
     except Exception as e:
-        logger.warning(f"Coqui TTS 失敗: {type(e).__name__}: {str(e)}")
+        logger.warning(f"Google TTS 失敗: {type(e).__name__}: {str(e)}")
+        return False
+
+def generate_audio_pyttsx3(text, output_path):
+    """使用 pyttsx3 生成音頻（方案4 - 離線備援）"""
+    try:
+        import pyttsx3
+        
+        temp_path = output_path + ".tmp.wav"
+        
+        engine = pyttsx3.init()
+        
+        # 設置語速和音量
+        engine.setProperty('rate', 150)  # 語速
+        engine.setProperty('volume', 1.0)  # 音量
+        
+        # 嘗試設置中文語音（如果可用）
+        voices = engine.getProperty('voices')
+        for voice in voices:
+            if 'chinese' in voice.name.lower() or 'mandarin' in voice.name.lower():
+                engine.setProperty('voice', voice.id)
+                break
+        
+        engine.save_to_file(text, temp_path)
+        engine.runAndWait()
+        
+        logger.info("✓ 成功使用 pyttsx3 生成音頻")
+        return temp_path
+        
+    except ImportError as e:
+        logger.warning(f"pyttsx3 導入失敗: {e}")
+        return False
+    except Exception as e:
+        logger.warning(f"pyttsx3 失敗: {type(e).__name__}: {str(e)}")
         return False
 
 def post_process_audio(temp_path, output_path):
@@ -136,7 +176,8 @@ def generate_audio(text_path, output_path):
     tts_providers = [
         ("ElevenLabs", generate_audio_elevenlabs),
         ("Edge TTS", generate_audio_edge_tts),
-        ("Coqui TTS", generate_audio_coqui_tts)
+        ("Google TTS", generate_audio_gtts),
+        ("pyttsx3", generate_audio_pyttsx3)
     ]
     
     logger.info("開始嘗試使用 TTS 服務生成音頻...")
