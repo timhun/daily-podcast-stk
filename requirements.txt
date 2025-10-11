@@ -25,9 +25,10 @@ TA-Lib
 edge-tts
 pydub
 torch
+# TTS 服務（多重備援）
 elevenlabs
-# Install TTS directly from GitHub to get the latest version
-TTS @ git+https://github.com/coqui-ai/TTS.git@dev 
+gTTS
+pyttsx3
 
 # 雲端服務
 b2sdk
