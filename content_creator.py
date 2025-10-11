@@ -8,6 +8,7 @@ XAI_API_KEY = os.getenv("XAI_API_KEY")
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -25,7 +26,7 @@ def call_gemini_api(prompt):
         client = genai.Client(api_key=GEMINI_API_KEY)
         
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-2.0-flash-exp",
             contents=prompt
         )
         
@@ -36,6 +37,39 @@ def call_gemini_api(prompt):
         return None
     except Exception as e:
         logger.warning(f"Gemini API 失敗: {type(e).__name__}: {str(e)}")
+        return None
+
+def call_openrouter_api(prompt):
+    """呼叫 OpenRouter API"""
+    if not OPENROUTER_API_KEY:
+        logger.warning("OPENROUTER_API_KEY 未設置")
+        return None
+    
+    try:
+        from openai import OpenAI
+        
+        client = OpenAI(
+            api_key=OPENROUTER_API_KEY,
+            base_url="https://openrouter.ai/api/v1"
+        )
+        
+        response = client.chat.completions.create(
+            model="google/gemini-2.0-flash-exp:free",  # 使用免費的 Gemini 模型
+            messages=[
+                {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7,
+            max_tokens=2000,
+            timeout=120
+        )
+        logger.info("成功使用 OpenRouter API 生成文字稿")
+        return response.choices[0].message.content
+    except ImportError as e:
+        logger.warning(f"OpenRouter API 導入失敗: {e}")
+        return None
+    except Exception as e:
+        logger.warning(f"OpenRouter API 失敗: {type(e).__name__}: {str(e)}")
         return None
 
 def call_xai_api(prompt):
@@ -132,6 +166,7 @@ def generate_script_with_llm(prompt):
     # 定義 API 順序（按優先級）
     llm_configs = [
         ("Gemini", call_gemini_api),
+        ("OpenRouter", call_openrouter_api),
         ("Groq", call_groq_api),
         ("OpenAI", call_openai_api),
         ("xAI", call_xai_api)
