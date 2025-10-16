@@ -1376,3 +1376,121 @@
 2025-10-16 06:45:36.633 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
 2025-10-16 06:45:37.589 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-10-16 06:45:37.862 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/10/16（四）
+2025-10-16 21:44:00.050 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_GSPC.csv
+2025-10-16 21:44:00.052 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_GSPC.csv
+2025-10-16 21:44:00.563 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_QQQ.csv
+2025-10-16 21:44:00.565 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_QQQ.csv
+2025-10-16 21:44:01.009 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_NVDA.csv
+2025-10-16 21:44:01.010 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_NVDA.csv
+2025-10-16 21:44:01.417 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_DJI.csv
+2025-10-16 21:44:01.418 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_DJI.csv
+2025-10-16 21:44:01.832 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_IXIC.csv
+2025-10-16 21:44:01.834 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_IXIC.csv
+2025-10-16 21:44:02.318 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_SPY.csv
+2025-10-16 21:44:02.319 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_SPY.csv
+2025-10-16 21:44:02.871 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_AAPL.csv
+2025-10-16 21:44:02.873 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_AAPL.csv
+2025-10-16 21:44:03.252 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_GOOG.csv
+2025-10-16 21:44:03.254 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_GOOG.csv
+2025-10-16 21:44:03.634 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_META.csv
+2025-10-16 21:44:03.636 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_META.csv
+2025-10-16 21:44:04.137 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_MSFT.csv
+2025-10-16 21:44:04.139 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_MSFT.csv
+2025-10-16 21:44:04.549 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TSLA.csv
+2025-10-16 21:44:04.551 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TSLA.csv
+2025-10-16 21:44:05.044 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TSM.csv
+2025-10-16 21:44:05.046 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TSM.csv
+2025-10-16 21:44:05.405 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_AMZN.csv
+2025-10-16 21:44:05.406 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_AMZN.csv
+2025-10-16 21:44:05.877 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_ORCL.csv
+2025-10-16 21:44:05.879 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_ORCL.csv
+2025-10-16 21:44:06.405 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_JPM.csv
+2025-10-16 21:44:06.407 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_JPM.csv
+2025-10-16 21:44:06.986 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_WMT.csv
+2025-10-16 21:44:06.988 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_WMT.csv
+2025-10-16 21:44:07.464 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_LLY.csv
+2025-10-16 21:44:07.466 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_LLY.csv
+2025-10-16 21:44:07.916 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_VIX.csv
+2025-10-16 21:44:07.919 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_VIX.csv
+2025-10-16 21:44:08.545 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-10-16 21:44:08.725 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.reddit.com/r/investing/.rss 失敗: 429 Client Error: Too Many Requests for url: https://www.reddit.com/r/investing/.rss
+2025-10-16 21:44:08.727 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-10-16/us_news.json
+2025-10-16 21:44:13.544 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-10-16/social_metrics.json
+2025-10-16 21:44:13.544 | WARNING  | data_collector:validate:48 - 數據品質不佳: {'completeness': 1.0, 'freshness': True, 'volatility': False}, 分數: 0.6666666666666666
+2025-10-16 21:44:13.544 | INFO     | data_collector:collect_data:252 - us 數據收集完成: 18 個標的, 3 則新聞, 品質分數: 0.6666666666666666
+2025-10-16 21:44:13.553 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: ^GSPC, 時間框架: daily
+2025-10-16 21:44:13.553 | INFO     | strategies.god_system_strategy:backtest:26 - ^GSPC 非主要交易標的，跳過回測
+2025-10-16 21:44:13.559 | INFO     | market_analyst:analyze_market:91 - ^GSPC 市場分析完成
+2025-10-16 21:44:13.562 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: QQQ, 時間框架: daily
+2025-10-16 21:44:13.562 | INFO     | strategies.god_system_strategy:backtest:26 - QQQ 非主要交易標的，跳過回測
+2025-10-16 21:44:13.568 | INFO     | market_analyst:analyze_market:91 - QQQ 市場分析完成
+2025-10-16 21:44:13.570 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: NVDA, 時間框架: daily
+2025-10-16 21:44:13.570 | INFO     | strategies.god_system_strategy:backtest:26 - NVDA 非主要交易標的，跳過回測
+2025-10-16 21:44:13.579 | INFO     | market_analyst:analyze_market:91 - NVDA 市場分析完成
+2025-10-16 21:44:13.582 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: ^DJI, 時間框架: daily
+2025-10-16 21:44:13.582 | INFO     | strategies.god_system_strategy:backtest:26 - ^DJI 非主要交易標的，跳過回測
+2025-10-16 21:44:13.589 | INFO     | market_analyst:analyze_market:91 - ^DJI 市場分析完成
+2025-10-16 21:44:13.591 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: ^IXIC, 時間框架: daily
+2025-10-16 21:44:13.591 | INFO     | strategies.god_system_strategy:backtest:26 - ^IXIC 非主要交易標的，跳過回測
+2025-10-16 21:44:13.596 | INFO     | market_analyst:analyze_market:91 - ^IXIC 市場分析完成
+2025-10-16 21:44:13.598 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: SPY, 時間框架: daily
+2025-10-16 21:44:13.599 | INFO     | strategies.god_system_strategy:backtest:26 - SPY 非主要交易標的，跳過回測
+2025-10-16 21:44:13.607 | INFO     | market_analyst:analyze_market:91 - SPY 市場分析完成
+2025-10-16 21:44:13.612 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: AAPL, 時間框架: daily
+2025-10-16 21:44:13.613 | INFO     | strategies.god_system_strategy:backtest:26 - AAPL 非主要交易標的，跳過回測
+2025-10-16 21:44:13.627 | INFO     | market_analyst:analyze_market:91 - AAPL 市場分析完成
+2025-10-16 21:44:13.632 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: GOOG, 時間框架: daily
+2025-10-16 21:44:13.633 | INFO     | strategies.god_system_strategy:backtest:26 - GOOG 非主要交易標的，跳過回測
+2025-10-16 21:44:13.646 | INFO     | market_analyst:analyze_market:91 - GOOG 市場分析完成
+2025-10-16 21:44:13.650 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: META, 時間框架: daily
+2025-10-16 21:44:13.650 | INFO     | strategies.god_system_strategy:backtest:26 - META 非主要交易標的，跳過回測
+2025-10-16 21:44:13.661 | INFO     | market_analyst:analyze_market:91 - META 市場分析完成
+2025-10-16 21:44:13.665 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: MSFT, 時間框架: daily
+2025-10-16 21:44:13.666 | INFO     | strategies.god_system_strategy:backtest:26 - MSFT 非主要交易標的，跳過回測
+2025-10-16 21:44:13.679 | INFO     | market_analyst:analyze_market:91 - MSFT 市場分析完成
+2025-10-16 21:44:13.683 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: TSLA, 時間框架: daily
+2025-10-16 21:44:13.684 | INFO     | strategies.god_system_strategy:backtest:26 - TSLA 非主要交易標的，跳過回測
+2025-10-16 21:44:13.697 | INFO     | market_analyst:analyze_market:91 - TSLA 市場分析完成
+2025-10-16 21:44:13.703 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: TSM, 時間框架: daily
+2025-10-16 21:44:13.703 | INFO     | strategies.god_system_strategy:backtest:26 - TSM 非主要交易標的，跳過回測
+2025-10-16 21:44:13.721 | INFO     | market_analyst:analyze_market:91 - TSM 市場分析完成
+2025-10-16 21:44:13.726 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: AMZN, 時間框架: daily
+2025-10-16 21:44:13.726 | INFO     | strategies.god_system_strategy:backtest:26 - AMZN 非主要交易標的，跳過回測
+2025-10-16 21:44:13.742 | INFO     | market_analyst:analyze_market:91 - AMZN 市場分析完成
+2025-10-16 21:44:13.748 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: ORCL, 時間框架: daily
+2025-10-16 21:44:13.749 | INFO     | strategies.god_system_strategy:backtest:26 - ORCL 非主要交易標的，跳過回測
+2025-10-16 21:44:13.766 | INFO     | market_analyst:analyze_market:91 - ORCL 市場分析完成
+2025-10-16 21:44:13.772 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: JPM, 時間框架: daily
+2025-10-16 21:44:13.772 | INFO     | strategies.god_system_strategy:backtest:26 - JPM 非主要交易標的，跳過回測
+2025-10-16 21:44:13.788 | INFO     | market_analyst:analyze_market:91 - JPM 市場分析完成
+2025-10-16 21:44:13.793 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: WMT, 時間框架: daily
+2025-10-16 21:44:13.794 | INFO     | strategies.god_system_strategy:backtest:26 - WMT 非主要交易標的，跳過回測
+2025-10-16 21:44:13.810 | INFO     | market_analyst:analyze_market:91 - WMT 市場分析完成
+2025-10-16 21:44:13.815 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: LLY, 時間框架: daily
+2025-10-16 21:44:13.816 | INFO     | strategies.god_system_strategy:backtest:26 - LLY 非主要交易標的，跳過回測
+2025-10-16 21:44:13.829 | INFO     | market_analyst:analyze_market:91 - LLY 市場分析完成
+2025-10-16 21:44:13.834 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: ^VIX, 時間框架: daily
+2025-10-16 21:44:13.834 | INFO     | strategies.god_system_strategy:backtest:26 - ^VIX 非主要交易標的，跳過回測
+2025-10-16 21:44:13.846 | INFO     | market_analyst:analyze_market:91 - ^VIX 市場分析完成
+2025-10-16 21:44:13.846 | INFO     | content_creator:generate_script_with_llm:175 - 開始嘗試使用 LLM API 生成文字稿...
+2025-10-16 21:44:13.846 | INFO     | content_creator:generate_script_with_llm:179 - 嘗試使用 Gemini API...
+2025-10-16 21:44:25.186 | INFO     | content_creator:call_gemini_api:33 - 成功使用 Gemini API 生成文字稿
+2025-10-16 21:44:25.188 | SUCCESS  | content_creator:generate_script_with_llm:182 - ✓ Gemini API 成功生成文字稿
+2025-10-16 21:44:25.189 | INFO     | voice_producer:generate_audio:170 - 讀取文字檔案成功，字數: 1636
+2025-10-16 21:44:25.189 | INFO     | voice_producer:generate_audio:183 - 開始嘗試使用 TTS 服務生成音頻...
+2025-10-16 21:44:25.189 | INFO     | voice_producer:generate_audio:188 - 嘗試使用 ElevenLabs...
+2025-10-16 21:44:27.449 | WARNING  | voice_producer:generate_audio_elevenlabs:43 - ElevenLabs 失敗: ApiError: headers: {'date': 'Thu, 16 Oct 2025 21:44:24 GMT', 'server': 'uvicorn', 'content-length': '171', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=31536000; includeSubDomains', 'x-trace-id': 'f00e40a5b2ac4a891720bc6466286838', 'x-region': 'us-central1', 'via': '1.1 google, 1.1 google', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 3 credits remaining, while 818 credits are required for this request.'}}
+2025-10-16 21:44:27.449 | WARNING  | voice_producer:generate_audio:199 - ✗ ElevenLabs 返回空結果
+2025-10-16 21:44:27.449 | INFO     | voice_producer:generate_audio:188 - 嘗試使用 Edge TTS...
+2025-10-16 21:44:27.514 | INFO     | voice_producer:generate_tts:62 - 嘗試使用 Edge TTS 語音: zh-TW-HsiaoChenNeural
+2025-10-16 21:44:28.360 | WARNING  | voice_producer:generate_tts:68 - 語音 zh-TW-HsiaoChenNeural 失敗: 401, message='Invalid response status', url='wss://api.msedgeservices.com/tts/cognitiveservices/websocket/v1?Ocp-Apim-Subscription-Key=6A5AA1D4EAFF4E9FB37E23D68491D6F4&ConnectionId=574aa3578a544ba982ebc1ba50226b49&Sec-MS-GEC=37A3F554DD609F6AC602A9EE359D86BA4CB14488E22750F955250CE80C894A55&Sec-MS-GEC-Version=1-140.0.3485.14'
+2025-10-16 21:44:28.361 | INFO     | voice_producer:generate_tts:62 - 嘗試使用 Edge TTS 語音: zh-CN-XiaoxiaoNeural
+2025-10-16 21:44:28.553 | WARNING  | voice_producer:generate_tts:68 - 語音 zh-CN-XiaoxiaoNeural 失敗: 401, message='Invalid response status', url='wss://api.msedgeservices.com/tts/cognitiveservices/websocket/v1?Ocp-Apim-Subscription-Key=6A5AA1D4EAFF4E9FB37E23D68491D6F4&ConnectionId=f3a61ddd7af24b188707d7df1d9aa596&Sec-MS-GEC=37A3F554DD609F6AC602A9EE359D86BA4CB14488E22750F955250CE80C894A55&Sec-MS-GEC-Version=1-140.0.3485.14'
+2025-10-16 21:44:28.555 | WARNING  | voice_producer:generate_audio:199 - ✗ Edge TTS 返回空結果
+2025-10-16 21:44:28.555 | INFO     | voice_producer:generate_audio:188 - 嘗試使用 Google TTS...
+2025-10-16 21:45:00.122 | INFO     | voice_producer:generate_audio_gtts:94 - ✓ 成功使用 Google TTS 生成音頻
+2025-10-16 21:45:07.713 | INFO     | voice_producer:post_process_audio:151 - 音頻後製完成: docs/podcast/20251017_us/daily-podcast-stk-20251017_us.mp3
+2025-10-16 21:45:07.715 | SUCCESS  | voice_producer:generate_audio:194 - ✓ 使用 Google TTS 成功生成並處理音頻
+2025-10-16 21:45:09.239 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-10-16 21:45:10.135 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-10-16 21:45:10.446 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，us 版 2025/10/17（五）
