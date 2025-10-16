@@ -1342,3 +1342,37 @@
 2025-10-15 21:43:50.608 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
 2025-10-15 21:43:51.612 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-10-15 21:43:51.858 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，us 版 2025/10/16（四）
+2025-10-16 06:45:08.129 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-10-16 06:45:08.131 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-10-16 06:45:08.344 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-10-16 06:45:08.345 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-10-16 06:45:08.611 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-10-16 06:45:08.612 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-10-16 06:45:09.084 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-10-16 06:45:09.560 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-10-16/tw_news.json
+2025-10-16 06:45:13.126 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-10-16/social_metrics.json
+2025-10-16 06:45:13.126 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 3 個標的, 3 則新聞, 品質分數: 1.0
+2025-10-16 06:45:13.134 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: ^TWII, 時間框架: daily
+2025-10-16 06:45:13.139 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^TWII: 'date'
+2025-10-16 06:45:13.139 | INFO     | strategies.god_system_strategy:backtest:77 - ^TWII 信號分佈: {1: 153, -1: 72, 0: 19}
+2025-10-16 06:45:13.139 | INFO     | strategies.god_system_strategy:backtest:78 - ^TWII 回報標準差: 0.0150
+2025-10-16 06:45:13.145 | INFO     | market_analyst:analyze_market:91 - ^TWII 市場分析完成
+2025-10-16 06:45:13.147 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: 0050.TW, 時間框架: daily
+2025-10-16 06:45:13.147 | INFO     | strategies.god_system_strategy:backtest:26 - 0050.TW 非主要交易標的，跳過回測
+2025-10-16 06:45:13.153 | INFO     | market_analyst:analyze_market:91 - 0050.TW 市場分析完成
+2025-10-16 06:45:13.155 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: 2330.TW, 時間框架: daily
+2025-10-16 06:45:13.155 | INFO     | strategies.god_system_strategy:backtest:26 - 2330.TW 非主要交易標的，跳過回測
+2025-10-16 06:45:13.161 | INFO     | market_analyst:analyze_market:91 - 2330.TW 市場分析完成
+2025-10-16 06:45:13.161 | INFO     | content_creator:generate_script_with_llm:175 - 開始嘗試使用 LLM API 生成文字稿...
+2025-10-16 06:45:13.161 | INFO     | content_creator:generate_script_with_llm:179 - 嘗試使用 Gemini API...
+2025-10-16 06:45:20.160 | INFO     | content_creator:call_gemini_api:33 - 成功使用 Gemini API 生成文字稿
+2025-10-16 06:45:20.162 | SUCCESS  | content_creator:generate_script_with_llm:182 - ✓ Gemini API 成功生成文字稿
+2025-10-16 06:45:20.163 | INFO     | voice_producer:generate_audio:170 - 讀取文字檔案成功，字數: 885
+2025-10-16 06:45:20.163 | INFO     | voice_producer:generate_audio:183 - 開始嘗試使用 TTS 服務生成音頻...
+2025-10-16 06:45:20.163 | INFO     | voice_producer:generate_audio:188 - 嘗試使用 ElevenLabs...
+2025-10-16 06:45:31.095 | INFO     | voice_producer:generate_audio_elevenlabs:36 - ✓ 成功使用 ElevenLabs 生成音頻
+2025-10-16 06:45:34.904 | INFO     | voice_producer:post_process_audio:151 - 音頻後製完成: docs/podcast/20251016_tw/daily-podcast-stk-20251016_tw.mp3
+2025-10-16 06:45:34.905 | SUCCESS  | voice_producer:generate_audio:194 - ✓ 使用 ElevenLabs 成功生成並處理音頻
+2025-10-16 06:45:36.633 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-10-16 06:45:37.589 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-10-16 06:45:37.862 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/10/16（四）
