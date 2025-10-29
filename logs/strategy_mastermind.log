@@ -3003,3 +3003,47 @@
 2025-10-28 06:50:07.083 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
 2025-10-28 06:50:08.426 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
 2025-10-28 06:50:08.709 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/10/28（二）
+2025-10-29 06:49:37.258 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_TWII.csv
+2025-10-29 06:49:37.260 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_TWII.csv
+2025-10-29 06:49:37.445 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_0050_TW.csv
+2025-10-29 06:49:37.446 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_0050_TW.csv
+2025-10-29 06:49:37.724 | INFO     | data_collector:collect_data:181 - 每日數據儲存至: data/market/daily_2330_TW.csv
+2025-10-29 06:49:37.725 | INFO     | data_collector:collect_data:186 - 每小時數據儲存至: data/market/hourly_2330_TW.csv
+2025-10-29 06:49:38.257 | ERROR    | data_collector:fetch_news:160 - 抓取新聞 https://www.theinformation.com/feed 失敗: 403 Client Error: Forbidden for url: https://www.theinformation.com/feed
+2025-10-29 06:49:38.970 | INFO     | data_collector:collect_data:206 - 新聞數據儲存至: data/news/2025-10-29/tw_news.json
+2025-10-29 06:49:42.315 | INFO     | data_collector:collect_data:238 - 情緒數據儲存至: data/sentiment/2025-10-29/social_metrics.json
+2025-10-29 06:49:42.315 | INFO     | data_collector:collect_data:252 - tw 數據收集完成: 3 個標的, 3 則新聞, 品質分數: 1.0
+2025-10-29 06:49:42.323 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: ^TWII, 時間框架: daily
+2025-10-29 06:49:42.328 | ERROR    | strategies.utils:generate_performance_chart:22 - Failed to generate performance chart for ^TWII: 'date'
+2025-10-29 06:49:42.328 | INFO     | strategies.god_system_strategy:backtest:77 - ^TWII 信號分佈: {1: 161, -1: 63, 0: 19}
+2025-10-29 06:49:42.329 | INFO     | strategies.god_system_strategy:backtest:78 - ^TWII 回報標準差: 0.0150
+2025-10-29 06:49:42.335 | INFO     | market_analyst:analyze_market:91 - ^TWII 市場分析完成
+2025-10-29 06:49:42.337 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: 0050.TW, 時間框架: daily
+2025-10-29 06:49:42.337 | INFO     | strategies.god_system_strategy:backtest:26 - 0050.TW 非主要交易標的，跳過回測
+2025-10-29 06:49:42.343 | INFO     | market_analyst:analyze_market:91 - 0050.TW 市場分析完成
+2025-10-29 06:49:42.345 | INFO     | strategies.god_system_strategy:backtest:23 - 開始回測 God System 策略: 2330.TW, 時間框架: daily
+2025-10-29 06:49:42.345 | INFO     | strategies.god_system_strategy:backtest:26 - 2330.TW 非主要交易標的，跳過回測
+2025-10-29 06:49:42.351 | INFO     | market_analyst:analyze_market:91 - 2330.TW 市場分析完成
+2025-10-29 06:49:42.351 | INFO     | content_creator:generate_script_with_llm:175 - 開始嘗試使用 LLM API 生成文字稿...
+2025-10-29 06:49:42.351 | INFO     | content_creator:generate_script_with_llm:179 - 嘗試使用 Gemini API...
+2025-10-29 06:49:43.666 | WARNING  | content_creator:call_gemini_api:39 - Gemini API 失敗: ClientError: 400 INVALID_ARGUMENT. {'error': {'code': 400, 'message': 'API key not valid. Please pass a valid API key.', 'status': 'INVALID_ARGUMENT', 'details': [{'@type': 'type.googleapis.com/google.rpc.ErrorInfo', 'reason': 'API_KEY_INVALID', 'domain': 'googleapis.com', 'metadata': {'service': 'generativelanguage.googleapis.com'}}, {'@type': 'type.googleapis.com/google.rpc.LocalizedMessage', 'locale': 'en-US', 'message': 'API key not valid. Please pass a valid API key.'}]}}
+2025-10-29 06:49:43.666 | WARNING  | content_creator:generate_script_with_llm:185 - ✗ Gemini API 返回空結果
+2025-10-29 06:49:43.666 | INFO     | content_creator:generate_script_with_llm:179 - 嘗試使用 OpenRouter API...
+2025-10-29 06:49:47.221 | WARNING  | content_creator:call_openrouter_api:72 - OpenRouter API 失敗: RateLimitError: Error code: 429 - {'error': {'message': 'Provider returned error', 'code': 429, 'metadata': {'raw': 'google/gemini-2.0-flash-exp:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations', 'provider_name': 'Google'}}, 'user_id': 'user_2zhkQVhxrIE4AXcORrv3PcKq9ho'}
+2025-10-29 06:49:47.221 | WARNING  | content_creator:generate_script_with_llm:185 - ✗ OpenRouter API 返回空結果
+2025-10-29 06:49:47.221 | INFO     | content_creator:generate_script_with_llm:179 - 嘗試使用 Groq API...
+2025-10-29 06:49:49.544 | INFO     | content_creator:call_groq_api:154 - 成功使用 Groq API 生成文字稿
+2025-10-29 06:49:49.544 | SUCCESS  | content_creator:generate_script_with_llm:182 - ✓ Groq API 成功生成文字稿
+2025-10-29 06:49:49.544 | INFO     | voice_producer:generate_audio:170 - 讀取文字檔案成功，字數: 823
+2025-10-29 06:49:49.544 | INFO     | voice_producer:generate_audio:183 - 開始嘗試使用 TTS 服務生成音頻...
+2025-10-29 06:49:49.544 | INFO     | voice_producer:generate_audio:188 - 嘗試使用 ElevenLabs...
+2025-10-29 06:49:50.325 | WARNING  | voice_producer:generate_audio_elevenlabs:43 - ElevenLabs 失敗: ApiError: headers: {'date': 'Wed, 29 Oct 2025 06:49:49 GMT', 'server': 'uvicorn', 'content-length': '171', 'content-type': 'application/json', 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'POST, PATCH, OPTIONS, DELETE, GET, PUT', 'access-control-max-age': '600', 'strict-transport-security': 'max-age=31536000; includeSubDomains', 'x-trace-id': '605cb7b008a29dee15686ea30be90fab', 'x-region': 'us-central1', 'via': '1.1 google, 1.1 google', 'alt-svc': 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'}, status_code: 401, body: {'detail': {'status': 'quota_exceeded', 'message': 'This request exceeds your quota of 10000. You have 3 credits remaining, while 412 credits are required for this request.'}}
+2025-10-29 06:49:50.325 | WARNING  | voice_producer:generate_audio:199 - ✗ ElevenLabs 返回空結果
+2025-10-29 06:49:50.325 | INFO     | voice_producer:generate_audio:188 - 嘗試使用 Edge TTS...
+2025-10-29 06:49:50.391 | INFO     | voice_producer:generate_tts:62 - 嘗試使用 Edge TTS 語音: zh-TW-HsiaoChenNeural
+2025-10-29 06:49:59.305 | INFO     | voice_producer:generate_tts:65 - ✓ 成功使用 Edge TTS (zh-TW-HsiaoChenNeural) 生成音頻
+2025-10-29 06:50:02.416 | INFO     | voice_producer:post_process_audio:151 - 音頻後製完成: docs/podcast/20251029_tw/daily-podcast-stk-20251029_tw.mp3
+2025-10-29 06:50:02.417 | SUCCESS  | voice_producer:generate_audio:194 - ✓ 使用 Edge TTS 成功生成並處理音頻
+2025-10-29 06:50:10.224 | INFO     | podcast_distributor:generate_rss:136 - ✅ 已產生 RSS Feed：docs/rss/podcast.xml
+2025-10-29 06:50:11.247 | INFO     | podcast_distributor:generate_rss:138 - RSS 上傳至 B2: https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml
+2025-10-29 06:50:11.521 | INFO     | podcast_distributor:notify_slack_enhanced:216 - 已發送增強 Slack 通知，tw 版 2025/10/29（三）
