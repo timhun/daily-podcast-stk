@@ -1,0 +1,86 @@
+{
+  "symbols": {
+    "us": ["^GSPC", "QQQ", "NVDA", "^DJI", "^IXIC", "SPY", "AAPL","GOOG","META","MSFT","TSLA","TSM", "AMZN", "ORCL", "JPM", "WMT","LLY", "^VIX"],
+    "tw": ["^TWII", "0050.TW", "2330.TW"],
+    "commodities": ["BTC-USD", "GC=F", "CL=F"]
+  },
+  "news_sources": {
+    "us": [
+      "https://feeds.bloomberg.com/technology/news.rss",
+      "https://www.theinformation.com/feed",
+      "https://www.reddit.com/r/investing/.rss"
+    ],
+    "tw": [
+      "https://tw.stock.yahoo.com/rss?category=news",
+      "https://www.theinformation.com/feed",
+      "https://www.moneydj.com/rss/feed.xml"
+    ]
+  },
+  "data_paths": {
+    "market": "data/market",
+    "charts": "data/charts",
+    "strategy": "data/strategy",
+    "news": "data/news",
+    "sentiment": "data/sentiment",
+    "podcast": "docs/podcast",
+    "rss": "docs/rss/podcast.xml",
+    "models": "data/models"
+  },
+  "b2_podcast_prefix": "daily-podcast-stk",
+  "b2_rss_prefix": "bbm", 
+  "technical_params": {
+    "rsi_window": 14,
+    "sma_window": 20,
+    "rsi_buy_threshold": 30,
+    "rsi_sell_threshold": 70,
+    "min_data_length_rsi_sma": 20,
+    "min_data_length_ml": 50
+  },
+  "strategy_params": {
+    "max_drawdown_threshold": 0.15,
+    "sharpe_annualization_daily": 252,
+    "sharpe_annualization_hourly": 1638,
+    "expected_return_annualization_daily": 252,
+    "expected_return_annualization_hourly": 1638,
+    "daily_multiplier": 1.1,
+    "hourly_multiplier": 1.05,
+    "stop_loss_ratio": 0.9,
+    "position_size": 0.1
+  },
+  "ai_optimizer": {
+    "default_ai": "grok",
+    "api_keys": {
+      "gemini": "GEMINI_API_KEY",
+      "groq": "GROQ_API_KEY"
+      }
+  },
+  "optimization": {
+    "weekday_data_period": "2y",
+    "weekend_data_period": "5y",
+    "weekday_iterations": 1,
+    "weekend_iterations": 3
+  },
+  "logging": {
+    "file": "logs/strategy_mastermind.log",
+    "rotation": "10 MB"
+  },
+  "quality_thresholds": {
+    "freshness_hours": 24,
+    "volatility_threshold": 0.05
+  },
+  "podcast": {
+    "script_length_limit": 3000,
+    "sentiment_model": "ProsusAI/finbert",
+    "tts": {
+      "model_name": "microsoft/VibeVoice-1.5B",
+      "language": "zh",
+      "speaker_id": "zh_speaker_1",
+      "sample_rate": 24000,
+      "output_format": "mp3",
+      "bitrate": "128k",
+      "channels": 2,
+      "target_sample_rate": 44100
+    }
+  }
+}
+

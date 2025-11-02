@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*venv
+# Environment variables
+.env
+
+# Generated data and logs
+data/
+logs/
+docs/podcast/
+rss/combined.xml
+log.txt
+*.log
+*.mp3
+*.csv
+*.png
+
+
+# Temporary audio files
+audio/temp.mp3.env.backup

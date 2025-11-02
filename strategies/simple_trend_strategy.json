@@ -1,0 +1,6 @@
+{
+  "ma_window": 20,
+  "vol_window": 20,
+  "breakout_price": 53.0,
+  "min_data_length": 20
+}

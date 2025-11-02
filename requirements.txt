@@ -1,0 +1,64 @@
+# 核心框架
+fastapi
+uvicorn
+pydantic
+
+# 數據處理
+pandas
+numpy
+yfinance
+requests
+beautifulsoup4
+
+# 機器學習
+scikit-learn
+torch
+transformers>=4.38.2  # Ensure a recent version with BeamSearchScorer
+matplotlib
+google-generativeai
+
+# 技術分析
+ta==0.10.2
+TA-Lib
+
+# 語音處理 (Updated section in requirements.txt)
+edge-tts
+pydub
+torch
+# TTS 服務（多重備援）
+elevenlabs
+gTTS
+pyttsx3
+
+# 雲端服務
+b2sdk
+slack-sdk
+
+# RSS/Feed
+feedgen
+feedparser
+python-dateutil
+
+# 工具套件
+python-dotenv
+loguru
+retry
+aiohttp
+asyncio
+
+# 開發工具
+pytest
+black
+flake8
+pre-commit
+
+workalendar>=17.0.0
+mutagen
+xgboost
+statsmodels
+openai
+pytz
+xai_sdk
+huggingface_hub
+groq
+google-genai

@@ -1,0 +1,18 @@
+請幫我整理依照台灣時間今天台灣證券交易所公告的台灣股市加權指數收盤的以下資訊，並以 JSON 格式輸出（不要加任何解說）：
+- date: 日期 (YYYY-MM-DD)
+- taiex: 收盤價 (close, 浮點數) 和漲跌百分比 (change_percent, 浮點數)
+- volume: 成交量 (整數，單位：億)
+- institutions: 外資 (foreign, 浮點數)、投信 (investment, 浮點數)、自營商 (dealer, 浮點數) 買賣超金額 (單位：億)
+- moving_averages: 5日均線 (ma5, 浮點數) 和 10日均線 (ma10, 浮點數)
+確保：
+1. 所有數值為有效數字（浮點數使用小數點後至少一位，例如 16510.0；整數不帶小數點）。
+2. JSON 格式完整，無多餘逗號或未閉合括號。
+3. 僅返回 JSON 內容，無額外文字或程式碼塊標記（```）。
+示例：
+{
+  "date": "2025-07-31",
+  "taiex": {"close": 23201.52, "change_percent": -0.9},
+  "volume": 3500,
+  "institutions": {"foreign": 50.0, "investment": -10.0, "dealer": 5.0},
+  "moving_averages": {"ma5": 22800.0, "ma10": 22500.0}
+}

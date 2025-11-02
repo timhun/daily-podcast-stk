@@ -1,0 +1,23 @@
+{
+  "symbols": [
+    "0050.TW", 
+    "QQQ", 
+    "^TWII", 
+    "BTC-USD", 
+    "^DJI", 
+    "GC=F", 
+    "^GSPC", 
+    "^IXIC", 
+    "SPY", 
+    "TSM", 
+    "2330.TW"
+  ],
+  "settings": {
+    "data_dir": "data",
+    "benchmark_map": {
+      "0050.TW": "^TWII",
+      "QQQ": "^IXIC"
+    },
+    "time_zone": "Asia/Taipei"
+  }
+}
