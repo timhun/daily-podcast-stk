@@ -49,7 +49,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add -f rss/ data/ logs/ docs/ strategies/
+          git add -f data/ docs/ strategies/
           # Only commit if there are changes
           git diff --staged --quiet || git commit -m "TW Podcast ${{ github.event.schedule || 'manual' }} published"
           git push
