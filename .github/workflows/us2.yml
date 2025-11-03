@@ -1,0 +1,35 @@
+name: US Podcast Pipeline
+on:
+  schedule:
+    - cron: '35 21 * * *'  # UTC 21:30 = 台灣 05:30 次日
+  workflow_dispatch:
+
+jobs:
+  produce:
+    runs-on: ubuntu-latest
+    env:
+        GROK_API_KEY: ${{ secrets.XAI_API_KEY }}
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        GROK_API_URL: ${{ secrets.GROK_API_URL }}
+        B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+        B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+        B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+        EMAIL: ${{ secrets.EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - run: pip install -r requirements.txt
+      - run: python main.py --mode us
+        
+      - run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add rss/ data/ logs/ docs/ strategies/
+          git commit -m "US Podcast ${{ github.event.schedule || 'manual' }} published" || exit 0
+          git push
