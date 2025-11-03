@@ -7,14 +7,9 @@ __pycache__/
 .env
 
 # Generated data and logs
-data/
 logs/
-docs/podcast/
-rss/combined.xml
 log.txt
 *.log
-*.mp3
-*.csv
 *.png
 
 
