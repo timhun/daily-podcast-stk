@@ -270,7 +270,7 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
 市場分析：
 {market_analysis_str or '無市場分析'}
 
-策略分析：
+策略分析： (只要談QQQ 或 0050.TW)
 {strategy_str}
 
 結尾：投資金句（選用 - 科斯托蘭尼 André Kostolany）。
