@@ -12,7 +12,8 @@
     ],
     "tw": [
       "https://tw.stock.yahoo.com/rss?category=news",
-      "https://www.theinformation.com/feed",
+      "https://techcrunch.com/category/artificial-intelligence/",
+      "https://techcrunch.com/latest/",
       "https://www.moneydj.com/rss/feed.xml"
     ]
   },
