@@ -1,0 +1,23 @@
+歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2025年12月14日。
+
+今天的市場情況，整體趨於疲弱，多數指數都有下跌的跡象。加權指數TWII跌了0.51%，而標普500指數^GSPC則跌了1.07%。NASDAQ指數QQQ跌了1.91%，而微軟的股價NVDA跌了3.27%。這些數字顯示市場目前的氣氛是悲觀的。
+
+市場情況分析，趨勢方面，TWII、^GSPC、QQQ、^DJI、^IXIC、SPY、AAPL、GOOG、TSLA、TSM、AMZN、ORCL、JPM、WMT、LLY等指數和股票都處於bullish趨勢，表示市場仍持續上升的趨勢。波動性方面，TWII的波動性僅0.77%，而GOOG的波動性則達到2.15%。這些數字代表市場波動性的大小。
+
+技術指標方面，TWII的RSI為53.12，MACD為36.31；QQQ的RSI為47.93，MACD為3.47；NVDA的RSI為39.87，MACD為-1.94；^DJI的RSI為61.96，MACD為371.10；等等。這些數字代表市場的技術指標，需要留意的。
+
+市場情緒方面，整體分數為-0.33，看漲比例為0.33。這意味著市場風氣仍然悲觀，但仍有部分投資者認為市場會漲。
+
+產業新聞方面，半導體和AI相關產業新聞比較熱鬧。Alphabet Poised for Another Paper Gain as SpaceX Valuation Jumps，Alphabet Inc. 即將錄得另一筆可觀的虛擬收益。這意味著SpaceX的估值已經達到800億美元。這個消息對Alphabet和SpaceX的股票價格將產生重大影響。
+
+Wall Street Sees AI Bubble Coming and Is Betting on What Pops It，市場上正在關注人工智能的泡沫是否會爆炸。這個消息對AI相關股票的價格將產生重大影響。
+
+Ad Agency Stocks Seen Turning AI Disruption to Their Advantage，廣告代理公司的股票被認為能夠從人工智能帶來的變革中受益。這意味著廣告代理公司的股票價格將上升。
+
+市場分析，目前市場風氣仍然悲觀，但仍有部分投資者認為市場會漲。趨勢方面，TWII、^GSPC、QQQ、^DJI、^IXIC、SPY、AAPL、GOOG、TSLA、TSM、AMZN、ORCL、JPM、WMT、LLY等指數和股票都處於bullish趨勢，表示市場仍持續上升的趨勢。
+
+策略分析，目前沒有明確的策略可以指導投資者買賣股票。但是，根據市場趨勢和技術指標，可以推測QQQ和0050的買賣策略。QQQ的趨勢是bullish，波動性是1.08%，RSI是47.93，MACD是3.47。因此，投資者可以考慮買入QQQ。0050的趨勢也是bullish，波動性是1.82%，RSI是49.77，MACD是3.55。因此，投資者可以考慮買入0050。
+
+最後，投資金句："如果你想成為百萬富翁，必須學會做出風險投資。" 這句話由科斯托蘭尼Andre Kostolany說過。投資者需要了解風險和收益之間的關係，才能做出明智的決策。
+
+本播客結束。
