@@ -123,11 +123,11 @@ def main(mode):
     # 偵錯用：印出目前在哪裡，以及目錄下有什麼
     print(f"目前工作目錄: {os.getcwd()}")
     print(f"根目錄下的檔案與資料夾: {os.listdir('.')}")
-    if os.path.exists("doc"):
-        print(f"doc 資料夾內的內容: {os.listdir('doc')}")
+    if os.path.exists("docs"):
+        print(f"doc 資料夾內的內容: {os.listdir('docs')}")
 
     # 正確的路徑寫法
-    manual_script_path = os.path.join(os.getcwd(), "doc/script.txt")
+    manual_script_path = os.path.join(os.getcwd(), "docs/script.txt")
 
     if os.path.exists(manual_script_path):
         print("成功找到手動腳本！")
