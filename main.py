@@ -120,13 +120,31 @@ def main(mode):
         market_analysis[symbol] = analyst.analyze_market(symbol)
     
     # 步驟3: 生成文字稿
+    # 1. 定義路徑
+    # 注意：如果 doc 是在專案根目錄，路徑寫 'doc/script.txt' 即可
+    manual_script_path = "doc/script.txt" 
+    
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
     script_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.txt"
     script_path = f"{podcast_dir}/{script_filename}"
+    
+    # 確保輸出目錄存在
     os.makedirs(os.path.dirname(script_path), exist_ok=True)
-    script = generate_script(market_data, mode, strategy_results, market_analysis)
+
+    # 2. 核心判斷邏輯
+    if os.path.exists(manual_script_path):
+        print(f"--- 偵測到手動稿件: {manual_script_path} ---")
+        with open(manual_script_path, 'r', encoding='utf-8') as f:
+            script = f.read()
+    else:
+        print(f"--- 未發現手動稿件，執行自動生成流程 ---")
+        script = generate_script(market_data, mode, strategy_results, market_analysis)
+
+    # 3. 統一寫入到當天有日期的正式路徑 (確保後續 TTS 或上傳流程能找到檔案)
     with open(script_path, 'w', encoding='utf-8') as f:
         f.write(script)
+    
+    print(f"文字稿已準備就緒，存檔於: {script_path}")
 
     # 步驟4: 生成音頻
     audio_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.mp3"
