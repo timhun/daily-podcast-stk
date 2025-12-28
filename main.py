@@ -120,9 +120,19 @@ def main(mode):
         market_analysis[symbol] = analyst.analyze_market(symbol)
     
     # 步驟3: 生成文字稿
-    # 1. 定義路徑
-    # 注意：如果 doc 是在專案根目錄，路徑寫 'doc/script.txt' 即可
-    manual_script_path = "doc/script.txt" 
+    # 偵錯用：印出目前在哪裡，以及目錄下有什麼
+    print(f"目前工作目錄: {os.getcwd()}")
+    print(f"根目錄下的檔案與資料夾: {os.listdir('.')}")
+    if os.path.exists("doc"):
+        print(f"doc 資料夾內的內容: {os.listdir('doc')}")
+
+    # 正確的路徑寫法
+    manual_script_path = os.path.join(os.getcwd(), "doc/script.txt")
+
+    if os.path.exists(manual_script_path):
+        print("成功找到手動腳本！")
+    else:
+        print(f"仍找不到檔案，路徑嘗試為: {manual_script_path}")
     
     podcast_dir = f"{config['data_paths']['podcast']}/{today}_{mode}"
     script_filename = f"{config['b2_podcast_prefix']}-{today}_{mode}.txt"
