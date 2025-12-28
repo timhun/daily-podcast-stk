@@ -1,7 +1,7 @@
 name: TW Podcast Pipeline
 on:
-  #schedule:
-  # - cron: '10 6 * * 1-6'  # UTC 06:10 = 台灣 14:10, 週一-六
+  schedule:
+   - cron: '10 6 * * 1-6'  # UTC 06:10 = 台灣 14:10, 週一-六
   workflow_dispatch:
 
 jobs:
