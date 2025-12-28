@@ -18,7 +18,7 @@ def generate_audio_elevenlabs(text, output_path):
         from elevenlabs import save
         
         VOICE_IDS = {
-            "adam": "pNInz6obpgDQGcFmaJgB",
+            "adam": "fQj4gJSexpu8RDE2Ii5m",
         }
         
         client = ElevenLabs(api_key=api_key)
