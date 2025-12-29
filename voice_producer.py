@@ -18,16 +18,22 @@ def generate_audio_elevenlabs(text, output_path):
         from elevenlabs import save
         
         VOICE_IDS = {
-            "adam": "fQj4gJSexpu8RDE2Ii5m",
+            "Kevin Tu": "BrbEfHMQu0fyclQR7lfh",
         }
         
         client = ElevenLabs(api_key=api_key)
-        voice_id = VOICE_IDS["adam"]
+        voice_id = VOICE_IDS["Kevin Tu"]
         
         audio = client.text_to_speech.convert(
             voice_id=voice_id,
             text=text,
-            model_id="eleven_turbo_v2"
+            model_id="eleven_multilingual_v2"
+            voice_settings={
+                "stability": 0.5,
+                "similarity_boost": 0.8,
+                "style": 0.0,
+                "use_speaker_boost": True
+            }
         )
         
         temp_path = output_path + ".tmp.mp3"
