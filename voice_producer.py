@@ -57,8 +57,9 @@ def generate_audio_edge_tts(text, output_path):
         async def generate_tts():
             # 使用穩定的語音選項
             voices = [
-                "zh-TW-HsiaoChenNeural",  # 台灣中文女聲
-                "zh-CN-XiaoxiaoNeural",  # 中國普通話女聲（更穩定）
+                "zh-TW-YunJheNeural",    # 台灣中文 - 雲哲 (成熟、穩重男聲)
+                "zh-TW-HsiaoChenNeural", # 台灣中文 - 曉臻 (女聲備援)
+                "zh-TW-HsiaoYuNeural",   # 台灣中文 - 曉雨 (女聲備援)
             ]
             
             temp_path = output_path + ".tmp.mp3"
@@ -66,7 +67,7 @@ def generate_audio_edge_tts(text, output_path):
             for voice in voices:
                 try:
                     logger.info(f"嘗試使用 Edge TTS 語音: {voice}")
-                    communicate = edge_tts.Communicate(text, voice)
+                    communicate = edge_tts.Communicate(text, voice, rate="+15%")
                     await communicate.save(temp_path)
                     logger.info(f"✓ 成功使用 Edge TTS ({voice}) 生成音頻")
                     return temp_path
