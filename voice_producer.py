@@ -18,11 +18,11 @@ def generate_audio_elevenlabs(text, output_path):
         from elevenlabs import save
         
         VOICE_IDS = {
-            "Kevin Tu": "BrbEfHMQu0fyclQR7lfh",
+            "Yu": "fQj4gJSexpu8RDE2Ii5m",
         }
         
         client = ElevenLabs(api_key=api_key)
-        voice_id = VOICE_IDS["Kevin Tu"]
+        voice_id = VOICE_IDS["Yu"]
         
         audio = client.text_to_speech.convert(
             voice_id=voice_id,
