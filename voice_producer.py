@@ -27,7 +27,7 @@ def generate_audio_elevenlabs(text, output_path):
         audio = client.text_to_speech.convert(
             voice_id=voice_id,
             text=text,
-            model_id="eleven_multilingual_v2"
+            model_id="eleven_multilingual_v2",
             voice_settings={
                 "stability": 0.5,
                 "similarity_boost": 0.8,
