@@ -1,7 +1,7 @@
 name: US Podcast Pipeline
 on:
-  schedule:
-   - cron: '35 21 * * *'  # UTC 21:30 = 台灣 05:30 次日
+  #schedule:
+   #- cron: '35 21 * * *'  # UTC 21:30 = 台灣 05:30 次日
   workflow_dispatch:
 
 jobs:
