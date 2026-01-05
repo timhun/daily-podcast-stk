@@ -166,9 +166,9 @@ def generate_rss(date, mode, script, audio_url, strategy_results):
     # 使用腳本作為描述並附加策略摘要
     #full_description = FIXED_DESCRIPTION + script[:200] + "..." if script else FIXED_DESCRIPTION
     full_description = FIXED_DESCRIPTION 
-    digest = build_strategy_digest(strategy_results, mode)
-    if digest:
-        full_description = f"{full_description}\n\n策略戰報\n{digest}"
+    #digest = build_strategy_digest(strategy_results, mode)
+    #if digest:
+    #    full_description = f"{full_description}\n\n策略戰報\n{digest}"
 
     # 新增集數
     fe = fg.add_entry()
