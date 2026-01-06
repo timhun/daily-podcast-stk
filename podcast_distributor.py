@@ -35,7 +35,7 @@ FIXED_DESCRIPTION = """(測試階段)一個適合上班族在最短時間做短�
 提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
 \n\n
 🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！\n\n
-📮 主持人：幫幫忙"""
+📮 主持人：幫幫忙  \n\n  YT頻道\n https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5"""
 
 
 def summarize_symbol_strategy(symbol, result):
@@ -165,7 +165,7 @@ def generate_rss(date, mode, script, audio_url, strategy_results):
 
     # 使用腳本作為描述並附加策略摘要
     #full_description = FIXED_DESCRIPTION + script[:200] + "..." if script else FIXED_DESCRIPTION
-    full_description = FIXED_DESCRIPTION + "\n\nYT頻道\n https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5"
+    full_description = FIXED_DESCRIPTION 
     #digest = build_strategy_digest(strategy_results, mode)
     #if digest:
     #    full_description = f"{full_description}\n\n策略戰報\n{digest}"
