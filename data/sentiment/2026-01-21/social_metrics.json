@@ -1,14 +1,59 @@
 {
-  "overall_score": -0.898179292678833,
-  "bullish_ratio": 0.0,
+  "overall_score": 0.14439513285954794,
+  "bullish_ratio": 0.6666666666666666,
   "symbols": {
-    "^TWII": {
+    "^GSPC": {
       "sentiment_score": 0.0
     },
-    "0050.TW": {
+    "QQQ": {
       "sentiment_score": 0.0
     },
-    "2330.TW": {
+    "NVDA": {
+      "sentiment_score": 0.0
+    },
+    "^DJI": {
+      "sentiment_score": 0.0
+    },
+    "^IXIC": {
+      "sentiment_score": 0.0
+    },
+    "SPY": {
+      "sentiment_score": 0.0
+    },
+    "AAPL": {
+      "sentiment_score": 0.0
+    },
+    "GOOG": {
+      "sentiment_score": 0.0
+    },
+    "META": {
+      "sentiment_score": 0.0
+    },
+    "MSFT": {
+      "sentiment_score": 0.0
+    },
+    "TSLA": {
+      "sentiment_score": 0.0
+    },
+    "TSM": {
+      "sentiment_score": 0.0
+    },
+    "AMZN": {
+      "sentiment_score": 0.0
+    },
+    "ORCL": {
+      "sentiment_score": 0.0
+    },
+    "JPM": {
+      "sentiment_score": 0.0
+    },
+    "WMT": {
+      "sentiment_score": 0.0
+    },
+    "LLY": {
+      "sentiment_score": 0.0
+    },
+    "^VIX": {
       "sentiment_score": 0.0
     }
   }
