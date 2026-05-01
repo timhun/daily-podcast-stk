@@ -1,0 +1,17 @@
+歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2026年05月01日。
+
+今天我們來看一下市場的走勢。加權指數TWII收盤7230.12，漲跌0.29%。納斯達克指數QQQ收盤674.15，漲跌0.96%。英國石油公司NVDA收盤198.45，漲跌-0.56%。道瓊指數^DJI收盤49499.27，漲跌-0.31%。科技業指數^IXIC收盤25114.44，漲跌0.89%。SPDR S&P 500 ETF Trust SPY收盤720.65，漲跌0.28%。蘋果公司AAPL收盤280.14，漲跌3.24%。谷歌公司GOOG收盤383.22，漲跌0.34%。META Platforms公司META收盤608.74，漲跌-0.52%。微軟公司MSFT收盤414.44，漲跌1.63%。特斯拉公司TSLA收盤390.82，漲跌2.41%。台積電公司TSM收盤397.67，漲跌0.41%。阿馬臻公司AMZN收盤268.26，漲跌1.21%。甲骨文公司ORCL收盤171.83，漲跌6.47%。金磚銀行集團JPM收盤312.47，漲跌-0.24%。沃爾瑪公司WMT收盤131.60，漲跌-0.25%。伊利公司LLY收盤963.33，漲跌3.07%。威脅指數^VIX收盤16.99，漲跌0.59%。
+
+今天我們來看一下產業動態。首先是半導體產業。EBay Soars on Report That GameStop Is Preparing a Takeover Bid，EBay公司股價大幅上漲13%，因為Wall Street Journal報導GameStop公司準備對EBay公司進行收購。
+
+接下來是AI產業。Apple Raises Mac Mini’s Starting Price to $799 After AI Frenzy Drains Supply，Apple公司將Mac Mini的起售價從$599提高到$799，原因是AI需求大幅增加，造成供應鏈斷裂。
+
+今天我們來看一下市場情緒。整體分數是-0.68，看漲比例是0.00。
+
+今天我們來看一下市場分析。加權指數TWII趨勢是BULLISH，波動性是0.75%。RSI是71.18，MACD是127.85。道瓊指數^DJI趨勢是BULLISH，波動性是0.89%。RSI是62.75，MACD是546.13。科技業指數^IXIC趨勢是BULLISH，波動性是0.99%。RSI是72.50，MACD是667.85。SPDR S&P 500 ETF Trust SPY趨勢是BULLISH，波動性是0.75%。RSI是71.67，MACD是12.91。蘋果公司AAPL趨勢是BULLISH，波動性是1.65%。RSI是66.44，MACD是4.36。谷歌公司GOOG趨勢是BULLISH，波動性是2.46%。RSI是82.77，MACD是16.31。META Platforms公司META趨勢是BEARISH，波動性是2.96%。RSI是40.70，MACD是6.81。微軟公司MSFT趨勢是BEARISH，波動性是2.15%。RSI是54.50，MACD是8.49。特斯拉公司TSLA趨勢是BEARISH，波動性是2.50%。RSI是56.14，MACD是0.76。台積電公司TSM趨勢是BULLISH，波動性是2.48%。RSI是63.44，MACD是12.89。阿馬臻公司AMZN趨勢是BEARISH，波動性是1.74%。RSI是78.12，MACD是12.55。甲骨文公司ORCL趨勢是BEARISH，波動性是4.29%。RSI是56.69，MACD是4.64。金磚銀行集團JPM趨勢是BEARISH，波動性是1.25%。RSI是58.39，MACD是3.98。沃爾瑪公司WMT趨勢是BULLISH，波動性是1.77%。RSI是60.96，MACD是1.55。伊利公司LLY趨勢是BULLISH，波動性是2.89%。RSI是57.89，MACD是-9.79。威脅指數^VIX趨勢是BULLISH，波動性是5.92%。RSI是38.61，MACD是-1.49。
+
+今天我們來看一下策略分析。加權指數TWII的最佳策略是god_system，預期回報是0.00%，訊號是NEUTRAL。QQQ的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。NVDA的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。^DJI的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。^IXIC的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。SPY的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。AAPL的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。GOOG的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。META的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。MSFT的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。TSLA的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。TSM的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。AMZN的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。ORCL的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。JPM的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。WMT的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。LLY的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。^VIX的最佳策略也是god_system，預期回報也是0.00%，訊號也是NEUTRAL。
+
+今天的投資金句是："投資是為了未來，而不是為了今天。"
+
+最後，我們來看一下QQQ和0050的買賣策略和大盤多空方向。QQQ的趨勢是BULLISH，看漲比例是0.00%，因此我們建議買QQQ。0050的趨勢是BULLISH，看漲比例是0.00%，因此我們建議買0050。整體而言，大盤趨勢是BULLISH，因此我們建議投資者多買股票。
