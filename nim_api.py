@@ -175,12 +175,12 @@ MODELS = {
 
 # 任務類型 → 推薦模型
 TASK_MODEL_MAP = {
-    "quick": ["llama-3.1-8b", "grok-beta", "openrouter-gemini"],
-    "medium": ["llama-3.1-70b", "llama-3.3-70b", "gpt-4o-mini"],
+    "quick": ["llama-3.3-70b", "qwen-3.5", "llama-3.1-8b", "grok-beta"],
+    "medium": ["llama-3.3-70b", "llama-3.1-70b", "deepseek-v3.2", "gpt-4o-mini"],
     "deep": ["glm-5.1", "deepseek-v3.2", "grok-4"],
     "script": ["llama-3.3-70b", "glm-5.1"],  # Podcast 腳本生成
     "strategy": ["glm-5.1", "deepseek-v3.2"],  # 策略分析
-    "json": ["llama-3.3-70b", "grok-4"],  # JSON 输出
+    "json": ["llama-3.3-70b", "qwen-3.5", "grok-4"],  # JSON 输出
 }
 
 # Provider 優先順序（按成本效益）
