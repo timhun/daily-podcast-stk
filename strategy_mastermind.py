@@ -33,8 +33,6 @@ class StrategyEngine:
         self.api_key = os.getenv("GROK_API_KEY")
         self.models = {}
         self.ai_config = config.get('ai_optimizer', {'default_ai': 'grok'})
-        self.gemini_model = None
-        self.groq_client = None
         self._load_strategies()
         # NIM API 統一管理，不需要個別初始化 client
         logger.info(f"NIM API 可用模型: {list(list_available_models().keys())[:5]}...")
@@ -76,27 +74,6 @@ class StrategyEngine:
             except json.JSONDecodeError as e:
                 logger.error(f"Invalid JSON in {path}: {e}")
         return None
-
-    def _init_ai_clients(self):
-        """Initialize AI clients with fallback"""
-        default_ai = self.ai_config.get('default_ai', 'grok')
-        if default_ai == 'gemini' and genai is not None:
-            try:
-                genai.configure(api_key=os.getenv('GEMINI_API_KEY') or self.ai_config['api_keys'].get('gemini'))
-                self.gemini_model = genai.GenerativeModel('gemini-1.5-flash')
-                logger.info("Gemini AI client initialized")
-            except Exception as e:
-                logger.error(f"Failed to initialize Gemini: {e}")
-                self.gemini_model = None
-        elif default_ai == 'groq' and Groq is not None:
-            try:
-                self.groq_client = Groq(api_key=os.getenv('GROQ_API_KEY') or self.ai_config['api_keys'].get('groq'))
-                logger.info("Groq AI client initialized")
-            except Exception as e:
-                logger.error(f"Failed to initialize Groq: {e}")
-                self.groq_client = None
-        else:
-            logger.info("Defaulting to Grok AI client")
 
     def run_strategy_tournament(self, symbol, data, timeframe='daily', index_symbol=None):
         """Run strategy backtests"""
@@ -153,38 +130,20 @@ class StrategyEngine:
                            f"Sharpe={god_result['sharpe_ratio']:.2f}, "
                            f"Max Drawdown={god_result['max_drawdown']:.2f}, "
                            f"Expected Return={god_result['expected_return']:.2f}, "
-                           f"Signal={god_result['signals']['position']}")
+f"Signal={god_result['signals']['position']}")
 
     def optimize_with_ai(self, results, strategy_name, extended_data=None):
-        """General AI optimization, supports Grok/Gemini/Groq with fallback"""")
-
-    def optimize_with_ai(self, results, strategy_name, extended_data=None):
-        """General AI optimization, supports Grok/Gemini/Groq with fallback"""
-        default_ai = self.ai_config.get('default_ai', 'grok')
+        """AI optimization via NIM API — auto-select best model"""
         prompt = self._build_optimization_prompt(results, strategy_name, extended_data)
-
-        if default_ai == 'gemini' and self.gemini_model:
-            try:
-                response = self.gemini_model.generate_content(prompt)
-                return json.loads(response.text.strip('```json\n').strip('```\n'))
-            except Exception as e:
-                logger.error(f"Gemini optimization failed: {e}")
-                return self.optimize_with_grok(symbol=results.get('symbol', 'unknown'), results=results, timeframe='daily', best_results=results, index_symbol='^TWII')
-        elif default_ai == 'groq' and self.groq_client:
-            try:
-                chat_completion = self.groq_client.chat.completions.create(
-                    messages=[{"role": "user", "content": prompt}],
-                    model="llama3-8b-8192",
-                    temperature=0.7
-                )
-                response_text = chat_completion.choices[0].message.content
-                return json.loads(response_text.strip('```json\n').strip('```\n'))
-            except Exception as e:
-                logger.error(f"Groq optimization failed: {e}")
-                return self.optimize_with_grok(symbol=results.get('symbol', 'unknown'), results=results, timeframe='daily', best_results=results, index_symbol='^TWII')
-        else:
-            logger.warning(f"No valid AI for {default_ai}, falling back to Grok")
-            return self.optimize_with_grok(symbol=results.get('symbol', 'unknown'), results=results, timeframe='daily', best_results=results, index_symbol='^TWII')
+        
+        # 使用 NIM API 進行優化
+        result = ask_nim_json(prompt, task_type="json")
+        if result:
+            return result
+        
+        logger.warning("NIM JSON 優化失敗，返回基礎結果")
+        return self.optimize_with_grok(symbol=results.get('symbol', 'unknown'), results=results, 
+                                       timeframe='daily', best_results=results, index_symbol='^TWII')
 
     def _build_optimization_prompt(self, results, strategy_name, extended_data):
         """Build AI optimization prompt"""
@@ -257,7 +216,7 @@ class StrategyEngine:
         ]
         prompt = '\n'.join(prompt_lines)
         try:
-            optimized = ask_grok_json(prompt, role="user", model=os.getenv("GROK_MODEL", "grok-4"))
+            optimized = ask_nim_json(prompt, task_type="json")
             return optimized
         except Exception as e:
             logger.error(f"Grok optimization failed: {e}")
