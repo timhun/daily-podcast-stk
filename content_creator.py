@@ -3,191 +3,36 @@ import json
 from loguru import logger
 import datetime
 
-# 支援多種 LLM 供應商
-XAI_API_KEY = os.getenv("XAI_API_KEY")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+# 新的統一 NIM API（支援多 provider 自動 failover）
+from nim_api import call_nim, optimize_script_with_nim
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
     config = json.load(f)
 
-def call_gemini_api(prompt):
-    """呼叫 Google Gemini API"""
-    if not GEMINI_API_KEY:
-        logger.warning("GEMINI_API_KEY 未設置")
-        return None
-    
-    try:
-        from google import genai
-        
-        client = genai.Client(api_key=GEMINI_API_KEY)
-        
-        response = client.models.generate_content(
-            model="gemini-2.0-flash-exp",
-            contents=prompt
-        )
-        
-        logger.info("成功使用 Gemini API 生成文字稿")
-        return response.text
-    except ImportError as e:
-        logger.warning(f"Gemini API 導入失敗: {e}")
-        return None
-    except Exception as e:
-        logger.warning(f"Gemini API 失敗: {type(e).__name__}: {str(e)}")
-        return None
-
-def call_openrouter_api(prompt):
-    """呼叫 OpenRouter API"""
-    if not OPENROUTER_API_KEY:
-        logger.warning("OPENROUTER_API_KEY 未設置")
-        return None
-    
-    try:
-        from openai import OpenAI
-        
-        client = OpenAI(
-            api_key=OPENROUTER_API_KEY,
-            base_url="https://openrouter.ai/api/v1"
-        )
-        
-        response = client.chat.completions.create(
-            model="google/gemini-2.0-flash-exp:free",  # 使用免費的 Gemini 模型
-            messages=[
-                {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.7,
-            max_tokens=2000,
-            timeout=120
-        )
-        logger.info("成功使用 OpenRouter API 生成文字稿")
-        return response.choices[0].message.content
-    except ImportError as e:
-        logger.warning(f"OpenRouter API 導入失敗: {e}")
-        return None
-    except Exception as e:
-        logger.warning(f"OpenRouter API 失敗: {type(e).__name__}: {str(e)}")
-        return None
-
-def call_xai_api(prompt):
-    """呼叫 xAI Grok API"""
-    if not XAI_API_KEY:
-        logger.warning("XAI_API_KEY 未設置")
-        return None
-    
-    try:
-        from openai import OpenAI
-        
-        client = OpenAI(
-            api_key=XAI_API_KEY,
-            base_url="https://api.x.ai/v1"
-        )
-        response = client.chat.completions.create(
-            model="grok-beta",
-            messages=[
-                {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.7,
-            max_tokens=2000,
-            timeout=120
-        )
-        logger.info("成功使用 xAI API 生成文字稿")
-        return response.choices[0].message.content
-    except ImportError as e:
-        logger.warning(f"xAI API 導入失敗: {e}")
-        return None
-    except Exception as e:
-        logger.warning(f"xAI API 失敗: {type(e).__name__}: {str(e)}")
-        return None
-
-def call_openai_api(prompt):
-    """呼叫 OpenAI API"""
-    if not OPENAI_API_KEY:
-        logger.warning("OPENAI_API_KEY 未設置")
-        return None
-    
-    try:
-        from openai import OpenAI
-        
-        client = OpenAI(api_key=OPENAI_API_KEY, timeout=120)
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.7,
-            max_tokens=2000
-        )
-        logger.info("成功使用 OpenAI API 生成文字稿")
-        return response.choices[0].message.content
-    except ImportError as e:
-        logger.warning(f"OpenAI API 導入失敗: {e}")
-        return None
-    except Exception as e:
-        logger.warning(f"OpenAI API 失敗: {type(e).__name__}: {str(e)}")
-        return None
-
-def call_groq_api(prompt):
-    """呼叫 Groq API"""
-    if not GROQ_API_KEY:
-        logger.warning("GROQ_API_KEY 未設置")
-        return None
-    
-    try:
-        from groq import Groq
-        
-        client = Groq(api_key=GROQ_API_KEY)
-        response = client.chat.completions.create(
-            model="llama-3.1-8b-instant",
-            messages=[
-                {"role": "system", "content": "你是一位專業的投資播客主播，擅長用親和的語氣分析市場動態。"},
-                {"role": "user", "content": prompt}
-            ],
-            temperature=0.7,
-            max_tokens=2000
-        )
-        logger.info("成功使用 Groq API 生成文字稿")
-        return response.choices[0].message.content
-    except ImportError as e:
-        logger.warning(f"Groq API 導入失敗: {e}")
-        return None
-    except Exception as e:
-        logger.warning(f"Groq API 失敗: {type(e).__name__}: {str(e)}")
-        return None
+# ============================================================================
+# 舊的多 Provider 函數已移除
+# 統一使用 nim_api.py 的 call_nim() 函數
+# 支援自動 failover、任務分類選模型、速率限制
+# ============================================================================
 
 def generate_script_with_llm(prompt):
-    """嘗試使用多 LLM 生成文字稿"""
+    """使用 NIM API 生成文字稿（自動選擇最佳模型）"""
+    logger.info("開始使用 NIM API 生成文字稿...")
     
-    # 定義 API 順序（按優先級）
-    llm_configs = [
-        ("Gemini", call_gemini_api),
-        ("OpenRouter", call_openrouter_api),
-        ("Groq", call_groq_api),
-        ("OpenAI", call_openai_api),
-        ("xAI", call_xai_api)
-    ]
+    # 使用 script 任務類型，自動選擇適合的模型
+    result = call_nim(
+        prompt=prompt,
+        task_type="script",
+        temperature=0.7,
+        max_tokens=3000
+    )
     
-    logger.info("開始嘗試使用 LLM API 生成文字稿...")
+    if result:
+        logger.success("✓ NIM API 成功生成文字稿")
+        return result
     
-    for name, func in llm_configs:
-        try:
-            logger.info(f"嘗試使用 {name} API...")
-            result = func(prompt)
-            if result:
-                logger.success(f"✓ {name} API 成功生成文字稿")
-                return result
-            else:
-                logger.warning(f"✗ {name} API 返回空結果")
-        except Exception as e:
-            logger.error(f"✗ {name} API 異常: {type(e).__name__}: {str(e)}")
-            continue
-    
-    logger.error("所有 LLM API 皆不可用")
+    logger.error("NIM API 失敗")
     return None
 
 def generate_script(market_data, mode, strategy_results, market_analysis):

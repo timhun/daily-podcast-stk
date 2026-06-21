@@ -2,7 +2,6 @@ import json
 import os
 from datetime import datetime
 from loguru import logger
-from scripts.grok_api import ask_grok_json
 from copy import deepcopy
 from strategies.technical_strategy import TechnicalStrategy
 from strategies.ml_strategy import MLStrategy
@@ -19,16 +18,8 @@ from threading import Thread
 import schedule
 import time
 
-try:
-    import google.generativeai as genai
-except ImportError:
-    genai = None
-    logger.warning("google.generativeai not installed. Gemini unavailable.")
-try:
-    from groq import Groq
-except ImportError:
-    Groq = None
-    logger.warning("groq not installed. Groq unavailable.")
+# 統一 NIM API
+from nim_api import call_nim, ask_nim_json, list_available_models
 
 # Load config.json
 with open('config.json', 'r', encoding='utf-8') as f:
@@ -45,7 +36,8 @@ class StrategyEngine:
         self.gemini_model = None
         self.groq_client = None
         self._load_strategies()
-        self._init_ai_clients()
+        # NIM API 統一管理，不需要個別初始化 client
+        logger.info(f"NIM API 可用模型: {list(list_available_models().keys())[:5]}...")
 
     def _load_strategies(self):
         """Load strategies, prioritize optimized params"""
