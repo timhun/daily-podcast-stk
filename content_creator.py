@@ -5,6 +5,16 @@ import datetime
 
 # 新的統一 NIM API（支援多 provider 自動 failover）
 from nim_api import call_nim, optimize_script_with_nim
+from pathlib import Path
+
+# Prompt 優化器整合
+try:
+    from auto_prompt_optimizer import PromptOptimizer
+    _optimizer = PromptOptimizer()
+    _USE_OPTIMIZED_PROMPT = True
+except ImportError:
+    _USE_OPTIMIZED_PROMPT = False
+    _optimizer = None
 
 # 載入 config.json
 with open('config.json', 'r', encoding='utf-8') as f:
