@@ -23,7 +23,7 @@ logger = logging.getLogger("prompt_optimizer")
 # 預設路徑
 PODCAST_DIR = Path("/home/bbm/podcast")
 PROMPT_DIR = PODCAST_DIR / "prompt_versions"
-PROMPT_DIR.mkdir(exist_ok=True)
+PROMPT_DIR.mkdir(parents=True, exist_ok=True)
 
 class PromptOptimizer:
     """自動 Prompt 優化器"""
