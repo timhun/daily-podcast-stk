@@ -20,11 +20,10 @@ from nim_api import call_nim
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("prompt_optimizer")
 
-# 預設路徑
-PODCAST_DIR = Path("/home/bbm/podcast")
+# 預設路徑 - 使用相對路徑或環境變數，支援 GitHub Actions
+PODCAST_DIR = Path(os.environ.get("PODCAST_DIR", "/home/bbm/podcast"))
 PROMPT_DIR = PODCAST_DIR / "prompt_versions"
 PROMPT_DIR.mkdir(parents=True, exist_ok=True)
-
 class PromptOptimizer:
     """自動 Prompt 優化器"""
     
