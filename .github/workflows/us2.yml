@@ -17,6 +17,7 @@ jobs:
         SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
         SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
         EMAIL: ${{ secrets.EMAIL }}
+        PODCAST_DIR: ${{ github.workspace }}  
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v4
