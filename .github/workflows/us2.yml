@@ -1,37 +1,60 @@
 name: US Podcast Pipeline
 on:
   schedule:
-   - cron: '35 21 * * *'  # UTC 21:30 = 台灣 05:30 次日
+   - cron: '35 21 * * *'  # UTC 21:35 = 台灣 05:35 次日
   workflow_dispatch:
 
 jobs:
   produce:
     runs-on: ubuntu-latest
     env:
-        GROK_API_KEY: ${{ secrets.XAI_API_KEY }}
-        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        GROK_API_URL: ${{ secrets.GROK_API_URL }}
-        B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-        B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
-        B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-        SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-        EMAIL: ${{ secrets.EMAIL }}
-        PODCAST_DIR: ${{ github.workspace }}  
+      # Podcast 路徑設定（支援 GitHub Actions 環境）
+      PODCAST_DIR: ${{ github.workspace }}
+      # LLM API Keys (NIM API 使用 NVIDIA_API_KEY)
+      NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+      XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+      GROK_API_KEY: ${{ secrets.XAI_API_KEY }}
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      GROK_API_URL: ${{ secrets.GROK_API_URL }}
+      # Backblaze B2 儲存
+      B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+      B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+      B2_BUCKET_NAME: ${{ secrets.B2_BUCKET_NAME }}
+      # Slack 通知
+      SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
+      # TTS
+      ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+      # 其他
+      EMAIL: ${{ secrets.EMAIL }}
     steps:
       - uses: actions/checkout@v4
+      
+      - name: Debug - Check environment
+        run: |
+          echo "PODCAST_DIR=$PODCAST_DIR"
+          echo "Current directory: $(pwd)"
+          echo "Workspace contents:"
+          ls -la $PODCAST_DIR/
+      
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
+      
       - name: Install ffmpeg
         run: sudo apt-get update && sudo apt-get install -y ffmpeg
-      - run: pip install -r requirements.txt
-      - run: python main.py --mode us
-        
-      - run: |
+      
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Run US Podcast
+        run: python main.py --mode us
+      
+      - name: Commit and push results
+        run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add -f data/ docs/ strategies/
           # Only commit if there are changes
-          git diff --staged --quiet || git commit -m "US Podcast ${{ github.event.schedule || 'manual' }} published"
+          git diff --staged --quiet || git commit -m "US Podcast $(date -u '+%') published"
           git push
