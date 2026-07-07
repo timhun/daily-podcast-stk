@@ -1,0 +1,68 @@
+歡迎收聽《幫幫忙說AI投資》，我是幫幫忙。今天是2026年07月07日。
+
+讓我們來看看今天的市場狀況。^GSPC: 收盤 7503.85, 漲跌 -0.45%
+QQQ: 收盤 709.43, 漲跌 -1.85%
+NVDA: 收盤 196.93, 漲跌 0.71%
+^DJI: 收盤 52925.15, 漲跌 -0.25%
+^IXIC: 收盤 25818.69, 漲跌 -1.16%
+SPY: 收盤 747.71, 漲跌 -0.48%
+AAPL: 收盤 310.66, 漲跌 -0.64%
+GOOG: 收盤 363.62, 漲跌 -0.35%
+META: 收盤 615.58, 漲跌 2.55%
+MSFT: 收盤 388.84, 漲跌 0.54%
+TSLA: 收盤 402.90, 漲跌 -4.02%
+TSM: 收盤 432.57, 漲跌 -4.25%
+AMZN: 收盤 245.98, 漲跌 0.75%
+ORCL: 收盤 141.60, 漲跌 -1.50%
+JPM: 收盤 339.22, 漲跌 0.44%
+WMT: 收盤 111.54, 漲跌 0.80%
+LLY: 收盤 1235.56, 漲跌 2.96%
+^VIX: 收盤 16.13, 漲跌 3.60%
+
+在產業動態方面，新聞: Billionaires Arrive for the Annual Sun Valley Conference - Billionaires descend today on Sun Valley, Idaho, for the Allen & Co. annual gathering of media, technology and finance moguls. Some of the attendees include Hank Paulson, David Zaslav, Neal Mohan and Barry Diller. (Source: Bloomberg)
+新聞: Chip Stocks Tumble on AI Anxiety | The Close 7/7/2026 - Bloomberg Television brings you the latest news and analysis leading up to the final minutes and seconds before and after the closing bell on Wall Street. Today's guests are Cboe Global Markets VP, Head of Derivatives Market Intelligence Mandy Xu, TeraWulf Chairman & CEO Paul Prager, CFRA Research Equity Research Analyst Keith Snyder, Former NATO Ambassador Kay Bailey Hutchison, JPMorgan Asset Management Global Market Strategist Jordan Jackson, Bernstein Research US Semiconductors Senior Analyst Stacy Rasgon, American Century Investments CEO Jonathan Thomas, Neuberger Private Markets Global Head Tony Tutrone, & Spring Health CEO & Co-Founder April Koh. (Source: Bloomberg)
+新聞: Amazon’s New Bonds Get Cooler Reception as AI Debt Floods Market - When Amazon.com Inc. sold its biggest ever bond earlier this year, it was inundated with investor orders amid hype about the artificial intelligence boom. This time around there’s less fanfare.
+
+市場情緒: 整體分數 -0.88, 看漲比例 0.00
+
+市場分析顯示，^GSPC: 趨勢 BULLISH, 波動性 0.94%, ^GSPC 市場分析：趨勢 BULLISH，波動性 0.94%，RSI 55.40，MACD 25.49。
+QQQ: 趨勢 BULLISH, 波動性 1.97%, QQQ 市場分析：趨勢 BULLISH，波動性 1.97%，RSI 47.25，MACD 2.06。
+NVDA: 趨勢 BULLISH, 波動性 2.13%, NVDA 市場分析：趨勢 BULLISH，波動性 2.13%，RSI 43.53，MACD -4.01。
+^DJI: 趨勢 BULLISH, 波動性 0.76%, ^DJI 市場分析：趨勢 BULLISH，波動性 0.76%，RSI 68.88，MACD 628.30。
+^IXIC: 趨勢 BULLISH, 波動性 1.55%, ^IXIC 市場分析：趨勢 BULLISH，波動性 1.55%，RSI 48.72，MACD -12.83。
+SPY: 趨勢 BULLISH, 波動性 1.00%, SPY 市場分析：趨勢 BULLISH，波動性 1.00%，RSI 55.28，MACD 2.70。
+AAPL: 趨勢 BULLISH, 波動性 2.43%, AAPL 市場分析：趨勢 BULLISH，波動性 2.43%，RSI 60.67，MACD 1.95。
+GOOG: 趨勢 BULLISH, 波動性 2.17%, GOOG 市場分析：趨勢 BULLISH，波動性 2.17%，RSI 53.16，MACD -2.25。
+META: 趨勢 BEARISH, 波動性 3.24%, META 市場分析：趨勢 BEARISH，波動性 3.24%，RSI 57.48，MACD -2.37。
+MSFT: 趨勢 BEARISH, 波動性 2.40%, MSFT 市場分析：趨勢 BEARISH，波動性 2.40%，RSI 49.20，MACD -7.35。
+TSLA: 趨勢 BEARISH, 波動性 4.04%, TSLA 市場分析：趨勢 BEARISH，波動性 4.04%，RSI 49.60，MACD -0.16。
+TSM: 趨勢 BULLISH, 波動性 4.02%, TSM 市場分析：趨勢 BULLISH，波動性 4.02%，RSI 49.46，MACD 7.60。
+AMZN: 趨勢 BULLISH, 波動性 2.21%, AMZN 市場分析：趨勢 BULLISH，波動性 2.21%，RSI 51.72，MACD -2.95。
+ORCL: 趨勢 BEARISH, 波動性 2.85%, ORCL 市場分析：趨勢 BEARISH，波動性 2.85%，RSI 29.17，MACD -14.85。
+JPM: 趨勢 BULLISH, 波動性 1.45%, JPM 市場分析：趨勢 BULLISH，波動性 1.45%，RSI 68.03，MACD 7.41。
+WMT: 趨勢 BULLISH, 波動性 1.56%, WMT 市場分析：趨勢 BULLISH，波動性 1.56%，RSI 36.43，MACD -2.91。
+LLY: 趨勢 BULLISH, 波動性 2.16%, LLY 市場分析：趨勢 BULLISH，波動性 2.16%，RSI 68.50，MACD 40.61。
+^VIX: 趨勢 BEARISH, 波動性 7.90%, ^VIX 市場分析：趨勢 BEARISH，波動性 7.90%，RSI 44.89，MACD -0.45。
+
+根據我們的策略分析，^GSPC: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+QQQ: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+NVDA: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+^DJI: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+^IXIC: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+SPY: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+AAPL: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+GOOG: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+META: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+MSFT: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+TSLA: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+TSM: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+AMZN: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+ORCL: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+JPM: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+WMT: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+LLY: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+^VIX: 最佳策略 god_system，預期回報 0.00%，訊號 NEUTRAL。策略對戰結果：god_system 回報 0.00% 訊號 NEUTRAL；bigline 回報 0.00% 訊號 NEUTRAL
+
+投資就像馬拉松，不是短跑衝刺。保持穩健的投資策略，長期來看才能獲得穩定的回報。感謝收聽今天的節目，我們下次見。
+
+(系統備註：所有 LLM API 皆不可用)
