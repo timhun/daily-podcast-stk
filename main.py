@@ -1,8 +1,27 @@
 import argparse
 import datetime
 import os
+import sys
+from pathlib import Path
+from loguru import logger
 import pandas as pd
 from dotenv import load_dotenv
+# ta_bridge 整合 — TradingAgents 分析注入
+sys.path.insert(0, str(Path(__file__).parent))
+try:
+    from ta_bridge import load_ta_cache
+    _TA_BRIDGE = load_ta_cache()
+    _TA_BRIDGE_AVAILABLE = _TA_BRIDGE is not None
+    if _TA_BRIDGE_AVAILABLE:
+        logger.info(f"✅ TA Bridge 已載入: {len(_TA_BRIDGE.get('market_analysis', {}))} 檔股票")
+    else:
+        logger.info("ℹ️ TA Bridge 無今日資料，使用原生流程")
+except Exception as e:
+    _TA_BRIDGE = None
+    _TA_BRIDGE_AVAILABLE = False
+    logger.info(f"ℹ️ TA Bridge 不可用: {e}")
+
+
 from data_collector import collect_data
 from content_creator import generate_script
 from voice_producer import generate_audio
@@ -117,7 +136,28 @@ def main(mode):
             'best': {'name': best_name, **best_result},
             'strategies': per_strategy_results
         }
+        # ── TA Bridge：注入 TradingAgents 策略與 DCF 估值 ──
+        if _TA_BRIDGE_AVAILABLE:
+            ta_sr = _TA_BRIDGE.get("strategy_results", {}).get(symbol)
+            if ta_sr:
+                strategy_results[symbol]['ta_signal'] = ta_sr.get('ta_signal', 'HOLD')
+                strategy_results[symbol]['ta_position'] = ta_sr.get('signals', {}).get('position', ta_sr.get('position', 'NEUTRAL'))
+                strategy_results[symbol]['ta_confidence'] = ta_sr.get('ta_confidence', 0.5)
+                if 'dcf' in ta_sr:
+                    strategy_results[symbol]['dcf'] = ta_sr['dcf']
+                logger.info(f"  ✅ {symbol} → TA: {ta_sr.get('ta_signal','?')} | {strategy_results[symbol].get('ta_position','?')}")
         market_analysis[symbol] = analyst.analyze_market(symbol)
+        # ── TA Bridge 注入：TradingAgents 分析覆蓋 ──
+        if _TA_BRIDGE_AVAILABLE:
+            ta_ma = _TA_BRIDGE.get("market_analysis", {}).get(symbol)
+            if ta_ma:
+                # 用 TA 的分析覆蓋（TA 有更多的分析師觀點）
+                original_ma = market_analysis[symbol]
+                market_analysis[symbol] = ta_ma.copy()
+                # 保留 podcast 原生的 MarketAnalyst 有用的欄位
+                market_analysis[symbol]['original_report'] = str(original_ma.get('report',''))[:200]
+                logger.info(f"  ✅ {symbol} → TA: trend={ta_ma.get('trend','?')} signal={ta_ma.get('ta_signal','?')}")
+
     
     # 步驟3: 生成文字稿
     # 偵錯用：印出目前在哪裡，以及目錄下有什麼

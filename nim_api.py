@@ -171,17 +171,65 @@ MODELS = {
         cost_tier=1,
         latency_tier=1
     ),
+    # Google Gemini 3.1 Flash Lite (fastest, no rate limit)
+    "gemini-3.1-flash-lite": ModelConfig(
+        name="gemini-3.1-flash-lite",
+        provider="gemini",
+        endpoint="https://generativelanguage.googleapis.com",
+        api_key_env="GEMINI_API_KEY",
+        max_tokens=8192,
+        cost_tier=1,
+        latency_tier=1
+    ),
+    # Google Gemini 2.5 Flash (more capable, rate limited)
+    "gemini-2.5-flash": ModelConfig(
+        name="gemini-2.5-flash",
+        provider="gemini",
+        endpoint="https://generativelanguage.googleapis.com",
+        api_key_env="GEMINI_API_KEY",
+        max_tokens=8192,
+        cost_tier=1,
+        latency_tier=2
+    ),
+
 }
 
 # 任務類型 → 推薦模型
 TASK_MODEL_MAP = {
-    "quick": ["llama-3.3-70b", "qwen-3.5", "llama-3.1-8b", "grok-beta"],
-    "medium": ["llama-3.3-70b", "llama-3.1-70b", "deepseek-v3.2", "gpt-4o-mini"],
+    "quick": ["gemini-3.1-flash-lite", "gemini-2.5-flash", "llama-3.3-70b", "qwen-3.5", "grok-beta", "qwen3.6-ollama"],
+    "medium": ["gemini-3.1-flash-lite", "gemini-2.5-flash", "llama-3.3-70b", "deepseek-v3.2"],
     "deep": ["glm-5.1", "deepseek-v3.2", "grok-4"],
     "script": ["llama-3.3-70b", "glm-5.1"],  # Podcast 腳本生成
     "strategy": ["glm-5.1", "deepseek-v3.2"],  # 策略分析
     "json": ["llama-3.3-70b", "qwen-3.5", "grok-4"],  # JSON 输出
 }
+
+
+def _call_ollama(prompt, model_key="qwen3.6-ollama", system=None,
+                 temperature=0.7, max_tokens=None, **kwargs):
+    """Call local Ollama API (no API key, ~30s, last resort)"""
+    model = MODELS.get(model_key, MODELS.get("qwen3.6-ollama"))
+    max_tokens = max_tokens or model.max_tokens
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+    try:
+        import httpx
+        with httpx.Client(timeout=60) as client:
+            r = client.post(f"{model.endpoint}/v1/chat/completions",
+                json={"model": model.name, "messages": messages,
+                      "max_tokens": max_tokens, "temperature": temperature})
+            if r.status_code == 200:
+                return r.json()["choices"][0]["message"]["content"]
+            r = client.post(f"{model.endpoint}/api/chat",
+                json={"model": model.name, "messages": messages})
+            if r.status_code == 200:
+                return r.json().get("message", {}).get("content") or ""
+    except Exception:
+        pass
+    return None
+
 
 # Provider 優先順序（按成本效益）
 PROVIDER_PRIORITY = ["nvidia", "groq", "xai", "gemini", "openrouter", "openai"]
@@ -224,7 +272,7 @@ def _get_api_key(model_key: str) -> Optional[str]:
     model = MODELS.get(model_key)
     if not model:
         return None
-    return os.getenv(model.api_key_env)
+    return os.getenv(model.api_key_env) or ("dummy" if model.provider == "ollama" else None)
 
 def _call_nvidia(prompt: str, model_key: str = "llama-3.3-70b", system: str = None,
                  temperature: float = 0.7, max_tokens: int = None,
@@ -432,6 +480,7 @@ PROVIDER_CALLERS = {
     "groq": _call_groq,
     "openai": _call_openai,
     "openrouter": _call_openrouter,
+    "ollama": _call_ollama,
 }
 
 # ============================================================================
