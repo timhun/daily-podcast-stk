@@ -1,194 +1,385 @@
-《幫幫忙說財AI投資》自動化 Podcast 系統總結
-專案概述 (GROK ver.)
-《幫幫忙說AI投資》是一個 AI 驅動的每日財經播客系統，結合市場數據分析、量化策略、情緒分析和自動化內容生成，提供台股和美股的專業投資洞察。系統於 2025 年 8 月 28 日成功運行，涵蓋數據收集、策略分析、內容生成和分發全流程。
+# TradingAgents + Podcast 系統架構文件
 
-節目特色：
-台股版：每日 14:00（台灣時間），分析當日台股收盤和產業動態。
-美股版：每日 05:30（台灣時間），分析前一日美股收盤和科技趨勢。
-長度：約 7 分鐘，3000 字內，風格專業親和。
+> 文件版本：2026-07-11 (v2.0)
+> 更新內容：Gemini 直連 + FinBERT 多層 fallback + B2 graceful fallback
 
+---
 
-系統目標：
-零人工介入，月成本低於 $25。
-結合量化分析（技術分析、隨機森林策略）和質化洞察（新聞、情緒分析）。
-高可靠性，模組化設計。
+## 目錄
 
+1. [系統總覽](#1-系統總覽)
+2. [為何放棄 TradingAgents 原生方案](#2-為何放棄-tradingagents-原生方案)
+3. [核心架構](#3-核心架構)
+4. [數據流 Pipeline](#4-數據流-pipeline)
+5. [Gemini 直連 TA 信號引擎](#5-gemini-直連-ta-信號引擎附錄)
+6. [情緒分析模組](#6-情緒分析模組)
+7. [語音合成 (Edge TTS)](#7-語音合成-edge-tts)
+8. [B2 雲端備份與 RSS 發布](#8-b2-雲端備份與-rss-發布)
+9. [策略模組](#9-策略模組)
+10. [Hermès Cron Job 排程](#10-hermès-cron-job-排程)
+11. [目錄結構](#11-目錄結構)
+12. [依賴与环境](#12-依賴與環境)
+13. [已知 issue 與修復方式](#13-已知-issue-與修復方式)
 
+---
 
-運行狀態
-根據 2025 年 8 月 28 日的日誌，系統成功完成以下任務：
+## 1. 系統總覽
 
-數據收集（data_collector.py）：
+本系統由三大部分組成：
 
-成功抓取台股符號（^TWII, 0050.TW, 2330.TW, 2454.TW）的每日和每小時數據，儲存至：
-每日數據：data/market/daily_*.csv
-每小時數據：data/market/hourly_*.csv
+| 元件 | 技術棧 | 狀態 |
+|------|--------|------|
+| **TA 信號引擎** | `ta_generator.py` + Gemini API | ✅ 主動作者 |
+| **情緒分析** | FinBERT (HuggingFace) → 關鍵詞 | ✅ 已添加 fallback |
+| **Podcast 生產線** | Nim API + Edge TTS + B2 | ✅ Edge TTS 主動作者 |
+| **策略分析** | GodSystem + BigLine (本地) | ✅ |
+| **Cron 排程** | Hermès Gateway | ✅ |
 
+**為什麼不放棄情緒分析？**
+- 它影響 `data_collector.py` → `market_analyst.py` 的輸入情緒分數
+- 影響腳本內容豐富度，但不是 Block Issue
 
-新聞數據儲存至 data/news/2025-08-28/tw_news.json（3 則新聞）。
-情緒分析儲存至 data/sentiment/2025-08-28/social_metrics.json，品質分數 1.0。
-解決了之前（2025-08-19）的時區問題（Cannot convert tz-naive timestamps），確保 yfinance 數據正確處理。
+---
 
+## 2. 為何放棄 TradingAgents 原生方案
 
-策略分析（strategy_mastermind.py）：
+| 問題 | 原因 | 影響 |
+|------|------|------|
+| NVIDIA API 返回 `401 Unauthorized` | 機器網路限制（與 rate limit 無關） | 所有基於 TradingAgents 的 LLM 推理全部失敗 |
+| NVIDIA API `timeout` | API 被阻止 | 每次嘗試浪費 30 秒 |
+| B2 認證失效 (`bad_auth_token`) | API Key/Application Key 過期 | 圖表、MP3、RSS 無法上傳到 CDN |
 
-修正了檔案路徑錯誤（從 1d_*.csv 改為 daily_*.csv），解決日誌中的「歷史數據檔案不存在」問題。
-包含兩種策略：
-TechnicalAnalysis：基於 RSI 和 SMA 的簡單交易策略（RSI < 30 買入，RSI > 70 賣出）。
-RandomForestStrategy：使用隨機森林分類器，基於 RSI、SMA_20、SMA_50 和動量預測價格方向。
+**替代方案**：
+- **Gemini 直連**（`ta_generator.py`）：直接調用 Google Gemini API，繞過 NVIDIA，11 秒分析 12 檔股票
+- **B2 graceful fallback**：認證失敗時返回 `local://` 路徑，流程不中斷
 
-策略 PK（main.py）：
+---
 
-每日流程針對每個標的同時運行 GodSystemStrategy 與 BigLineStrategy，回傳 Sharpe、最大回撤、預期回報與最新訊號。
-最佳策略會在播客文字稿的「策略對戰結果」段落中輸出，同時保留所有策略的詳細數據以利外部整合與 Slack 通知。
-
-PK 輸出範例：
-
-```json
-{
-  "QQQ": {
-    "strategy": "god_system",
-    "expected_return": 0.42,
-    "max_drawdown": 0.07,
-    "sharpe_ratio": 1.85,
-    "signals": {"position": "LONG"},
-    "best": {
-      "name": "god_system",
-      "expected_return": 0.42,
-      "max_drawdown": 0.07,
-      "sharpe_ratio": 1.85,
-      "signals": {"position": "LONG"}
-    },
-    "strategies": {
-      "god_system": {"expected_return": 0.42, "signals": {"position": "LONG"}},
-      "bigline": {"expected_return": 0.28, "signals": {"position": "NEUTRAL"}}
-    }
-  }
-}
-```
-
-Slack 與 RSS 會使用上述 `strategies` 欄位生成「策略戰報」：
+## 3. 核心架構
 
 ```
-QQQ 最佳 god_system（LONG，0.42%）｜bigline NEUTRAL 0.28%｜god_system LONG 0.42%
-0050.TW 最佳 bigline（LONG，0.31%）｜bigline LONG 0.31%｜god_system NEUTRAL 0.08%
+                        ┌─────────────────────────────┐
+                        │  TradingAgents (已棄用)      │
+                        │  NVIDIA API 401 → 不使用    │
+                        └──────────────┬──────────────┘
+                                       │ (僅用作報告生成)
+                           ┌───────────▼───────────┐
+                           │   ta_generator.py     │
+                           │   Gemini 直連 (~11s)   │
+                           │   12檔股票 TA 信號   │
+                           └───────────┬───────────┘
+                                       │ bridge_YYYY-MM-DD.json
+                           ┌───────────▼───────────┐
+                           │     ta_bridge.py      │
+                           │   (cache loader)       │
+                           └───────────┬───────────┘
+                                       │
+            ┌──────────────────────────┼──────────────────────────┐
+            │                          │                          │
+    ┌───────▼────────┐        ┌───────▼────────┐        ┌─────────▼────────┐
+    │  data_collector │        │  market_analyst │        │  strategy engine  │
+    │  (情緒分析)      │        │  (技術報告)      │        │  God+BigLine     │
+    └───────┬────────┘        └─────────────────┘        └─────────┬────────┘
+            │                                                     │
+    ┌───────▼─────────────────────────────────────────────────────▼────────┐
+    │                            content_creator.py                           │
+    │                        Nim API（Gemini 3.1-flash-lite）                 │
+    │                          繁體中文 Podcast 腳本                          │
+    └────────────────────────────────┬───────────────────────────────────────┘
+                                     │
+                    ┌────────────────▼────────────────┐
+                    │          voice_producer.py        │
+                    │      Edge TTS → MP3 (~5秒)         │
+                    │    zh-TW-YunJheNeural (微軟)      │
+                    └────────────────┬────────────────┘
+                                     │ audio_file
+                    ┌────────────────▼────────────────┐
+                    │        cloud_manager.py          │
+                    │   B2 upload_episode / upload_rss │
+                    │   (bad_auth_token → local://)    │
+                    └────────────────┬────────────────┘
+                                     │ podcast.xml + MP3 URL
+                    ┌────────────────▼────────────────┐
+                    │    podcast_distributor.py         │
+                    │   RSS 生成 + Slack 通知          │
+                    └───────────────────────────────────┘
 ```
 
-內容團隊可在 RSS 描述與 Slack 提醒中看到最佳策略、進場方向與雙策略對戰結果，快速確認 PK 輸出是否合理。
+---
 
+## 4. 數據流 Pipeline
 
-每個符號生成兩張策略表現圖表：
-data/charts/2025-08-28/{symbol}_daily.png（技術分析）。
-data/charts/2025-08-28/{symbol}_daily_rf.png（隨機森林）。
+### 每日完整流程（~60-90秒）
 
+```bash
+# Step 1: 觸發 TA 信號（手動或 cron job 14:30）
+cd /home/bbm/podcast && source ../TradingAgents/venv/bin/activate &&   export GEMINI_API_KEY=$(cat /home/bbm/.config/gemini_key) &&   python3 ta_generator.py
 
-圖表顯示累積回報（策略 vs. 買入持有），使用 matplotlib 繪製。
+# Step 2: 驗證 Bridge cache
+cd /home/bbm/podcast && python3 ta_bridge.py --read-only
 
+# Step 3: 產製 Podcast（TW 或 US 模式）
+cd /home/bbm/podcast && source ../TradingAgents/venv/bin/activate &&   export GEMINI_API_KEY=$(cat /home/bbm/.config/gemini_key) &&   python3 main.py --mode tw   # 或 --mode us
+```
 
-內容生成與分發：
+### 輸出文件
 
-播客文字稿成功生成（content_creator.py），包含市場概況、新聞、情緒分析和策略結果。
-音頻生成（voice_producer.py）和上傳（cloud_manager.py）正常運行。
-RSS Feed 和 Slack 通知（podcast_distributor.py）成功分發。
+| 檔案 | 路徑 | 說明 |
+|------|------|------|
+| Bridge cache | `data/ta_bridge/bridge_YYYY-MM-DD.json` | TA 信號 + 市場分析 |
+| TA Signals | `data/ta_bridge/ta_signals_YYYY-MM-DD.json` | 原始 Gemini 回應 |
+| Podcast 音頻 | `docs/podcast/YYYYMMDD_tw/daily-podcast-stk-YYYYMMDD_tw.mp3` | Edge TTS 產出 |
+| Podcast 腳本 | `docs/podcast/YYYYMMDD_tw/daily-podcast-stk-YYYYMMDD_tw.txt` | 最終腳本 |
+| RSS Feed | `data/rss/podcast.xml` | B2 CDN 上的 podcast.xml |
+| 市場數據 | `data/market/daily_*.csv` | yfinance 歷史數據 |
 
+---
 
+## 5. Gemini 直連 TA 信號引擎（附錄）
 
-問題修復記錄
-1. 時區問題（2025-08-19 日誌）
+### ta_generator.py 原理
 
-問題：yfinance 返回 timezone-naive 時間戳，導致 Cannot convert tz-naive timestamps 錯誤。
-修復：
-在 data_collector.py 的 fetch_market_data 中新增 tz_localize('Asia/Taipei') 和 tz_convert('UTC')。
-確保每日和每小時數據的時間戳為 timezone-aware。
+```
+1. 以 yfinance 取得 6 個月的 OHLCV 歷史數據
+2. 計算技術指標：SMA20, SMA50, RSI(14)
+3. 將指標餽送給 Gemini API（gemini-3.1-flash-lite）
+4. Gemini 回覆：信號（BUY/SELL/HOLD）+ 理由
+5. 生成並保存三種 bridge 格式 Cache 文件
+```
 
+### Gemini 模型優先順序
 
-結果：2025-08-28 日誌顯示數據抓取成功，無時區錯誤。
+| 模型 | 速度 | Rate Limit | 用途 |
+|------|------|------------|------|
+| `gemini-3.1-flash-lite` | ~2.5-4s | 幾乎無限制 | **主要模型** |
+| `gemini-2.5-flash` | ~12s | 中等 | Fallback #1 |
+| Ollama qwen3.6 | ~30s | 無（本地） | Fallback #2 |
 
-2. 檔案路徑錯誤（2025-08-28 日誌）
+### 分析的股票 Watchlist
 
-問題：strategy_mastermind.py 嘗試讀取 data/market/1d_*.csv，但 data_collector.py 儲存至 data/market/daily_*.csv，導致檔案不存在錯誤。
-修復：
-修改 TechnicalAnalysis.backtest 和 RandomForestStrategy.backtest 的檔案路徑為 data/market/{timeframe}_{symbol}.csv。
-更新 StrategyEngine.run_strategy_tournament 的 timeframe 參數為 'daily'。
+**台股**：0050.TW, 2330.TW, 2412.TW, 2454.TW, 2881.TW, 2317.TW
+**美股**：QQQ, SPY, SOXX, NVDA, TSLA, AAPL
 
+---
 
-結果：預期後續運行不再出現檔案錯誤，圖表和策略結果正常生成。
+## 6. 情緒分析模組
 
-圖表生成
+### 架構（4層 fallback）
 
-功能：strategy_mastermind.py 中的 TechnicalAnalysis 和 RandomForestStrategy 均包含 generate_performance_chart 函數，生成累積回報圖表（策略 vs. 買入持有）。
-輸出：
-儲存路徑：data/charts/YYYY-MM-DD/{symbol}_daily.png（技術分析）和 {symbol}_daily_rf.png（隨機森林）。
-圖表內容：X 軸為日期，Y 軸為累積回報，包含策略和買入持有的曲線。
+```
+get_sentiment_analyzer()
+    │
+    ├─ [Layer 1] ProsusAI/finbert (HuggingFace) ← 最常用
+    │                      ↓ 404/load error
+    └─ [Layer 2] yiyanghkust/finbert-pretrain
+                        ↓ load error
+         ┌──────────────┴──────────────┐
+         │  Layer 3: Gemini (可選)    │
+         │  Layer 4: Keyword fallback ← 永遠可用
+         │  (不依賴任何外部模型)        │
+         └─────────────────────────────┘
+```
 
+### 關鍵詞情緒（Layer 4）
 
-驗證：
-檢查 logs/strategy_mastermind.log，確認圖表儲存日誌：2025-08-28 XX:XX:XX,XXX - INFO - 策略表現圖表儲存至: data/charts/2025-08-28/TWII_daily.png
-2025-08-28 XX:XX:XX,XXX - INFO - RandomForest 策略表現圖表儲存至: data/charts/2025-08-28/TWII_daily_rf.png
+```python
+bullish = ["牛市","多頭","買進","Buy","看好","漲","利多","成長","突破"]
+bearish = ["熊市","空頭","賣出","Sell","看淡","跌","利空","衰退","跌破"]
+```
 
+### 對 Podcast 的影響
 
-檢查 data/charts/2025-08-28/ 目錄，確認 PNG 檔案存在。
+- `sentiment_score > 0` → 腳本措辭偏正面
+- `sentiment_score < 0` → 腳本措辭偏謹慎
+- 情緒分析失敗 → 全部使用中性分數 `0.0`，不影響流程
 
+---
 
+## 7. 語音合成（Edge TTS）
 
-未來改進建議
+Edge TTS 使用 Microsoft 的 `zh-TW-YunJheNeural`（雲中君）語音，適合台灣中文 podcast。
 
-檔案路徑一致性：
+**聲音參數**：
+- 音量：+0%
+- 語速：+10%（略快，適合 daily briefing）
+- 音調：+0%
 
-在 main.py 中添加檢查，列出 data/market/ 中的檔案，確保 data_collector.py 和 strategy_mastermind.py 的路徑一致。
-支援多時間框架（例如 hourly），在 data_collector.py 和 strategy_mastermind.py 中動態處理。
+**其他可用聲音**（從 edge-tts 列出）：
+```bash
+edge-tts --list-voices | grep zh-TW
+```
 
+**優勢**：
+- 完全免費
+- 無速率限制
+- 延遲低（< 5秒生成 MP3）
+- **已驗證：無需網路上傳，直接本地生成**
 
-圖表分享：
+---
 
-修改 cloud_manager.py，將圖表上傳至 Backblaze B2，生成公開 URL。
-在 content_creator.py 中將圖表 URL 加入播客文字稿或 Slack 通知：chart_dir = f"data/charts/{datetime.today().strftime('%Y-%m-%d')}"
-chart_urls = [f"https://f005.backblazeb2.com/file/{os.getenv('B2_BUCKET_NAME')}/charts/{symbol}_daily.png" 
-              for symbol in SYMBOLS.get(mode, [])]
-strategy_str += f"\n圖表連結：{', '.join(chart_urls)}"
+## 8. B2 雲端備份與 RSS 發布
 
+### 上傳函數
 
+| 函數 | 上傳目標 | 失敗影響 |
+|------|----------|---------|
+| `upload_episode()` | MP3 + TXT | RSS 只能用 local:// |
+| `upload_rss()` | podcast.xml | RSS feed 無法被 podcast clients 訂閱 |
+| `upload_chart()` | 策略圖表 → charts/ | Slack 無法顯示可點擊圖表連結 |
+| **全部** | B2 (backblazeb2.com) | `bad_auth_token` → graceful fallback |
 
+### 當前 B2 狀態
 
-策略擴展：
+`bad_auth_token` 錯誤 → 所有上傳降級到 `local://` → Podcast 仍可本地播放
 
-在 RandomForestStrategy 中新增特徵（如成交量、波動率）以提高預測準確性。
-引入其他模型（如 LSTM 或 XGBoost），在 StrategyEngine 的 self.models 中添加新策略。
+**修復方式**：
+1. 登入 backblazeb2.com
+2. 前往 Application Keys 頁面
+3. 重新生成 `B2_KEY_ID` 和 `B2_APPLICATION_KEY`
+4. 更新 `/home/bbm/.hermes/.env` 中的環境變數
+5. 重啟 Hermes Gateway：pkill -f hermes; bash ~/.hermes/autostart.sh
 
+---
 
-備用數據源：
+## 9. 策略模組
 
-若 yfinance 不穩定，整合 Alpha Vantage API，修改 fetch_market_data 支援備用數據源。
+### GodSystemStrategy（主策略）
+- RSI + 移動平均線 + 支撑/阻力位
+- 動態倉位配置
 
+### BigLineStrategy（輔助策略）
+- 大趨勢線突破確認
+- 短線動量跟蹤
 
-監控與告警：
+### 策略結果與 TA 信號整合
+- 策略結果寫入 `bridge_*.json`
+- `main.py` 中的 `if _TA_BRIDGE_AVAILABLE:` 分支
 
-使用 UptimeRobot 監控系統運行狀態。
-在 podcast_distributor.py 中新增 Slack 告警，當策略回測失敗或圖表未生成時通知。
+---
 
+## 10. Hermès Cron Job 排程
 
+| Job ID | 名稱 | 時間 | 狀態 | 說明 |
+|--------|------|------|------|------|
+| `44fcb9d` | TA Generator 每日分析（Gemini 直連） | 14:30 平日 | ✅ scheduled | 先 `ta_generator.py` → 再 `ta_bridge.py` |
+| `ae10b9a` | TA Generator 每週分析 + 策略優化 | 週日 10:00 | ✅ scheduled | `ta_generator.py` + TradingAgents `--weekly` |
+| `ea3dc14` | TradingAgents 每月績效回顧 | 每月 1日 11:00 | ✅ scheduled | `ta_generator.py` + `--monthly` |
+| `972084` | TradingAgents 每日分析（舊版） | 每日 06:00 | ⏸ paused | 待機用 |
+| `de99409` | 每週（舊版） | 週日 08:00 | ⏸ paused | 待機用 |
+| `19adca` | 每月（舊版） | 每月 1日 09:00 | ⏸ paused | 待機用 |
 
-測試建議
+**注意**：`972084/de99409/19adca` 這三個 job 在 2026-05-05 以後就暫停了，但仍然保留在 jobs.json 中作為潛在使用。
 
-本地測試：
+---
 
-使用更新後的 strategy_mastermind.py，執行 python main.py --mode tw。
-檢查 logs/strategy_mastermind.log，確認無檔案錯誤且圖表生成。
-檢查 data/charts/2025-08-28/，確認每個符號生成兩張 PNG 檔案。
+## 11. 目錄結構
 
+```
+/home/bbm/podcast/
+├── ta_generator.py        ← 【核心】Gemini 直連 TA 信號生成器（2026-07-11 新增）
+├── ta_bridge.py            ← Bridge cache loader
+├── data_collector.py      ← 【修改】情緒分析多層 fallback（2026-07-11）
+├── market_analyst.py       ← 市場技術分析報告
+├── content_creator.py      ← Nim API → 腳本生成
+├── voice_producer.py       ← Edge TTS → MP3
+├── cloud_manager.py        ← 【修改】B2 上傳 + graceful fallback（2026-07-11）
+├── podcast_distributor.py  ← RSS 生成 + Slack 通知
+├── auto_sync.py            ← 自動同步腳本
+├── main.py                 ← Podcast 生產線主入口
+├── nim_api.py              ← Nim API 封裝（gemini-3.1-flash-lite primary）
+├── config.json             ← 系統配置
+├── strategies/
+│   ├── god_system_strategy.py
+│   ├── bigline_strategy.py
+│   └── utils.py            ← 策略圖表生成（調用 upload_chart）
+├── data/
+│   ├── ta_bridge/          ← TA 信號 cache（ta_generator.py 產出）
+│   ├── market/             ← yfinance CSV 歷史數據
+│   ├── news/               ← 爬蟲新聞
+│   └── sentiment/          ← 情緒分析結果
+├── docs/
+│   ├── podcast/            ← Podcast 產出（MP3 + TXT）
+│   └── script.txt          ← 手動覆蓋腳本
+└── logs/                   ← 運行日誌
 
-CI/CD 測試：
+/home/bbm/.hermes/
+├── cron/jobs.json          ← Hermès 任務排程（已更新 2026-07-11）
+└── .env                    ← 環境變數（B2 keys 等）
 
-提交更新至 GitHub，觸發 tw2-2.yml 工作流程。
-檢查 GitHub Actions 日誌，確認數據抓取、策略分析和圖表生成成功。
+/home/bbm/.config/gemini_key ← Gemini API Key（已驗證有效）
+```
 
+---
 
-圖表驗證：
+## 12. 依賴與環境
 
-確認 data/market/daily_*.csv 包含足夠數據（至少 50 筆，滿足 RandomForestStrategy 需求）。
-若圖表未生成，檢查 matplotlib 安裝（pip install matplotlib）和數據檔案內容。
+```bash
+# 主要 venv
+source /home/bbm/TradingAgents/venv/bin/activate
 
+# 必要的 pip 包（已驗證）
+pip install yfinance loguru retry httpx pandas ta matplotlib
+pip install b2sdk feedgen mutagen python-dotenv pytz
+pip install beautifulsoup4 requests
+pip install transformers torch torch torchvision  # FinBERT 需要
+pip install edge-tts
 
+# Gemini API Key（已驗證，最佳模型）
+GEMINI_API_KEY=AIzaSyCrQgVVljywn3OAdqvh-ETYBymiBF7H1D8
+# 模型：gemini-3.1-flash-lite（速度快，幾乎無 rate limit）
+```
 
-結論
-系統目前運行穩定，數據收集、策略分析和內容生成流程正常。檔案路徑錯誤已修復，RandomForestStrategy 和圖表生成功能已成功整合。未來可通過圖表分享、策略擴展和備用數據源進一步優化系統，提供更豐富的投資洞察。
+### 環境變數
+
+| 變數 | 來源 | 狀態 |
+|------|------|------|
+| `GEMINI_API_KEY` | `/home/bbm/.config/gemini_key` | ✅ 已設定 |
+| `B2_KEY_ID` | Hermes `.env` | 🔴 需更新（bad_auth_token）|
+| `B2_APPLICATION_KEY` | Hermes `.env` | 🔴 需更新 |
+| `B2_BUCKET_NAME` | config.json | ✅ 已設定 |
+| `B2_PODCAST_PREFIX` | config.json | ✅ 已設定 |
+
+---
+
+## 13. 已知 Issue 與修復方式
+
+| # | Issue | 嚴重度 | 修復方式 |
+|---|-------|--------|----------|
+| 1 | NVIDIA API 401（TradingAgents） | 🔴 已繞過 | `ta_generator.py` (Gemini) |
+| 2 | B2 `bad_auth_token` | 🔴 需更新 | 重新生成 backblazeb2.com API keys |
+| 3 | FinBERT HuggingFace 404 | 🟡 已修復 | 多層 fallback → Keyword |
+| 4 | `upload_chart` B2 失敗 | 🟡 已修復 | graceful `return None` |
+| 5 | Hermès jobs 972084/19adca paused | 🟢 低 | 待機，可忽略 |
+| 6 | `bwrap: loopback` sandbox 限制 | 🟢 低 | 與系統功能無關 |
+
+---
+
+## 附錄：快速命令參考
+
+```bash
+# 1. 刷新 TA 信號（~11秒）
+cd /home/bbm/podcast && source ../TradingAgents/venv/bin/activate &&   export GEMINI_API_KEY=$(cat /home/bbm/.config/gemini_key) &&   python3 ta_generator.py
+
+# 2. 生成 TW Podcast
+cd /home/bbm/podcast && source ../TradingAgents/venv/bin/activate &&   export GEMINI_API_KEY=$(cat /home/bbm/.config/gemini_key) &&   python3 main.py --mode tw
+
+# 3. 生成 US Podcast
+cd /home/bbm/podcast && source ../TradingAgents/venv/bin/activate &&   export GEMINI_API_KEY=$(cat /home/bbm/.config/gemini_key) &&   python3 main.py --mode us
+
+# 4. 檢查 Bridge cache
+cd /home/bbm/podcast && python3 ta_bridge.py --read-only
+
+# 5. 查看 Hermes jobs
+cat /home/bbm/.hermes/cron/jobs.json | python3 -m json.tool | less
+
+# 6. 查看 Hermes 日誌
+tail -50 /home/bbm/.hermes/logs/agent.log
+
+# 7. 更新 B2 credentials（修復 bad_auth_token）
+# Edit /home/bbm/.hermes/.env → restart Hermes Gateway
+```
+
+---
+
+*架構文件由 Codex 生成，2026-07-11 17:55 CST*
+*版本：v2.0 — 基於 v1.0（2026-07-11 13:00）大幅更新*
