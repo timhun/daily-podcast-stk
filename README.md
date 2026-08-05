@@ -325,7 +325,7 @@ pip install transformers torch torch torchvision  # FinBERT 需要
 pip install edge-tts
 
 # Gemini API Key（已驗證，最佳模型）
-GEMINI_API_KEY=AIzaSyCrQgVVljywn3OAdqvh-ETYBymiBF7H1D8
+GEMINI_API_KEY=AIzaS
 # 模型：gemini-3.1-flash-lite（速度快，幾乎無 rate limit）
 ```
 
