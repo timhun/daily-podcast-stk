@@ -20,7 +20,8 @@ class BaseStrategy:
             logger.error(f"Failed to load data for {symbol}: {e}")
             return None
 
-    def backtest(self, symbol, data, timeframe='daily'):
+    def _default_results(self):
+        """返回預設的回測結果格式"""
         return {
             'sharpe_ratio': 0,
             'max_drawdown': 0,
@@ -33,3 +34,6 @@ class BaseStrategy:
                 'position_size': 0.0
             }
         }
+
+    def backtest(self, symbol, data, timeframe='daily'):
+        return self._default_results()
