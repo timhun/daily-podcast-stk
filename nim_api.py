@@ -120,8 +120,8 @@ MODELS = {
     ),
     
     # Google Gemini
-    "gemini-3.5-flash": ModelConfig(
-        name="gemini-3.5-flash",
+    "gemini-3.6-flash": ModelConfig(
+        name="gemini-3.6-flash",
         provider="gemini",
         endpoint="https://generativelanguage.googleapis.com",
         api_key_env="GEMINI_API_KEY",
@@ -172,8 +172,8 @@ MODELS = {
         latency_tier=1
     ),
     # Google Gemini 3.1 Flash Lite (fastest, no rate limit)
-    "gemini-3.1-flash-lite": ModelConfig(
-        name="gemini-3.1-flash-lite",
+    "gemini-3.6-flash": ModelConfig(
+        name="gemini-3.6-flash",
         provider="gemini",
         endpoint="https://generativelanguage.googleapis.com",
         api_key_env="GEMINI_API_KEY",
@@ -182,8 +182,8 @@ MODELS = {
         latency_tier=1
     ),
     # Google Gemini 2.5 Flash (more capable, rate limited)
-    "gemini-2.5-flash": ModelConfig(
-        name="gemini-2.5-flash",
+    "gemini-3.1-pro": ModelConfig(
+        name="gemini-3.1-pro",
         provider="gemini",
         endpoint="https://generativelanguage.googleapis.com",
         api_key_env="GEMINI_API_KEY",
@@ -196,12 +196,12 @@ MODELS = {
 
 # 任務類型 → 推薦模型
 TASK_MODEL_MAP = {
-    "quick": ["gemini-3.1-flash-lite", "gemini-2.5-flash", "llama-3.3-70b", "qwen-3.5", "grok-beta", "qwen3.6-ollama"],
-    "medium": ["gemini-3.1-flash-lite", "gemini-2.5-flash", "llama-3.3-70b", "deepseek-v3.2"],
-    "deep": ["glm-5.1", "deepseek-v3.2", "grok-4"],
+    "quick": ["gemini-3.6-flash", "gemini-2.5-flash", "llama-3.3-70b", "qwen-3.5", "grok-beta", "qwen3.6-ollama"],
+    "medium": ["gemini-3.1-pro", "gemini-2.5-flash", "llama-3.3-70b", "deepseek-v3.2"],
+    "deep": ["glm-5.2","nemotron-3-ultra-550b-a55b"],
     "script": ["llama-3.3-70b", "glm-5.1"],  # Podcast 腳本生成
-    "strategy": ["glm-5.1", "deepseek-v3.2"],  # 策略分析
-    "json": ["llama-3.3-70b", "qwen-3.5", "grok-4"],  # JSON 输出
+    "strategy": ["glm-5.2", "gemini-3.1-pro"],  # 策略分析
+    "json": ["gemini-3.6-flash", "qwen-3.6", "grok-4"],  # JSON 输出
 }
 
 
