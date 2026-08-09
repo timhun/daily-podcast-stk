@@ -232,7 +232,7 @@ def _call_ollama(prompt, model_key="qwen3.6-ollama", system=None,
 
 
 # Provider 優先順序（按成本效益）
-PROVIDER_PRIORITY = ["nvidia", "groq", "xai", "gemini", "openrouter", "openai"]
+PROVIDER_PRIORITY = ["nvidia", "gemini"]
 
 # Rate Limiting
 class RateLimiter:
