@@ -58,8 +58,8 @@ class ModelConfig:
 # 可用模型列表
 MODELS = {
     # NVIDIA Free Models (40 RPM limit)
-    "llama-3.3-70b": ModelConfig(
-        name="meta/llama-3.3-70b-instruct",
+    "nemotron-3-super-120b-a12b": ModelConfig(
+        name="nvidia/nemotron-3-super-120b-a12b",
         provider="nvidia",
         endpoint="https://integrate.api.nvidia.com/v1",
         api_key_env="NVIDIA_API_KEY",
@@ -68,8 +68,8 @@ MODELS = {
         cost_tier=1,
         latency_tier=2
     ),
-    "glm-5.1": ModelConfig(
-        name="z-ai/glm-5.1",
+    "glm-5.2": ModelConfig(
+        name="z-ai/glm-5.2",
         provider="nvidia",
         endpoint="https://integrate.api.nvidia.com/v1",
         api_key_env="NVIDIA_API_KEY",
@@ -78,8 +78,8 @@ MODELS = {
         cost_tier=1,
         latency_tier=3
     ),
-    "deepseek-v3.2": ModelConfig(
-        name="deepseek-ai/deepseek-v3-0324",
+    "minimaxai/minimax-m3": ModelConfig(
+        name="minimaxai/minimax-m3",
         provider="nvidia",
         endpoint="https://integrate.api.nvidia.com/v1",
         api_key_env="NVIDIA_API_KEY",
@@ -88,7 +88,7 @@ MODELS = {
         cost_tier=1,
         latency_tier=3
     ),
-    "qwen-3.5": ModelConfig(
+    "qwen-3.6": ModelConfig(
         name="qwen/qwen3-32b",
         provider="nvidia",
         endpoint="https://integrate.api.nvidia.com/v1",
@@ -120,8 +120,8 @@ MODELS = {
     ),
     
     # Google Gemini
-    "gemini-2.0-flash": ModelConfig(
-        name="gemini-2.0-flash-exp",
+    "gemini-3.5-flash": ModelConfig(
+        name="gemini-3.5-flash",
         provider="gemini",
         endpoint="https://generativelanguage.googleapis.com",
         api_key_env="GEMINI_API_KEY",
