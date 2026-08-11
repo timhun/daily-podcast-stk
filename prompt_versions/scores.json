@@ -1,0 +1,482 @@
+[
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 40,
+    "char_count": 2515,
+    "scores": {
+      "length": 10,
+      "hook": 10,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 7.1
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 40,
+    "char_count": 221,
+    "scores": {
+      "length": 0.884,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 40,
+    "char_count": 2478,
+    "scores": {
+      "length": 9.912,
+      "hook": 10,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 7.1
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 40,
+    "char_count": 212,
+    "scores": {
+      "length": 0.848,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 40,
+    "char_count": 281,
+    "scores": {
+      "length": 1.124,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 40,
+    "char_count": 2979,
+    "scores": {
+      "length": 10,
+      "hook": 10,
+      "kostolany": 0,
+      "stance": 10,
+      "chinese_names": 0,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 7.1
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 42,
+    "char_count": 1592,
+    "scores": {
+      "length": 6.368,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 5.2
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 42,
+    "char_count": 218,
+    "scores": {
+      "length": 0.872,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 42,
+    "char_count": 1126,
+    "scores": {
+      "length": 4.504,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.9
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 42,
+    "char_count": 224,
+    "scores": {
+      "length": 0.896,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 10,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 5.8
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 42,
+    "char_count": 259,
+    "scores": {
+      "length": 1.036,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 42,
+    "char_count": 217,
+    "scores": {
+      "length": 0.868,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 44,
+    "char_count": 204,
+    "scores": {
+      "length": 0.816,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 44,
+    "char_count": 261,
+    "scores": {
+      "length": 1.044,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 46,
+    "char_count": 2741,
+    "scores": {
+      "length": 10,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 5.7
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 46,
+    "char_count": 212,
+    "scores": {
+      "length": 0.848,
+      "hook": 10,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 5.8
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 46,
+    "char_count": 1294,
+    "scores": {
+      "length": 5.176,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 5.0
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 46,
+    "char_count": 2602,
+    "scores": {
+      "length": 10,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 10,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 7.1
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 46,
+    "char_count": 207,
+    "scores": {
+      "length": 0.828,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 46,
+    "char_count": 20,
+    "scores": {
+      "length": 0.08,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.3
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 47,
+    "char_count": 219,
+    "scores": {
+      "length": 0.876,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 4.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 47,
+    "char_count": 1961,
+    "scores": {
+      "length": 7.844,
+      "hook": 0,
+      "kostolany": 0,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 5.4
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 49,
+    "char_count": 3837,
+    "scores": {
+      "length": 10,
+      "hook": 0,
+      "kostolany": 10,
+      "stance": 10,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 8.6
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 49,
+    "char_count": 3766,
+    "scores": {
+      "length": 10,
+      "hook": 0,
+      "kostolany": 10,
+      "stance": 10,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 8.6
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 49,
+    "char_count": 3739,
+    "scores": {
+      "length": 10,
+      "hook": 0,
+      "kostolany": 10,
+      "stance": 10,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 8.6
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 49,
+    "char_count": 3469,
+    "scores": {
+      "length": 10,
+      "hook": 0,
+      "kostolany": 10,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 7.1
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 49,
+    "char_count": 3800,
+    "scores": {
+      "length": 10,
+      "hook": 0,
+      "kostolany": 10,
+      "stance": 10,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 8.6
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 49,
+    "char_count": 3346,
+    "scores": {
+      "length": 10,
+      "hook": 0,
+      "kostolany": 10,
+      "stance": 0,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 7.1
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "tw",
+    "version": 49,
+    "char_count": 3249,
+    "scores": {
+      "length": 10,
+      "hook": 0,
+      "kostolany": 10,
+      "stance": 10,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 8.6
+    }
+  },
+  {
+    "date": "2026-08-12",
+    "mode": "us",
+    "version": 49,
+    "char_count": 3516,
+    "scores": {
+      "length": 10,
+      "hook": 0,
+      "kostolany": 10,
+      "stance": 10,
+      "chinese_names": 10,
+      "no_csv": 10,
+      "no_tech_numbers": 10,
+      "overall": 8.6
+    }
+  }
+]

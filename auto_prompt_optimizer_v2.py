@@ -111,34 +111,35 @@ class EvaluationResult:
 class LLMEvaluator:
     """使用 LLM 進行專業評審"""
 
-    def __init__(self, model: str = "gemini-3.1-flash-lite"):
+    def __init__(self, model: str = None):
         self.model = model
 
     def evaluate(self, script: str, mode: str, version: int) -> EvaluationResult:
         """LLM 完整評審"""
         
-        eval_prompt = f"""你是專業的投資 Podcast 腳本評審。請嚴格依照評估標準給分。
-
-{EVALUATION_CRITERIA}
-
----
+        eval_prompt = f"""你是專業的投資 Podcast 腳本評審。請只輸出有效 JSON，不要任何解釋文字。
 
 ## 待評腳本 (模式: {mode.upper()}, 版本: v{version})
-
 {script}
 
----
+## 評分標準 (1-10分):
+- persuasion (說服力): 觀點鮮明、論據充分、能說服聽眾
+- fluency (流暢度): 文字如行雲流水、口語化強、適合TTS
+- professional (專業性): 分析深度專業、術語用法精準
+- structure (結構性): 開場鉤子強、主體層層遞進、金句收尾完美
+- compliance (合規性): 完全符合硬性規則(無代碼、無CSV、無指標數值、有立場、有金句、≥2500字)
+- length (長度適配度): 2500-3500字最佳
 
-## 請輸出 JSON 格式 (僅 JSON，無其他文字)：
+## 請輸出 JSON (僅 JSON，無markdown、無代碼塊、無說明):
 {{
-    "persuasion": 8.5,
-    "fluency": 9.0,
-    "professional": 8.0,
-    "structure": 8.5,
-    "compliance": 10.0,
-    "length": 9.0,
-    "violations": ["具體違規項目，無則空陣列"],
-    "reasoning": "簡要說明給分理由，特別指出優缺點"
+  "persuasion": 8.5,
+  "fluency": 9.0,
+  "professional": 8.0,
+  "structure": 8.5,
+  "compliance": 10.0,
+  "length": 9.0,
+  "violations": [],
+  "reasoning": "簡要說明"
 }}"""
 
         try:
@@ -340,7 +341,7 @@ class PromptOptimizerV2:
         response = call_nim(
             prompt=prompt,
             task_type="deep",
-            model="gemini-3.1-flash-lite",
+            
             system="你是頂級 Prompt 工程師，專精投資播客提示詞優化。只輸出優化後的提示詞。",
             max_tokens=4096,
         )
@@ -385,7 +386,7 @@ class PromptOptimizerV2:
         response = call_nim(
             prompt=prompt,
             task_type="deep",
-            model="gemini-3.1-flash-lite",
+            
             system="你是頂級 Prompt 工程師，專精投資播客提示詞優化。只輸出優化後的提示詞。",
             max_tokens=4096,
         )

@@ -27,12 +27,20 @@ import os
 import json
 import time
 import logging
+import re
 from typing import Optional, Dict, List, Any, Callable, Union
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum
 from collections import defaultdict
 import threading
+
+# Load .env file for API keys
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -78,7 +86,7 @@ MODELS = {
         cost_tier=1,
         latency_tier=3
     ),
-    "minimaxai/minimax-m3": ModelConfig(
+    "minimax-m3": ModelConfig(
         name="minimaxai/minimax-m3",
         provider="nvidia",
         endpoint="https://integrate.api.nvidia.com/v1",
@@ -86,7 +94,7 @@ MODELS = {
         max_tokens=8192,
         supports_thinking=True,
         cost_tier=1,
-        latency_tier=3
+        latency_tier=2
     ),
     "qwen-3.6": ModelConfig(
         name="qwen/qwen3-32b",
@@ -129,6 +137,15 @@ MODELS = {
         cost_tier=1,
         latency_tier=1
     ),
+    "gemini-3.1-pro": ModelConfig(
+        name="gemini-3.1-pro",
+        provider="gemini",
+        endpoint="https://generativelanguage.googleapis.com",
+        api_key_env="GEMINI_API_KEY",
+        max_tokens=8192,
+        cost_tier=1,
+        latency_tier=2
+    ),
     
     # Groq (Free, fast)
     "llama-3.1-8b": ModelConfig(
@@ -163,7 +180,7 @@ MODELS = {
     
     # OpenRouter (aggregator)
     "openrouter-gemini": ModelConfig(
-        name="google/gemini-2.0-flash-exp:free",
+        name="google/gemini-flash-latest:free",
         provider="openrouter",
         endpoint="https://openrouter.ai/api/v1",
         api_key_env="OPENROUTER_API_KEY",
@@ -171,487 +188,342 @@ MODELS = {
         cost_tier=1,
         latency_tier=1
     ),
-    # Google Gemini 3.1 Flash Lite (fastest, no rate limit)
-    "gemini-3.6-flash": ModelConfig(
-        name="gemini-3.6-flash",
-        provider="gemini",
-        endpoint="https://generativelanguage.googleapis.com",
-        api_key_env="GEMINI_API_KEY",
+    
+    # Local Ollama (fallback)
+    "qwen3.6-ollama": ModelConfig(
+        name="qwen3.6:latest",
+        provider="ollama",
+        endpoint="http://localhost:11434",
+        api_key_env="",
         max_tokens=8192,
-        cost_tier=1,
-        latency_tier=1
+        cost_tier=0,
+        latency_tier=3
     ),
-    # Google Gemini 2.5 Flash (more capable, rate limited)
-    "gemini-3.1-pro": ModelConfig(
-        name="gemini-3.1-pro",
-        provider="gemini",
-        endpoint="https://generativelanguage.googleapis.com",
-        api_key_env="GEMINI_API_KEY",
-        max_tokens=8192,
-        cost_tier=1,
-        latency_tier=2
-    ),
-
 }
 
-# 任務類型 → 推薦模型
+# 任務類型 → 推薦模型 (優先使用 Gemini)
 TASK_MODEL_MAP = {
-    "quick": ["gemini-3.6-flash", "gemini-2.5-flash", "llama-3.3-70b", "qwen-3.5", "grok-beta", "qwen3.6-ollama"],
-    "medium": ["gemini-3.1-pro", "gemini-2.5-flash", "llama-3.3-70b", "deepseek-v3.2"],
-    "deep": ["glm-5.2","nemotron-3-ultra-550b-a55b"],
-    "script": ["llama-3.3-70b", "glm-5.1"],  # Podcast 腳本生成
-    "strategy": ["glm-5.2", "gemini-3.1-pro"],  # 策略分析
-    "json": ["gemini-3.6-flash", "qwen-3.6", "grok-4"],  # JSON 输出
+    "quick": ["gemini-3.6-flash", "gemini-3.6-flash", "gemini-3.6-flash", "llama-3.1-8b", "qwen-3.6", "grok-beta", "qwen3.6-ollama"],
+    "medium": ["gemini-3.6-flash", "gemini-3.6-flash", "gemini-3.6-flash", "llama-3.1-70b", "deepseek-v3.2"],
+    "deep": ["gemini-3.6-flash", "gemini-3.6-flash", "gemini-3.6-flash", "glm-5.1", "deepseek-v3.2"],
+    "script": ["gemini-3.6-flash", "gemini-3.6-flash", "gemini-3.6-flash", "llama-3.1-70b", "glm-5.1"],  # Podcast 腳本生成
+    "strategy": ["gemini-3.6-flash", "gemini-3.6-flash", "gemini-3.6-flash", "glm-5.1", "deepseek-v3.2"],  # 策略分析
+    "json": ["gemini-3.6-flash", "gemini-3.6-flash", "gemini-3.6-flash", "llama-3.1-70b", "qwen-3.6"],  # JSON 輸出
 }
 
 
-def _call_ollama(prompt, model_key="qwen3.6-ollama", system=None,
-                 temperature=0.7, max_tokens=None, **kwargs):
-    """Call local Ollama API (no API key, ~30s, last resort)"""
-    model = MODELS.get(model_key, MODELS.get("qwen3.6-ollama"))
-    max_tokens = max_tokens or model.max_tokens
-    messages = []
-    if system:
-        messages.append({"role": "system", "content": system})
-    messages.append({"role": "user", "content": prompt})
-    try:
-        import httpx
-        with httpx.Client(timeout=60) as client:
-            r = client.post(f"{model.endpoint}/v1/chat/completions",
-                json={"model": model.name, "messages": messages,
-                      "max_tokens": max_tokens, "temperature": temperature})
-            if r.status_code == 200:
-                return r.json()["choices"][0]["message"]["content"]
-            r = client.post(f"{model.endpoint}/api/chat",
-                json={"model": model.name, "messages": messages})
-            if r.status_code == 200:
-                return r.json().get("message", {}).get("content") or ""
-    except Exception:
-        pass
-    return None
-
-
-# Provider 優先順序（按成本效益）
-PROVIDER_PRIORITY = ["nvidia", "gemini"]
-
+# ============================================================================
 # Rate Limiting
+# ============================================================================
+
 class RateLimiter:
-    """簡單的速率限制器"""
+    """簡單的 RPM 速率限制器"""
+    
     def __init__(self, rpm: int = 40):
         self.rpm = rpm
-        self.requests = defaultdict(list)
+        self.requests: Dict[str, List[datetime]] = defaultdict(list)
         self.lock = threading.Lock()
     
-    def acquire(self, provider: str = "nvidia"):
+    def acquire(self, provider: str = "nvidia") -> bool:
         """獲取配額，成功返回 True"""
         with self.lock:
             now = datetime.now()
-            cutoff = now - timedelta(minutes=1)
-            
-            # 清理舊請求
-            self.requests[provider] = [t for t in self.requests[provider] if t > cutoff]
-            
+            # 清理過期請求
+            self.requests[provider] = [
+                req_time for req_time in self.requests[provider]
+                if now - req_time < timedelta(minutes=1)
+            ]
             if len(self.requests[provider]) < self.rpm:
                 self.requests[provider].append(now)
                 return True
             return False
     
     def wait_if_needed(self, provider: str = "nvidia"):
-        """如果需要，等待配額"""
+        """等待直到有配額"""
         while not self.acquire(provider):
-            time.sleep(2)  # 等待 2 秒後重試
+            time.sleep(1.5)  # 等待 1.5 秒後重試
 
-rate_limiter = RateLimiter(rpm=40)
+rate_limiter = RateLimiter(40)
+
+
+# ============================================================================
+# API Key 管理
+# ============================================================================
+
+def _get_api_key(model_key: str) -> Optional[str]:
+    """獲取模型對應的 API Key"""
+    model_config = MODELS.get(model_key)
+    if not model_config:
+        return None
+    return os.getenv(model_config.api_key_env)
+
+
+# ============================================================================
+# Provider 呼叫器
+# ============================================================================
+
+def _call_nvidia(prompt, model_config, system=None, temperature=0.7, max_tokens=None, **kwargs):
+    """呼叫 NVIDIA NIM API"""
+    import httpx
+    
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+    
+    api_key = os.getenv(model_config.api_key_env)
+    if not api_key:
+        logger.warning(f"{model_config.api_key_env} 未設置")
+        return None
+    
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    payload = {
+        "model": model_config.name,
+        "messages": messages,
+        "temperature": temperature,
+        "max_tokens": max_tokens or model_config.max_tokens,
+    }
+    
+    try:
+        with httpx.Client(timeout=180) as client:
+            response = client.post(
+                f"{model_config.endpoint}/chat/completions",
+                headers=headers,
+                json=payload
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data["choices"][0]["message"]["content"]
+    except Exception as e:
+        logger.error(f"NVIDIA API 呼叫失敗: {e}")
+        return None
+
+
+def _call_gemini(prompt, model_config, system=None, temperature=0.7, max_tokens=None, **kwargs):
+    """呼叫 Google Gemini API"""
+    import httpx
+    
+    api_key = os.getenv(model_config.api_key_env)
+    if not api_key:
+        logger.warning("GEMINI_API_KEY 未設置")
+        return None
+    
+    # Gemini API 格式
+    parts = []
+    if system:
+        parts.append({"text": f"System: {system}"})
+    parts.append({"text": prompt})
+    
+    payload = {
+        "contents": [{"parts": parts}],
+        "generationConfig": {
+            "temperature": temperature,
+            "maxOutputTokens": max_tokens or model_config.max_tokens,
+        }
+    }
+    
+    try:
+        with httpx.Client(timeout=180) as client:
+            url = f"{model_config.endpoint}/v1beta/models/{model_config.name}:generateContent?key={api_key}"
+            response = client.post(url, json=payload)
+            response.raise_for_status()
+            data = response.json()
+            return data["candidates"][0]["content"]["parts"][0]["text"]
+    except Exception as e:
+        logger.error(f"Gemini API 呼叫失敗: {e}")
+        return None
+
+
+def _call_openai_compatible(prompt, model_config, system=None, temperature=0.7, max_tokens=None, **kwargs):
+    """呼叫 OpenAI 兼容 API (Groq, xAI, OpenAI, OpenRouter)"""
+    import httpx
+    
+    api_key = os.getenv(model_config.api_key_env)
+    if not api_key:
+        logger.warning(f"{model_config.api_key_env} 未設置")
+        return None
+    
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+    
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+    
+    payload = {
+        "model": model_config.name,
+        "messages": messages,
+        "temperature": temperature,
+        "max_tokens": max_tokens or model_config.max_tokens,
+    }
+    
+    try:
+        with httpx.Client(timeout=180) as client:
+            response = client.post(
+                f"{model_config.endpoint}/chat/completions",
+                headers=headers,
+                json=payload
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data["choices"][0]["message"]["content"]
+    except Exception as e:
+        logger.error(f"{model_config.provider} API 呼叫失敗: {e}")
+        return None
+
+
+def _call_ollama(prompt, model_config, system=None, temperature=0.7, max_tokens=None, **kwargs):
+    """呼叫 Ollama 本地 API"""
+    import httpx
+    
+    # Ollama 不需要 API key
+    messages = []
+    if system:
+        messages.append({"role": "system", "content": system})
+    messages.append({"role": "user", "content": prompt})
+    
+    payload = {
+        "model": model_config.name,
+        "messages": messages,
+        "options": {
+            "temperature": temperature,
+            "num_predict": max_tokens or model_config.max_tokens,
+        },
+        "stream": False
+    }
+    
+    try:
+        with httpx.Client(timeout=180) as client:
+            response = client.post(
+                f"{model_config.endpoint}/api/chat",
+                json=payload
+            )
+            response.raise_for_status()
+            data = response.json()
+            return data["message"]["content"]
+    except Exception as e:
+        logger.error(f"Ollama API 呼叫失敗: {e}")
+        return None
+
+
+PROVIDER_CALLERS = {
+    "nvidia": _call_nvidia,
+    "gemini": _call_gemini,
+    "xai": _call_openai_compatible,
+    "groq": _call_openai_compatible,
+    "openai": _call_openai_compatible,
+    "openrouter": _call_openai_compatible,
+    "ollama": _call_ollama,
+}
+
 
 # ============================================================================
 # Core LLM Calling
 # ============================================================================
 
-def _get_api_key(model_key: str) -> Optional[str]:
-    """獲取 API key"""
-    model = MODELS.get(model_key)
-    if not model:
-        return None
-    return os.getenv(model.api_key_env) or ("dummy" if model.provider == "ollama" else None)
-
-def _call_nvidia(prompt: str, model_key: str = "llama-3.3-70b", system: str = None,
-                 temperature: float = 0.7, max_tokens: int = None,
-                 thinking: bool = False, **kwargs) -> Optional[str]:
-    """呼叫 NVIDIA API"""
-    api_key = _get_api_key(model_key)
-    if not api_key:
-        logger.warning("NVIDIA_API_KEY 未設置")
-        return None
-    
-    model = MODELS.get(model_key)
-    if not model:
-        model_key = "llama-3.3-70b"
-        model = MODELS[model_key]
-    
-    max_tokens = max_tokens or model.max_tokens
-    
-    try:
-        from openai import OpenAI
-        client = OpenAI(api_key=api_key, base_url=model.endpoint, timeout=180)
-        
-        messages = []
-        if system:
-            messages.append({"role": "system", "content": system})
-        messages.append({"role": "user", "content": prompt})
-        
-        # 構造 extra_headers
-        extra_headers = {}
-        if thinking and model.supports_thinking:
-            extra_headers["X-Think"] = "true"
-        
-        response = client.chat.completions.create(
-            model=model.name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            extra_headers=extra_headers if extra_headers else None
-        )
-        
-        return response.choices[0].message.content
-    except Exception as e:
-        logger.warning(f"NVIDIA API 失敗 ({model_key}): {e}")
-        return None
-
-def _call_xai(prompt: str, model_key: str = "grok-beta", system: str = None,
-              temperature: float = 0.7, max_tokens: int = None, **kwargs) -> Optional[str]:
-    """呼叫 xAI Grok API"""
-    api_key = _get_api_key(model_key)
-    if not api_key:
-        logger.warning("XAI_API_KEY 未設置")
-        return None
-    
-    model = MODELS.get(model_key) or MODELS["grok-beta"]
-    max_tokens = max_tokens or model.max_tokens
-    
-    try:
-        from openai import OpenAI
-        client = OpenAI(api_key=api_key, base_url=model.endpoint, timeout=120)
-        
-        messages = []
-        if system:
-            messages.append({"role": "system", "content": system})
-        messages.append({"role": "user", "content": prompt})
-        
-        response = client.chat.completions.create(
-            model=model.name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
-        
-        return response.choices[0].message.content
-    except Exception as e:
-        logger.warning(f"xAI API 失敗 ({model_key}): {e}")
-        return None
-
-def _call_gemini(prompt: str, model_key: str = "gemini-2.0-flash", system: str = None,
-                 temperature: float = 0.7, max_tokens: int = None, **kwargs) -> Optional[str]:
-    """呼叫 Google Gemini API"""
-    api_key = _get_api_key(model_key)
-    if not api_key:
-        logger.warning("GEMINI_API_KEY 未設置")
-        return None
-    
-    model = MODELS.get(model_key) or MODELS["gemini-2.0-flash"]
-    max_tokens = max_tokens or model.max_tokens
-    
-    try:
-        from google import genai
-        client = genai.Client(api_key=api_key)
-        
-        full_prompt = f"{system}\n\n{prompt}" if system else prompt
-        
-        response = client.models.generate_content(
-            model=model.name,
-            contents=full_prompt
-        )
-        
-        return response.text
-    except Exception as e:
-        logger.warning(f"Gemini API 失敗 ({model_key}): {e}")
-        return None
-
-def _call_groq(prompt: str, model_key: str = "llama-3.1-70b", system: str = None,
-               temperature: float = 0.7, max_tokens: int = None, **kwargs) -> Optional[str]:
-    """呼叫 Groq API"""
-    api_key = _get_api_key(model_key)
-    if not api_key:
-        logger.warning("GROQ_API_KEY 未設置")
-        return None
-    
-    model = MODELS.get(model_key) or MODELS["llama-3.1-70b"]
-    max_tokens = max_tokens or model.max_tokens
-    
-    try:
-        from groq import Groq
-        client = Groq(api_key=api_key)
-        
-        messages = []
-        if system:
-            messages.append({"role": "system", "content": system})
-        messages.append({"role": "user", "content": prompt})
-        
-        response = client.chat.completions.create(
-            model=model.name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
-        
-        return response.choices[0].message.content
-    except Exception as e:
-        logger.warning(f"Groq API 失敗 ({model_key}): {e}")
-        return None
-
-def _call_openai(prompt: str, model_key: str = "gpt-4o-mini", system: str = None,
-                 temperature: float = 0.7, max_tokens: int = None, **kwargs) -> Optional[str]:
-    """呼叫 OpenAI API"""
-    api_key = _get_api_key(model_key)
-    if not api_key:
-        logger.warning("OPENAI_API_KEY 未設置")
-        return None
-    
-    model = MODELS.get(model_key) or MODELS["gpt-4o-mini"]
-    max_tokens = max_tokens or model.max_tokens
-    
-    try:
-        from openai import OpenAI
-        client = OpenAI(api_key=api_key, timeout=120)
-        
-        messages = []
-        if system:
-            messages.append({"role": "system", "content": system})
-        messages.append({"role": "user", "content": prompt})
-        
-        response = client.chat.completions.create(
-            model=model.name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
-        
-        return response.choices[0].message.content
-    except Exception as e:
-        logger.warning(f"OpenAI API 失敗 ({model_key}): {e}")
-        return None
-
-def _call_openrouter(prompt: str, model_key: str = "openrouter-gemini", system: str = None,
-                     temperature: float = 0.7, max_tokens: int = None, **kwargs) -> Optional[str]:
-    """呼叫 OpenRouter API"""
-    api_key = _get_api_key(model_key)
-    if not api_key:
-        logger.warning("OPENROUTER_API_KEY 未設置")
-        return None
-    
-    model = MODELS.get(model_key) or MODELS["openrouter-gemini"]
-    max_tokens = max_tokens or model.max_tokens
-    
-    try:
-        from openai import OpenAI
-        client = OpenAI(api_key=api_key, base_url=model.endpoint, timeout=120)
-        
-        messages = []
-        if system:
-            messages.append({"role": "system", "content": system})
-        messages.append({"role": "user", "content": prompt})
-        
-        response = client.chat.completions.create(
-            model=model.name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
-        
-        return response.choices[0].message.content
-    except Exception as e:
-        logger.warning(f"OpenRouter API 失敗 ({model_key}): {e}")
-        return None
-
-# Provider → 呼叫函數映射
-PROVIDER_CALLERS = {
-    "nvidia": _call_nvidia,
-    "xai": _call_xai,
-    "gemini": _call_gemini,
-    "groq": _call_groq,
-    "openai": _call_openai,
-    "openrouter": _call_openrouter,
-    "ollama": _call_ollama,
-}
-
-# ============================================================================
-# Main Interface
-# ============================================================================
-
 def call_nim(
     prompt: str,
-    model: str = None,
     task_type: str = "medium",
+    model: str = None,
     system: str = None,
     temperature: float = 0.7,
     max_tokens: int = None,
-    max_retries: int = 3,
     thinking: bool = False,
-    fallback_models: List[str] = None,
     **kwargs
 ) -> Optional[str]:
     """
-    統一的 NIM API 呼叫介面
+    統一 LLM 呼叫介面
     
     參數:
-        prompt: 用戶提示詞
-        model: 直接指定模型（如 "glm-5.1", "llama-3.3-70b"），或 None 自動選擇
-        task_type: 任務類型（quick/medium/deep/script/strategy/json）
+        prompt: 輸入提示詞
+        task_type: 任務類型 ("quick", "medium", "deep", "script", "strategy", "json")
+        model: 指定模型 key (可選，不指定則自動選擇)
         system: 系統提示詞
-        temperature: 生成溫度
+        temperature: 溫度
         max_tokens: 最大 token 數
-        max_retries: 最大重試次數
-        thinking: 是否啟用思考模型
-        fallback_models: 備用模型列表
-    
+        thinking: 是否啟用思考模式
+        
     返回:
-        str: 生成的文本，或 None（所有 provider 都失敗）
-    
-    用法示例:
-        # 自動選擇模型
-        result = call_nim("分析今天市場", task_type="quick")
-        
-        # 指定模型
-        result = call_nim("深度分析", model="glm-5.1", thinking=True)
-        
-        # 純文字生成
-        result = call_nim("寫一個推文", model="llama-3.1-8b")
+        生成的文本，失敗返回 None
     """
     
-    # 決定要嘗試的模型列表
-    if model:
-        # 直接指定模型
-        model_list = [model]
-        if fallback_models:
-            model_list.extend(fallback_models)
-    elif task_type:
-        # 根據任務類型選擇
-        base_models = TASK_MODEL_MAP.get(task_type, TASK_MODEL_MAP["medium"])
-        model_list = list(base_models)
-        if fallback_models:
-            model_list.extend(fallback_models)
-    else:
-        # 預設順序
-        model_list = ["llama-3.3-70b", "llama-3.1-70b", "grok-beta", "gemini-2.0-flash"]
+    # 選擇模型
+    if model is None:
+        model = get_best_model(task_type)
+        if not model:
+            logger.error(f"找不到可用模型: {task_type}")
+            return None
     
-    # 如果啟用思考模式，優先選擇支援的模型
-    if thinking:
-        thinking_models = [m for m in model_list if MODELS.get(m, ModelConfig("", "", "", "")).supports_thinking]
-        if thinking_models:
-            model_list = thinking_models + [m for m in model_list if m not in thinking_models]
+    model_config = MODELS.get(model)
+    if not model_config:
+        logger.error(f"未知模型: {model}")
+        return None
     
-    # 去除重複
-    seen = set()
-    unique_models = []
-    for m in model_list:
-        if m not in seen:
-            seen.add(m)
-            unique_models.append(m)
-    model_list = unique_models
+    # 檢查 API Key
+    api_key = _get_api_key(model)
+    if api_key is None and model_config.provider != "ollama":
+        logger.warning(f"{model} 的 API Key 未設置 ({model_config.api_key_env})")
+        # 嘗試降級
+        model = get_best_model(task_type)
+        if not model:
+            return None
+        model_config = MODELS[model]
+        api_key = _get_api_key(model)
     
-    logger.info(f"NIM API 呼叫: task_type={task_type}, models={model_list[:3]}...")
+    # 速率限制
+    if model_config.provider == "nvidia":
+        rate_limiter.wait_if_needed("nvidia")
     
-    # 嘗試每個模型
-    for model_key in model_list:
-        model_config = MODELS.get(model_key)
-        if not model_config:
-            logger.warning(f"未知模型: {model_key}")
-            continue
-        
-        api_key = _get_api_key(model_key)
-        if not api_key:
-            logger.info(f"{model_key} API key 未設置，跳過")
-            continue
-        
-        provider = model_config.provider
-        caller = PROVIDER_CALLERS.get(provider)
-        if not caller:
-            logger.warning(f"未知的 provider: {provider}")
-            continue
-        
-        # NVIDIA 需要 rate limiting
-        if provider == "nvidia":
-            rate_limiter.wait_if_needed(provider)
-        
-        # 嘗試呼叫
-        for attempt in range(max_retries):
-            try:
-                result = caller(
-                    prompt=prompt,
-                    model_key=model_key,
-                    system=system,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    thinking=thinking,
-                    **kwargs
-                )
-                
-                if result:
-                    logger.info(f"✓ NIM 成功: {model_key}")
-                    return result
-                
-            except Exception as e:
-                logger.warning(f"NIM {model_key} 嘗試 {attempt+1}/{max_retries} 失敗: {e}")
-            
-            if attempt < max_retries - 1:
-                time.sleep(2 ** attempt)  # 指數退避
-        
-        logger.warning(f"NIM {model_key} 完全失敗，切換到下一個模型")
+    # 呼叫對應的 provider
+    caller = PROVIDER_CALLERS.get(model_config.provider)
+    if not caller:
+        logger.error(f"不支援的 provider: {model_config.provider}")
+        return None
     
-    logger.error("所有 NIM provider 都失敗")
-    return None
-
-# ============================================================================
-# Specialized Functions
-# ============================================================================
-
-def optimize_script_with_nim(initial_script: str, task_type: str = "script", **kwargs) -> str:
-    """
-    使用 NIM API 優化 podcast 腳本
+    logger.info(f"NIM API 呼叫: task_type={task_type}, model={model} ({model_config.provider})")
     
-    向後相容於原 grok_api.optimize_script_with_grok
-    """
-    prompt = (
-        "你是一位專業投資大師，名叫幫幫忙，請根據以下初始逐字稿，使用繁體中文撰寫一段約10分鐘的Podcast播報逐字稿，"
-        "風格需更口語化、自然，適合廣播節目，控制在3000字以內。請保留所有市場數據（包括收盤價和成交金額，單位為台幣億元），"
-        "並融入專業分析，確保內容符合台灣慣用語，保留英文術語（如 Nvidia、Fed）。\n\n"
-        f"初始逐字稿：\n{initial_script}\n\n"
-        "注意：僅輸出繁體中文逐字稿正文，勿包含任何說明或JSON格式。"
-    )
-    
-    system = "你是一位專業財經科技主持人，擅長以口語化方式呈現財經分析。"
-    
-    result = call_nim(
+    result = caller(
         prompt=prompt,
-        task_type=task_type,
+        model_config=model_config,
         system=system,
-        temperature=0.4,
-        max_tokens=3000,
+        temperature=temperature,
+        max_tokens=max_tokens,
         **kwargs
     )
     
-    return result if result else initial_script
-
-def ask_nim_json(prompt: str, task_type: str = "json", **kwargs) -> Optional[Dict]:
-    """
-    呼叫 NIM API 並期望返回 JSON
+    if result:
+        logger.info(f"NIM API 成功: {len(result)} 字元")
+    else:
+        logger.warning(f"NIM API 失敗: {model}")
     
-    用於策略優化等需要結構化輸出的場景
-    """
+    return result
+
+
+# ============================================================================
+# JSON 專用介面
+# ============================================================================
+
+def ask_nim_json(
+    prompt: str,
+    task_type: str = "json",
+    model: str = None,
+    system: str = None,
+    **kwargs
+) -> Optional[Dict]:
+    """呼叫 NIM API 並解析 JSON 回應"""
     result = call_nim(
         prompt=prompt,
         task_type=task_type,
-        temperature=0.3,
-        max_tokens=4096,
+        model=model,
+        system=system,
+        temperature=0.1,  # JSON 任務用低溫度
         **kwargs
     )
     
@@ -660,36 +532,33 @@ def ask_nim_json(prompt: str, task_type: str = "json", **kwargs) -> Optional[Dic
     
     # 嘗試解析 JSON
     try:
-        # 去除 markdown 代碼塊
-        text = result.strip()
-        if text.startswith("```json"):
-            text = text[7:]
-        if text.startswith("```"):
-            text = text[3:]
-        if text.endswith("```"):
-            text = text[:-3]
-        text = text.strip()
-        
-        return json.loads(text)
-    except json.JSONDecodeError as e:
+        # 先找代碼塊裡的 JSON
+        json_match = re.search(r'```(?:json)?\s*(\{.*?\})\s*```', result, re.DOTALL)
+        if json_match:
+            return json.loads(json_match.group(1))
+        # 再找第一個 { 到最後一個 }
+        json_match = re.search(r'(\{.*\})', result, re.DOTALL)
+        if json_match:
+            return json.loads(json_match.group(1))
+    except Exception as e:
         logger.error(f"JSON 解析失敗: {e}")
-        return None
+    return None
+
+
+def optimize_script_with_nim(initial_script: str, task_type: str = "script") -> str:
+    """優化腳本（向後兼容）"""
+    return call_nim(
+        prompt=f"優化以下投資播客腳本，使其更專業、流暢、有說服力：\n\n{initial_script}",
+        task_type=task_type,
+    )
+
 
 # ============================================================================
-# Task Chain (任務鏈)
+# 任務鏈
 # ============================================================================
 
 class TaskChain:
-    """
-    任務鏈 - 將多個 LLM 任務串聯執行
-    
-    用法:
-        result = (TaskChain()
-            .then("收集數據", task_type="quick")
-            .then("分析市場趨勢", task_type="medium")
-            .then("生成 Podcast 腳本", task_type="script")
-            .execute())
-    """
+    """任務鏈 - 依序執行多個任務，前一個輸出作為下一個輸入"""
     
     def __init__(self, system: str = None):
         self.tasks: List[Dict] = []
@@ -757,6 +626,7 @@ class TaskChain:
         
         return results
 
+
 # ============================================================================
 # 向後兼容接口
 # ============================================================================
@@ -770,6 +640,11 @@ def optimize_script_with_grok(initial_script: str, api_key: str = None,
 def ask_grok_json(prompt: str, role: str = "user", model: str = "grok-4") -> Optional[Dict]:
     """向後兼容: 呼叫 Grok 返回 JSON（現在內部使用 NIM API）"""
     return ask_nim_json(prompt, task_type="json")
+
+def ask_nim_json_legacy(prompt: str, task_type: str = "json", model: str = None, system: str = None, **kwargs):
+    """呼叫 NIM API 返回 JSON（向後兼容）"""
+    return ask_nim_json(prompt, task_type, model, system, **kwargs)
+
 
 # ============================================================================
 # 工具函數
@@ -797,6 +672,7 @@ def get_best_model(task_type: str = "medium") -> Optional[str]:
         if _get_api_key(model_key):
             return model_key
     return None
+
 
 # ============================================================================
 # 測試

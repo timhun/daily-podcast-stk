@@ -1,0 +1,466 @@
+[
+  {
+    "id": "signoff_20260809_161715",
+    "mode": "us",
+    "version": 5,
+    "score": 7.4,
+    "violations": [
+      "字數不足 (1128/2500)"
+    ],
+    "created_at": "2026-08-09T16:17:15.706337",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260809_185804",
+    "mode": "tw",
+    "version": 10,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1230/2500)"
+    ],
+    "created_at": "2026-08-09T18:58:04.345567",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260809_201951",
+    "mode": "tw",
+    "version": 15,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1230/2500)"
+    ],
+    "created_at": "2026-08-09T20:19:51.680333",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260809_202712",
+    "mode": "us",
+    "version": 20,
+    "score": 7.4,
+    "violations": [
+      "字數不足 (1128/2500)"
+    ],
+    "created_at": "2026-08-09T20:27:12.979644",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260809_203640",
+    "mode": "tw",
+    "version": 25,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1230/2500)"
+    ],
+    "created_at": "2026-08-09T20:36:40.539248",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260809_205044",
+    "mode": "us",
+    "version": 30,
+    "score": 7.4,
+    "violations": [
+      "字數不足 (1128/2500)"
+    ],
+    "created_at": "2026-08-09T20:50:44.711872",
+    "status": "approved",
+    "reason": "合規性/專業性不足或里程碑版本",
+    "notes": "",
+    "decided_at": "2026-08-09T20:58:23.176167"
+  },
+  {
+    "id": "signoff_20260811_073336",
+    "mode": "tw",
+    "version": 35,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "created_at": "2026-08-11T07:33:36.867668",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260811_073419",
+    "mode": "tw",
+    "version": 35,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "created_at": "2026-08-11T07:34:19.827737",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260811_073500",
+    "mode": "tw",
+    "version": 35,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "created_at": "2026-08-11T07:35:00.279566",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260811_073555",
+    "mode": "tw",
+    "version": 35,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "created_at": "2026-08-11T07:35:55.532334",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260811_073630",
+    "mode": "tw",
+    "version": 35,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "created_at": "2026-08-11T07:36:30.838467",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260811_073708",
+    "mode": "tw",
+    "version": 35,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "created_at": "2026-08-11T07:37:08.848236",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260811_073755",
+    "mode": "tw",
+    "version": 35,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "created_at": "2026-08-11T07:37:55.247775",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260811_073915",
+    "mode": "tw",
+    "version": 35,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "created_at": "2026-08-11T07:39:15.435779",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_060954",
+    "mode": "us",
+    "version": 40,
+    "score": 6.2,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (244/2500)"
+    ],
+    "created_at": "2026-08-12T06:09:54.273232",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061023",
+    "mode": "tw",
+    "version": 40,
+    "score": 6.2,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (231/2500)"
+    ],
+    "created_at": "2026-08-12T06:10:23.669206",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061203",
+    "mode": "tw",
+    "version": 40,
+    "score": 6.2,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (227/2500)"
+    ],
+    "created_at": "2026-08-12T06:12:03.652972",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061235",
+    "mode": "tw",
+    "version": 41,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (219/2500)"
+    ],
+    "created_at": "2026-08-12T06:12:35.216802",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061246",
+    "mode": "us",
+    "version": 41,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (225/2500)"
+    ],
+    "created_at": "2026-08-12T06:12:46.378159",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061248",
+    "mode": "tw",
+    "version": 41,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (221/2500)"
+    ],
+    "created_at": "2026-08-12T06:12:48.821633",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061311",
+    "mode": "tw",
+    "version": 41,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (221/2500)"
+    ],
+    "created_at": "2026-08-12T06:13:11.310760",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061325",
+    "mode": "tw",
+    "version": 41,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (212/2500)"
+    ],
+    "created_at": "2026-08-12T06:13:25.924134",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061334",
+    "mode": "us",
+    "version": 42,
+    "score": 7.7,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (2478/2500)"
+    ],
+    "created_at": "2026-08-12T06:13:34.180490",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061351",
+    "mode": "us",
+    "version": 42,
+    "score": 6.2,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (281/2500)"
+    ],
+    "created_at": "2026-08-12T06:13:51.265269",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061539",
+    "mode": "tw",
+    "version": 43,
+    "score": 7.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (1592/2500)"
+    ],
+    "created_at": "2026-08-12T06:15:39.926026",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061619",
+    "mode": "tw",
+    "version": 43,
+    "score": 6.8,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (1126/2500)"
+    ],
+    "created_at": "2026-08-12T06:16:19.939868",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061623",
+    "mode": "us",
+    "version": 44,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (218/2500)"
+    ],
+    "created_at": "2026-08-12T06:16:23.679214",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061701",
+    "mode": "tw",
+    "version": 43,
+    "score": 6.2,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (259/2500)"
+    ],
+    "created_at": "2026-08-12T06:17:01.133319",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_061746",
+    "mode": "us",
+    "version": 44,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (217/2500)"
+    ],
+    "created_at": "2026-08-12T06:17:46.160183",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_062314",
+    "mode": "tw",
+    "version": 45,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (204/2500)"
+    ],
+    "created_at": "2026-08-12T06:23:14.921084",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_062357",
+    "mode": "us",
+    "version": 46,
+    "score": 6.2,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (261/2500)"
+    ],
+    "created_at": "2026-08-12T06:23:57.500134",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_062950",
+    "mode": "us",
+    "version": 47,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (212/2500)"
+    ],
+    "created_at": "2026-08-12T06:29:50.686005",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_063040",
+    "mode": "tw",
+    "version": 47,
+    "score": 6.9,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (1294/2500)"
+    ],
+    "created_at": "2026-08-12T06:30:40.676682",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_063115",
+    "mode": "tw",
+    "version": 47,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (207/2500)"
+    ],
+    "created_at": "2026-08-12T06:31:15.825160",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20260812_063221",
+    "mode": "tw",
+    "version": 48,
+    "score": 6.1,
+    "violations": [
+      "缺少 Kostolany 金句",
+      "缺少明確立場",
+      "字數不足 (219/2500)"
+    ],
+    "created_at": "2026-08-12T06:32:21.425225",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  }
+]

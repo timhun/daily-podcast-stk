@@ -279,7 +279,7 @@ def generate_script(
     )
     
     # 呼叫 LLM
-    script = generate_script_with_llm(user_prompt, system_prompt)
+    script = generate_script_with_llm(user_prompt, system_prompt, max_tokens=8192)
     
     if script:
         # 清理殘留系統文字
