@@ -166,8 +166,11 @@ def main(mode):
     if os.path.exists("docs"):
         print(f"doc 資料夾內的內容: {os.listdir('docs')}")
 
-    # 正確的路徑寫法
-    manual_script_path = os.path.join(os.getcwd(), "docs/script.txt")
+    # 正確的路徑寫法：先找這一軌專用的稿（docs/script_tw.txt / docs/script_us.txt），
+    # 找不到才退回共用的 docs/script.txt。兩個 workflow 才不會唸到對方的稿。
+    manual_script_path = os.path.join(os.getcwd(), f"docs/script_{mode}.txt")
+    if not os.path.exists(manual_script_path):
+        manual_script_path = os.path.join(os.getcwd(), "docs/script.txt")
 
     if os.path.exists(manual_script_path):
         print("成功找到手動腳本！")
