@@ -1,8 +1,12 @@
 name: US Podcast Pipeline
 on:
-  schedule:
-   - cron: '10 23 * * 1-5'  # UTC 23:10（週一-五）= 台灣 07:10（週二-六），美股收盤影片後 10 分鐘
+  # 時間由 local 的 TriLine 排程決定：07:00 的影片 job 推完文字稿後呼叫
+  # /actions/workflows/us2.yml/dispatches。這裡刻意沒有 schedule，理由同 tw2.yml。
   workflow_dispatch:
+
+concurrency:
+  group: podcast-us
+  cancel-in-progress: false
 
 jobs:
   produce:
@@ -56,5 +60,5 @@ jobs:
           git config --local user.name "GitHub Action"
           git add -f data/ docs/ strategies/
           # Only commit if there are changes
-          git diff --staged --quiet || git commit -m "US Podcast $(date -u '+%') published"
+          git diff --staged --quiet || git commit -m "US Podcast $(date -u '+%Y-%m-%d %H:%M UTC') published"
           git push
