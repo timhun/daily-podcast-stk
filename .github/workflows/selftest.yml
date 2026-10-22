@@ -1,0 +1,12 @@
+name: Dispatch self-test
+
+# Temporary: proves a workflow_dispatch call built by the local TriLine job is
+# accepted by GitHub, without producing a real episode. Deleted after the check.
+on:
+  workflow_dispatch:
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "dispatch accepted"
