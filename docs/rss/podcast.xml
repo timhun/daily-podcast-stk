@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說AI投資</title><link>https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><atom:link href="https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI投資</title><link>https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml</link></image><language>zh-TW</language><lastBuildDate>Sat, 14 Nov 2026 04:03:54 +0000</lastBuildDate><itunes:author>幫幫忙AI投資腦</itunes:author><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><itunes:owner><itunes:name>幫幫忙AI投資腦</itunes:name><itunes:email>tim.oneway@gmail.com</itunes:email></itunes:owner><item><title>幫幫忙每日投資快報 - 美股（20261114_us）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" version="2.0"><channel><title>幫幫忙說AI投資</title><link>https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml</link><description>掌握美股台股、科技、AI 與投資機會，每日兩集！</description><atom:link href="https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml" rel="self"/><docs>http://www.rssboard.org/rss-specification</docs><generator>python-feedgen</generator><image><url>https://timhun.github.io/daily-podcast-stk/img/cover.jpg</url><title>幫幫忙說AI投資</title><link>https://f005.backblazeb2.com/file/daily-podcast-stk/podcast.xml</link></image><language>zh-TW</language><lastBuildDate>Sat, 21 Nov 2026 04:04:39 +0000</lastBuildDate><itunes:author>幫幫忙AI投資腦</itunes:author><itunes:category text="Business"><itunes:category text="Investing"/></itunes:category><itunes:image href="https://timhun.github.io/daily-podcast-stk/img/cover.jpg"/><itunes:explicit>no</itunes:explicit><itunes:owner><itunes:name>幫幫忙AI投資腦</itunes:name><itunes:email>tim.oneway@gmail.com</itunes:email></itunes:owner><item><title>幫幫忙每日投資快報 - 美股（20261121_us）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 
 
@@ -39,7 +39,7 @@
   YT頻道
  幫幫忙 
 
- https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5]]></content:encoded><guid isPermaLink="false">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261114_us.mp3</guid><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261114_us.mp3" length="1166985" type="audio/mpeg"/><pubDate>Sat, 14 Nov 2026 00:00:00 +0800</pubDate><itunes:duration>0:01:12</itunes:duration><itunes:summary>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+ https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5]]></content:encoded><guid isPermaLink="false">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261121_us.mp3</guid><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261121_us.mp3" length="1021535" type="audio/mpeg"/><pubDate>Sat, 21 Nov 2026 00:00:00 +0800</pubDate><itunes:duration>0:01:03</itunes:duration><itunes:summary>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 
 
@@ -59,7 +59,67 @@
   YT頻道
  幫幫忙 
 
- https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5</itunes:summary></item><item><title>幫幫忙每日投資快報 - 美股（20261114_us）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+ https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5</itunes:summary></item><item><title>幫幫忙每日投資快報 - 台股（20261121_tw）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+
+
+讓你在 3 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
+提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
+
+
+提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
+
+
+
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
+
+
+📮 主持人：幫幫忙  
+
+  YT頻道
+ 幫幫忙 
+
+ https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5</description><guid isPermaLink="true">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261121_tw.mp3</guid><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261121_tw.mp3" length="1333332" type="audio/mpeg"/><pubDate>Sat, 21 Nov 2026 00:00:00 +0800</pubDate></item><item><title>幫幫忙每日投資快報 - 台股（20261121_tw）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+
+
+讓你在 3 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
+提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
+
+
+提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
+
+
+
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
+
+
+📮 主持人：幫幫忙  
+
+  YT頻道
+ 幫幫忙 
+
+ https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5</description><guid isPermaLink="true">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261121_tw.mp3</guid><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261121_tw.mp3" length="1333332" type="audio/mpeg"/><pubDate>Sat, 21 Nov 2026 00:00:00 +0800</pubDate></item><item><title>幫幫忙每日投資快報 - 美股（20261114_us）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+
+
+讓你在 3 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
+提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
+
+
+提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
+
+
+
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
+
+
+📮 主持人：幫幫忙  
+
+  YT頻道
+ 幫幫忙 
+
+ https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5</description><guid isPermaLink="true">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261114_us.mp3</guid><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261114_us.mp3" length="1166985" type="audio/mpeg"/><pubDate>Sat, 14 Nov 2026 00:00:00 +0800</pubDate></item><item><title>幫幫忙每日投資快報 - 美股（20261114_us）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
 每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
 
 
@@ -13872,4 +13932,64 @@ WMT 最佳 god_system（NEUTRAL，0.00%）｜bigline NEUTRAL 0.00%｜god_system 
   YT頻道
  幫幫忙 
 
- https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5</description><guid isPermaLink="true">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261114_tw.mp3</guid><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261114_tw.mp3" length="3191579" type="audio/mpeg"/><pubDate>Sat, 14 Nov 2026 00:00:00 +0800</pubDate></item></channel></rss>
+ https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5</description><guid isPermaLink="true">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261114_tw.mp3</guid><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261114_tw.mp3" length="3191579" type="audio/mpeg"/><pubDate>Sat, 14 Nov 2026 00:00:00 +0800</pubDate></item><item><title>幫幫忙每日投資快報 - 台股（20261118_tw）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+
+
+讓你在 3 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
+提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
+
+
+提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
+
+
+
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
+
+
+📮 主持人：幫幫忙  
+
+  YT頻道
+ 幫幫忙 
+
+ https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5</description><guid isPermaLink="true">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261118_tw.mp3</guid><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261118_tw.mp3" length="2633603" type="audio/mpeg"/><pubDate>Wed, 18 Nov 2026 00:00:00 +0800</pubDate></item><item><title>幫幫忙每日投資快報 - 台股（20261121_tw）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+
+
+讓你在 3 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
+提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
+
+
+提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
+
+
+
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
+
+
+📮 主持人：幫幫忙  
+
+  YT頻道
+ 幫幫忙 
+
+ https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5</description><guid isPermaLink="true">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261121_tw.mp3</guid><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261121_tw.mp3" length="1333332" type="audio/mpeg"/><pubDate>Sat, 21 Nov 2026 00:00:00 +0800</pubDate></item><item><title>幫幫忙每日投資快報 - 台股（20261121_tw）</title><description>(測試階段)一個適合上班族在最短時間做短線交易策略的節目!
+每集節目由涵蓋最新市場數據與 AI 趨勢，專注市值型ETF短線交易策略(因為你沒有無限資金可以東買買西買買，更沒有時間研究個股)！
+
+
+讓你在 3 分鐘內快速掌握大盤動向，以獨家研製的短線大盤多空走向，
+提供美股每日(SPY,QQQ)的交易策略(喜歡波動小的選SPY/QQQ,波動大的TQQQ/SOXL)。
+
+
+提供台股每日(0050或00631L)的交易策略(喜歡波動小的選0050,波動大的00631L)。
+
+
+
+🔔 訂閱 Apple Podcasts 或 Spotify，掌握每日雙時段更新。掌握每日美股、台股、AI工具與新創投資機會！
+
+
+📮 主持人：幫幫忙  
+
+  YT頻道
+ 幫幫忙 
+
+ https://youtube.com/channel/UC1yYPJ_S8lyEOkeACsX2-SQ?si=DdbwhP6G_vVf_Fv5</description><guid isPermaLink="true">https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261121_tw.mp3</guid><enclosure url="https://f005.backblazeb2.com/file/daily-podcast-stk/daily-podcast-stk-20261121_tw.mp3" length="1333332" type="audio/mpeg"/><pubDate>Sat, 21 Nov 2026 00:00:00 +0800</pubDate></item></channel></rss>
