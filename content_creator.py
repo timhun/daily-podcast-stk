@@ -187,6 +187,75 @@ def _get_sys(mode):
                 return d.get("stw" if mode=='tw' else "sus",cfg.get(f"sys_{mode}",""))
     return cfg.get(f"sys_{mode}", _D_TW if mode=="tw" else _D_US)
 
+# ── template_tw_v1：TW 收盤稿唯一 production 範本（2026-11-13 三簽定版） ──
+# 以 docs/template_tw_v1.md 為單一事實來源：範本更新，prompt 自動跟著更新；
+# 檔案缺席時退回內嵌備援（fail-closed：不中斷管線，也绝不靜默退回舊的
+# 「AI 新聞 70/30」規格——那正是每日自動稿退化為簡式的根因）。
+_TW_TEMPLATE_PATH = Path(__file__).parent / "docs" / "template_tw_v1.md"
+
+_TW_TEMPLATE_FALLBACK = """# 台股收盤 Podcast Production 範本 v1（內嵌備援）
+
+（正式規則以 docs/template_tw_v1.md 為準；本段僅在該檔案缺席時生效。）
+
+## 固定骨架
+各位朋友大家好，我是幫幫忙。今天是 {播出日 日期 星期X}，這一集{當日收盤}的台股收盤。
+今日市場定調：「{一句話總結當日主軸}」。
+
+【第一部分：大盤收盤紀錄】加權指數終場{漲跌 N 點}，漲幅 {N%}，收在 {N} 點；與前一~二個交易日的結構性對照；收盤正式性（列數、universe 檔數、最終驗證狀態）。
+【第二部分：結構與排行】有正式價格可算漲跌的成分股中，{X} 檔上漲、{Y} 檔平盤、{Z} 檔下跌；漲幅前五（由高至低）；跌幅前五（依當日漲跌幅排序）；兩份名單合看的結構解讀——這裡是全稿靈魂。
+【第三部分：權值股】台積電、鴻海收盤與定性（可補合併權重佔大盤比重）。
+【第四部分：籌碼與評分（誠實聲明）】二擇一：
+  A) 已入庫：三大法人買賣超、融資餘額、三線評分直接解讀；
+  B) 未入庫：誠實聲明——「M 月 D 日的正式數據還沒有發布。為了不把不同日期的資料混在一起，今天一律不引用。」並標註次交易日發布時點。
+（結語）金句：「{金句}」——{出處}；次交易日觀察重點（可量化指標：外資連買天數、融資增減）；記得把手綁好，我們{下次見面日}見！
+免責：本節目所有輸出僅供個人研究參考，不構成投資建議。
+稿尾來源標註（價格與結構、籌碼各自的來源；非同日參考必標註）。
+
+## 數據規則
+1. 只用同日正式事實；非同日一律標註「非同日，僅供參考」，絕不拼接。
+2. 缺值不補：未發布 → 誠實聲明 B，絕不補零或借前日充數。
+3. 每個數字落稿前對照【資料】區；無法核對者不寫。
+4. 漲跌幅排行用「當日漲跌幅排序」措辭。
+5. 金句收尾＋出處；結語給觀察指標，不做預測性斷言。
+
+## 播報節奏
+- 強勢與弱勢對比處：語氣停頓＋重音；誠實聲明段放慢語速，逐句清晰。
+- 全稿目標長度 1,000–1,300 字（約 4–5 分鐘）。
+"""
+
+def _load_tw_template_rules() -> str:
+    """讀 template_tw_v1 全文；缺席或讀取失敗退回內嵌備援（必留 warning）。"""
+    try:
+        if _TW_TEMPLATE_PATH.exists():
+            text = _TW_TEMPLATE_PATH.read_text(encoding="utf-8").strip()
+            if text:
+                return text
+            logger.warning("template_tw_v1 檔案為空，改用內嵌備援規則")
+    except Exception as e:
+        logger.warning(f"template_tw_v1 讀取失敗（{e}），改用內嵌備援規則")
+    return _TW_TEMPLATE_FALLBACK
+
+# 與範本不衝突的通用禁則（tw 模式與範本同時有效）
+_TW_GUARDRAILS = """
+【通用禁則（與上方範本同時有效；若有衝突一律以範本為準）】
+- 永遠說股票中文名稱（TWII→加權指數；2330→台積電；0050→元大台灣50），絕不朗讀股票代碼。
+- 不朗讀技術指標數值與情緒分數，全部轉成描述語。
+- 不提 god_system / bigline 等策略內部名稱，只說「MA20 均線策略訊號」。
+- 只寫下方【資料】區提供的數字；資料區沒有的數字一個都不寫（依範本走誠實聲明）。
+- 一律繁體中文用字（不出簡體字，如「弱势」要寫「弱勢」）。
+- 純口語、可直接朗讀：不要 markdown、不要表情符號、不要分點符號。
+"""
+
+def _tw_system_prompt() -> str:
+    """TW 收盤稿 system prompt ＝ template_tw_v1（唯一規格）＋通用禁則。
+
+    舊版 _D_TW / prompt_versions 的「AI 新聞 70/30、至少 2500 字、不得分段標題」
+    與收盤稿規格（八段骨架、1,000–1,300 字、【】段標題）正面衝突；若疊加，
+    弱模型會把兩套規格混寫。因此 tw 模式不走 _get_sys，直接以範本為準——
+    prompt 優化器（_do_proactive_iter 寫入的 sys_tw）也從此干預不到 tw 稿。
+    """
+    return _load_tw_template_rules() + "\n" + _TW_GUARDRAILS
+
 # ══════════════════════════════════════════════════════════════════════
 # 主動式質量提升系統 (Proactive Quality Improvement)
 # ── 多維評分器 ───────────────────────────────────────────────────
@@ -196,7 +265,14 @@ def validate_quality(script, mode):
     診斷結果同時用於：
       1. 自動記錄（用於失敗模式分析）
       2. 反饋給 _do_iter_opt 做根因改進
+
+    tw（收盤稿）走 template_tw_v1 專用評分器：舊版 8 維以「AI 新聞 70/30 稿」
+    為標竿（要求 AI 圈鉤子、Kostolany 金句、無段標題），對三簽定版的收盤稿
+    會誤判硬性失敗，進而觸發 prompt 優化器朝舊規格漂移、把 template_tw_v1
+    沖掉——那正是每日自動稿退化為簡式的根因。
     """
+    if mode == "tw":
+        return _validate_quality_tw(script)
     score = 10.0
     issues = []
     warnings = []
@@ -276,6 +352,98 @@ def validate_quality(script, mode):
         "has_ai_hook": has_ai_hook,
     }
     _lfl(mode, "|".join([i for i in issues]), script[:100])
+    return diag
+
+def _validate_quality_tw(script: str) -> dict:
+    """TW 收盤稿 8 維評分：契約＝template_tw_v1（2026-11-13 三簽定版）。
+
+    與舊版同構（issues=硬性失敗、warnings=緩慢改進、pass=score≥7 且零 issues），
+    但每維度的判準換成範本條款，讓合規的收盤稿過關、讓優化器不再有
+    「把稿子改回 AI 新聞體」的正當理由。
+    """
+    score = 10.0
+    issues = []
+    warnings = []
+
+    # ── 維度1（硬性）：代碼／技術指標／策略內部名洩漏 ──
+    forbidden = ["^GSPC:", "^DJI:", "^IXIC:", "0050.TW", "2330.TW",
+                 "god_system", "bigline", "RSI ", "MACD "]
+    hits = [p for p in forbidden if p in script]
+    if hits:
+        score -= 3.0
+        issues.append(f"[維度1-技術洩漏] {hits[:2]}")
+
+    # ── 維度2（硬性）：開場 persona（範本固定骨架第1句） ──
+    if "我是幫幫忙" not in script:
+        score -= 2.0
+        issues.append("[維度2-開場缺失] 缺「各位朋友大家好，我是幫幫忙」persona 開場")
+    if "今日市場定調" not in script:
+        score -= 1.0
+        warnings.append("[維度2-定調缺失] 缺範本要求的『今日市場定調』一句話")
+
+    # ── 維度3（硬性）：範本段落骨架【第X部分】 ──
+    parts = len(re.findall(r"【第[一二三四五六七八]部分", script))
+    if parts < 3:
+        score -= 2.0
+        issues.append(f"[維度3-骨架缺失] 只有 {parts} 個段標題（範本要求 ≥3）")
+
+    # ── 維度4：方向／立場清晰（防守、減碼皆算立場） ──
+    pos_sig = (script.count("多方") + script.count("空方") + script.count("減碼")
+               + script.count("防守") + script.count("觀望")
+               + script.count("持股水位") + script.count("持倉水位"))
+    if pos_sig == 0:
+        score -= 1.5
+        warnings.append("[維度4-立場偏弱] 無多方/空方/減碼/防守等方向詞")
+    elif script.count("中性") + script.count("中立") > pos_sig * 1.5:
+        score -= 1.0
+        warnings.append("[維度4-立場偏中性] 方向詞太少、中性詞過多")
+
+    # ── 維度5（硬性）：金句收尾＋出處（範本結語必備） ──
+    tail = script[-400:]
+    if "金句" not in script or "「" not in tail:
+        score -= 1.5
+        issues.append("[維度5-金句缺失] 結語缺金句（「」引文）")
+
+    # ── 維度6（硬性）：稿尾免責聲明 ──
+    if "不構成投資建議" not in script:
+        score -= 2.0
+        issues.append("[維度6-免責缺失] 缺稿尾『不構成投資建議』免責聲明")
+
+    # ── 維度7：稿尾來源標註（範本必備；缺＝警示不硬擋） ──
+    if not ("來源標註" in script or "（價格與" in script or "(價格與" in script
+            or "來源：" in script):
+        score -= 0.5
+        warnings.append("[維度7-來源缺失] 缺稿尾來源標註")
+
+    # ── 維度8：系統痕跡／過渡句／字數 ──
+    system_markers = re.findall(r'\(系統[^\)]+\)|\(本腳本[^\)]+\)|\(AI[^\)]+\)', script)
+    if system_markers:
+        score -= 2.0
+        issues.append(f"[維度8-系統痕跡] {system_markers}")
+    filler = re.findall(r"以下是|根據我們的|讓我們看看|根據我們的資料", script)
+    if filler:
+        score -= 0.5
+        warnings.append(f"[維度8-過渡句] 發現: {set(filler)}")
+    n = len(script)
+    if n < 800:
+        score -= 1.0
+        warnings.append(f"[維度8-長度] {n} 字 < 800（範本目標 1,000–1,300）")
+    elif n > 1800:
+        score -= 0.5
+        warnings.append(f"[維度8-長度] {n} 字 > 1,800（範本目標 1,000–1,300）")
+
+    final_score = max(0.0, score)
+    passed = final_score >= 7.0 and len(issues) == 0
+
+    diag = {
+        "pass": passed,
+        "score": round(final_score, 2),
+        "issues": issues,
+        "warnings": warnings,
+        "pos_sig": pos_sig,
+        "has_ai_hook": False,  # 收盤稿契約：開場是 persona＋定調句，不是 AI 新聞鉤子
+    }
+    _lfl("tw", "|".join(issues), script[:100])
     return diag
 
 def _analyze_fail_patterns(mode, limit=10):
@@ -795,14 +963,86 @@ def _build_user_prompt(mode, today, analysis, news_str, sentiment_desc,
 - 絕對不要只報新聞、不說投資啟示（每段AI新聞後至少暗示「對投資人的意義」）
 """
 
-# ── LLM 生成 ─────────────────────────────────────────────────────
-MIN_CHARS = 2500  # 7分鐘普通話約需2500字，這是最低門檻
+# ── TW 收盤稿 user prompt（template_tw_v1 掛載點） ──────────────────
+def _build_user_prompt_tw(today, market, analysis, news_str, sentiment_desc,
+                          market_analysis_str, strategy_str, spike_info=None):
+    """依 template_tw_v1 建構 TW 收盤稿的 user prompt。
 
-def _expand_section(section_type, current_text, system_prompt, max_tokens=4000):
+    與舊版 _build_user_prompt（AI 新聞 70/30、2500 字、禁段標題）互斥，
+    只供 mode=='tw' 使用。事實只來自【資料】區；範本要求但本環境查不到的
+    事實（廣度／排行／法人／融資／三線／持股水位）一律走誠實聲明 B。
+    """
+    wd = "星期" + "一二三四五六日"[datetime.date.today().weekday()]
+
+    # 【資料】區：只放能核對的數字（yfinance 當日抓取；日期隨附）
+    fact_lines = []
+    for sym, label in (("^TWII", "加權指數"), ("0050.TW", "元大台灣50"), ("2330.TW", "台積電")):
+        info = market.get(sym) or {}
+        close = info.get("close") or 0
+        chg = info.get("change") or 0
+        vol = info.get("volume") or 0
+        ts = info.get("timestamp")
+        data_date = ""
+        try:
+            data_date = str(ts)[:10] if ts else ""
+        except Exception:
+            data_date = ""
+        if close:
+            vol_text = f"，成交量 {vol:,.0f}" if vol else ""
+            fact_lines.append(
+                f"- {label}：收 {close:,.2f}，{'漲' if chg >= 0 else '跌'} {abs(chg):.2f}%{vol_text}"
+                + (f"（資料日期 {data_date}）" if data_date else "")
+            )
+        else:
+            fact_lines.append(f"- {label}：無法取得（依範本走誠實聲明，不得編造）")
+    facts = "\n".join(fact_lines) if fact_lines else "- 本日無可用行情資料（全稿走誠實聲明）"
+
+    spike_line = ""
+    if spike_info:
+        lbl, chg, direction, _ = spike_info
+        spike_line = f"\n【鉤子提示】{lbl} {abs(chg):.2f}%（{'正面' if direction == 'bullish' else '警訊'}），可作定調或開場素材。"
+
+    news_block = ""
+    if news_str and "今日無重要" not in news_str:
+        news_block = f"""
+【當日 AI／半導體新聞——僅供背景，不得凌駕收盤主軸】
+{news_str}
+（若與收盤無結構性關聯就不要寫進稿裡；寫進去也只當背景，一段為限。）"""
+
+    return f"""請依上方 template_tw_v1 範本，生成 {today}（{wd}）的台股收盤 Podcast 文字稿，目標 1,000–1,300 字。
+
+【本集可引用的數字——只准引用以下資料區，每個數字必須完全一致】
+{facts}
+{analysis}
+{sentiment_desc}
+{market_analysis_str or '（技術面無特殊發現）'}
+{strategy_str}{spike_line}
+{news_block}
+
+【資料區沒有的事實——依範本誠實聲明 B，絕不編造】
+- 漲跌幅前五／後五名單、上漲下跌家數（廣度）、三大法人、融資融券、三線／六星評分、持股水位、正式發布列數：本環境查不到。
+  → 對應段落改寫誠實聲明（「○月○日的正式數據還沒有發布。為了不把不同日期的資料混在一起，今天一律不引用。」），
+    並標註次交易日的發布時點。絕不補零、絕不借前日充數、絕不虛構名單。
+- 若資料日期不是今天：必須標註「非同日，僅供參考」，絕不當作今日收盤引用。
+
+【硬性要求】
+1. 骨架照範本：開場 persona＋定調句 →【第一部分：大盤收盤紀錄】→【第二部分：結構與排行】→【第三部分：權值股】→【第四部分：籌碼與評分（誠實聲明）】→（結語：金句＋出處＋次交易日觀察重點＋「記得把手綁好」）。
+2. 段標題用範本的【第X部分：…】格式；不要 markdown、不要表情符號。
+3. 只寫資料區出現的數字；漲跌幅用「當日漲跌幅排序」措辭。
+4. 說中文名稱不朗讀代碼；不朗讀技術指標數值。
+5. 稿尾兩行必備：「本節目所有輸出僅供個人研究參考，不構成投資建議。」與來源標註（哪些事實來自哪個來源；非同日參考必標註）。
+"""
+
+# ── LLM 生成 ─────────────────────────────────────────────────────
+MIN_CHARS = 2500  # 7分鐘普通話約需2500字，這是最低門檻（US/舊規格；TW 收盤稿用 1000）
+
+def _expand_section(section_type, current_text, system_prompt, max_tokens=4000, min_chars=None):
     """
     多段擴展：用獨立的 prompt 請求模型繼續扩充某個段落。
     section_type: "news" | "strategy" | "all"
     """
+    if min_chars is None:
+        min_chars = MIN_CHARS
     expand_prompts = {
         "news": (
             "你是一個專業的Podcast主持人助理。你的任務是將下面的AI新聞段落徹底擴展，使其更詳細、更有深度。"
@@ -838,11 +1078,11 @@ def _expand_section(section_type, current_text, system_prompt, max_tokens=4000):
     }
     tmpl = expand_prompts.get(section_type, expand_prompts["all"])
     # 計算目標
-    need = max(0, (MIN_CHARS if section_type == "all" else MIN_CHARS // 4) - len(current_text))
+    need = max(0, (min_chars if section_type == "all" else min_chars // 4) - len(current_text))
     if need < 200 and section_type == "all":
         return current_text  # 差距太小不折騰
 
-    prompt = tmpl.format(content=current_text, target=MIN_CHARS)
+    prompt = tmpl.format(content=current_text, target=min_chars)
     logger.info(f"  🔄 多段擴展 ({section_type}), 差距={need}字, 呼叫 NIM...")
     # 擴展用 deepseek-v3.2（有思考模式，比 llama 更能生成長文本）
     # fallback 到 llama-3.3-70b（萬一 deepseek 失敗）
@@ -861,13 +1101,15 @@ def _build_multi_pass_plan(filtered_news, mode):
     estimated = 100 + n_news * 150 + 200 + 50
     return estimated
 
-def _generate_long_script(user_prompt, system_prompt=None):
+def _generate_long_script(user_prompt, system_prompt=None, min_chars=None):
     """
     多段生成策略（v2）：
     1. 先完整生成一次（llama-3.3-70b）
-    2. 如果 < MIN_CHARS，執行 all→news→strategy→all 共4次擴展
+    2. 如果 < min_chars，執行 all→news→strategy→all 共4次擴展
     3. 每輪擴展後記錄長度，達標則提前終止
     """
+    if min_chars is None:
+        min_chars = MIN_CHARS
     # ── 第一輪：初始生成 ──────────────────────
     logger.info("開始使用 NIM API 生成文字稿（長度優化模式）...")
     result = call_nim(prompt=user_prompt, task_type="script", temperature=0.7,
@@ -878,21 +1120,22 @@ def _generate_long_script(user_prompt, system_prompt=None):
 
     logger.success("✓ NIM API 成功生成文字稿")
     chars = len(result)
-    logger.info(f"  第1輪輸出：{chars} 字（目標：≥{MIN_CHARS}字）")
+    logger.info(f"  第1輪輸出：{chars} 字（目標：≥{min_chars}字）")
 
     # ── 第二輪起：多段擴展（固定4次，確保長度達標） ───────────────
-    if chars < MIN_CHARS:
+    if chars < min_chars:
         logger.info(f"  ⚠  長度不足，觸發多段擴展...")
 
         # 擴展順序：all → news → strategy → all（每輪都執行，除非已超標）
         for pass_idx, stype in enumerate(["all", "news", "strategy", "all"], start=2):
-            if chars >= MIN_CHARS:
+            if chars >= min_chars:
                 logger.info(f"  ✅ 已達標（{chars}字），跳過剩餘擴展")
                 break
 
             prev_chars = chars
             tokens = 8000  # 都用最大 tokens 鼓勵長輸出
-            result = _expand_section(stype, result, system_prompt, max_tokens=tokens)
+            result = _expand_section(stype, result, system_prompt, max_tokens=tokens,
+                                     min_chars=min_chars)
             chars = len(result) if result else prev_chars
             delta = chars - prev_chars
             if delta > 0:
@@ -902,8 +1145,8 @@ def _generate_long_script(user_prompt, system_prompt=None):
 
     return result
 
-def generate_script_with_llm(prompt, system_prompt=None):
-    return _generate_long_script(prompt, system_prompt=system_prompt)
+def generate_script_with_llm(prompt, system_prompt=None, min_chars=None):
+    return _generate_long_script(prompt, system_prompt=system_prompt, min_chars=min_chars)
 
 # ── 主生成流程 ───────────────────────────────────────────────────
 def generate_script(market_data, mode, strategy_results, market_analysis):
@@ -930,12 +1173,22 @@ def generate_script(market_data, mode, strategy_results, market_analysis):
     market_analysis_str=_summarize_market_analysis(market_analysis,mode)
     strategy_str=_summarize_strategies(strategy_results,mode)
 
-    system_prompt=_get_sys(mode)
-    user_prompt=_build_user_prompt(mode,today,analysis,news_str,sentiment_desc,
-                                   market_analysis_str,strategy_str,
-                                   spike_info=spike_info,filtered_news=filtered_news)
+    # template_tw_v1 掛載：TW 收盤稿以範本為唯一規格（system＋user 都換）；
+    # US 維持原有 AI 新聞 70/30 路徑不變。
+    if mode=='tw':
+        system_prompt=_tw_system_prompt()
+        user_prompt=_build_user_prompt_tw(today,market,analysis,news_str,
+                                          sentiment_desc,market_analysis_str,
+                                          strategy_str,spike_info=spike_info)
+        min_chars=1000  # 範本下限 1,000 字（目標 1,000–1,300），不套用 2,500 擴展門檻
+    else:
+        system_prompt=_get_sys(mode)
+        user_prompt=_build_user_prompt(mode,today,analysis,news_str,sentiment_desc,
+                                       market_analysis_str,strategy_str,
+                                       spike_info=spike_info,filtered_news=filtered_news)
+        min_chars=MIN_CHARS
 
-    script=generate_script_with_llm(user_prompt,system_prompt=system_prompt)
+    script=generate_script_with_llm(user_prompt,system_prompt=system_prompt,min_chars=min_chars)
 
     if script:
         # 清理殘留系統文字
