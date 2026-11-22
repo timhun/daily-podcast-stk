@@ -462,5 +462,101 @@
     "created_at": "2026-08-12T06:32:21.425225",
     "status": "pending",
     "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20261028_063024",
+    "mode": "tw",
+    "version": 50,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1230/2500)"
+    ],
+    "created_at": "2026-10-28T06:30:24.829531",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20261030_063042",
+    "mode": "us",
+    "version": 55,
+    "score": 7.4,
+    "violations": [
+      "字數不足 (1127/2500)"
+    ],
+    "created_at": "2026-10-30T06:30:42.476455",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20261104_063022",
+    "mode": "tw",
+    "version": 60,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1230/2500)"
+    ],
+    "created_at": "2026-11-04T06:30:22.456333",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20261106_063016",
+    "mode": "us",
+    "version": 65,
+    "score": 7.4,
+    "violations": [
+      "字數不足 (1127/2500)"
+    ],
+    "created_at": "2026-11-06T06:30:16.908212",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20261111_063020",
+    "mode": "tw",
+    "version": 70,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1230/2500)"
+    ],
+    "created_at": "2026-11-11T06:30:20.775711",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20261113_063043",
+    "mode": "us",
+    "version": 75,
+    "score": 7.4,
+    "violations": [
+      "字數不足 (1122/2500)"
+    ],
+    "created_at": "2026-11-13T06:30:43.705442",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20261118_063004",
+    "mode": "tw",
+    "version": 80,
+    "score": 7.5,
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "created_at": "2026-11-18T06:30:04.216952",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
+  },
+  {
+    "id": "signoff_20261120_063054",
+    "mode": "us",
+    "version": 85,
+    "score": 7.4,
+    "violations": [
+      "字數不足 (1121/2500)"
+    ],
+    "created_at": "2026-11-20T06:30:54.204054",
+    "status": "pending",
+    "reason": "合規性/專業性不足或里程碑版本"
   }
 ]

@@ -1,157 +1,5 @@
 [
   {
-    "date": "2026-08-09T15:31:34.464548",
-    "mode": "tw",
-    "version": 1,
-    "overall": 7.5,
-    "scores": {
-      "persuasion": 8.0,
-      "fluency": 8.0,
-      "professional": 8.0,
-      "structure": 8.0,
-      "compliance": 8,
-      "length": 4.92
-    },
-    "violations": [
-      "字數不足 (1230/2500)"
-    ],
-    "char_count": 1230,
-    "evaluated_by": "heuristic"
-  },
-  {
-    "date": "2026-08-09T15:31:34.465340",
-    "mode": "us",
-    "version": 2,
-    "overall": 7.4,
-    "scores": {
-      "persuasion": 8.0,
-      "fluency": 8.0,
-      "professional": 8.0,
-      "structure": 8.0,
-      "compliance": 8,
-      "length": 4.512
-    },
-    "violations": [
-      "字數不足 (1128/2500)"
-    ],
-    "char_count": 1128,
-    "evaluated_by": "heuristic"
-  },
-  {
-    "date": "2026-08-09T16:17:15.704838",
-    "mode": "tw",
-    "version": 3,
-    "overall": 7.5,
-    "scores": {
-      "persuasion": 8.0,
-      "fluency": 8.0,
-      "professional": 8.0,
-      "structure": 8.0,
-      "compliance": 8,
-      "length": 4.92
-    },
-    "violations": [
-      "字數不足 (1230/2500)"
-    ],
-    "char_count": 1230,
-    "evaluated_by": "heuristic"
-  },
-  {
-    "date": "2026-08-09T16:17:15.705816",
-    "mode": "us",
-    "version": 4,
-    "overall": 7.4,
-    "scores": {
-      "persuasion": 8.0,
-      "fluency": 8.0,
-      "professional": 8.0,
-      "structure": 8.0,
-      "compliance": 8,
-      "length": 4.512
-    },
-    "violations": [
-      "字數不足 (1128/2500)"
-    ],
-    "char_count": 1128,
-    "evaluated_by": "heuristic"
-  },
-  {
-    "date": "2026-08-09T17:45:33.671430",
-    "mode": "tw",
-    "version": 5,
-    "overall": 7.5,
-    "scores": {
-      "persuasion": 8.0,
-      "fluency": 8.0,
-      "professional": 8.0,
-      "structure": 8.0,
-      "compliance": 8,
-      "length": 4.92
-    },
-    "violations": [
-      "字數不足 (1230/2500)"
-    ],
-    "char_count": 1230,
-    "evaluated_by": "heuristic"
-  },
-  {
-    "date": "2026-08-09T17:45:33.672496",
-    "mode": "us",
-    "version": 6,
-    "overall": 7.4,
-    "scores": {
-      "persuasion": 8.0,
-      "fluency": 8.0,
-      "professional": 8.0,
-      "structure": 8.0,
-      "compliance": 8,
-      "length": 4.512
-    },
-    "violations": [
-      "字數不足 (1128/2500)"
-    ],
-    "char_count": 1128,
-    "evaluated_by": "heuristic"
-  },
-  {
-    "date": "2026-08-09T17:54:09.133976",
-    "mode": "tw",
-    "version": 7,
-    "overall": 7.5,
-    "scores": {
-      "persuasion": 8.0,
-      "fluency": 8.0,
-      "professional": 8.0,
-      "structure": 8.0,
-      "compliance": 8,
-      "length": 4.92
-    },
-    "violations": [
-      "字數不足 (1230/2500)"
-    ],
-    "char_count": 1230,
-    "evaluated_by": "heuristic"
-  },
-  {
-    "date": "2026-08-09T17:54:09.135236",
-    "mode": "us",
-    "version": 8,
-    "overall": 7.4,
-    "scores": {
-      "persuasion": 8.0,
-      "fluency": 8.0,
-      "professional": 8.0,
-      "structure": 8.0,
-      "compliance": 8,
-      "length": 4.512
-    },
-    "violations": [
-      "字數不足 (1128/2500)"
-    ],
-    "char_count": 1128,
-    "evaluated_by": "heuristic"
-  },
-  {
     "date": "2026-08-09T18:57:55.271576",
     "mode": "tw",
     "version": 9,
@@ -1377,6 +1225,690 @@
     },
     "violations": [],
     "char_count": 3516,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-10-28T06:30:24.011443",
+    "mode": "tw",
+    "version": 49,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.92
+    },
+    "violations": [
+      "字數不足 (1230/2500)"
+    ],
+    "char_count": 1230,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-10-28T06:30:25.437933",
+    "mode": "us",
+    "version": 50,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.512
+    },
+    "violations": [
+      "字數不足 (1128/2500)"
+    ],
+    "char_count": 1128,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-10-29T06:30:36.184863",
+    "mode": "tw",
+    "version": 51,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.896
+    },
+    "violations": [
+      "字數不足 (1224/2500)"
+    ],
+    "char_count": 1224,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-10-29T06:30:37.283066",
+    "mode": "us",
+    "version": 52,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.488
+    },
+    "violations": [
+      "字數不足 (1122/2500)"
+    ],
+    "char_count": 1122,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-10-30T06:30:40.027330",
+    "mode": "tw",
+    "version": 53,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.916
+    },
+    "violations": [
+      "字數不足 (1229/2500)"
+    ],
+    "char_count": 1229,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-10-30T06:30:41.098631",
+    "mode": "us",
+    "version": 54,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.508
+    },
+    "violations": [
+      "字數不足 (1127/2500)"
+    ],
+    "char_count": 1127,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-02T06:30:17.626462",
+    "mode": "tw",
+    "version": 55,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.916
+    },
+    "violations": [
+      "字數不足 (1229/2500)"
+    ],
+    "char_count": 1229,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-02T06:30:18.622185",
+    "mode": "us",
+    "version": 56,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.508
+    },
+    "violations": [
+      "字數不足 (1127/2500)"
+    ],
+    "char_count": 1127,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-03T06:30:34.563030",
+    "mode": "tw",
+    "version": 57,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.896
+    },
+    "violations": [
+      "字數不足 (1224/2500)"
+    ],
+    "char_count": 1224,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-03T06:30:35.823396",
+    "mode": "us",
+    "version": 58,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.488
+    },
+    "violations": [
+      "字數不足 (1122/2500)"
+    ],
+    "char_count": 1122,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-04T06:30:21.783429",
+    "mode": "tw",
+    "version": 59,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.92
+    },
+    "violations": [
+      "字數不足 (1230/2500)"
+    ],
+    "char_count": 1230,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-04T06:30:22.749972",
+    "mode": "us",
+    "version": 60,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.512
+    },
+    "violations": [
+      "字數不足 (1128/2500)"
+    ],
+    "char_count": 1128,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-05T06:30:07.293080",
+    "mode": "tw",
+    "version": 61,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.916
+    },
+    "violations": [
+      "字數不足 (1229/2500)"
+    ],
+    "char_count": 1229,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-05T06:30:08.270705",
+    "mode": "us",
+    "version": 62,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.508
+    },
+    "violations": [
+      "字數不足 (1127/2500)"
+    ],
+    "char_count": 1127,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-06T06:30:15.343728",
+    "mode": "tw",
+    "version": 63,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.916
+    },
+    "violations": [
+      "字數不足 (1229/2500)"
+    ],
+    "char_count": 1229,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-06T06:30:16.286184",
+    "mode": "us",
+    "version": 64,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.508
+    },
+    "violations": [
+      "字數不足 (1127/2500)"
+    ],
+    "char_count": 1127,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-09T06:30:42.553188",
+    "mode": "tw",
+    "version": 65,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.92
+    },
+    "violations": [
+      "字數不足 (1230/2500)"
+    ],
+    "char_count": 1230,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-09T06:30:43.749106",
+    "mode": "us",
+    "version": 66,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.512
+    },
+    "violations": [
+      "字數不足 (1128/2500)"
+    ],
+    "char_count": 1128,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-10T06:30:44.352383",
+    "mode": "tw",
+    "version": 67,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.892
+    },
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "char_count": 1223,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-10T06:30:45.922526",
+    "mode": "us",
+    "version": 68,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.484
+    },
+    "violations": [
+      "字數不足 (1121/2500)"
+    ],
+    "char_count": 1121,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-11T06:30:19.990144",
+    "mode": "tw",
+    "version": 69,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.92
+    },
+    "violations": [
+      "字數不足 (1230/2500)"
+    ],
+    "char_count": 1230,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-11T06:30:21.172692",
+    "mode": "us",
+    "version": 70,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.512
+    },
+    "violations": [
+      "字數不足 (1128/2500)"
+    ],
+    "char_count": 1128,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-12T06:30:28.056421",
+    "mode": "tw",
+    "version": 71,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.916
+    },
+    "violations": [
+      "字數不足 (1229/2500)"
+    ],
+    "char_count": 1229,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-12T06:30:29.234443",
+    "mode": "us",
+    "version": 72,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.508
+    },
+    "violations": [
+      "字數不足 (1127/2500)"
+    ],
+    "char_count": 1127,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-13T06:30:41.925380",
+    "mode": "tw",
+    "version": 73,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.896
+    },
+    "violations": [
+      "字數不足 (1224/2500)"
+    ],
+    "char_count": 1224,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-13T06:30:42.904838",
+    "mode": "us",
+    "version": 74,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.488
+    },
+    "violations": [
+      "字數不足 (1122/2500)"
+    ],
+    "char_count": 1122,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-16T06:30:39.832745",
+    "mode": "tw",
+    "version": 75,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.896
+    },
+    "violations": [
+      "字數不足 (1224/2500)"
+    ],
+    "char_count": 1224,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-16T06:30:40.828558",
+    "mode": "us",
+    "version": 76,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.488
+    },
+    "violations": [
+      "字數不足 (1122/2500)"
+    ],
+    "char_count": 1122,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-17T06:30:26.638413",
+    "mode": "tw",
+    "version": 77,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.892
+    },
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "char_count": 1223,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-17T06:30:27.845899",
+    "mode": "us",
+    "version": 78,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.484
+    },
+    "violations": [
+      "字數不足 (1121/2500)"
+    ],
+    "char_count": 1121,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-18T06:30:03.529445",
+    "mode": "tw",
+    "version": 79,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.892
+    },
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "char_count": 1223,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-18T06:30:04.601342",
+    "mode": "us",
+    "version": 80,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.484
+    },
+    "violations": [
+      "字數不足 (1121/2500)"
+    ],
+    "char_count": 1121,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-19T06:30:50.381983",
+    "mode": "tw",
+    "version": 81,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.916
+    },
+    "violations": [
+      "字數不足 (1229/2500)"
+    ],
+    "char_count": 1229,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-19T06:30:51.377368",
+    "mode": "us",
+    "version": 82,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.508
+    },
+    "violations": [
+      "字數不足 (1127/2500)"
+    ],
+    "char_count": 1127,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-20T06:30:52.776162",
+    "mode": "tw",
+    "version": 83,
+    "overall": 7.5,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.892
+    },
+    "violations": [
+      "字數不足 (1223/2500)"
+    ],
+    "char_count": 1223,
+    "evaluated_by": "heuristic"
+  },
+  {
+    "date": "2026-11-20T06:30:53.849388",
+    "mode": "us",
+    "version": 84,
+    "overall": 7.4,
+    "scores": {
+      "persuasion": 8.0,
+      "fluency": 8.0,
+      "professional": 8.0,
+      "structure": 8.0,
+      "compliance": 8,
+      "length": 4.484
+    },
+    "violations": [
+      "字數不足 (1121/2500)"
+    ],
+    "char_count": 1121,
     "evaluated_by": "heuristic"
   }
 ]
